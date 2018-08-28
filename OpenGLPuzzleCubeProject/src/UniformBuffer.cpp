@@ -24,7 +24,6 @@ UniformBufferPtr UniformBuffer::Create(GLsizeiptr size, GLuint bindingPoint, con
 		return {};
 	}
 
-
 	glGenBuffers(1, &p->ubo);
 	glBindBuffer(GL_UNIFORM_BUFFER, p->ubo);
 	glBufferData(GL_UNIFORM_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
@@ -40,8 +39,6 @@ UniformBufferPtr UniformBuffer::Create(GLsizeiptr size, GLuint bindingPoint, con
 	p->size = size;
 	p->bindingPoint = bindingPoint;
 	p->name = name;
-
-	//std::cout << "UniformBuffer::Create" << std::endl << "NAME :" << name << " SIZE :" << size << " BINDINGPOINT :" << bindingPoint << std::endl << std::endl;
 
 	return p;
 }

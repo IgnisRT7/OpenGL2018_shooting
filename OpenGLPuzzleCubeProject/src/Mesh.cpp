@@ -17,6 +17,8 @@ namespace Mesh {
 		glm::vec4 color;	///< 色
 		glm::vec2 texCoord;	///< テクスチャ座標
 		glm::vec3 normal;	///< 法線
+		glm::vec4 tangent;	///< 接ベクトル
+
 	};
 
 	/**
@@ -92,6 +94,7 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 		SetVertexAttribPointer(1, Vertex, color);
 		SetVertexAttribPointer(2, Vertex, texCoord);
 		SetVertexAttribPointer(3, Vertex, normal);
+		SetVertexAttribPointer(4, Vertex, tangent); 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 		glBindVertexArray(0);
 		//glDeleteBuffers(1, &vbo);
@@ -128,6 +131,36 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 			static_cast<float>(fbxVec[0]),
 			static_cast<float>(fbxVec[1]));
 	}
+
+	/**
+	*	頂点パラメータを取得する
+	*
+	*	@param mappingMode	使用するインデックスを選択するマッピングモード
+	*	@param isDirectRef	直接参照モードなら真、間接参照モードなら偽を渡す
+	*	@param pIndexList	間接参照用のインデックス配列。isDirectRefが偽の場合使われる
+	*	@param pList		要素の配列
+	*	@param cpIndex		マッピングモードが頂点単位の場合に使用するインデックス
+	*	@param polygonVertex マッピングモードがポリゴン単位の場合に使用するインデックス
+	*	@param defaultValue	未対応マッピングモードの場合に返す値
+	*	
+	*	@return マッピングモードと参照モードに応じて適切な配列から頂点のパラメータを返す
+	*/
+	template<typename T>
+	T GetElement(
+		FbxGeometryElement::EMappingMode mappingMode, bool isDirectRef, const FbxLayerElementArrayTemplate<int>* pIndexList,
+		const FbxLayerElementArrayTemplate<T>* pList, int cpIndex, int polygonVertex, const T& defaultValue) {
+
+		switch (mappingMode) {
+		case FbxLayerElement::eByControlPoint:
+			return (*pList)[isDirectRef ? cpIndex : (*pIndexList)[cpIndex] ];
+		case FbxLayerElement::eByPolygonVertex:
+			return (*pList)[isDirectRef ? polygonVertex : (*pIndexList)[polygonVertex] ];
+		default:
+			return defaultValue;
+		}
+	}
+
+
 
 	/**
 	*	FBXオブジェクトを破棄するためのヘルパー構造体
@@ -277,6 +310,7 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 		const bool hasColor = fbxMesh->GetElementVertexColorCount() > 0;
 		const bool hasTexcoord = fbxMesh->GetElementUVCount() > 0;
 		const bool hasNormal = fbxMesh->GetElementNormalCount() > 0;
+		const bool hasTangent = fbxMesh->GetElementTangentCount() > 0;
 
 		//UVセット名のリストを取得する
 		FbxStringList uvSetNameList;
@@ -289,7 +323,6 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 		bool isColorDirectRef = true;
 		const FbxLayerElementArrayTemplate<int>* colorIndexList = nullptr;
 		const FbxLayerElementArrayTemplate<FbxColor>* colorList = nullptr;
-
 		if (hasColor) {
 
 			const FbxGeometryElementVertexColor* fbxColorList = fbxMesh->GetElementVertexColor();
@@ -298,6 +331,29 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 			colorIndexList = &fbxColorList->GetIndexArray();
 			colorList = &fbxColorList->GetDirectArray();
 		}
+
+		//接ベクトルを読み取る準備
+		FbxGeometryElement::EMappingMode tangentMappingMode = FbxLayerElement::eNone;
+		bool isTangentDirectRef = true;
+		const FbxLayerElementArrayTemplate<int>* tangentIndexList = nullptr;
+		const FbxLayerElementArrayTemplate<FbxVector4>* tangentList = nullptr;
+		FbxGeometryElement::EMappingMode binormalMappingMode = FbxLayerElement::eNone;
+		bool isBinormalDirectRef = true;
+		const FbxLayerElementArrayTemplate<int>* binormalIndexList = nullptr;
+		const FbxLayerElementArrayTemplate<FbxVector4>* binormalList = nullptr;
+		if (hasTangent) {
+			const FbxGeometryElementTangent* fbxTangentList = fbxMesh->GetElementTangent();
+			tangentMappingMode = fbxTangentList->GetMappingMode();
+			isTangentDirectRef = fbxTangentList->GetReferenceMode() == FbxLayerElement::eDirect;
+			tangentIndexList = &fbxTangentList->GetIndexArray();
+			const FbxGeometryElementBinormal* fbxBinormalList = fbxMesh->GetElementBinormal();
+			binormalMappingMode = fbxBinormalList->GetMappingMode();
+			isBinormalDirectRef = fbxBinormalList->GetReferenceMode() == FbxLayerElement::eDirect;
+			binormalIndexList = &fbxBinormalList->GetIndexArray();
+			binormalList = &fbxBinormalList->GetDirectArray();
+		}
+
+
 
 		//頂点がどのマテリアルに属するかを示すマテリアルインデックスリストを取得する
 		const FbxLayerElementArrayTemplate<int>* materialIndexList = nullptr;
@@ -359,6 +415,27 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 					FbxVector4 normal;
 					fbxMesh->GetPolygonVertexNormal(polygonIndex, pos, normal);
 					v.normal = glm::normalize(ToVec3(matR.MultT(normal)));
+				}
+				
+				v.tangent = glm::vec4(1, 0, 0, 1);
+				if (hasTangent) {
+
+					//従法線ベクトル
+					const glm::vec3 binormal = ToVec3(matR.MultT(GetElement(
+						binormalMappingMode, isBinormalDirectRef, binormalIndexList,
+						binormalList, cpIndex, polygonVertex, FbxVector4(0, 1, 0, 1))));
+
+					//接ベクトル
+					const glm::vec3 tangent = ToVec3(matR.MultT(GetElement(
+						tangentMappingMode, isTangentDirectRef, tangentIndexList,
+						tangentList, cpIndex, polygonVertex, FbxVector4(1, 0, 0, 1))));
+
+					//仮の従法線ベクトル計算
+					const glm::vec3 binormalTmp = glm::normalize(glm::cross(v.normal, tangent));
+					
+					if (glm::dot(binormal, binormalTmp) < 0) {
+						v.tangent.w = -1;
+					}
 				}
 
 				//頂点に対応する仮マテリアルに、頂点データとインデックスデータを追加する
