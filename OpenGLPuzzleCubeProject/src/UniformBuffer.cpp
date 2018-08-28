@@ -4,7 +4,6 @@
 #include "UniformBuffer.h"
 #include <iostream>
 
-
 /**
 *	Uniformバッファを作成する
 *
