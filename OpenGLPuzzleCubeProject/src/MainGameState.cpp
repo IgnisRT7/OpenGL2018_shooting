@@ -206,7 +206,7 @@ namespace GameState {
 			for (int i = rndAddingCount(game.Rand()); i > 0; --i) {
 				const glm::vec3 pos(distributerX(game.Rand()), 0, distributerZ(game.Rand()));
 
-				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, pos, "Toroid", "Res/Toroid.bmp", UpdateToroid())) {
+				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, pos, "Toroid", "Res/Toroid.bmp","Res/Toroid.Normal.bmp", UpdateToroid())) {
 
 					p->Velocity(glm::vec3(pos.x < 0 ? 1.0f : -1.0f, 0, -1.0f));
 					p->Collision(collisionDataList[EntityGroupId_Enemy]);

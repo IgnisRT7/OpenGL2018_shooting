@@ -346,6 +346,27 @@ bool GameEngine::LoadMeshFromFile(const char* filename) {
 */
 Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, Entity::Entity::UpdateFuncType func,const char* shader) {
 
+	return AddEntity(groupId, pos, meshName, texName, nullptr, func, shader);
+}
+
+/**
+*	エンティティを追加する
+*
+*	@param groupId	エンティティのグループID
+*	@param pos		エンティティの座標
+*	@param meshName	エンティティの表示に使用するメッシュ名
+*	@param texName	エンティティの表示に使うテクスチャファイル名
+*	@param texNormal
+*	@param func		エンティティの状態を更新する関数(または関数オブジェクト)
+*	@param shader	エンティティの表示に使うシェーダ名
+*
+*	@return 追加したエンティティへのポインタ
+*			これ以上エンティティを追加できない場合はnullptrが返される
+*			回転や拡大率はこのポインタ経由で設定する
+*			なお、このポインタをアプリケーション側で保持する必要はない
+*/
+Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName,const char* normalName, Entity::Entity::UpdateFuncType func, const char* shader) {
+
 	decltype(shaderMap)::const_iterator itr = shaderMap.end();
 	if (shader) {
 		itr = shaderMap.find(shader);
@@ -358,7 +379,14 @@ Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const c
 	}
 
 	const Mesh::MeshPtr& mesh = meshBuffer->GetMesh(meshName);
-	const TexturePtr& tex = textureBuffer.find(texName)->second;
+	TexturePtr tex[2];
+	tex[0] = GetTexture(texName);
+	if (normalName) {
+		tex[1] = GetTexture(normalName);
+	}
+	else {
+		tex[1] = GetTexture("Res/Dummy.Normal.bmp");
+	}
 	return entityBuffer->AddEntity(groupId, pos, mesh, tex, itr->second, func);
 }
 

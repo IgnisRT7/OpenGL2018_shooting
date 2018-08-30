@@ -30,7 +30,9 @@ int main() {
 
 	game.LoadTextureFromFile("Res/SpaceSphere.bmp");
 	game.LoadTextureFromFile("Res/Toroid.bmp");
+	game.LoadTextureFromFile("Res/Toroid.Normal.bmp");
 	game.LoadTextureFromFile("Res/Player.bmp");
+	game.LoadTextureFromFile("Res/Dummy.Normal.bmp");
 
 	game.LoadMeshFromFile("Res/SpaceSphere.fbx");
 	game.LoadMeshFromFile("Res/Toroid.fbx");
