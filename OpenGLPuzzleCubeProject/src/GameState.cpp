@@ -26,14 +26,25 @@ namespace GameState {
 		}
 
 		const float offset = timer == 0 ? 0 : 0 (2.0f - timer) * (2.0f - timer) * 2.0f;
+		game.FontColor(glm::vec4(1, 1, 1, 1));
 		game.FontScale(glm::vec2(2));
 		game.AddString(glm::vec2(-0.25f + offset, 0.125f), "STAR FIGHTER");
 		game.FontScale(glm::vec2(0.5f));
 		game.AddString(glm::vec2(0.1f + offset, -0.05f), "The ultimate in Manned-Fighter");
 
+		static float tmpTimer= 0;
+		tmpTimer += delta;
+		auto f = (sinf(glm::radians((float)tmpTimer)) + 1) / 2;
+
+		game.FontColor(glm::vec4(1.0f,0, 0, 0));
+		game.AddString(glm::vec2(-0.2, -0.5), "Pressed Enter...");
+
+
 		if (timer > 0) {
 			timer -= static_cast<float>(delta);
 			if (timer <= 0) {
+
+				//タイトル画面からメインゲーム画面の更新処理へ移行
 				game.UpdateFunc(MainGame(pSpaceSphere));
 			}
 		}
@@ -43,4 +54,15 @@ namespace GameState {
 		}
 	}
 
+	void GameOver::operator()(double delta) {
+
+		GameEngine& game = GameEngine::Instance();
+
+		game.FontScale(glm::vec2(3));
+		game.AddString(glm::vec2(-0.5,0), "GAME OVER");
+		
+		game.FontScale(glm::vec2(1));
+//		game.AddString(glm::vec2(0, 0.3), "Press To Z ");
+
+	}
 }
