@@ -31,6 +31,7 @@ namespace GameState {
 			}
 
 			entity.Scale({ 2,5,2 });
+			entity.Color({ 1,1,1,0.4f });
 
 			// ‰~”Õ‚ð‰ñ“]‚³‚¹‚é.
 			float rot = glm::angle(entity.Rotation());
@@ -64,7 +65,7 @@ namespace GameState {
 
 		void operator()(Entity::Entity& entity, double delta) {
 			timer += delta;
-			std::cout << timer << std::endl;
+
 			if (timer >= 0.5) {
 				entity.Destroy();
 				return;

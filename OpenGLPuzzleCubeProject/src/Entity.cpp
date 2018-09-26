@@ -160,6 +160,7 @@ namespace Entity {
 		entity->rotation = glm::quat();
 		entity->scale = glm::vec3(1, 1, 1);
 		entity->velocity = glm::vec3();
+		entity->color = glm::vec4(1);
 		entity->mesh = mesh;
 		entity->texture[0] = texture[0];
 		entity->texture[1] = texture[1];
