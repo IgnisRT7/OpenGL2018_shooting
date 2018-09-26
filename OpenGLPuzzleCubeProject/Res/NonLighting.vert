@@ -16,6 +16,8 @@ layout(std140) uniform VertexData{
 	mat4 matModel;
 	mat3x4 matNormal;
 	vec4 color;
+//	mat4x3 _dummy;
+
 } vertexData;
 
 void main(){
