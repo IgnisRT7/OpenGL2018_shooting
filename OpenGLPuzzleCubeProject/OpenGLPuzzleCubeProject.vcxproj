@@ -201,7 +201,7 @@
     <None Include="Res\ColorFilter.vert" />
     <None Include="Res\Font.frag" />
     <None Include="Res\Font.vert" />
-    <None Include="Res\HiLumExtraction.frag" />
+    <None Include="Res\HiLumExtract.frag" />
     <None Include="Res\NonLighting.frag" />
     <None Include="Res\NonLighting.vert" />
     <None Include="Res\posterization.frag" />

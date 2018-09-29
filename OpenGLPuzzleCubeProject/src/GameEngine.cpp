@@ -222,9 +222,12 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	}
 
 	static const char* const shaderNameList[][3] = {
-		{ "Tutorial","Res/Tutorial.vert","Res/Tutorial.frag" },
-		{ "ColorFilter","Res/ColorFilter.vert","Res/ColorFilter.frag" },
-		{ "NonLighting","Res/NonLighting.vert","Res/NonLighting.frag" },
+		{ "Tutorial", "Res/Tutorial.vert", "Res/Tutorial.frag" },
+		{ "ColorFilter", "Res/ColorFilter.vert", "Res/ColorFilter.frag" },
+		{ "NonLighting", "Res/NonLighting.vert", "Res/NonLighting.frag" },
+		{ "HiLumExtract", "Res/TexCoord.vert", "Res/HiLumExtract.frag" },
+		{ "Shrink", "Res/TexCoord.vert", "Res/Shrink.frag" },
+		{ "Blur3x3", "Res/TexCoord.vert", "Res/Blur3x3.frag" },
 	};
 
 	shaderMap.reserve(sizeof(shaderNameList) / sizeof(shaderNameList[0]));
@@ -629,28 +632,79 @@ void GameEngine::Render() const {
 	//Draw entity
 	entityBuffer->Draw(meshBuffer);
 	
-	//=====================================
-	//Draw Passing Number 2
-	//=====================================
+
 
 	//Set Default FrameBuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+
+	//=====================================
+	//Draw Passing Number 2 : blur effect
+	//=====================================
+	
+	glBindVertexArray(vao);
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_BLEND);
 
+	//Extract only brightness
+	const Shader::ProgramPtr& progHiLumExtract = shaderMap.find("HiLumExtract")->second;
+	progHiLumExtract->UseProgram();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, offBloom[0]->GetFramebuffer());
+	glViewport(0, 0, offBloom[0]->width(), offBloom[0]->height());
+	progHiLumExtract->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offscreen->GetTexture());
+	glDrawElements(GL_TRIANGLES,  renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
+
+	//A blurred image is created from the extracted brightness data
+	const Shader::ProgramPtr& progShrink = shaderMap.find("Shrink")->second;
+	progShrink->UseProgram();
+
+	for (int i = 1; i < bloomBufferCount; ++i) {
+		
+		glBindFramebuffer(GL_FRAMEBUFFER, offBloom[i]->GetFramebuffer());
+		glViewport(0, 0, offBloom[i]->width(), offBloom[i]->height());
+		progShrink->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offBloom[i - 1]->GetTexture());
+		glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
+
+	}
+
+	//Blend with data of frame buffer with addition synthesis
+	const Shader::ProgramPtr& progBlur3x3 = shaderMap.find("Blur3x3")->second;
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
+	progBlur3x3->UseProgram();
+
+	for (int i = bloomBufferCount - 1; i > 0; --i) {
+		
+		glBindFramebuffer(GL_FRAMEBUFFER, offBloom[i - 1]->GetFramebuffer());
+		glViewport(0, 0, offBloom[i - 1]->width(), offBloom[i - 1]->height());
+		progBlur3x3->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offBloom[i]->GetTexture());
+		glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
+	}
+	
+	//=====================================
+	//Draw Passing Number 3 : final output
+	//=====================================
 	glBindVertexArray(vao);
 
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_BLEND);
 
-	static bool useColorFilter = true;
+	glViewport(0, 0, 800, 600);
 
-		progColorFilter->UseProgram();
-		Uniform::PostEffectData postEffect;
-		uboPostEffect->BUfferSubData(&postEffect);
-		progColorFilter->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offscreen->GetTexture());
-		glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
-		fontRenderer.Draw();
+	progColorFilter->UseProgram();
+	Uniform::PostEffectData postEffect;
+	uboPostEffect->BUfferSubData(&postEffect);
+	progColorFilter->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offscreen->GetTexture());
+	//progColorFilter->BindTexture(GL_TEXTURE1, GL_TEXTURE_2D, offBloom[0]->GetTexture());
+
+	glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
+	fontRenderer.Draw();
 
 }
 

@@ -27,6 +27,8 @@ namespace Shader {
 			return {};
 		}
 
+		std::cout << "Compiling " << vsFilename << " and " << fsFilename << std::endl;
+
 		p->program = CreateProgramFromFile(vsFilename, fsFilename);
 		if (!p->program) {
 			return {};
@@ -152,6 +154,9 @@ namespace Shader {
 			glDeleteShader(shader);
 			return 0;
 		}
+		else {
+			std::cout << "Successful." << std::endl;
+		}
 		return shader;
 	}
 
@@ -165,9 +170,13 @@ namespace Shader {
 	*/
 	GLuint CreateShaderProgram(const GLchar* vsCode, const GLchar* fsCode) {
 
+		std::cout << "	vertex shader... ";
 		GLuint vs = CompileShader(GL_VERTEX_SHADER, vsCode);
+
+		std::cout << "	fragment shader... ";
 		GLuint fs = CompileShader(GL_FRAGMENT_SHADER, fsCode);
 
+		
 		if (!vs || !fs) {
 			return 0;
 		}
@@ -194,6 +203,9 @@ namespace Shader {
 			glDeleteProgram(program);
 			return 0;
 		}
+
+		std::cout << std::endl;
+
 		return program;
 	}
 

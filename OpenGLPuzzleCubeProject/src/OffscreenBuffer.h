@@ -19,6 +19,9 @@ public:
 	GLuint GetFramebuffer() const { return framebuffer; }
 	GLuint GetTexture() const { return tex->Id(); }
 
+	GLuint width() const { return tex->Width(); }
+	GLuint height() const { return tex->Height(); }
+
 private:
 
 	OffscreenBuffer() = default;

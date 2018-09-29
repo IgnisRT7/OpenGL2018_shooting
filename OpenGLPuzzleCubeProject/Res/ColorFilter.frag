@@ -20,7 +20,7 @@ void main(){
 	ts.xy = vec2(0.25) / vec2(textureSize(colorSampler[1],0));
 	ts.zw = -ts.xy;
 
-	vec3 bloom  Texture(colorSampler[1],inTexCoord + ts.xy).rgb;
+	vec3 bloom = texture(colorSampler[1],inTexCoord + ts.xy).rgb;
 	bloom += texture(colorSampler[1],inTexCoord + ts.zy).rgb;
 	bloom += texture(colorSampler[1],inTexCoord + ts.xw).rgb;
 	bloom += texture(colorSampler[1],inTexCoord + ts.zw).rgb;
@@ -28,7 +28,8 @@ void main(){
 
 	fragColor.rgb = texture(colorSampler[0],inTexCoord).rgb;
 	fragColor.rgb += bloom;
-	fragColor.rgb = (postEffect.matColor * vec4(fragColor.rgb,1)).rgb;
+	fragColor.rgb += (postEffect.matColor * vec4(fragColor.rgb,1)).rgb;
 	fragColor.a = 1.0f;
 	fragColor *= inColor;
+
 }

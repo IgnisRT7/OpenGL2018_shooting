@@ -140,13 +140,13 @@
     <None Include="Res\TexCoord.vert">
       <Filter>リソース ファイル</Filter>
     </None>
-    <None Include="Res\HiLumExtraction.frag">
-      <Filter>リソース ファイル</Filter>
-    </None>
     <None Include="Res\Shrink.frag">
       <Filter>リソース ファイル</Filter>
     </None>
     <None Include="Res\Blur3x3.frag">
+      <Filter>リソース ファイル</Filter>
+    </None>
+    <None Include="Res\HiLumExtract.frag">
       <Filter>リソース ファイル</Filter>
     </None>
   </ItemGroup>
