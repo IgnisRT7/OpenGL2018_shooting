@@ -193,7 +193,6 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		return false;
 	}
 
-	//<---ƒRƒR‚É‰Šú‰»ˆ—‚ð’Ç‰Á‚·‚é--->
 	vbo = CreateVBO(sizeof(vertices), vertices);
 	ibo = CreateIBO(sizeof(indices), indices);
 	vao = CreateVAO(vbo, ibo);
@@ -201,12 +200,22 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	uboLight = UniformBuffer::Create(sizeof(Uniform::LightData), 1, "LightData");
 	uboPostEffect = UniformBuffer::Create(sizeof(Uniform::PostEffectData), 2, "PostEffectData");
 
-	//progTutorial = Shader::Program::Create("Res/Tutorial.vert", "Res/Tutorial.frag");
-	//progColorFilter = Shader::Program::Create("Res/posterization.vert", "Res/posterization.frag");
-
 	offscreen = OffscreenBuffer::Create(800, 600,GL_RGBA16F);
+	if (!offscreen) {
+		return false;
+	}
 
-	if (!vbo || !ibo || !vao || !uboLight || !uboPostEffect || !offscreen) {
+	for (int i = 0, scale = 4; i < bloomBufferCount; ++i, scale *= 4) {
+		const int w = 800 / scale;
+		const int h = 600 / scale;
+		offBloom[i] = OffscreenBuffer::Create(w, h, GL_RGBA16F);
+		if (!offBloom[i]) {
+			return false;
+		}
+	}
+
+
+	if (!vbo || !ibo || !vao || !uboLight || !uboPostEffect ) {
 
 		std::cerr << "ERROR: GameEngine‚Ì‰Šú‰»‚ÉŽ¸”s" << std::endl;
 		return false;

@@ -196,14 +196,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Res\Blur3x3.frag" />
     <None Include="Res\ColorFilter.frag" />
     <None Include="Res\ColorFilter.vert" />
     <None Include="Res\Font.frag" />
     <None Include="Res\Font.vert" />
+    <None Include="Res\HiLumExtraction.frag" />
     <None Include="Res\NonLighting.frag" />
     <None Include="Res\NonLighting.vert" />
     <None Include="Res\posterization.frag" />
     <None Include="Res\posterization.vert" />
+    <None Include="Res\Shrink.frag" />
+    <None Include="Res\TexCoord.vert" />
     <None Include="Res\Tutorial.frag" />
     <None Include="Res\Tutorial.vert" />
   </ItemGroup>
