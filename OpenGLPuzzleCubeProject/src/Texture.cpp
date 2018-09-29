@@ -50,6 +50,13 @@ Texture::~Texture() {
 */
 TexturePtr Texture::Create(int width, int height, GLenum iformat, GLenum format, const void* data) {
 
+	GLenum type;
+
+	switch (iformat) {
+	case GL_RGBA16F: type = GL_HALF_FLOAT; break;
+	default: type = GL_UNSIGNED_BYTE;
+	}
+
 	struct Impl : Texture{};
 	TexturePtr p = std::make_shared<Impl>();
 
@@ -58,7 +65,7 @@ TexturePtr Texture::Create(int width, int height, GLenum iformat, GLenum format,
 	glGenTextures(1, &p->texId);
 
 	glBindTexture(GL_TEXTURE_2D, p->texId);
-	glTexImage2D(GL_TEXTURE_2D, 0, iformat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, iformat, width, height, 0, format, type, data);
 	const GLenum result = glGetError();
 	if (result != GL_NO_ERROR) {
 		std::cerr << "ERROR テクスチャの作成に失敗 0x" << std::hex << result << std::endl;

@@ -15,7 +15,7 @@ using OffscreenBufferPtr = std::shared_ptr<OffscreenBuffer>;
 class OffscreenBuffer {
 public:
 
-	static OffscreenBufferPtr Create(int w, int h);
+	static OffscreenBufferPtr Create(int w, int h,GLenum f = GL_RGBA8);
 	GLuint GetFramebuffer() const { return framebuffer; }
 	GLuint GetTexture() const { return tex->Id(); }
 

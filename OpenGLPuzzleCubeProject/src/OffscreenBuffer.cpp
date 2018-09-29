@@ -12,16 +12,12 @@
 *
 *	@return 作成したオフスクリーンバッファへのポインタ
 */
-OffscreenBufferPtr OffscreenBuffer::Create(int w, int h) {
+OffscreenBufferPtr OffscreenBuffer::Create(int w, int h, GLenum f) {
 
 	struct Impl : OffscreenBuffer {};
 	OffscreenBufferPtr offscreen = std::make_shared<Impl>();
-	if (!offscreen) {
-		return offscreen;
-	}
 
-
-	offscreen->tex = Texture::Create(w, h, GL_RGBA8, GL_RGBA, nullptr);
+	offscreen->tex = Texture::Create(w, h, f, GL_RGBA, nullptr);
 
 	//深度バッファの作成
 	glGenRenderbuffers(1, &offscreen->depthbuffer);						//深度バッファのメモリ確保
@@ -35,6 +31,10 @@ OffscreenBufferPtr OffscreenBuffer::Create(int w, int h) {
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, offscreen->depthbuffer);	//深度バッファをフレームバッファに紐づけ	
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, offscreen->tex->Id(), 0);	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	if (!offscreen) {
+		return {};
+	}
 
 	return offscreen;
 }

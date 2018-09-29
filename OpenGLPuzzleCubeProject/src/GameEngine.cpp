@@ -204,7 +204,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	//progTutorial = Shader::Program::Create("Res/Tutorial.vert", "Res/Tutorial.frag");
 	//progColorFilter = Shader::Program::Create("Res/posterization.vert", "Res/posterization.frag");
 
-	offscreen = OffscreenBuffer::Create(800, 600);
+	offscreen = OffscreenBuffer::Create(800, 600,GL_RGBA16F);
 
 	if (!vbo || !ibo || !vao || !uboLight || !uboPostEffect || !offscreen) {
 
