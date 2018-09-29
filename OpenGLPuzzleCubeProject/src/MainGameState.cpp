@@ -30,6 +30,11 @@ namespace GameState {
 				return;
 			}
 
+			//TODO : デバッグ用、敵を透明化させる
+			auto colorValue = entity.Color();
+			colorValue.a = 0;
+			entity.Color(colorValue);
+
 			entity.Scale({ 2,5,2 });
 			entity.Color({ 1,1,1,0.4f });
 
@@ -99,8 +104,18 @@ namespace GameState {
 	*/
 	struct UpdatePlayer {
 		void operator()(Entity::Entity& entity, double delta) {
+			
+			static float timer = 0;
+			timer += delta * 100;
+
+			/*TODO : プレイヤーのダメージ時の点滅アクションテスト
+			auto color = entity.Color();
+			color.a = (glm::sin(timer) + 1) * 0.5;
+			entity.Color(color);
+			*/
 
 			GameEngine& game = GameEngine::Instance();
+
 			const GamePad gamepad = game.GetGamePad();
 			glm::vec3 vec;
 
@@ -120,13 +135,16 @@ namespace GameState {
 				vec.z = -1;
 			}
 			if (vec.x || vec.z) {
-				vec = glm::normalize(vec) * 2.0f;
+				vec = glm::normalize(vec) * 5.0f;
 			}
-
+			
+			glm::vec3 rt = glm::vec3(-25, -100, 1);
+			glm::vec3 ld = glm::vec3(25, 100, 80)
+				;
 			entity.Velocity(vec);
 			entity.Rotation(glm::quat(glm::vec3(0, 0, rotZ)));
 			glm::vec3 pos = entity.Position();
-			pos = glm::min(glm::vec3(11, 100, 20), glm::max(pos, glm::vec3(-11, -100, 1)));
+			pos = glm::min(ld, glm::max(pos, rt));
 			entity.Position(pos);
 
 			if (gamepad.buttons & GamePad::A) {
@@ -158,14 +176,46 @@ namespace GameState {
 	void PlayerShotAndEnemyCollisionHandler(Entity::Entity& lhs, Entity::Entity& rhs) {
 
 		GameEngine& game = GameEngine::Instance();
+
+		//爆発エフェクト
 		if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, rhs.Position(), "Blast", "Res/Toroid.bmp", UpdateBlast())) {
 			const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
 			p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
 			game.UserVariable("score") += 100;
 		}
+
+		//爆発音
 		game.PlayAudio(1, CRI_SAMPLECUESHEET_BOMB);
 		lhs.Destroy();
 		rhs.Destroy();
+	}
+
+	/**
+	*	自機と敵の衝突判定
+	*/
+	void PlayyerAndEnemyCollisionHandler(Entity::Entity& lhs, Entity::Entity& rhs) {
+
+		GameEngine& game = GameEngine::Instance();
+
+		//爆発エフェクト
+		if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, rhs.Position(), "Blast", "Res/Toroid.bmp", UpdateBlast())) {
+			const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
+			p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
+			game.UserVariable("score") += 100;
+		}
+
+		//爆発音
+		game.PlayAudio(1, CRI_SAMPLECUESHEET_BOMB);
+
+		if (lhs.GroupId() == EntityGroupId_Player) {
+			rhs.Destroy();			
+		}
+		else {
+			lhs.Destroy();	
+		}
+
+		game.UserVariable("player") -= 1;
+
 	}
 
 	/**
@@ -175,14 +225,25 @@ namespace GameState {
 
 		GameEngine& game = GameEngine::Instance();
 		game.CollisionHandler(EntityGroupId_PlayerShot, EntityGroupId_Enemy, &PlayerShotAndEnemyCollisionHandler);
+		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Enemy, &PlayyerAndEnemyCollisionHandler);
+
+		game.UserVariable("player") = 3;	//プレイヤー残機数
 	}
 
 	/**
 	*	メインゲーム画面の更新
 	*/
 	void MainGame::operator()(double delta) {
-
+		
 		GameEngine& game = GameEngine::Instance();
+
+		if (game.UserVariable("player") <= 0) {
+			//プレイヤー死亡
+
+			//TODO : ゲームオーバーの処理へ
+			//このときにゲーム上のエンティティをすべて削除しなければならない
+			game.UpdateFunc(GameOver());
+		}
 
 		if (!pPlayer) {
 			pPlayer = game.AddEntity(EntityGroupId_Player, glm::vec3(0, 0, 2), "Aircraft", "Res/Player.bmp", UpdatePlayer());
@@ -201,7 +262,7 @@ namespace GameState {
 
 		if (interval <= 0) {
 
-			const std::uniform_real_distribution<> rndInterval(8.0, 16.0);
+			const std::uniform_real_distribution<> rndInterval(0.5f, 1);
 			const std::uniform_int_distribution<> rndAddingCount(1, 5);
 
 			for (int i = rndAddingCount(game.Rand()); i > 0; --i) {
@@ -209,17 +270,26 @@ namespace GameState {
 
 				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, pos, "Toroid", "Res/Toroid.bmp","Res/Toroid.Normal.bmp", UpdateToroid())) {
 
-					p->Velocity(glm::vec3(pos.x < 0 ? 1.0f : -1.0f, 0, -1.0f));
+					p->Velocity(glm::vec3(pos.x < 0 ? 0.5f : -0.5f, 0, -1.0f));
 					p->Collision(collisionDataList[EntityGroupId_Enemy]);
 				}
 			}
 
 			interval = rndInterval(game.Rand());
+
 		}
+
 
 		char str[16];
 		snprintf(str, 16, "%08.0f", game.UserVariable("score"));
-		game.AddString(glm::vec2(-0.2f, 1.0f), str);
+		game.FontScale(glm::vec2(1.5));
+		game.AddString(glm::vec2(-0.3f, 1.0f), str);
+
+		snprintf(str, 16, "%02.0f", game.UserVariable("player"));
+		std::string player = std::string("p - 0") + std::to_string((int)game.UserVariable("player"));
+
+		game.AddString(glm::vec2(-0.9, 1.0f), player.c_str());
+
 	}
 
 }

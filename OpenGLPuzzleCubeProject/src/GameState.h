@@ -46,4 +46,20 @@ namespace GameState {
 
 	};
 
+	///ゲームオーバー画面
+	class GameOver {	
+	public:
+
+		explicit GameOver(Entity::Entity* = nullptr) {}
+		void operator()(double delta);
+
+	private:
+
+		
+
+	};
+
+
+
 }
+

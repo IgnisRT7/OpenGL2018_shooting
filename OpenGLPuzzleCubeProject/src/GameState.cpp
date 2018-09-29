@@ -54,4 +54,15 @@ namespace GameState {
 		}
 	}
 
+	void GameOver::operator()(double delta) {
+
+		GameEngine& game = GameEngine::Instance();
+
+		game.FontScale(glm::vec2(3));
+		game.AddString(glm::vec2(-0.5,0), "GAME OVER");
+		
+		game.FontScale(glm::vec2(1));
+//		game.AddString(glm::vec2(0, 0.3), "Press To Z ");
+
+	}
 }

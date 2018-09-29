@@ -223,6 +223,8 @@ namespace Font {
 			}
 			pos.x += font.xadvance * reciprocalScreenSize.x * scale.x;
 		}
+
+
 		return true;
 	}
 
