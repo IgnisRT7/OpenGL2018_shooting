@@ -610,6 +610,10 @@ void GameEngine::Render() const {
 	// Draw Passing Number 1
 	//=====================================
 
+	const Shader::ProgramPtr& progColorFilter = shaderMap.find("ColorFilter")->second;
+	progColorFilter->UseProgram();
+
+
 	//Set OffscreenFrameBuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, offscreen->GetFramebuffer());
 
@@ -629,7 +633,7 @@ void GameEngine::Render() const {
 	//Draw entity
 	entityBuffer->Draw(meshBuffer);
 	
-
+	
 
 
 
@@ -687,34 +691,25 @@ void GameEngine::Render() const {
 	//Draw Passing Number 3 : final output
 	//=====================================
 
-	const Shader::ProgramPtr& progColorFilter = shaderMap.find("ColorFilter")->second;
-	progColorFilter->UseProgram();
 
 	//Set Default FrameBuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+
+	glDisable(GL_BLEND);
+	glViewport(0, 0, 800, 600);
 
 	glBindVertexArray(vao);
 
-	glClearColor(0.1f, 0.3f, 0.5f, 1.0f);
-	glClearDepth(1);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
-	glDisable(GL_BLEND);
-
-	glViewport(0, 0, 800, 600);
-
-
+	progColorFilter->UseProgram();
 
 	Uniform::PostEffectData postEffect;
 	uboPostEffect->BUfferSubData(&postEffect);
 	progColorFilter->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offscreen->GetTexture());
 	progColorFilter->BindTexture(GL_TEXTURE1, GL_TEXTURE_2D, offBloom[0]->GetTexture());
 
-
-
 	glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
+
 	fontRenderer.Draw();
 
 }

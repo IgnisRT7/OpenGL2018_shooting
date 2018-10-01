@@ -2,14 +2,14 @@
 
 layout(location=0) in vec3 vPosition;
 layout(location=1) in vec2 vTexCoord;
-//layout(location=2) in vec4 vColor;
+layout(location=2) in vec4 vColor;
 
-//layout(location=0) out vec4 outColor;
+layout(location=0) out vec4 outColor;
 layout(location=1) out vec2 outTexCoord;
 
 void main(){
 
-//	outColor = vColor;
+	outColor = vColor;
 	outTexCoord = vTexCoord;
 	gl_Position = vec4(vPosition,1);
 }
