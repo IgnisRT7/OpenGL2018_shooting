@@ -41,5 +41,4 @@ void main() {
 
   fragColor = inColor * texture(colorSampler[0], inTexCoord);
   fragColor.rgb *= lightColor;
-  //fragColor.rgb = inWorldNormal * 0.5 + 0.5;
 }

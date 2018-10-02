@@ -243,6 +243,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	shaderMap["Tutorial"]->UniformBlockBinding("LightData", 1);
 	shaderMap["ColorFilter"]->UniformBlockBinding("PostEffectData", 2);
 
+
 	meshBuffer = Mesh::Buffer::Create(30 * 1024, 30 * 1024);
 	if (!meshBuffer) {
 		std::cerr << "ERROR: GameEngine‚Ì‰Šú‰»‚ÉŽ¸”s" << std::endl;
