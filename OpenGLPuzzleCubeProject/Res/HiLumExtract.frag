@@ -8,7 +8,7 @@ uniform sampler2D colorSampler;
 
 void main(){
 
-	vec3 threshould = vec3(0.9);
+	vec3 threshould = vec3(1.0);
 	vec4 ts;
 	
 	ts.xy = vec2(1.0) / vec2(textureSize(colorSampler,0));

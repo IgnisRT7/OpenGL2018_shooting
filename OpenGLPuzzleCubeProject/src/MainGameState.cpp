@@ -181,6 +181,7 @@ namespace GameState {
 		if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, rhs.Position(), "Blast", "Res/Toroid.bmp", UpdateBlast())) {
 			const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
 			p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
+			p->Color(glm::vec4(1.0f, 0.75f, 0.5f, 1.0f));
 			game.UserVariable("score") += 100;
 		}
 
