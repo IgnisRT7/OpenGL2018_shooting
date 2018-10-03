@@ -214,6 +214,18 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		}
 	}
 
+	//オブスクリーンバッファの大きさを取得
+	int offWidth, offHeight;
+	glBindTexture(GL_TEXTURE_2D, offBloom[bloomBufferCount - 1]->GetTexture());
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &offWidth);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &offHeight);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	//PBOを作成
+	const int pboByteSize = offWidth * offHeight*sizeof(GLfloat) * 4;
+	for (auto& e: pbo) {
+		e.Init(GL_PIXEL_PACK_BUFFER, pboByteSize, nullptr, GL_DYNAMIC_DRAW);
+	}
 
 	if (!vbo || !ibo || !vao || !uboLight || !uboPostEffect ) {
 
@@ -254,10 +266,54 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		std::cerr << "ERROR: GameEngineの初期化に失敗" << std::endl;
 		return false;
 	}
-
+	
 	rand.seed(std::random_device()());
 
 	fontRenderer.Init(1024, glm::vec2(800, 600));
+
+	{
+		//オフスクリーンバッファの大きさを取得
+		int width, height;
+		glBindTexture(GL_TEXTURE_2D, offBloom[bloomBufferCount - 1]->GetTexture());
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &height);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//初回(pboIndexForWriting<0の場合はまだデータがないため
+		//変換コピーするだけで輝度計算はしない
+		if (pboIndexForWriting < 0) {
+
+			//オフスクリーンバッファの内容をPBOに変換コピー
+			const GLuint pboWrite = pbo[1].Id();
+			glBindBuffer(GL_PIXEL_PACK_BUFFER, pboWrite);
+			glBindFramebuffer(GL_FRAMEBUFFER, offBloom[bloomBufferCount - 1]->GetFramebuffer());
+			glReadPixels(0, 0, width, height, GL_RGBA, GL_FLOAT, 0);
+		}
+		else {
+			//オフスクリーンバッファの内容をPBOに変換コピー
+			const GLuint pboWrite = pbo[1].Id();
+			glBindBuffer(GL_PIXEL_PACK_BUFFER, pboWrite);
+			glBindFramebuffer(GL_FRAMEBUFFER, offBloom[bloomBufferCount - 1]->GetFramebuffer());
+			glReadPixels(0, 0, width, height, GL_RGBA, GL_FLOAT, 0);
+
+			//PBOの内容を読み取って輝度スケールを計算
+			const GLuint pboRead = pbo[pboIndexForWriting ^ 1].Id();
+			glBindBuffer(GL_PIXEL_PACK_BUFFER, pboRead);
+			const GLfloat* p = static_cast<GLfloat*>(glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY));
+			float totalLum = 0;
+			for (int i = 0; i < width*height; ++i) {
+
+				totalLum += p[i * 4 + 3];
+			}
+			luminanceScale = 0.18f / std::exp(totalLum / static_cast<float>(width* height));
+			glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+		}
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+
+	}
+
 
 	isInitalized = true;
 	return true;
@@ -391,6 +447,7 @@ Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const c
 		}
 	}
 
+	//法線マップ
 	const Mesh::MeshPtr& mesh = meshBuffer->GetMesh(meshName);
 	TexturePtr tex[2];
 	tex[0] = GetTexture(texName);
@@ -705,7 +762,10 @@ void GameEngine::Render() const {
 	progColorFilter->UseProgram();
 
 	Uniform::PostEffectData postEffect;
+	postEffect.luminanceScale = luminanceScale;
+	postEffect.bloomThreshold = 1.0f / luminanceScale;
 	uboPostEffect->BUfferSubData(&postEffect);
+
 	progColorFilter->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offscreen->GetTexture());
 	progColorFilter->BindTexture(GL_TEXTURE1, GL_TEXTURE_2D, offBloom[0]->GetTexture());
 

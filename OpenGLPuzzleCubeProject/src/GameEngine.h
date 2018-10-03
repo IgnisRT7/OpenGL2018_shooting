@@ -7,6 +7,7 @@
 
 #include "Uniform.h"
 #include "OffscreenBuffer.h"
+#include "BufferObject.h"
 #include "Shader.h"
 #include "Texture.h"
 #include "Mesh.h"
@@ -95,7 +96,11 @@ private:
 	GLuint vbo = 0;
 	GLuint ibo = 0;
 	GLuint vao = 0;
-	
+
+	BufferObject pbo[2];
+	int pboIndexForWriting = -1;
+	float luminanceScale = 1.0f;
+
 	UniformBufferPtr uboLight;
 	UniformBufferPtr uboPostEffect;
 	std::unordered_map<std::string, Shader::ProgramPtr> shaderMap;

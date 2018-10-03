@@ -18,6 +18,6 @@ void main(){
   fragColor += texture(colorSampler, inTexCoord + ts.zw);
   fragColor *= 1.0 / 4.0;
 
-	fragColor.a = 1.0;
+//	fragColor.a = 1.0;
 }
 

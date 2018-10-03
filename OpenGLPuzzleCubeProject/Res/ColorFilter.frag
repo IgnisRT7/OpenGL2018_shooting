@@ -12,6 +12,8 @@ uniform sampler2D colorSampler[2];
 layout(std140) uniform PostEffectData{
 	
 	mat4x4 matColor;	//色変換行列
+	float luminanceScale;	//輝度増減係数
+	float bloomThreshold;	//ブルームを発生させる閾値
 
 } postEffect;
 
@@ -50,6 +52,7 @@ void main(){
 
 	fragColor.rgb = texture(colorSampler[0],inTexCoord).rgb;
 	fragColor.rgb += bloom;
+	fragColor.rgb *= postEffect.luminanceScale;
 	fragColor.rgb = ACESFilecToneMapping(fragColor.rgb);
 	fragColor.rgb += (postEffect.matColor * vec4(fragColor.rgb,1)).rgb;
 	fragColor.a = 1.0f;

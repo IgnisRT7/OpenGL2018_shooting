@@ -39,5 +39,7 @@ namespace Uniform {
 	struct PostEffectData {
 
 		glm::mat4x4 matColor;	///< 色変換行列
+		float luminanceScale;	///< 輝度増減英数
+		float bloomThreshold;	///< ブルームを発生させる閾値
 	};
 }
