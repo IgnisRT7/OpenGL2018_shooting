@@ -49,6 +49,8 @@ public:
 	const Uniform::PointLight& Light(int index) const;
 	void AmbientLight(const glm::vec4& color);
 	const glm::vec4& AmbientLight() const;
+	void KeyValue(float k) { keyValue = k; }
+	float KeyValue() const { return keyValue; }
 	void Camera(const CameraData& cam);
 	const CameraData& Camera() const;
 	std::mt19937& Rand();
@@ -99,6 +101,7 @@ private:
 	BufferObject pbo[2];
 	int pboIndexForWriting = -1;
 	float luminanceScale = 1.0f;
+	float keyValue = 0.18f;
 	
 	UniformBufferPtr uboLight;
 	UniformBufferPtr uboPostEffect;

@@ -210,7 +210,9 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		const int h = 600 / scale;
 		offBloom[i] = OffscreenBuffer::Create(w, h, GL_RGBA16F);
 		if (!offBloom[i]) {
-			return false;
+			{
+				return false;
+			}
 		}
 	}
 
@@ -743,6 +745,7 @@ void GameEngine::Render() {
 			glBindBuffer(GL_PIXEL_PACK_BUFFER, pboWrite);
 			glBindFramebuffer(GL_FRAMEBUFFER, offBloom[bloomBufferCount - 1]->GetFramebuffer());
 			glReadPixels(0, 0, width, height, GL_RGBA, GL_FLOAT, 0);
+			pboIndexForWriting = 1;
 		}
 		else {
 
@@ -763,7 +766,7 @@ void GameEngine::Render() {
 			for (int i = 0; i < width*height; ++i) {
 				totalLum += p[i * 4 + 3];
 			}
-			luminanceScale = 0.18f / std::exp(totalLum / static_cast<float>(width * height));
+			luminanceScale = keyValue / std::exp(totalLum / static_cast<float>(width * height));
 			glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
 		}
 
