@@ -15,6 +15,24 @@ layout(std140) uniform PostEffectData{
 
 } postEffect;
 
+/**
+*	ACES フィルム風トーンマッピング
+*
+*	@param rgb 入力カラー
+*
+*	@return トーンマッピングされたrgbカラー
+*/
+vec3 ACESFilmicToneMapping(vec3 rgb){
+
+	float a = 2.51f;
+	float b = 0.03f;
+	float c = 2.43f;
+	float d = 0.59f;
+	float e = 0.14f;
+
+	return ( rgb * (a * rgb + b)) / (rgb * (c * rgb + d) + e);
+}
+
 void main(){
 
 	vec4 ts;
@@ -31,6 +49,7 @@ void main(){
 
 	fragColor.rgb = texture(colorSampler[0],inTexCoord).rgb;
 	fragColor.rgb += bloom;
+	fragColor.rgb =ACESFilmicToneMapping(fragColor.rgb);
 	fragColor.rgb += (postEffect.matColor * vec4(fragColor.rgb,1)).rgb;
 	fragColor.a = 1.0f;
 	fragColor *= inColor;
