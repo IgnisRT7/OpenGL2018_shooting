@@ -7,6 +7,7 @@
 
 #include "Uniform.h"
 #include "OffscreenBuffer.h"
+#include "BufferObject.h"
 #include "Shader.h"
 #include "Texture.h"
 #include "Mesh.h"
@@ -84,17 +85,20 @@ private:
 	GameEngine(const GameEngine&) = delete;
 	GameEngine& operator=(const GameEngine&) = delete;
 	void Update(double  delta);
-	void Render() const;
+	void Render();
 
 private:
 
 	bool isInitalized = false;
 	UpdateFuncType updateFunc;
 
-
 	GLuint vbo = 0;
 	GLuint ibo = 0;
 	GLuint vao = 0;
+
+	BufferObject pbo[2];
+	int pboIndexForWriting = -1;
+	float luminanceScale = 1.0f;
 	
 	UniformBufferPtr uboLight;
 	UniformBufferPtr uboPostEffect;

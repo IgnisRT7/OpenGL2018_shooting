@@ -214,6 +214,18 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		}
 	}
 
+	//オフスクリーンバッファの大きさを取得
+	int offWidth, offHeight;
+	glBindTexture(GL_TEXTURE_2D, offBloom[bloomBufferCount - 1]->GetTexture());
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &offWidth);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &offHeight);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	//PBOを作成
+	const int pboByteSize = offWidth * offHeight * sizeof(GLfloat) * 4;
+	for (auto& e : pbo) {
+		e.Init(GL_PIXEL_PACK_BUFFER, pboByteSize, nullptr, GL_DYNAMIC_READ);
+	}
 
 	if (!vbo || !ibo || !vao || !uboLight || !uboPostEffect ) {
 
@@ -605,7 +617,7 @@ void GameEngine::Update(double delta) {
 /**
 *	ゲームの状態を描画する
 */
-void GameEngine::Render() const {
+void GameEngine::Render() {
 
 	//=====================================
 	// Draw Passing Number 1
@@ -613,7 +625,6 @@ void GameEngine::Render() const {
 
 	const Shader::ProgramPtr& progColorFilter = shaderMap.find("ColorFilter")->second;
 	progColorFilter->UseProgram();
-
 
 	//Set OffscreenFrameBuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, offscreen->GetFramebuffer());
@@ -705,6 +716,8 @@ void GameEngine::Render() const {
 	progColorFilter->UseProgram();
 
 	Uniform::PostEffectData postEffect;
+	postEffect.luminanceScale = luminanceScale;
+	postEffect.bloomThreshold = 1.0f / luminanceScale;
 	uboPostEffect->BUfferSubData(&postEffect);
 	progColorFilter->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offscreen->GetTexture());
 	progColorFilter->BindTexture(GL_TEXTURE1, GL_TEXTURE_2D, offBloom[0]->GetTexture());
@@ -712,6 +725,51 @@ void GameEngine::Render() const {
 	glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
 
 	fontRenderer.Draw();
+
+	{
+		//オフスクリーンバッファの大きさを取得
+		int width, height;
+		glBindTexture(GL_TEXTURE_2D, offBloom[bloomBufferCount - 1]->GetTexture());
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//初回(pboIndexForWriting<0の場合)はまだデータがないため、
+		//変換コピーするだけで輝度計算はしない
+		if (pboIndexForWriting < 0) {
+
+			//オフスクリーンバッファの内容をPBOに変換コピー
+			const GLuint pboWrite = pbo[1].Id();
+			glBindBuffer(GL_PIXEL_PACK_BUFFER, pboWrite);
+			glBindFramebuffer(GL_FRAMEBUFFER, offBloom[bloomBufferCount - 1]->GetFramebuffer());
+			glReadPixels(0, 0, width, height, GL_RGBA, GL_FLOAT, 0);
+		}
+		else {
+
+			//オフスクリーンバッファの内容をPBOに変換コピー
+			const GLuint pboWrite = pbo[pboIndexForWriting].Id();
+			//書き込み先
+			glBindBuffer(GL_PIXEL_PACK_BUFFER, pboWrite);
+			//書き込むデータ
+			glBindFramebuffer(GL_FRAMEBUFFER, offBloom[bloomBufferCount - 1]->GetFramebuffer());
+			//0, 0, width, height : 書き込むデータのどこの矩形を描画するか
+			glReadPixels(0, 0, width, height, GL_RGBA, GL_FLOAT, 0);
+				
+			//PBOの内容を読み取って輝度スケールを計算
+			const GLuint pboRead = pbo[pboIndexForWriting ^ 1].Id();
+			glBindBuffer(GL_PIXEL_PACK_BUFFER, pboRead);
+			const GLfloat* p = static_cast<GLfloat*>(glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY));
+			float totalLum = 0;
+			for (int i = 0; i < width*height; ++i) {
+				totalLum += p[i * 4 + 3];
+			}
+			luminanceScale = 0.18f / std::exp(totalLum / static_cast<float>(width * height));
+			glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+		}
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+	}
 
 }
 
