@@ -6,6 +6,18 @@ out vec4 fragColor;
 
 uniform sampler2D colorSampler;
 
+/**
+*	ãPìxÇåvéZÇ∑ÇÈ
+*
+*	@param rgb RGBÉJÉâÅ[
+*
+*	@return rgbÇITU-BT.2020Ç…è]Ç¡Çƒïœä∑ÇµÇΩãPìxÇÃëŒêî
+*/
+float luminance(vec3 rgb){
+
+	return log(dot(rgb, vec3(0.2627, 0.678, 0.0593)) + 0.0001);
+}
+
 void main(){
 
 	vec3 threshould = vec3(1.0);
@@ -14,11 +26,24 @@ void main(){
 	ts.xy = vec2(1.0) / vec2(textureSize(colorSampler,0));
 	ts.zw = -ts.xy;
 
-	fragColor.rgb = max(texture(colorSampler,inTexCoord + ts.xy).rgb,threshould) - threshould;
-	fragColor.rgb += max(texture(colorSampler,inTexCoord + ts.zy).rgb,threshould) - threshould;
-	fragColor.rgb += max(texture(colorSampler,inTexCoord + ts.xw).rgb,threshould) - threshould;
-	fragColor.rgb += max(texture(colorSampler,inTexCoord + ts.zw).rgb,threshould) - threshould;
+	vec3 rgb;
+	rgb = texture(colorSampler, inTexCoord + ts.xy).rgb;
+
+	fragColor.a = luminance(rgb);
+	fragColor.rgb = max(rgb, threshould) - threshould;
+	rgb = texture(colorSampler, inTexCoord + ts.zy).rgb;
+
+	fragColor.a += luminance(rgb);
+	fragColor.rgb += max(rgb,threshould) - threshould;
+	rgb = texture(colorSampler, inTexCoord + ts.xw).rgb;
+
+	fragColor.a += luminance(rgb);
+	fragColor.rgb += max(rgb,threshould) - threshould;	
+	rgb = texture(colorSampler, inTexCoord + ts.zw).rgb;
+
+	fragColor.a += luminance(rgb);
+	fragColor.rgb += max(rgb,threshould) - threshould;	
+
 
 	fragColor.rgb *= 1.0 / 4.0;
-	fragColor.a = 1.0;
 }
