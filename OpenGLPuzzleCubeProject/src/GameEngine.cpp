@@ -399,6 +399,8 @@ Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const c
 		itr = shaderMap.find(shader);
 	}
 	if (itr == shaderMap.end()) {
+		//char* s = shader == nullptr ? "null" : shader;
+		//std::cout << "shader: " << s << " が見つかりませんでした。デフォルトのシェーダを使用します" << std::endl;
 		itr = shaderMap.find("Tutorial");
 		if (itr == shaderMap.end()) {
 			return nullptr;

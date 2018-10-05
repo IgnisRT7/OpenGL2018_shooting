@@ -178,7 +178,7 @@ namespace GameState {
 		GameEngine& game = GameEngine::Instance();
 
 		//爆発エフェクト
-		if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, rhs.Position(), "Blast", "Res/Toroid.bmp", UpdateBlast())) {
+		if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, rhs.Position(), "Blast", "Res/Toroid.dds", UpdateBlast())) {
 			const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
 			p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
 			p->Color(glm::vec4(1.0f, 0.75f, 0.5f, 1.0f));
@@ -269,7 +269,7 @@ namespace GameState {
 			for (int i = rndAddingCount(game.Rand()); i > 0; --i) {
 				const glm::vec3 pos(distributerX(game.Rand()), 0, distributerZ(game.Rand()));
 
-				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, pos, "Toroid", "Res/Toroid.bmp","Res/Toroid.Normal.bmp", UpdateToroid())) {
+				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, pos, "Toroid", "Res/Toroid.dds","Res/Toroid.Normal.bmp", UpdateToroid())) {
 
 					p->Velocity(glm::vec3(pos.x < 0 ? 0.5f : -0.5f, 0, -1.0f));
 					p->Collision(collisionDataList[EntityGroupId_Enemy]);

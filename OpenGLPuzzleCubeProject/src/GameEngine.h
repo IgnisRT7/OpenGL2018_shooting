@@ -67,6 +67,9 @@ public:
 	const TexturePtr& GetTexture(const char* filename) const {
 		static const TexturePtr dummy;
 		auto itr = textureBuffer.find(filename);
+
+		bool b = itr == textureBuffer.end();
+
 		return itr != textureBuffer.end() ? itr->second : dummy;
 	}
 	bool LoadFontFromFile(const char* filename) {
