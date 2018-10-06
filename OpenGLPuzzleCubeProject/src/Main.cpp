@@ -38,7 +38,7 @@ int main() {
 //	game.LoadMeshFromFile("Res/Player.fbx");
 //	game.LoadMeshFromFile("Res/Blast.fbx");
 
-	game.LoadTextureFromFile("Res/Dummy.Normal.bmp");
+	game.LoadTextureFromFile("Res/Model/Dummy.Normal.bmp");
 	game.LoadFontFromFile("Res/Font.fnt");
 
 	game.PushLevel();

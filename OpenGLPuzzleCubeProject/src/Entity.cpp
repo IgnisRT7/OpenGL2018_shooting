@@ -305,7 +305,8 @@ itrUpdateRhs = p->prev;
 					e.program->UseProgram();
 					for (size_t i = 0; i < sizeof(e.texture) / sizeof(e.texture[0]); ++i) {
 
-						//if(e.texture[i] != nullptr)
+						//TODO : 1,e.texture[i] == nullptr‚É‚È‚é•s‹ï‡
+						if(e.texture[i] != nullptr)
 							e.program->BindTexture(GL_TEXTURE0 + i, GL_TEXTURE_2D, e.texture[i]->Id());
 					}
 

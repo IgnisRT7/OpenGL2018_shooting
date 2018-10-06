@@ -354,7 +354,8 @@ bool GameEngine::LoadTextureFromFile(const char* filename) {
 *	@retval false	“Ç‚Ýž‚ÝŽ¸”s
 */
 bool GameEngine::LoadMeshFromFile(const char* filename) {
-	return meshBuffer->LoadMeshFromFile(filename);
+	auto p = meshBuffer->LoadMeshFromFile(filename);
+	return p;
 }
 
 /**

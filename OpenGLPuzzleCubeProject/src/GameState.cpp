@@ -28,8 +28,8 @@ namespace GameState {
 			game.ClearLevel();
 			game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
 			game.LoadTextureFromFile("Res/Model/SpaceSphere.bmp");
-			game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0), 
-				"SpaceSphere", "Res/SpaceSphere.bmp", &UpdateSpaceSphere, "NonLighting");
+			auto e = game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0), 
+				"SpaceSphere", "Res/Model/SpaceSphere.bmp", &UpdateSpaceSphere, "NonLighting");
 		}
 
 

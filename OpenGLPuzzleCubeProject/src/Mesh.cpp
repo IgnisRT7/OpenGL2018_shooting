@@ -153,6 +153,7 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 		switch (mappingMode) {
 		case FbxLayerElement::eByControlPoint:
 			return (*pList)[isDirectRef ? cpIndex : (*pIndexList)[cpIndex] ];
+			//TODO : 2,FbxLayer内での例外 pList == nullptrになる
 		case FbxLayerElement::eByPolygonVertex:
 			return (*pList)[isDirectRef ? polygonVertex : (*pIndexList)[polygonVertex] ];
 		default:
@@ -426,6 +427,7 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 						binormalList, cpIndex, polygonVertex, FbxVector4(0, 1, 0, 1))));
 
 					//接ベクトル
+					//TODO : 2,hasTangent == trueなのにtangentListが無い
 					const glm::vec3 tangent = ToVec3(matR.MultT(GetElement(
 						tangentMappingMode, isTangentDirectRef, tangentIndexList,
 						tangentList, cpIndex, polygonVertex, FbxVector4(1, 0, 0, 1))));
