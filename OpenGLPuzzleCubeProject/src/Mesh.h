@@ -70,6 +70,10 @@ namespace Mesh {
 		const Material& GetMaterial(size_t index) const;
 		void BindVAO() const;
 
+		void PushLevel();
+		void PopLevel();
+		void ClearLevel();
+
 	private:
 
 		Buffer() = default;
@@ -82,10 +86,15 @@ namespace Mesh {
 		GLuint vbo = 0;	///< モデルの頂点データを格納するVBO
 		GLuint ibo = 0;	///< モデルのインデックスデータを格納するIBO
 		GLuint vao = 0; ///< モデル用VAO
-		GLintptr vboEnd = 0;///< 読み込み済み頂点データの終端
-		GLintptr iboEnd = 0;///< 読み込み済みインデックスデータ終端
 		std::vector<Material> materialList;	///< マテリアルリスト
-		std::unordered_map<std::string, MeshPtr> meshList;	///< メッシュリスト
+		struct Level {
+			GLintptr vboEnd = 0;///< 読み込み済み頂点データの終端
+			GLintptr iboEnd = 0;///< 読み込み済みインデックスデータ終端
+			size_t materialBaseOffset = 0;	///< マテリアルの各脳開始位置
+			std::unordered_map<std::string, MeshPtr> meshList;	///< メッシュリスト
+		};
+		std::vector <Level>	levelStack;	///< リソーススタック
+		static const size_t minimalStackSize = 1;	///< スタックサイズはこれより小さくならない
 
 	};
 

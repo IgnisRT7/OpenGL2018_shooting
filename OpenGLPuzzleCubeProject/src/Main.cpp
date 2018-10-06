@@ -28,18 +28,20 @@ int main() {
 		return 1;
 	}
 
-	game.LoadTextureFromFile("Res/SpaceSphere.bmp");
-	game.LoadTextureFromFile("Res/Toroid.dds");
-	game.LoadTextureFromFile("Res/Toroid.Normal.bmp");
-	game.LoadTextureFromFile("Res/Player.bmp");
+//	game.LoadTextureFromFile("Res/SpaceSphere.bmp");
+//	game.LoadTextureFromFile("Res/Toroid.dds");
+//	game.LoadTextureFromFile("Res/Toroid.Normal.bmp");
+//	game.LoadTextureFromFile("Res/Player.bmp");
+
+//	game.LoadMeshFromFile("Res/SpaceSphere.fbx");
+//	game.LoadMeshFromFile("Res/Toroid.fbx");
+//	game.LoadMeshFromFile("Res/Player.fbx");
+//	game.LoadMeshFromFile("Res/Blast.fbx");
+
 	game.LoadTextureFromFile("Res/Dummy.Normal.bmp");
-
-	game.LoadMeshFromFile("Res/SpaceSphere.fbx");
-	game.LoadMeshFromFile("Res/Toroid.fbx");
-	game.LoadMeshFromFile("Res/Player.fbx");
-	game.LoadMeshFromFile("Res/Blast.fbx");
-
 	game.LoadFontFromFile("Res/Font.fnt");
+
+	game.PushLevel();
 	
 	game.UpdateFunc(GameState::Title());
 	game.Run();

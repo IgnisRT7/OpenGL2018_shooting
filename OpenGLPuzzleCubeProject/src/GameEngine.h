@@ -45,6 +45,10 @@ public:
 	Entity::Entity* AddEntity(int groupId, const glm::vec3& pos, const char* meshName,const char* texName, Entity::Entity::UpdateFuncType func, const char* shader = nullptr);
 	Entity::Entity* AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName,const char* normalName, Entity::Entity::UpdateFuncType func,const char* shader = nullptr);
 	void RemoveEntity(Entity::Entity*);
+	void RemoveAllEntity();
+	void PushLevel();
+	void PopLevel();
+	void ClearLevel();
 	void Light(int index, const Uniform::PointLight& light);
 	const Uniform::PointLight& Light(int index) const;
 	void AmbientLight(const glm::vec4& color);
@@ -64,14 +68,8 @@ public:
 	const Entity::CollisionHandlerType& CollisionHandler(int gid0, int gid1) const;
 	void ClearCollisionHandlerList();
 
-	const TexturePtr& GetTexture(const char* filename) const {
-		static const TexturePtr dummy;
-		auto itr = textureBuffer.find(filename);
+	const TexturePtr& GetTexture(const char* filename) const;
 
-		bool b = itr == textureBuffer.end();
-
-		return itr != textureBuffer.end() ? itr->second : dummy;
-	}
 	bool LoadFontFromFile(const char* filename) {
 		return fontRenderer.LoadFromFile(filename);
 	}
@@ -115,7 +113,11 @@ private:
 	OffscreenBufferPtr offBloom[bloomBufferCount];
 
 
-	std::unordered_map<std::string, TexturePtr> textureBuffer;
+	//std::unordered_map<std::string, TexturePtr> textureBuffer;
+	using TextureLevel = std::unordered_map<std::string, TexturePtr>;
+	static const size_t minimalStackSize = 1;
+	std::vector<TextureLevel> textureStack;
+
 	Mesh::BufferPtr meshBuffer;
 	Entity::BufferPtr entityBuffer;
 	Font::Renderer fontRenderer;

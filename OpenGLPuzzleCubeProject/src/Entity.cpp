@@ -206,6 +206,18 @@ itrUpdateRhs = p->prev;
 	}
 
 	/**
+	*	全てのエンティティを削除する
+	*/
+	void Buffer::RemoveAllEntity() {
+
+		for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
+			while (activeList[groupId].next != &activeList[groupId]) {
+				RemoveEntity(static_cast<LinkEntity*>(activeList[groupId].next));
+			}
+		}
+	}
+
+	/**
 	*	矩形同士の衝突判定
 	*/
 	bool HasCollision(const CollisionData& lhs, const CollisionData& rhs) {

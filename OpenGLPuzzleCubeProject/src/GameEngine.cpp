@@ -262,6 +262,8 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	if (!meshBuffer) {
 		std::cerr << "ERROR: GameEngineの初期化に失敗" << std::endl;
 	}
+	textureStack.push_back(TextureLevel());
+
 
 	entityBuffer = Entity::Buffer::Create(1024, sizeof(Uniform::VertexData), 0, "VertexData");
 	if (!entityBuffer) {
@@ -330,8 +332,7 @@ const GameEngine::UpdateFuncType& GameEngine::UpdateFunc() const {
 */
 bool GameEngine::LoadTextureFromFile(const char* filename) {
 
-	const auto itr = textureBuffer.find(filename);
-	if (itr != textureBuffer.end()) {
+	if (GetTexture(filename)) {
 		return true;
 	}
 
@@ -340,7 +341,7 @@ bool GameEngine::LoadTextureFromFile(const char* filename) {
 		return false;
 	}
 
-	textureBuffer.insert(std::make_pair(std::string(filename), texture));
+	textureStack.back().insert(std::make_pair(std::string(filename), texture));
 	return true;
 }
 
@@ -428,6 +429,16 @@ void GameEngine::RemoveEntity(Entity::Entity* e) {
 
 	entityBuffer->RemoveEntity(e);
 }
+
+/**
+*	全てのエンティティを削除する
+*/
+void GameEngine::RemoveAllEntity(){
+
+	entityBuffer->RemoveAllEntity();
+}
+
+
 
 /**
 *	ライトを設定する
@@ -554,6 +565,20 @@ void GameEngine::ClearCollisionHandlerList() {
 	entityBuffer->ClearCollisionHanderList();
 }
 
+const TexturePtr& GameEngine::GetTexture(const char * filename) const{
+
+	for (const auto& e : textureStack) {
+
+		const auto itr = e.find(filename);
+		if (itr != e.end()) {
+			return itr->second;
+		}
+	}
+
+	static const TexturePtr dummy;
+	return dummy;
+}
+
 /**
 *	@copydoc Audio::Initialize
 */
@@ -578,6 +603,34 @@ void GameEngine::StopAudio(int playerId) {
 	Audio::Stop(playerId);
 }
 
+/**
+*	リソーススタックに新しいリソースレベルを作成する
+*/
+void GameEngine::PushLevel() {
+
+	meshBuffer->PushLevel();
+	textureStack.push_back(TextureLevel());
+}
+
+/**
+*	リソーススタックの末尾のリソースレベルを除去する
+*/
+void GameEngine::PopLevel(){
+
+	meshBuffer->PopLevel();
+	if (textureStack.size() > minimalStackSize) {
+		textureStack.pop_back();
+	}
+}
+
+/**
+*	リソーススタックの末尾のリソースレベルを空の状態にする
+*/
+void GameEngine::ClearLevel(){
+
+	meshBuffer->ClearLevel();
+	textureStack.back().clear();
+}
 
 
 /**

@@ -105,6 +105,7 @@ namespace Entity {
 
 		Entity* AddEntity(int groupId, const glm::vec3& pos, const Mesh::MeshPtr& m, const TexturePtr t[2], const Shader::ProgramPtr& p, Entity::UpdateFuncType func);
 		void RemoveEntity(Entity* entity);
+		void RemoveAllEntity();
 		void Update(double delta, const glm::mat4& matView, const glm::mat4& matProj);
 		void Draw(const Mesh::BufferPtr& meshBuffer) const;
 

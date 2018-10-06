@@ -21,12 +21,13 @@ namespace GameState {
 	class Title {
 	public:
 
-		explicit Title(Entity::Entity* p = nullptr) : pSpaceSphere(p) {}
+		//explicit Title(Entity::Entity* p = nullptr) : pSpaceSphere(p) {}
 		void operator()(double delta);
 
 	private:
 
-		Entity::Entity* pSpaceSphere;
+		//Entity::Entity* pSpaceSphere;
+		bool initial = true;
 		float timer = 0;
 
 	};
@@ -35,18 +36,21 @@ namespace GameState {
 	class MainGame {
 	public:
 
-		explicit MainGame(Entity::Entity* p);
+		MainGame() {}
+		//explicit MainGame(Entity::Entity* p);
 		void operator()(double delta);
 		
 	private:
 
-		Entity::Entity* pSpaceSphere = nullptr;
-		Entity::Entity* pPlayer = nullptr;
+		//Entity::Entity* pSpaceSphere = nullptr;
+		//Entity::Entity* pPlayer = nullptr;
 		double interval = 0;
-
+		int stageNo = 0;
+		double stageTimer = -1;
 	};
 
 	///ゲームオーバー画面
+	/*
 	class GameOver {	
 	public:
 
@@ -57,7 +61,7 @@ namespace GameState {
 
 		
 
-	};
+	};*/
 
 
 
