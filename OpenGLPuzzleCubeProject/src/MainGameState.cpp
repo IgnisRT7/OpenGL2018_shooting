@@ -216,7 +216,7 @@ namespace GameState {
 		GameEngine& game = GameEngine::Instance();
 
 		//爆発エフェクト
-		if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, rhs.Position(), "Blast", "Res/Toroid.bmp", UpdateBlast())) {
+		if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, rhs.Position(), "Blast", "Res/Toroid.dds", UpdateBlast())) {
 			const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
 			p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
 			game.UserVariable("score") += 100;

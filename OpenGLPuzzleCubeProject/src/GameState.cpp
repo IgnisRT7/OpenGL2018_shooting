@@ -20,7 +20,7 @@ namespace GameState {
 
 		GameEngine& game = GameEngine::Instance();
 		game.Camera({ glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,0,1) });
-		game.KeyValue(0.1f);
+		game.KeyValue(0.2);
 
 		if (initial) {
 			initial = false;
