@@ -268,6 +268,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	entityBuffer = Entity::Buffer::Create(1024, sizeof(Uniform::VertexData), 0, "VertexData");
 	if (!entityBuffer) {
 		std::cerr << "ERROR: GameEngine‚Ì‰Šú‰»‚ÉŽ¸”s" << std::endl;
+
 		return false;
 	}
 

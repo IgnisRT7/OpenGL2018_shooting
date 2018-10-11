@@ -32,11 +32,11 @@ namespace GameState {
 			}
 
 			//TODO : デバッグ用、敵を透明化させる
-			auto colorValue = entity.Color();
-			colorValue.a = 0;
-			entity.Color(colorValue);
+			//auto colorValue = entity.Color();
+			//colorValue.a = 0;
+			//entity.Color(colorValue);
 
-			entity.Scale({ 2,5,2 });
+			//entity.Scale({ 2,5,2 });
 			entity.Color({ 1,1,1,0.4f });
 
 			// 円盤を回転させる.
