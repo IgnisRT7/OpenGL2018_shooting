@@ -259,7 +259,10 @@ namespace GameState {
 		if (stageTimer < 0) {
 			++stageNo;
 			stageTimer = stageTime;
-			game.Camera({ glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,0,1) });
+			game.Camera(0, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,0,1) });
+			game.Camera(2, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,0,1) });
+			game.GroupVisibility(EntityGroupId_Background, 0, false);
+			game.GroupVisibility(EntityGroupId_Background, 1, true);
 			game.AmbientLight(glm::vec4(0.05f, 0.1f, 0.2f, 1));
 			game.Light(0, { glm::vec4(40,100,10,1),glm::vec4(12000,12000,12000,1) });
 			game.RemoveAllEntity();
@@ -273,7 +276,7 @@ namespace GameState {
 			game.LoadTextureFromFile("Res/Model/Toroid.Normal.bmp");
 
 			switch (stageNo % 3) {
-			case 1:
+			case 1:		
 
 				game.KeyValue(0.16f);
 				game.LoadMeshFromFile("Res/Model/Landscape.fbx");
@@ -334,6 +337,7 @@ namespace GameState {
 
 		stageTimer -= delta;	
 
+		//スコアの更新処理
 		char str[16];
 		snprintf(str, 16, "%08.0f", game.UserVariable("score"));
 		game.FontScale(glm::vec2(1.5));
@@ -341,9 +345,13 @@ namespace GameState {
 
 		snprintf(str, 16, "%02.0f", game.UserVariable("player"));
 		std::string player = std::string("p - 0") + std::to_string((int)game.UserVariable("player"));
-
 		game.AddString(glm::vec2(-0.9, 1.0f), player.c_str());
 
+		//カメラ1の更新処理 cosでの左右移動
+		GameEngine::CameraData camera = game.Camera(1);
+		float cameraMoveValue = fmod(static_cast<float>(stageTimer), 45.0f) * (glm::radians(360.0f) / 45.0f);
+		camera.position.x = glm::cos(cameraMoveValue * 5.0f);
+		game.Camera(1, camera);
 	}
 
 }

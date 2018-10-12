@@ -6,9 +6,11 @@
 
 namespace Uniform {
 
+	static const int maxViewCount = 4;
+
 	/// 頂点データのパラメータ型	
 	struct VertexData {
-		glm::mat4 matMVP;
+		glm::mat4 matMVP[maxViewCount];
 		glm::mat4 matModel;
 		glm::mat4 matNormal;
 		glm::vec4 color;
@@ -29,6 +31,7 @@ namespace Uniform {
 	*	ライティングパラメータ
 	*/
 	struct LightData {
+		glm::vec4 eyePos[maxViewCount];
 		glm::vec4 ambientColor;	///< 環境光
 		PointLight light[maxLightCount];	///< ライトのリスト
 	};

@@ -52,6 +52,7 @@ namespace Shader {
 				break;
 			}
 		}
+		p->viewIndexLocation = glGetUniformLocation(p->program, "viewIndex");
 
 		//頂点シェーダファイル名の末尾から".vert"を取り除いたものをプログラム名とする
 		p->name = vsFilename;
@@ -121,6 +122,17 @@ namespace Shader {
 			
 			glActiveTexture(unit);
 			glBindTexture(type, texture);
+		}
+	}
+
+	/**
+	*	使用するカメラのインデックスを指定する
+	*/
+	void Program::SetViewIndex(int index) {
+
+		if (viewIndexLocation >= 0) {
+
+			glUniform1i(viewIndexLocation, index);
 		}
 	}
 

@@ -106,8 +106,19 @@ namespace Entity {
 		Entity* AddEntity(int groupId, const glm::vec3& pos, const Mesh::MeshPtr& m, const TexturePtr t[2], const Shader::ProgramPtr& p, Entity::UpdateFuncType func);
 		void RemoveEntity(Entity* entity);
 		void RemoveAllEntity();
-		void Update(double delta, const glm::mat4& matView, const glm::mat4& matProj);
+		void Update(double delta, const glm::mat4* matView, const glm::mat4& matProj);
 		void Draw(const Mesh::BufferPtr& meshBuffer) const;
+		void GroupVisiblity(int groupId, int cameraIndex, bool isVisible) {
+			if (isVisible) {
+				visiblityFlags[groupId] |= (1U << cameraIndex);
+			}
+			else {
+				visiblityFlags[groupId] &= (1U << cameraIndex);
+			}
+		}
+		bool GroupVisiblity(int groupId, int cameraIndex) const {
+			return visiblityFlags[groupId] & (1U << cameraIndex);
+		}
 
 		void CollisionHandler(int gid0, int gid1, CollisionHandlerType hander);
 		const CollisionHandlerType& CollisionHandler(int gid0, int gid1) const;
@@ -140,6 +151,7 @@ namespace Entity {
 		size_t bufferSize;	///< エンティティの総数
 		Link freeList;		///< 未使用のエンティティのリンクリスト
 		Link activeList[maxGroupId + 1];	///< 使用中のエンティティのリンクリスト
+		glm::u32 visiblityFlags[maxGroupId + 1];
 		GLsizeiptr ubSizePerEntity;	///< 各エンティティが使えるUniformBufferのバイト数
 		UniformBufferPtr ubo;	///< エンティティ用UBO
 		Link* itrUpdate = nullptr;	///< UpdateとRemoveEntityの相互作用に対応っするためのイテレータ
