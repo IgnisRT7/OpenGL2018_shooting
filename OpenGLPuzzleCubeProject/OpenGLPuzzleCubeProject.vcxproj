@@ -24,7 +24,7 @@
     <ProjectGuid>{CC15C813-0B10-4507-8B58-A16CF9578D66}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>OpenGLPuzzleCubeProject</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
