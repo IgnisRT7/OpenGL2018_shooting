@@ -259,12 +259,29 @@ namespace GameState {
 		if (stageTimer < 0) {
 			++stageNo;
 			stageTimer = stageTime;
+
+			game.KeyValue(0.24f);
+
+			//ƒJƒƒ‰Ý’è
 			game.Camera(0, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,0,1) });
 			game.Camera(2, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,0,1) });
 			game.GroupVisibility(EntityGroupId_Background, 0, false);
 			game.GroupVisibility(EntityGroupId_Background, 1, true);
+			
+			//‰e‚Ì•`‰æÝ’è
+			GameEngine::ShadowParameter shadowParam;
+			shadowParam.lightPos = glm::vec3(20, 50, 50);
+			shadowParam.lightDir = glm::normalize(glm::vec3(-25, -50, 25));
+			shadowParam.lightUp = glm::vec3(0, 0, 1);
+			shadowParam.near = 10;
+			shadowParam.far = 200;
+			shadowParam.range = glm::vec2(300, 300);
+			game.Shadow(shadowParam);
+
+			//ƒ‰ƒCƒg‚ÌÝ’è
 			game.AmbientLight(glm::vec4(0.05f, 0.1f, 0.2f, 1));
 			game.Light(0, { glm::vec4(40,100,10,1),glm::vec4(12000,12000,12000,1) });
+
 			game.RemoveAllEntity();
 			game.ClearLevel();
 

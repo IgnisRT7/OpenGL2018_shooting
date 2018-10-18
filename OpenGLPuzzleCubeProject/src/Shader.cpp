@@ -54,6 +54,8 @@ namespace Shader {
 		}
 		p->viewIndexLocation = glGetUniformLocation(p->program, "viewIndex");
 
+		p->depthSamplerLocation = glGetUniformLocation(p->program, "depthSampler");
+
 		//頂点シェーダファイル名の末尾から".vert"を取り除いたものをプログラム名とする
 		p->name = vsFilename;
 		p->name.resize(p->name.size() - 4);
@@ -81,20 +83,22 @@ namespace Shader {
 	*/
 	bool Program::UniformBlockBinding(const char* blockName,GLuint bindingPoint){
 	
+		//blockNameで指定したUniformBlockのインデックスを取得
 		const GLuint blockIndex = glGetUniformBlockIndex(program, blockName);
 		if (blockIndex == GL_INVALID_INDEX) {
 			std::cerr << "ERROR(" << name << "): Uniformブロック'" << blockName << "'が見つかりません" << std::endl;
 			return false;
 		}
 
+		//取得したインデックスをバインディングポイントに割り当てる
 		glUniformBlockBinding(program, blockIndex, bindingPoint);
 		const GLenum result = glGetError();
 		if (result != GL_NO_ERROR) {
 			std::cerr << "ERROR(" << name << "): Uniformブロック'" << blockName << "'のバインドに失敗" << std::endl;
+			std::cerr << glewGetErrorString(result) << std::endl;
 			return false;
 		}
 
-		//std::cout << "Program::UniformBlockBinding()" << "Successed" << " blockName:" << blockName << " bindingPoint:"<<bindingPoint << std::endl;
 		return true;
 	}
 
@@ -121,6 +125,20 @@ namespace Shader {
 		if (unit >= GL_TEXTURE0 && unit < static_cast<GLenum>(GL_TEXTURE0 + samperCount)) {
 			
 			glActiveTexture(unit);
+			glBindTexture(type, texture);
+		}
+	}
+
+	/**
+	*	デプステクスチャをテクスチャ・イメージユニットに割り当てる
+	*
+	*	@param type 割り当てるテクスチャの種類(GL_TEXTURE_1D,GL_TEXTURE_2D,etc)
+	*	@param texture 割り当てるテクスチャオブジェクト
+	*/
+	void Program::BindShadowTexture(GLenum type, GLuint texture) {
+
+		if (depthSamplerLocation >= 0) {
+			glActiveTexture(GL_TEXTURE2);
 			glBindTexture(type, texture);
 		}
 	}

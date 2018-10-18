@@ -223,6 +223,12 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &offHeight);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	//デプスシャドウバッファの作成
+	offDepth = OffscreenBuffer::Create(2048, 2048, GL_DEPTH_COMPONENT16);
+	if (!offDepth) {
+		return false;
+	}
+
 	//PBOを作成
 	const int pboByteSize = offWidth * offHeight * sizeof(GLfloat) * 4;
 	for (auto& e : pbo) {
@@ -235,6 +241,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		return false;
 	}
 
+	//シェーダファイル読み込み
 	static const char* const shaderNameList[][3] = {
 		{ "Tutorial", "Res/Tutorial.vert", "Res/Tutorial.frag" },
 		{ "ColorFilter", "Res/ColorFilter.vert", "Res/ColorFilter.frag" },
@@ -242,6 +249,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		{ "HiLumExtract", "Res/TexCoord.vert", "Res/HiLumExtract.frag" },
 		{ "Shrink", "Res/TexCoord.vert", "Res/Shrink.frag" },
 		{ "Blur3x3", "Res/TexCoord.vert", "Res/Blur3x3.frag" },
+		{"RenderDepth", "Res/RenderDepth.vert", "Res/RenderDepth.frag"} ,
 	};
 
 	shaderMap.reserve(sizeof(shaderNameList) / sizeof(shaderNameList[0]));
@@ -253,19 +261,19 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		shaderMap.insert(std::make_pair(std::string(e[0]), program));
 	}
 
-	shaderMap["Tutorial"]->UniformBlockBinding("VertexData", 0);
+	shaderMap["Tutorial"]->UniformBlockBinding("VertexData", 1);
 	shaderMap["Tutorial"]->UniformBlockBinding("LightData", 1);
 	shaderMap["ColorFilter"]->UniformBlockBinding("PostEffectData", 2);
 	shaderMap["HiLumExtract"]->UniformBlockBinding("PostEffectData",2);
 
-
+	//メッシュバッファの作成
 	meshBuffer = Mesh::Buffer::Create(100 * 1024, 100 * 1024);
 	if (!meshBuffer) {
 		std::cerr << "ERROR: GameEngineの初期化に失敗" << std::endl;
 	}
 	textureStack.push_back(TextureLevel());
 
-
+	//エンティティバッファの作成
 	entityBuffer = Entity::Buffer::Create(1024, sizeof(Uniform::VertexData), 0, "VertexData");
 	if (!entityBuffer) {
 		std::cerr << "ERROR: GameEngineの初期化に失敗" << std::endl;
@@ -285,8 +293,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 *	ゲームを実行する
 */
 void GameEngine::Run() {
-	;
-
+	
 	const double delta = 1.0 / 60.0;
 	GLFWEW::Window& window = GLFWEW::Window::Instance();
 
@@ -676,19 +683,51 @@ GameEngine::~GameEngine() {
 void GameEngine::Update(double delta) {
 
 	fontRenderer.MapBuffer();
+
+	//全体の更新処理
 	if (updateFunc) {
 		updateFunc(delta);
 	}
 
+	//ビュー変換行列と射影変換行列の作成
 	const glm::mat4x4 matProj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 200.0f);
 	glm::mat4x4 matView[Uniform::maxViewCount];
 	for (int i = 0; i < Uniform::maxViewCount; ++i) {
 		const CameraData& cam = camera[i];
 		matView[i] = glm::lookAt(cam.position, cam.target, cam.up);
 	}
-		
-	entityBuffer->Update(delta, matView, matProj);
+
+	//シャドウマップ用のビュー変換行列の作成
+	const glm::vec2 range = shadowParameter.range * 0.5f;
+	const glm::mat4 matDepthProj = glm::ortho<float>(
+		-range.x, range.x, -range.y, range.y,
+		shadowParameter.near, shadowParameter.far);
+	//ライトの位置をカメラ位置としたビュー変換行列
+	const glm::mat4 matDepthView = glm::lookAt(
+		shadowParameter.lightPos, shadowParameter.lightPos + shadowParameter.lightDir, shadowParameter.lightUp);
+
+	entityBuffer->Update(delta, matView, matProj,matDepthProj * matDepthView);
+
 	fontRenderer.UnmapBuffer();
+}
+
+/**
+*	デプスシャドウマップを描画する
+*/
+void GameEngine::RenderShadow() const {
+
+	glBindFramebuffer(GL_FRAMEBUFFER, offDepth->GetFramebuffer());
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+	glEnable(GL_CULL_FACE);
+	glDisable(GL_BLEND);
+	glViewport(0, 0, offDepth->width(), offDepth->height());
+	glScissor(0, 0, offDepth->width(), offDepth->height());
+	glClearDepth(1);
+
+	const Shader::ProgramPtr& progDepth = shaderMap.find("RenderDepth")->second;
+	progDepth->UseProgram();
+	entityBuffer->DrawDepth(meshBuffer);
 }
 
 /**
@@ -696,10 +735,10 @@ void GameEngine::Update(double delta) {
 */
 void GameEngine::Render() {
 
-	//=====================================
-	// Draw Passing Number 1
-	//=====================================
+	//pass1: Draw depth to draw shadow...
+	RenderShadow();
 
+	//pass2: Draw MeshBuffer
 	const Shader::ProgramPtr& progColorFilter = shaderMap.find("ColorFilter")->second;
 	progColorFilter->UseProgram();
 
@@ -722,16 +761,7 @@ void GameEngine::Render() {
 	//Draw entity
 	entityBuffer->Draw(meshBuffer);
 	
-	
-
-
-
-
-
-	//=====================================
-	//Draw Passing Number 2 : blur effect
-	//=====================================
-
+	//pass3: make blur effect
 	glBindVertexArray(vao);
 
 	glDisable(GL_DEPTH_TEST);
@@ -776,10 +806,7 @@ void GameEngine::Render() {
 		glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
 	}
 	
-	//=====================================
-	//Draw Passing Number 3 : final output
-	//=====================================
-
+	//pass4: final output
 
 	//Set Default FrameBuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

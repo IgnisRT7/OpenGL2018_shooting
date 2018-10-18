@@ -287,7 +287,12 @@ TexturePtr Texture::Create(int width, int height, GLenum iformat, GLenum format,
 	GLenum type;
 
 	switch (iformat) {
+	case GL_RGB10_A2:type = GL_UNSIGNED_INT_2_10_10_10_REV; break;
 	case GL_RGBA16F: type = GL_HALF_FLOAT; break;
+	case GL_DEPTH_COMPONENT16:type = GL_HALF_FLOAT; break;
+	case GL_DEPTH_COMPONENT24:type = GL_UNSIGNED_INT; break;
+	case GL_DEPTH_COMPONENT32:type = GL_UNSIGNED_INT; break;
+	case GL_DEPTH_COMPONENT32F:type = GL_FLOAT; break;
 	default: type = GL_UNSIGNED_BYTE;
 	}
 

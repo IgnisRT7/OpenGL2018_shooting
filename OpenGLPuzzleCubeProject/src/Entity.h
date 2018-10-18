@@ -106,8 +106,9 @@ namespace Entity {
 		Entity* AddEntity(int groupId, const glm::vec3& pos, const Mesh::MeshPtr& m, const TexturePtr t[2], const Shader::ProgramPtr& p, Entity::UpdateFuncType func);
 		void RemoveEntity(Entity* entity);
 		void RemoveAllEntity();
-		void Update(double delta, const glm::mat4* matView, const glm::mat4& matProj);
+		void Update(double delta, const glm::mat4* matView, const glm::mat4& matProj,const glm::mat4& matDepthVP);
 		void Draw(const Mesh::BufferPtr& meshBuffer) const;
+		void DrawDepth(const Mesh::BufferPtr& meshBufferr)const;
 		void GroupVisiblity(int groupId, int cameraIndex, bool isVisible) {
 			if (isVisible) {
 				visiblityFlags[groupId] |= (1U << cameraIndex);
@@ -119,6 +120,7 @@ namespace Entity {
 		bool GroupVisiblity(int groupId, int cameraIndex) const {
 			return visiblityFlags[groupId] & (1U << cameraIndex);
 		}
+
 
 		void CollisionHandler(int gid0, int gid1, CollisionHandlerType hander);
 		const CollisionHandlerType& CollisionHandler(int gid0, int gid1) const;

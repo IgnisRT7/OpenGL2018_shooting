@@ -206,6 +206,8 @@
     <None Include="Res\NonLighting.vert" />
     <None Include="Res\posterization.frag" />
     <None Include="Res\posterization.vert" />
+    <None Include="Res\RenderDepth.frag" />
+    <None Include="Res\RenderDepth.vert" />
     <None Include="Res\Shrink.frag" />
     <None Include="Res\TexCoord.vert" />
     <None Include="Res\Tutorial.frag" />

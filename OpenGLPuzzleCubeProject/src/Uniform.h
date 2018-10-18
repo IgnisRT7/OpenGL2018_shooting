@@ -11,10 +11,11 @@ namespace Uniform {
 	/// 頂点データのパラメータ型	
 	struct VertexData {
 		glm::mat4 matMVP[maxViewCount];
+		glm::mat4 matDepthMVP;
 		glm::mat4 matModel;
 		glm::mat4 matNormal;
 		glm::vec4 color;
-		glm::mat4x3 _dummy;
+		//glm::mat4x3 _dummy;
 	};
 
 	/**

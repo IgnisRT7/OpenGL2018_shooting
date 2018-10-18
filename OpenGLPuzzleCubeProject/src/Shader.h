@@ -26,6 +26,7 @@ namespace Shader {
 		bool UniformBlockBinding(const char* blocblockName, GLuint bindingPoint);
 		void UseProgram();
 		void BindTexture(GLenum unit, GLenum type, GLuint texture);
+		void BindShadowTexture(GLenum type, GLuint texture);
 		void SetViewIndex(int index);
 
 	private:
@@ -37,10 +38,12 @@ namespace Shader {
 	private:
 
 		GLuint program = 0;			///< プログラムオブジェクト
-		GLint samplerLocation = -1;	///< サンプラーの数
+		GLint samplerLocation = -1;	///< サンプラーの位置
 		int samperCount = 0;		///< サンプラーの数
-		std::string name;			///< プログラム名
 		GLint viewIndexLocation = 1;///< 始点インデックスの位置
+		GLuint depthSamplerLocation = -1;
+		std::string name;			///< プログラム名
+
 	};
 
 }
