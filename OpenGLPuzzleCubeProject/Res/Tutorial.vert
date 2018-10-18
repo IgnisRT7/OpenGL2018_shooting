@@ -10,27 +10,31 @@ layout(location=0) out vec4 outColor;
 layout(location=1) out vec2 outTexCoord;
 layout(location=2) out vec3 outWorldPosition;
 layout(location=3) out mat3 outTBN;
+layout(location=6) out vec3 outDepthCoord;
 
 /**
 * 頂点シェーダのパラメータ.
 */
-layout(std140) uniform VertexData
-{
+layout(std140) uniform VertexData{
+
   mat4 matMVP[4];
+  mat4 matDepthMVP;
   mat4 matModel;
   mat4 matNormal;
   vec4 color;
-  mat4x3 _dummy;	
+ // mat4x3 _dummy;	
 } vertexData;
 
 uniform int viewIndex;
 
 void main() {
-  outColor = vColor * vertexData.color;                    
-  outTexCoord = vTexCoord;
 
+  outColor = vColor * vertexData.color;                    
+  outTexCoord =  vTexCoord;
+  //outTexCoord =(vertexData.matTex * vec4(vTexCoord,0,1)).xy;
+
+  //頂点のワールド座標
   outWorldPosition = (vertexData.matModel * vec4(vPosition, 1.0)).xyz;
-  //outWorldNormal = mat3(vertexData.matNormal) * vNormal;
 
   mat3 matNormal = mat3(vertexData.matNormal);
   vec3 t = matNormal * vTangent.xyz;
@@ -39,5 +43,7 @@ void main() {
 
   outTBN = mat3(t, b, n);
 
-  gl_Position = vertexData.matMVP[viewIndex]  * vec4(vPosition, 1);                  
+  outDepthCoord = ((vertexData.matDepthMVP * vec4(vPosition,1.0)) *  0.5 + 0.5).xyz;
+
+  gl_Position = vertexData.matMVP[viewIndex] * vec4(vPosition, 1.0);
 }
