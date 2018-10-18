@@ -13,6 +13,7 @@ layout(location=1) out vec2 outTexCoord;
 layout(std140) uniform VertexData{
 
 	mat4 matMVP[4];
+	mat4 matDepthMVP;
 	mat4 matModel;
 	mat4 matNormal;
 	vec4 color;
