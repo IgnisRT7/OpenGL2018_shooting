@@ -53,5 +53,5 @@ void main(){
 	fragColor.rgb += max(rgb,threshould) - threshould;	
 
 
-	fragColor.rgba *= 1.0 / 4.0;
+	fragColor.rgb *= 1.0 / 4.0;
 }

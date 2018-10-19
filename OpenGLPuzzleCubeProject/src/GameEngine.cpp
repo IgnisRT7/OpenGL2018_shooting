@@ -264,7 +264,6 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	shaderMap["Tutorial"]->UniformBlockBinding("VertexData", 0);
 	shaderMap["Tutorial"]->UniformBlockBinding("LightData", 1);
 	shaderMap["ColorFilter"]->UniformBlockBinding("PostEffectData", 2);
-	shaderMap["HiLumExtract"]->UniformBlockBinding("PostEffectData",2);
 
 	//メッシュバッファの作成
 	meshBuffer = Mesh::Buffer::Create(100 * 1024, 100 * 1024);
@@ -308,15 +307,6 @@ void GameEngine::Run() {
 		Update(glm::min(0.25, delta));
 		Render();
 		window.SwapBuffers();
-
-		if(pboIndexForWriting<0){
-
-			pboIndexForWriting = 0;
-		}
-		else {
-
-			pboIndexForWriting ^= 1;
-		}
 	}
 }
 
@@ -434,7 +424,7 @@ Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const c
 		tex[1] = GetTexture(normalName);
 	}
 	else {
-		tex[1] = GetTexture("Res/Model/Dummy.Normal.bmp");
+		tex[1] = GetTexture("Res/Dummy.Normal.bmp");
 	}
 	return entityBuffer->AddEntity(groupId, pos, mesh, tex, itr->second, func);
 }
