@@ -96,6 +96,7 @@ namespace Shader {
 		if (result != GL_NO_ERROR) {
 			std::cerr << "ERROR(" << name << "): Uniformブロック'" << blockName << "'のバインドに失敗" << std::endl;
 
+			//TODO: Tutorial.vertのみエラーが起き、result値にGLINVALID_OPERATIONを必ず返す
 			if (result == GL_INVALID_ENUM) std::cout << "INVALID_ENUM" << std::endl;
 			else if (result == GL_INVALID_VALUE) std::cout << "INVALID_VALUE" << std::endl;
 			else if (result == GL_INVALID_OPERATION) std::cout << "INVALID_OPERATION" << std::endl;
