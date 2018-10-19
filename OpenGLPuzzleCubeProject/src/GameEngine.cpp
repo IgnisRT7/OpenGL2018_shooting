@@ -261,9 +261,11 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		shaderMap.insert(std::make_pair(std::string(e[0]), program));
 	}
 
+	//TODO: ここの順番を変えると一番上の処理のみが発生 
 	shaderMap["Tutorial"]->UniformBlockBinding("VertexData", 0);
 	shaderMap["Tutorial"]->UniformBlockBinding("LightData", 1);
 	shaderMap["ColorFilter"]->UniformBlockBinding("PostEffectData", 2);
+	shaderMap["HiLumExtract"]->UniformBlockBinding("PostEffectData", 2);
 
 	//メッシュバッファの作成
 	meshBuffer = Mesh::Buffer::Create(100 * 1024, 100 * 1024);
@@ -307,6 +309,13 @@ void GameEngine::Run() {
 		Update(glm::min(0.25, delta));
 		Render();
 		window.SwapBuffers();
+
+		if (pboIndexForWriting < 0) {
+			pboIndexForWriting = 0;
+		}
+		else {
+			pboIndexForWriting ^= 1;
+		}
 	}
 }
 
