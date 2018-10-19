@@ -362,7 +362,8 @@ itrUpdateRhs = p->prev;
 					if (e.mesh && e.texture&& e.program) {
 
 						for (size_t i = 0; i < sizeof(e.texture) / sizeof(e.texture[0]); ++i) {
-							e.program->BindTexture(GL_TEXTURE0 + i, GL_TEXTURE_2D, e.texture[i]->Id());
+							
+								e.program->BindTexture(GL_TEXTURE0 + i, GL_TEXTURE_2D, e.texture[i]->Id());
 						}
 						ubo->BindBufferRange(e.uboOffset, ubSizePerEntity);
 						e.mesh->Draw(meshBuffer);

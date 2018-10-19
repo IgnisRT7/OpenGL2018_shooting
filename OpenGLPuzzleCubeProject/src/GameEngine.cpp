@@ -249,7 +249,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		{ "HiLumExtract", "Res/TexCoord.vert", "Res/HiLumExtract.frag" },
 		{ "Shrink", "Res/TexCoord.vert", "Res/Shrink.frag" },
 		{ "Blur3x3", "Res/TexCoord.vert", "Res/Blur3x3.frag" },
-		//{"RenderDepth", "Res/RenderDepth.vert", "Res/RenderDepth.frag"} ,
+		{"RenderDepth", "Res/RenderDepth.vert", "Res/RenderDepth.frag"} ,
 	};
 
 	shaderMap.reserve(sizeof(shaderNameList) / sizeof(shaderNameList[0]));
@@ -424,7 +424,7 @@ Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const c
 		tex[1] = GetTexture(normalName);
 	}
 	else {
-		tex[1] = GetTexture("Res/Dummy.Normal.bmp");
+		tex[1] = GetTexture("Res/Model/Dummy.Normal.bmp");
 	}
 	return entityBuffer->AddEntity(groupId, pos, mesh, tex, itr->second, func);
 }
