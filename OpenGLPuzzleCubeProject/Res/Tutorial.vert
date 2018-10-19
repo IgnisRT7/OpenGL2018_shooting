@@ -15,15 +15,15 @@ layout(location=6) out vec3 outDepthCoord;
 /**
 * 頂点シェーダのパラメータ.
 */
-layout(std140) uniform VertexData{
-
+layout(std140) uniform VertexData
+{
   mat4 matMVP[4];
   mat4 matDepthMVP;
   mat4 matModel;
   mat4 matNormal;
   vec4 color;
  // mat4x3 _dummy;	
-} vertexData;
+}vertexData;
 
 uniform int viewIndex;
 
@@ -45,5 +45,5 @@ void main() {
 
   outDepthCoord = ((vertexData.matDepthMVP * vec4(vPosition,1.0)) *  0.5 + 0.5).xyz;
 
-  gl_Position = vertexData.matMVP[viewIndex] * vec4(vPosition, 1.0);
+  gl_Position = vertexData.matMVP[viewIndex]  * vec4(vPosition, 1.0);                  
 }

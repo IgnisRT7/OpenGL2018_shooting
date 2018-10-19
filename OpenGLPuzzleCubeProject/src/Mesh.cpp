@@ -192,6 +192,7 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 	*	FBXデータを中間データに変換するクラス
 	*/
 	struct FbxLoader {
+		bool GetMotionList(void);
 		bool Load(const char* filename);
 		bool Convert(FbxNode* node);
 		bool LoadMesh(FbxNode* node);
@@ -220,6 +221,7 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 			return false;
 		}
 		else {
+
 			std::unique_ptr<FbxImporter, Deleter<FbxImporter> > fbxImporter(FbxImporter::Create(fbxManager.get(), ""));
 			const bool importStatus = fbxImporter->Initialize(filename);
 			if (!importStatus || !fbxImporter->Import(fbxScene)) {

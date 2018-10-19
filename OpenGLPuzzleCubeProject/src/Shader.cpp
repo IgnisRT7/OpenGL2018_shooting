@@ -95,7 +95,14 @@ namespace Shader {
 		const GLenum result = glGetError();
 		if (result != GL_NO_ERROR) {
 			std::cerr << "ERROR(" << name << "): Uniformブロック'" << blockName << "'のバインドに失敗" << std::endl;
-			std::cerr << glewGetErrorString(result) << std::endl;
+
+			if (result == GL_INVALID_ENUM) std::cout << "INVALID_ENUM" << std::endl;
+			else if (result == GL_INVALID_VALUE) std::cout << "INVALID_VALUE" << std::endl;
+			else if (result == GL_INVALID_OPERATION) std::cout << "INVALID_OPERATION" << std::endl;
+			else if (result == GL_OUT_OF_MEMORY) std::cout << "OUT_OF_MEMORY" << std::endl;
+			else if (result == GL_INVALID_FRAMEBUFFER_OPERATION) std::cout << "INVALID_FRAMEBUFFER_OPERATION" << std::endl;
+			else std::cerr << "unknown error."<<std::endl;
+
 			return false;
 		}
 

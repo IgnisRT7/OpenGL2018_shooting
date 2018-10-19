@@ -249,7 +249,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		{ "HiLumExtract", "Res/TexCoord.vert", "Res/HiLumExtract.frag" },
 		{ "Shrink", "Res/TexCoord.vert", "Res/Shrink.frag" },
 		{ "Blur3x3", "Res/TexCoord.vert", "Res/Blur3x3.frag" },
-		{"RenderDepth", "Res/RenderDepth.vert", "Res/RenderDepth.frag"} ,
+		//{"RenderDepth", "Res/RenderDepth.vert", "Res/RenderDepth.frag"} ,
 	};
 
 	shaderMap.reserve(sizeof(shaderNameList) / sizeof(shaderNameList[0]));
@@ -261,7 +261,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		shaderMap.insert(std::make_pair(std::string(e[0]), program));
 	}
 
-	shaderMap["Tutorial"]->UniformBlockBinding("VertexData", 1);
+	shaderMap["Tutorial"]->UniformBlockBinding("VertexData", 0);
 	shaderMap["Tutorial"]->UniformBlockBinding("LightData", 1);
 	shaderMap["ColorFilter"]->UniformBlockBinding("PostEffectData", 2);
 	shaderMap["HiLumExtract"]->UniformBlockBinding("PostEffectData",2);

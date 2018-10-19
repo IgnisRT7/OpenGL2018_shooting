@@ -28,7 +28,6 @@ namespace Entity {
 		for (int i = 0; i < Uniform::maxViewCount; ++i) {
 			if (viewFlags & (1 << i)) {
 
-				//TODO : s—ñÏ‚ÅŒ^•ÏŠ·‚ª”­¶ glm::mat4 ¨ glm::tvec4;
 				data.matMVP[i] = matViewProjection[i] * data.matModel;
 				//auto t = matViewProjection[i] * data.matModel;
 				
