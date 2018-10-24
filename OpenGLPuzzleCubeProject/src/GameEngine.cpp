@@ -192,6 +192,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	if (!GLFWEW::Window::Instance().Init(w, h, title)) {
 		return false;
 	}
+	GLenum result = glGetError();
 
 	vbo = CreateVBO(sizeof(vertices), vertices);
 	ibo = CreateIBO(sizeof(indices), indices);
@@ -200,42 +201,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	uboLight = UniformBuffer::Create(sizeof(Uniform::LightData), 1, "LightData");
 	uboPostEffect = UniformBuffer::Create(sizeof(Uniform::PostEffectData), 2, "PostEffectData");
 
-	offscreen = OffscreenBuffer::Create(800, 600,GL_RGBA16F);
-	if (!offscreen) {
-		return false;
-	}
-
-	for (int i = 0, scale = 4; i < bloomBufferCount; ++i, scale *= 4) {
-		const int w = 800 / scale;
-		const int h = 600 / scale;
-		offBloom[i] = OffscreenBuffer::Create(w, h, GL_RGBA16F);
-		if (!offBloom[i]) {
-			{
-				return false;
-			}
-		}
-	}
-
-	//オフスクリーンバッファの大きさを取得
-	int offWidth, offHeight;
-	glBindTexture(GL_TEXTURE_2D, offBloom[bloomBufferCount - 1]->GetTexture());
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &offWidth);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &offHeight);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	//デプスシャドウバッファの作成
-	offDepth = OffscreenBuffer::Create(2048, 2048, GL_DEPTH_COMPONENT16);
-	if (!offDepth) {
-		return false;
-	}
-
-	//PBOを作成
-	const int pboByteSize = offWidth * offHeight * sizeof(GLfloat) * 4;
-	for (auto& e : pbo) {
-		e.Init(GL_PIXEL_PACK_BUFFER, pboByteSize, nullptr, GL_DYNAMIC_READ);
-	}
-
-	if (!vbo || !ibo || !vao || !uboLight || !uboPostEffect ) {
+	if (!vbo || !ibo || !vao || !uboLight || !uboPostEffect) {
 
 		std::cerr << "ERROR: GameEngineの初期化に失敗" << std::endl;
 		return false;
@@ -244,12 +210,12 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	//シェーダファイル読み込み
 	static const char* const shaderNameList[][3] = {
 		{ "Tutorial", "Res/Tutorial.vert", "Res/Tutorial.frag" },
-		{ "ColorFilter", "Res/ColorFilter.vert", "Res/ColorFilter.frag" },
-		{ "NonLighting", "Res/NonLighting.vert", "Res/NonLighting.frag" },
-		{ "HiLumExtract", "Res/TexCoord.vert", "Res/HiLumExtract.frag" },
-		{ "Shrink", "Res/TexCoord.vert", "Res/Shrink.frag" },
-		{ "Blur3x3", "Res/TexCoord.vert", "Res/Blur3x3.frag" },
-		{"RenderDepth", "Res/RenderDepth.vert", "Res/RenderDepth.frag"} ,
+	{ "ColorFilter", "Res/ColorFilter.vert", "Res/ColorFilter.frag" },
+	{ "NonLighting", "Res/NonLighting.vert", "Res/NonLighting.frag" },
+	{ "HiLumExtract", "Res/TexCoord.vert", "Res/HiLumExtract.frag" },
+	{ "Shrink", "Res/TexCoord.vert", "Res/Shrink.frag" },
+	{ "Blur3x3", "Res/TexCoord.vert", "Res/Blur3x3.frag" },
+	{ "RenderDepth", "Res/RenderDepth.vert", "Res/RenderDepth.frag" } ,
 	};
 
 	shaderMap.reserve(sizeof(shaderNameList) / sizeof(shaderNameList[0]));
@@ -283,6 +249,41 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	}
 
 	rand.seed(std::random_device()());
+
+	//オフスクリーンバッファの作成
+	offscreen = OffscreenBuffer::Create(800, 600,GL_RGBA16F);
+
+	//ブルームエフェクト用バッファの作成
+	for (int i = 0, scale = 4; i < bloomBufferCount; ++i, scale *= 4) {
+		const int w = 800 / scale;
+		const int h = 600 / scale;
+		offBloom[i] = OffscreenBuffer::Create(w, h, GL_RGBA16F);
+		if (!offBloom[i]) {
+			{
+				return false;
+			}
+		}
+	}
+
+	//オフスクリーンバッファの大きさを取得
+	int offWidth, offHeight;
+	glBindTexture(GL_TEXTURE_2D, offBloom[bloomBufferCount - 1]->GetTexture());
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &offWidth);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &offHeight);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	//PBOを作成
+	const int pboByteSize = offWidth * offHeight * sizeof(GLfloat) * 4;
+	for (auto& e : pbo) {
+		e.Init(GL_PIXEL_PACK_BUFFER, pboByteSize, nullptr, GL_DYNAMIC_READ);
+	}
+
+	//デプスシャドウバッファの作成
+	offDepth = OffscreenBuffer::Create(2048, 2048, GL_DEPTH_COMPONENT16);
+	if (!offDepth) {
+		return false;
+	}
+
 
 	fontRenderer.Init(1024, glm::vec2(800, 600));
 
@@ -350,10 +351,11 @@ const GameEngine::UpdateFuncType& GameEngine::UpdateFunc() const {
 bool GameEngine::LoadTextureFromFile(const char* filename) {
 
 	if (GetTexture(filename)) {
+		std::cout << "テクスチャの読み込みに失敗。" << std::endl;
 		return true;
 	}
 
-	TexturePtr texture = Texture::LoadFromFile(filename);
+	TexturePtr texture = Texture::LoadFromFile(filename); 
 	if (!texture) {
 		return false;
 	}

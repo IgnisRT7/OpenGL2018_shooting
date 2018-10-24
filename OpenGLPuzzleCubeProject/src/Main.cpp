@@ -28,16 +28,6 @@ int main() {
 		return 1;
 	}
 
-//	game.LoadTextureFromFile("Res/SpaceSphere.bmp");
-//	game.LoadTextureFromFile("Res/Toroid.dds");
-//	game.LoadTextureFromFile("Res/Toroid.Normal.bmp");
-//	game.LoadTextureFromFile("Res/Player.bmp");
-
-//	game.LoadMeshFromFile("Res/SpaceSphere.fbx");
-//	game.LoadMeshFromFile("Res/Toroid.fbx");
-//	game.LoadMeshFromFile("Res/Player.fbx");
-//	game.LoadMeshFromFile("Res/Blast.fbx");
-
 	game.LoadTextureFromFile("Res/Model/Dummy.Normal.bmp");
 	game.LoadFontFromFile("Res/Font.fnt");
 
