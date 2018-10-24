@@ -37,11 +37,17 @@ namespace Shader {
 		//サンプラーの数と位置を取得する
 		GLint activeUniforms;
 		glGetProgramiv(p->program, GL_ACTIVE_UNIFORMS, &activeUniforms);
+
+		std::cout << "SamplerNum :" << activeUniforms << std::endl;
+
 		for (int i = 0; i < activeUniforms; ++i) {
 			GLint size;
 			GLenum type;
 			GLchar name[128];
 			glGetActiveUniform(p->program, i, sizeof(name), nullptr, &size, &type, name);
+
+			std::cout << "'" << name << "': size=" << size << " type=0x" << std::hex << type << std::endl;
+
 			if (type == GL_SAMPLER_2D) {
 				p->samperCount = size;
 				p->samplerLocation = glGetUniformLocation(p->program, name);
@@ -52,6 +58,8 @@ namespace Shader {
 				break;
 			}
 		}
+
+		std::cout << std::endl;
 		p->viewIndexLocation = glGetUniformLocation(p->program, "viewIndex");
 
 		p->depthSamplerLocation = glGetUniformLocation(p->program, "depthSampler");
@@ -242,7 +250,7 @@ namespace Shader {
 			return 0;
 		}
 
-		std::cout << std::endl;
+	//	std::cout << std::endl;
 
 		return program;
 	}
