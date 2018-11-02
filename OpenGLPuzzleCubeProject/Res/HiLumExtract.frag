@@ -7,12 +7,12 @@ out vec4 fragColor;
 uniform sampler2D colorSampler;
 
 //ポストエフェクトデータ
-layout(std140) uniform PostEffectData{
-	
-	mat4x4 matColor;	//色変換行列
-	float luminanceScale;	//輝度増減係数
-	float bloomThreshold;	//ブルームを発生させる閾値
-}postEffect;
+layout(std140) uniform PostEffectData {
+
+  mat4x4 matColor; // 色変換行列.
+  float luminanceScale; // 輝度増減係数.
+  float bloomThreshould; // ブルームを発生させるしきい値.
+} postEffect;
 
 /**
 *	輝度を計算する
@@ -23,12 +23,12 @@ layout(std140) uniform PostEffectData{
 */
 float luminance(vec3 rgb){
 
-	return log(dot(rgb, vec3(0.2627, 0.678, 0.0593)) + 0.0001);
+	return log(dot(rgb, vec3(0.2627, 0.678, 0.9593)) + 0.0001);
 }
 
 void main(){
 
-	vec3 threshould = vec3(postEffect.bloomThreshold);
+	vec3 threshould = vec3(postEffect.bloomThreshould);
 	vec4 ts;
 	
 	ts.xy = vec2(1.0) / vec2(textureSize(colorSampler,0));
@@ -36,22 +36,20 @@ void main(){
 
 	vec3 rgb;
 	rgb = texture(colorSampler, inTexCoord + ts.xy).rgb;
-
 	fragColor.a = luminance(rgb);
-	fragColor.rgb = max(rgb, threshould) - threshould;
-	rgb = texture(colorSampler, inTexCoord + ts.zy).rgb;
+	fragColor.rgb = max(rgb,threshould) - threshould;
 
+	rgb = texture(colorSampler, inTexCoord + ts.zy).rgb;
 	fragColor.a += luminance(rgb);
 	fragColor.rgb += max(rgb,threshould) - threshould;
+
 	rgb = texture(colorSampler, inTexCoord + ts.xw).rgb;
-
 	fragColor.a += luminance(rgb);
-	fragColor.rgb += max(rgb,threshould) - threshould;	
+	fragColor.rgb += max(rgb,threshould) - threshould;
+
 	rgb = texture(colorSampler, inTexCoord + ts.zw).rgb;
-
 	fragColor.a += luminance(rgb);
-	fragColor.rgb += max(rgb,threshould) - threshould;	
+	fragColor.rgb += max(rgb,threshould) - threshould;
 
-
-	fragColor.rgba *= 1.0 / 4.0;
+	fragColor *= 1.0 / 4.0;
 }

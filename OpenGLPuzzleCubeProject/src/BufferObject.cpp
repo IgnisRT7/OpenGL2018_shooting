@@ -49,9 +49,9 @@ void VertexArrayObject::Init(GLuint vbo, GLuint ibo) {
 
 /**
 *	VAOを破棄する
-*/	
+*/
 void VertexArrayObject::Destroy() {
-	
+
 	if (id) {
 		glDeleteVertexArrays(1, &id);
 		id = 0;
@@ -60,10 +60,10 @@ void VertexArrayObject::Destroy() {
 
 /**
 *	頂点アトリビュートのインデックス
-*		
+*
 *	@param index		頂点アトリビュートのインデックス
 *	@param size			頂点アトリビュートの要素数
-*	@param type			頂点アトリビュートの型	
+*	@param type			頂点アトリビュートの型
 *	@param normlized	GL_TRUE-要素を正規化する,GL_FALSE=正規化しない
 *	@param stride		次の頂点データまでのバイト数
 *	@param offset		頂点データ先頭からのバイトオフセット

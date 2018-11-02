@@ -37,17 +37,11 @@ namespace Shader {
 		//サンプラーの数と位置を取得する
 		GLint activeUniforms;
 		glGetProgramiv(p->program, GL_ACTIVE_UNIFORMS, &activeUniforms);
-
-		std::cout << "SamplerNum :" << activeUniforms << std::endl;
-
 		for (int i = 0; i < activeUniforms; ++i) {
 			GLint size;
 			GLenum type;
 			GLchar name[128];
 			glGetActiveUniform(p->program, i, sizeof(name), nullptr, &size, &type, name);
-
-			std::cout << "'" << name << "': size=" << size << " type=0x" << std::hex << type << std::endl;
-
 			if (type == GL_SAMPLER_2D) {
 				p->samperCount = size;
 				p->samplerLocation = glGetUniformLocation(p->program, name);
@@ -59,9 +53,7 @@ namespace Shader {
 			}
 		}
 
-		std::cout << std::endl;
 		p->viewIndexLocation = glGetUniformLocation(p->program, "viewIndex");
-
 		p->depthSamplerLocation = glGetUniformLocation(p->program, "depthSampler");
 
 		//頂点シェーダファイル名の末尾から".vert"を取り除いたものをプログラム名とする
@@ -89,32 +81,22 @@ namespace Shader {
 	*	@retval	true	割り当て成功
 	*	@retval false	割り当て失敗
 	*/
-	bool Program::UniformBlockBinding(const char* blockName,GLuint bindingPoint){
-	
-		//blockNameで指定したUniformBlockのインデックスを取得
+	bool Program::UniformBlockBinding(const char* blockName, GLuint bindingPoint) {
+
 		const GLuint blockIndex = glGetUniformBlockIndex(program, blockName);
 		if (blockIndex == GL_INVALID_INDEX) {
 			std::cerr << "ERROR(" << name << "): Uniformブロック'" << blockName << "'が見つかりません" << std::endl;
 			return false;
 		}
 
-		//取得したインデックスをバインディングポイントに割り当てる
 		glUniformBlockBinding(program, blockIndex, bindingPoint);
 		const GLenum result = glGetError();
 		if (result != GL_NO_ERROR) {
 			std::cerr << "ERROR(" << name << "): Uniformブロック'" << blockName << "'のバインドに失敗" << std::endl;
-
-			//TODO: Tutorial.vertのみエラーが起き、result値にGLINVALID_OPERATIONを必ず返す
-			if (result == GL_INVALID_ENUM) std::cout << "INVALID_ENUM" << std::endl;
-			else if (result == GL_INVALID_VALUE) std::cout << "INVALID_VALUE" << std::endl;
-			else if (result == GL_INVALID_OPERATION) std::cout << "INVALID_OPERATION" << std::endl;
-			else if (result == GL_OUT_OF_MEMORY) std::cout << "OUT_OF_MEMORY" << std::endl;
-			else if (result == GL_INVALID_FRAMEBUFFER_OPERATION) std::cout << "INVALID_FRAMEBUFFER_OPERATION" << std::endl;
-			else std::cerr << "unknown error."<<std::endl;
-
 			return false;
 		}
 
+		//std::cout << "Program::UniformBlockBinding()" << "Successed" << " blockName:" << blockName << " bindingPoint:"<<bindingPoint << std::endl;
 		return true;
 	}
 
@@ -139,20 +121,19 @@ namespace Shader {
 	void Program::BindTexture(GLenum unit, GLenum type, GLuint texture) {
 
 		if (unit >= GL_TEXTURE0 && unit < static_cast<GLenum>(GL_TEXTURE0 + samperCount)) {
-			
+
 			glActiveTexture(unit);
 			glBindTexture(type, texture);
 		}
 	}
 
 	/**
-	*	デプステクスチャをテクスチャ・イメージユニットに割り当てる
+	*	デプステクスチャをテクスチャ・イメージ・ユニットに割り当てる
 	*
-	*	@param type 割り当てるテクスチャの種類(GL_TEXTURE_1D,GL_TEXTURE_2D,etc)
-	*	@param texture 割り当てるテクスチャオブジェクト
+	*	@param type		割り当てるテクスチャの種類 (GL_TEXTURE_1D,GL_TEXTURE_2D,etc)
+	*	@param texture	割り当てるテクスチャオブジェクト
 	*/
 	void Program::BindShadowTexture(GLenum type, GLuint texture) {
-
 		if (depthSamplerLocation >= 0) {
 			glActiveTexture(GL_TEXTURE2);
 			glBindTexture(type, texture);
@@ -165,7 +146,6 @@ namespace Shader {
 	void Program::SetViewIndex(int index) {
 
 		if (viewIndexLocation >= 0) {
-
 			glUniform1i(viewIndexLocation, index);
 		}
 	}
@@ -222,7 +202,7 @@ namespace Shader {
 		std::cout << "	fragment shader... ";
 		GLuint fs = CompileShader(GL_FRAGMENT_SHADER, fsCode);
 
-		
+
 		if (!vs || !fs) {
 			return 0;
 		}
@@ -250,7 +230,7 @@ namespace Shader {
 			return 0;
 		}
 
-	//	std::cout << std::endl;
+		std::cout << std::endl;
 
 		return program;
 	}
@@ -295,7 +275,7 @@ namespace Shader {
 	*
 	*	@param vsCode 頂点シェーダファイル名
 	*	@param fsCode フラグメントシェーダファイル名
-	*	
+	*
 	*	@return 作成したプログラムオブジェクト
 	*/
 	GLuint CreateProgramFromFile(const char* vsFilename, const char* fsFilename) {

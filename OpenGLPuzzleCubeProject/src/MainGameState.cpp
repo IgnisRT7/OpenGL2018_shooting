@@ -4,10 +4,10 @@
 #include "GameState.h"
 #include "GameEngine.h"
 #include "../Res/Audio/SampleCueSheet.h"
+//#include "ResourceName.h"
 #include <algorithm>
 
 namespace GameState {
-
 	///衝突形状リスト
 	static const Entity::CollisionData collisionDataList[] = {
 		{ glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.0f,1.0f,1.0f) },
@@ -15,6 +15,18 @@ namespace GameState {
 	{ glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.0f,1.0f,1.0f) },
 	{ glm::vec3(-0.25f,-0.25f,-0.25f), glm::vec3(0.25f,0.25f,0.25f) },
 	};
+
+	void UpdateLandscape(Entity::Entity& entity, double delta) {
+		entity.Position(entity.Position() + glm::vec3(0, 0, -4.0f * delta));
+	}
+
+	///背景の更新
+	void UpdateSpaceSphere1(Entity::Entity& entity, double delta) {
+
+		glm::vec3 rotSpace = glm::eulerAngles(entity.Rotation());
+		rotSpace.x += static_cast<float>(glm::radians(2.5) * delta);
+		entity.Rotation(rotSpace);
+	}
 
 	/**
 	*	敵の円盤の状態を更新する
@@ -37,7 +49,7 @@ namespace GameState {
 			//entity.Color(colorValue);
 
 			//entity.Scale({ 2,5,2 });
-			entity.Color({ 1,1,1,0.4f });
+			//entity.Color({ 1,1,1,0.4f });
 
 			// 円盤を回転させる.
 			float rot = glm::angle(entity.Rotation());
@@ -105,7 +117,7 @@ namespace GameState {
 	*/
 	struct UpdatePlayer {
 		void operator()(Entity::Entity& entity, double delta) {
-			
+
 			static float timer = 0;
 			timer += delta * 100;
 
@@ -138,7 +150,7 @@ namespace GameState {
 			if (vec.x || vec.z) {
 				vec = glm::normalize(vec) * 5.0f;
 			}
-			
+
 			glm::vec3 rt = glm::vec3(-25, -100, 1);
 			glm::vec3 ld = glm::vec3(25, 100, 80)
 				;
@@ -155,7 +167,7 @@ namespace GameState {
 
 				game.PlayAudio(0, 0);
 				for (int i = 0; i < 2; ++i) {
-					if (Entity::Entity* p = game.AddEntity(EntityGroupId_PlayerShot, pos, "NormalShot", "Res/Player.bmp", UpdatePlayerShot())) {
+					if (Entity::Entity* p = game.AddEntity(EntityGroupId_PlayerShot, pos, "NormalShot", "Res/Model/Player.dds", UpdatePlayerShot())) {
 						p->Velocity(glm::vec3(0, 0, 80));
 						p->Collision(collisionDataList[EntityGroupId_PlayerShot]);
 					}
@@ -171,22 +183,6 @@ namespace GameState {
 		double shotInterval = 0;
 	};
 
-	void UpdateLandscape(Entity::Entity& entity, double delta) {
-
-		entity.Position(entity.Position() + glm::vec3(0, 0, -4.0f * delta));
-	}
-
-	/**
-	*	背景の更新
-	*/
-	void UpdateSpaceSphereMainGame(Entity::Entity& entity, double delta) {
-
-		glm::vec3 rotSpace = glm::eulerAngles(entity.Rotation());
-		rotSpace.x += static_cast<float>(glm::radians(2.5) * delta);
-		entity.Rotation(rotSpace);
-	}
-
-
 	/**
 	*	自機の弾と敵の衝突判定
 	*/
@@ -195,7 +191,7 @@ namespace GameState {
 		GameEngine& game = GameEngine::Instance();
 
 		//爆発エフェクト
-		if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, rhs.Position(), "Blast", "Res/Toroid.dds", UpdateBlast())) {
+		if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, rhs.Position(), "Blast", "Res/Model/Toroid.dds", UpdateBlast())) {
 			const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
 			p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
 			p->Color(glm::vec4(1.0f, 0.75f, 0.5f, 1.0f));
@@ -216,7 +212,7 @@ namespace GameState {
 		GameEngine& game = GameEngine::Instance();
 
 		//爆発エフェクト
-		if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, rhs.Position(), "Blast", "Res/Toroid.dds", UpdateBlast())) {
+		if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, rhs.Position(), "Blast", "Res/Model/Toroid.dds", UpdateBlast())) {
 			const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
 			p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
 			game.UserVariable("score") += 100;
@@ -226,10 +222,10 @@ namespace GameState {
 		game.PlayAudio(1, CRI_SAMPLECUESHEET_BOMB);
 
 		if (lhs.GroupId() == EntityGroupId_Player) {
-			rhs.Destroy();			
+			rhs.Destroy();
 		}
 		else {
-			lhs.Destroy();	
+			lhs.Destroy();
 		}
 
 		game.UserVariable("player") -= 1;
@@ -238,37 +234,38 @@ namespace GameState {
 
 	/**
 	*	メインゲーム画面のコンストラクタ
-	*//*
-	MainGame::MainGame(Entity::Entity* p) : pSpaceSphere(p) {
+	*/
+	MainGame::MainGame() {
 
 		GameEngine& game = GameEngine::Instance();
-		game.CollisionHandler(EntityGroupId_PlayerShot, EntityGroupId_Enemy, &PlayerShotAndEnemyCollisionHandler);
-		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Enemy, &PlayyerAndEnemyCollisionHandler);
-
-		game.UserVariable("player") = 3;	//プレイヤー残機数
-	}*/
+		game.ClearCollisionHandlerList();
+		game.CollisionHandler(EntityGroupId_PlayerShot, EntityGroupId_Enemy, PlayerShotAndEnemyCollisionHandler);
+		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Enemy, PlayyerAndEnemyCollisionHandler);
+	}
 
 	/**
 	*	メインゲーム画面の更新
 	*/
 	void MainGame::operator()(double delta) {
-		
+
 		GameEngine& game = GameEngine::Instance();
-		static const float stageTime = 90;
+		static const float stageTime = 60;
 
 		if (stageTimer < 0) {
+
 			++stageNo;
 			stageTimer = stageTime;
-
-			game.KeyValue(0.24f);
-
-			//カメラ設定
-			game.Camera(0, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,0,1) });
-			game.Camera(2, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,0,1) });
+			game.Camera(0, { glm::vec4(0,30,0,1),glm::vec3(0,0,10),glm::vec3(0,0,1) });
+			game.Camera(1, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,0,1) });
 			game.GroupVisibility(EntityGroupId_Background, 0, false);
 			game.GroupVisibility(EntityGroupId_Background, 1, true);
-			
-			//影の描画設定
+
+			game.AmbientLight(glm::vec4(0.05f, 0.1f, 0.2f, 1));
+			game.Light(0, { glm::vec4(40,100,10,1),glm::vec4(12000,12000,12000,1) });
+			game.KeyValue(0.24);
+
+			//TODO: エンティティの配置関係で影の描画に影響あるのか？
+			//シャドウの設定
 			GameEngine::ShadowParameter shadowParam;
 			shadowParam.lightPos = glm::vec3(20, 50, 50);
 			shadowParam.lightDir = glm::normalize(glm::vec3(-25, -50, 25));
@@ -278,83 +275,106 @@ namespace GameState {
 			shadowParam.range = glm::vec2(300, 300);
 			game.Shadow(shadowParam);
 
-			//ライトの設定
-			game.AmbientLight(glm::vec4(0.05f, 0.1f, 0.2f, 1));
-			game.Light(0, { glm::vec4(40,100,10,1),glm::vec4(12000,12000,12000,1) });
-
 			game.RemoveAllEntity();
 			game.ClearLevel();
-
 			game.LoadMeshFromFile("Res/Model/Player.fbx");
-			game.LoadMeshFromFile("Res/Model/Toroid.fbx");
 			game.LoadMeshFromFile("Res/Model/Blast.fbx");
+			game.LoadMeshFromFile("Res/Model/Toroid.fbx");
 			game.LoadTextureFromFile("Res/Model/Player.dds");
 			game.LoadTextureFromFile("Res/Model/Toroid.dds");
 			game.LoadTextureFromFile("Res/Model/Toroid.Normal.bmp");
 
 			switch (stageNo % 3) {
-			case 1:		
+			case 1: {
 
 				game.KeyValue(0.16f);
+
 				game.LoadMeshFromFile("Res/Model/Landscape.fbx");
 				game.LoadTextureFromFile("Res/Model/BG02.Diffuse.dds");
 				game.LoadTextureFromFile("Res/Model/BG02.Normal.bmp");
 
+				//背景の更新処理
 				for (int z = 0; z < 5; ++z) {
-					
 					const float offsetZ = static_cast<float>(z * 40 * 5);
 
 					for (int x = 0; x < 5; ++x) {
-
-						const float offsetX = static_cast<float>(x * 40 - 80)*5.0f;
-						game.AddEntity(EntityGroupId_Others, glm::vec3(offsetX, -100, offsetZ), "Landscape01", "Res/Model/BG02.Diffuse.dds", "Res/Model/BG02.Normal.bmp", &UpdateLandscape);
+						const float offsetX = static_cast<float>(x * 40 - 80) * 5.0f;
+						game.AddEntity(EntityGroupId_Background, glm::vec3(offsetX, -100.0, offsetZ),
+							"Landscape01", "Res/Model/BG02.Diffuse.dds", "Res/Model/BG02.Normal.bmp", &UpdateLandscape);
 					}
 				}
 
 				break;
-
-			case 2:
+			}
+			case 2: {
 
 				game.KeyValue(0.24f);
 				game.LoadMeshFromFile("Res/Model/City01.fbx");
 				game.LoadTextureFromFile("Res/Model/City01.Diffuse.dds");
 				game.LoadTextureFromFile("Res/Model/City01.Normal.bmp");
 
-				for (int z = 0; z < 12; ++z) {
-
+				//背景の更新処理
+				for (int z = 0; z < 5; ++z) {
 					const float offsetZ = static_cast<float>(z * 40);
 
 					for (int x = 0; x < 5; ++x) {
-
 						const float offsetX = static_cast<float>(x * 40 - 80);
-						game.AddEntity(EntityGroupId_Others, glm::vec3(offsetX, -10, offsetZ),
-							"City01", "Res/ModelCity01.Diffuse.dds", "Res/Model/City01.Normal.bmp", &UpdateLandscape);
-						game.AddEntity(EntityGroupId_Others, glm::vec3(offsetX, -10, offsetZ),
+						game.AddEntity(EntityGroupId_Background, glm::vec3(offsetX, -10, offsetZ),
+							"City01", "Res/Model/City01.Diffuse.dds", "Res/Model/City01.Normal.bmp", &UpdateLandscape);
+						game.AddEntity(EntityGroupId_Background, glm::vec3(offsetX, -10, offsetX),
 							"City01.Shadow", "Res/Model/City01.Diffuse.dds", "Res/Model/City01.Normal.bmp", &UpdateLandscape);
 					}
 				}
-
 				break;
 
-			case 0:
+			}
+			case 0: {
 
 				game.KeyValue(0.02f);
-				game.LoadMeshFromFile("Res/Model/SpadeSphere.fbx");
-				game.LoadTextureFromFile("Res/Model/SpaceSphere.dds");
-				game.AddEntity(EntityGroupId_Others, glm::vec3(0, 0, 0),
-					"SpaceSphere", "Res/Model/SpaceSphere.dds", &UpdateSpaceSphereMainGame, "NonLighting");
+				game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
+				game.LoadTextureFromFile("Res/Model/SpaceSphere.bmp");
+				game.AddEntity(EntityGroupId_Background, glm::vec3(0),
+					"SpaceSphere", "Res/Model/SpaceSphere.bmp", &UpdateSpaceSphere1, "NonLighting");
 
 				break;
+			}
 			}
 
 			auto pPlayer = game.AddEntity(EntityGroupId_Player, glm::vec3(0, 0, 2),
 				"Aircraft", "Res/Model/Player.dds", UpdatePlayer());
 			pPlayer->Collision(collisionDataList[EntityGroupId_Player]);
+
 		}
 
-		stageTimer -= delta;	
+		stageTimer -= delta;
 
-		//スコアの更新処理
+		//スポーン座標範囲
+		std::uniform_int_distribution<> distributerX(-12, 12);
+		std::uniform_int_distribution<> distributerZ(40, 44);
+
+		interval -= delta;
+
+		if (interval <= 0) {
+
+			const std::uniform_real_distribution<> rndInterval(0.5f, 1);
+			const std::uniform_int_distribution<> rndAddingCount(1, 5);
+
+			for (int i = rndAddingCount(game.Rand()); i > 0; --i) {
+				const glm::vec3 pos(distributerX(game.Rand()), 0, distributerZ(game.Rand()));
+
+				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, pos,
+					"Toroid", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", UpdateToroid())) {
+
+					p->Velocity(glm::vec3(pos.x < 0 ? 0.5f : -0.5f, 0, -1.0f));
+					p->Collision(collisionDataList[EntityGroupId_Enemy]);
+				}
+			}
+
+			interval = rndInterval(game.Rand());
+
+		}
+
+		//スコア表示処理
 		char str[16];
 		snprintf(str, 16, "%08.0f", game.UserVariable("score"));
 		game.FontScale(glm::vec2(1.5));
@@ -364,10 +384,10 @@ namespace GameState {
 		std::string player = std::string("p - 0") + std::to_string((int)game.UserVariable("player"));
 		game.AddString(glm::vec2(-0.9, 1.0f), player.c_str());
 
-		//カメラ1の更新処理 cosでの左右移動
+		//カメラ移動処理
 		GameEngine::CameraData camera = game.Camera(1);
 		float cameraMoveValue = fmod(static_cast<float>(stageTimer), 45.0f) * (glm::radians(360.0f) / 45.0f);
-		camera.position.x = glm::cos(cameraMoveValue * 5.0f);
+		camera.position.x = glm::cos(cameraMoveValue) * 5.0f;
 		game.Camera(1, camera);
 	}
 

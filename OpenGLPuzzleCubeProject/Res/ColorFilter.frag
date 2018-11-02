@@ -13,8 +13,7 @@ layout(std140) uniform PostEffectData{
 	
 	mat4x4 matColor;	//色変換行列
 	float luminanceScale;	//輝度増減係数
-	float bloomThreshold;	//ブルームを発生させる閾値
-
+	float bloomThreshould;	//ブルームを発生させる閾値
 } postEffect;
 
 /**
@@ -24,15 +23,15 @@ layout(std140) uniform PostEffectData{
 *
 *	@return トーンマッピングされたrgbカラー
 */
-vec3 ACESFilmicToneMapping(vec3 rgb){
+vec3 ACESFilimicToneMapping(vec3 rgb){
 
 	float a = 2.51f;
 	float b = 0.03f;
 	float c = 2.43f;
 	float d = 0.59f;
 	float e = 0.14f;
-
-	return ( rgb * (a * rgb + b)) / (rgb * (c * rgb + d) + e);
+	
+	return (rgb * (a * rgb + b)) /(rgb * (c * rgb + d) + e);
 }
 
 void main(){
@@ -52,9 +51,12 @@ void main(){
 	fragColor.rgb = texture(colorSampler[0],inTexCoord).rgb;
 	fragColor.rgb += bloom;
 	fragColor.rgb *= postEffect.luminanceScale;
-	fragColor.rgb =ACESFilmicToneMapping(fragColor.rgb);
+	fragColor.rgb = ACESFilimicToneMapping(fragColor.rgb);
 	fragColor.rgb += (postEffect.matColor * vec4(fragColor.rgb,1)).rgb;
 	fragColor.a = 1.0f;
 	fragColor *= inColor;
+
+//		fragColor.rgb = texture(colorSampler[0],inTexCoord).rgb;
+//	fragColor.rgb = bloom;
 	
 }

@@ -36,7 +36,7 @@ namespace GameState {
 	class MainGame {
 	public:
 
-		MainGame() {}
+		MainGame();
 		//explicit MainGame(Entity::Entity* p);
 		void operator()(double delta);
 		

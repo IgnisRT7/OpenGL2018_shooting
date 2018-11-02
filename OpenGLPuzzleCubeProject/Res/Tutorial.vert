@@ -22,18 +22,15 @@ layout(std140) uniform VertexData
   mat4 matModel;
   mat4 matNormal;
   vec4 color;
- // mat4x3 _dummy;	
-}vertexData;
+//  mat4x3 _dummy;	
+} vertexData;
 
 uniform int viewIndex;
 
 void main() {
-
   outColor = vColor * vertexData.color;                    
-  outTexCoord =  vTexCoord;
-  //outTexCoord =(vertexData.matTex * vec4(vTexCoord,0,1)).xy;
+  outTexCoord = vTexCoord;
 
-  //頂点のワールド座標
   outWorldPosition = (vertexData.matModel * vec4(vPosition, 1.0)).xyz;
 
   mat3 matNormal = mat3(vertexData.matNormal);
@@ -42,8 +39,8 @@ void main() {
   vec3 b = normalize(cross(n,t)) * vTangent.w;
 
   outTBN = mat3(t, b, n);
+  outDepthCoord = ((vertexData.matDepthMVP * vec4(vPosition,1.0)) * 0.5 + 0.5).xyz;
 
-  outDepthCoord = ((vertexData.matDepthMVP * vec4(vPosition,1.0)) *  0.5 + 0.5).xyz;
 
-  gl_Position = vertexData.matMVP[viewIndex]  * vec4(vPosition, 1.0);                  
+  gl_Position = vertexData.matMVP[viewIndex] * vec4(vPosition, 1);                  
 }

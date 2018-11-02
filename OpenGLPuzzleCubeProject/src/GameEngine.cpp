@@ -192,7 +192,6 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	if (!GLFWEW::Window::Instance().Init(w, h, title)) {
 		return false;
 	}
-	GLenum result = glGetError();
 
 	vbo = CreateVBO(sizeof(vertices), vertices);
 	ibo = CreateIBO(sizeof(indices), indices);
@@ -201,13 +200,48 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	uboLight = UniformBuffer::Create(sizeof(Uniform::LightData), 1, "LightData");
 	uboPostEffect = UniformBuffer::Create(sizeof(Uniform::PostEffectData), 2, "PostEffectData");
 
+	offscreen = OffscreenBuffer::Create(800, 600, GL_RGBA16F);
+	if (!offscreen) {
+		return false;
+	}
+
+	//縮小バッファ作成コード(ブルームエフェクト用)
+	for (int i = 0, scale = 4; i < bloomBufferCount; ++i, scale *= 4) {
+		const int w = 800 / scale;
+		const int h = 600 / scale;
+		offBloom[i] = OffscreenBuffer::Create(w, h, GL_RGBA16F);
+		if (!offBloom[i]) {
+			return false;
+		}
+	}
+
+	//デプスシャドウバッファ作成
+	offDepth = OffscreenBuffer::Create(2048, 2048, GL_DEPTH_COMPONENT16);
+	if (!offDepth) {
+		return false;
+	}
+
+	//テクスチャサイズ取得
+	int offWidth, offHeight;
+	glBindTexture(GL_TEXTURE_2D, offBloom[bloomBufferCount - 1]->GetTexture());
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &offWidth);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &offHeight);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	//PBOを作成
+	const int pboByteSize = offWidth * offHeight * sizeof(GLfloat) * 4;//tips :vec4 == GLfloat * 4
+	for (auto& e : pbo) {
+		e.Init(GL_PIXEL_PACK_BUFFER, pboByteSize, nullptr, GL_DYNAMIC_READ);
+	}
+
+
 	if (!vbo || !ibo || !vao || !uboLight || !uboPostEffect) {
 
 		std::cerr << "ERROR: GameEngineの初期化に失敗" << std::endl;
 		return false;
 	}
 
-	//シェーダファイル読み込み
+	//シェーダリスト
 	static const char* const shaderNameList[][3] = {
 		{ "Tutorial", "Res/Tutorial.vert", "Res/Tutorial.frag" },
 	{ "ColorFilter", "Res/ColorFilter.vert", "Res/ColorFilter.frag" },
@@ -215,9 +249,9 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	{ "HiLumExtract", "Res/TexCoord.vert", "Res/HiLumExtract.frag" },
 	{ "Shrink", "Res/TexCoord.vert", "Res/Shrink.frag" },
 	{ "Blur3x3", "Res/TexCoord.vert", "Res/Blur3x3.frag" },
-	{ "RenderDepth", "Res/RenderDepth.vert", "Res/RenderDepth.frag" } ,
+	{ "RenderDepth", "Res/RenderDepth.vert", "Res/RenderDepth.frag" },
 	};
-
+	//シェーダのコンパイル
 	shaderMap.reserve(sizeof(shaderNameList) / sizeof(shaderNameList[0]));
 	for (auto& e : shaderNameList) {
 		Shader::ProgramPtr program = Shader::Program::Create(e[1], e[2]);
@@ -226,64 +260,27 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		}
 		shaderMap.insert(std::make_pair(std::string(e[0]), program));
 	}
-
-	//TODO: ここの順番を変えると一番上の処理のみが発生 
+	//Uniformブロックのバインド
 	shaderMap["Tutorial"]->UniformBlockBinding("VertexData", 0);
 	shaderMap["Tutorial"]->UniformBlockBinding("LightData", 1);
 	shaderMap["ColorFilter"]->UniformBlockBinding("PostEffectData", 2);
 	shaderMap["HiLumExtract"]->UniformBlockBinding("PostEffectData", 2);
 
-	//メッシュバッファの作成
+	//meshBuffer作成
 	meshBuffer = Mesh::Buffer::Create(100 * 1024, 100 * 1024);
 	if (!meshBuffer) {
 		std::cerr << "ERROR: GameEngineの初期化に失敗" << std::endl;
 	}
+
 	textureStack.push_back(TextureLevel());
 
-	//エンティティバッファの作成
 	entityBuffer = Entity::Buffer::Create(1024, sizeof(Uniform::VertexData), 0, "VertexData");
 	if (!entityBuffer) {
 		std::cerr << "ERROR: GameEngineの初期化に失敗" << std::endl;
-
 		return false;
 	}
 
 	rand.seed(std::random_device()());
-
-	//オフスクリーンバッファの作成
-	offscreen = OffscreenBuffer::Create(800, 600,GL_RGBA16F);
-
-	//ブルームエフェクト用バッファの作成
-	for (int i = 0, scale = 4; i < bloomBufferCount; ++i, scale *= 4) {
-		const int w = 800 / scale;
-		const int h = 600 / scale;
-		offBloom[i] = OffscreenBuffer::Create(w, h, GL_RGBA16F);
-		if (!offBloom[i]) {
-			{
-				return false;
-			}
-		}
-	}
-
-	//オフスクリーンバッファの大きさを取得
-	int offWidth, offHeight;
-	glBindTexture(GL_TEXTURE_2D, offBloom[bloomBufferCount - 1]->GetTexture());
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &offWidth);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &offHeight);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	//PBOを作成
-	const int pboByteSize = offWidth * offHeight * sizeof(GLfloat) * 4;
-	for (auto& e : pbo) {
-		e.Init(GL_PIXEL_PACK_BUFFER, pboByteSize, nullptr, GL_DYNAMIC_READ);
-	}
-
-	//デプスシャドウバッファの作成
-	offDepth = OffscreenBuffer::Create(2048, 2048, GL_DEPTH_COMPONENT16);
-	if (!offDepth) {
-		return false;
-	}
-
 
 	fontRenderer.Init(1024, glm::vec2(800, 600));
 
@@ -295,14 +292,15 @@ bool GameEngine::Init(int w, int h, const char* title) {
 *	ゲームを実行する
 */
 void GameEngine::Run() {
-	
+	;
+
 	const double delta = 1.0 / 60.0;
 	GLFWEW::Window& window = GLFWEW::Window::Instance();
 
 	double prevTime = glfwGetTime();
 	while (!window.ShouldClose()) {
 
-		const double curTime = glfwGetTime(); 
+		const double curTime = glfwGetTime();
 		const double delta = curTime - prevTime;
 		prevTime = curTime;
 
@@ -351,11 +349,10 @@ const GameEngine::UpdateFuncType& GameEngine::UpdateFunc() const {
 bool GameEngine::LoadTextureFromFile(const char* filename) {
 
 	if (GetTexture(filename)) {
-		std::cout << "テクスチャの読み込みに失敗。" << std::endl;
 		return true;
 	}
 
-	TexturePtr texture = Texture::LoadFromFile(filename); 
+	TexturePtr texture = Texture::LoadFromFile(filename);
 	if (!texture) {
 		return false;
 	}
@@ -373,8 +370,7 @@ bool GameEngine::LoadTextureFromFile(const char* filename) {
 *	@retval false	読み込み失敗
 */
 bool GameEngine::LoadMeshFromFile(const char* filename) {
-	auto p = meshBuffer->LoadMeshFromFile(filename);
-	return p;
+	return meshBuffer->LoadMeshFromFile(filename);
 }
 
 /**
@@ -392,7 +388,7 @@ bool GameEngine::LoadMeshFromFile(const char* filename) {
 *			回転や拡大率はこのポインタ経由で設定する
 *			なお、このポインタをアプリケーション側で保持する必要はない
 */
-Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, Entity::Entity::UpdateFuncType func,const char* shader) {
+Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, Entity::Entity::UpdateFuncType func, const char* shader) {
 
 	return AddEntity(groupId, pos, meshName, texName, nullptr, func, shader);
 }
@@ -413,15 +409,13 @@ Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const c
 *			回転や拡大率はこのポインタ経由で設定する
 *			なお、このポインタをアプリケーション側で保持する必要はない
 */
-Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName,const char* normalName, Entity::Entity::UpdateFuncType func, const char* shader) {
+Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, const char* normalName, Entity::Entity::UpdateFuncType func, const char* shader) {
 
 	decltype(shaderMap)::const_iterator itr = shaderMap.end();
 	if (shader) {
 		itr = shaderMap.find(shader);
 	}
 	if (itr == shaderMap.end()) {
-		//char* s = shader == nullptr ? "null" : shader;
-		//std::cout << "shader: " << s << " が見つかりませんでした。デフォルトのシェーダを使用します" << std::endl;
 		itr = shaderMap.find("Tutorial");
 		if (itr == shaderMap.end()) {
 			return nullptr;
@@ -453,12 +447,10 @@ void GameEngine::RemoveEntity(Entity::Entity* e) {
 /**
 *	全てのエンティティを削除する
 */
-void GameEngine::RemoveAllEntity(){
+void GameEngine::RemoveAllEntity() {
 
 	entityBuffer->RemoveAllEntity();
 }
-
-
 
 /**
 *	ライトを設定する
@@ -513,12 +505,11 @@ const glm::vec4& GameEngine::AmbientLight() const {
 
 /**
 *	視点の位置と姿勢を設定する
-*	
-*	@param index カメラのインデックス
+*
+*	@param index 設定するカメラのインデックス
 *	@param cam 設定するカメラデータ
 */
-void GameEngine::Camera(size_t index,const CameraData& cam) {
-
+void GameEngine::Camera(size_t index, const CameraData& cam) {
 	camera[index] = cam;
 	lightData.eyePos[index] = glm::vec4(cam.position, 0);
 }
@@ -526,7 +517,8 @@ void GameEngine::Camera(size_t index,const CameraData& cam) {
 /**
 *	視点の位置と姿勢を取得する
 *
-*	@param index カメラのインデックス
+*	@param index 取得するカメラのインデックス
+*
 *	@rerturn カメラデータ
 */
 const GameEngine::CameraData& GameEngine::Camera(size_t index) const {
@@ -578,7 +570,7 @@ void GameEngine::CollisionHandler(int gid0, int gid1, Entity::CollisionHandlerTy
 *	@return 衝突解決ハンドラ
 */
 const Entity::CollisionHandlerType& GameEngine::CollisionHandler(int gid0, int gid1) const {
-	
+
 	return entityBuffer->CollisionHandler(gid0, gid1);
 }
 
@@ -587,20 +579,6 @@ const Entity::CollisionHandlerType& GameEngine::CollisionHandler(int gid0, int g
 */
 void GameEngine::ClearCollisionHandlerList() {
 	entityBuffer->ClearCollisionHanderList();
-}
-
-const TexturePtr& GameEngine::GetTexture(const char * filename) const{
-
-	for (const auto& e : textureStack) {
-
-		const auto itr = e.find(filename);
-		if (itr != e.end()) {
-			return itr->second;
-		}
-	}
-
-	static const TexturePtr dummy;
-	return dummy;
 }
 
 /**
@@ -636,10 +614,10 @@ void GameEngine::PushLevel() {
 	textureStack.push_back(TextureLevel());
 }
 
-/**
+/*
 *	リソーススタックの末尾のリソースレベルを除去する
 */
-void GameEngine::PopLevel(){
+void GameEngine::PopLevel() {
 
 	meshBuffer->PopLevel();
 	if (textureStack.size() > minimalStackSize) {
@@ -650,12 +628,11 @@ void GameEngine::PopLevel(){
 /**
 *	リソーススタックの末尾のリソースレベルを空の状態にする
 */
-void GameEngine::ClearLevel(){
+void GameEngine::ClearLevel() {
 
 	meshBuffer->ClearLevel();
 	textureStack.back().clear();
 }
-
 
 /**
 *	デストラクタ
@@ -690,24 +667,26 @@ void GameEngine::Update(double delta) {
 		updateFunc(delta);
 	}
 
-	//ビュー変換行列と射影変換行列の作成
-	const glm::mat4x4 matProj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 200.0f);
+	//行列計算処理
+	const glm::mat4x4 matProj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 1000.0f);
 	glm::mat4x4 matView[Uniform::maxViewCount];
 	for (int i = 0; i < Uniform::maxViewCount; ++i) {
-		const CameraData& cam = camera[i];
+
+		CameraData& cam = camera[i];
 		matView[i] = glm::lookAt(cam.position, cam.target, cam.up);
 	}
 
-	//シャドウマップ用のビュー変換行列の作成
+	//シャドウの設定
 	const glm::vec2 range = shadowParameter.range * 0.5f;
 	const glm::mat4 matDepthProj = glm::ortho<float>(
-		-range.x, range.x, -range.y, range.y,
-		shadowParameter.near, shadowParameter.far);
-	//ライトの位置をカメラ位置としたビュー変換行列
+		-range.x, range.x, -range.y, range.y, shadowParameter.near, shadowParameter.far);
+	//	matDepthProj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 10, 200);
+
 	const glm::mat4 matDepthView = glm::lookAt(
 		shadowParameter.lightPos, shadowParameter.lightPos + shadowParameter.lightDir, shadowParameter.lightUp);
 
-	entityBuffer->Update(delta, matView, matProj,matDepthProj * matDepthView);
+	//エンティティバッファの更新
+	entityBuffer->Update(delta, matView, matProj, matDepthProj * matDepthView);
 
 	fontRenderer.UnmapBuffer();
 }
@@ -722,9 +701,10 @@ void GameEngine::RenderShadow() const {
 	glDepthFunc(GL_LESS);
 	glEnable(GL_CULL_FACE);
 	glDisable(GL_BLEND);
-	glViewport(0, 0, offDepth->width(), offDepth->height());
-	glScissor(0, 0, offDepth->width(), offDepth->height());
+	glViewport(0, 0, offDepth->Width(), offDepth->Height());
+	glScissor(0, 0, offDepth->Width(), offDepth->Height());
 	glClearDepth(1);
+	glClear(GL_DEPTH_BUFFER_BIT);
 
 	const Shader::ProgramPtr& progDepth = shaderMap.find("RenderDepth")->second;
 	progDepth->UseProgram();
@@ -736,14 +716,12 @@ void GameEngine::RenderShadow() const {
 */
 void GameEngine::Render() {
 
-	//pass1: Draw depth to draw shadow...
+	///Path1: Draw shadow.
+
 	RenderShadow();
 
-	//pass2: Draw MeshBuffer
-	const Shader::ProgramPtr& progColorFilter = shaderMap.find("ColorFilter")->second;
-	progColorFilter->UseProgram();
+	///Path2: Draw entity.
 
-	//Set OffscreenFrameBuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, offscreen->GetFramebuffer());
 
 	glEnable(GL_DEPTH_TEST);
@@ -756,43 +734,47 @@ void GameEngine::Render() {
 	glClearDepth(1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	shaderMap.find("Tutorial")->second->BindShadowTexture(GL_TEXTURE_2D, offDepth->GetTexture());
+
 	//LightSetting
 	uboLight->BUfferSubData(&lightData);
-
 	//Draw entity
 	entityBuffer->Draw(meshBuffer);
-	
-	//pass3: make blur effect
+
+	///Path3: Extract only brightness
+
 	glBindVertexArray(vao);
+
+	const Shader::ProgramPtr& progHiLumExtract = shaderMap.find("HiLumExtract")->second;
+	progHiLumExtract->UseProgram();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, offBloom[0]->GetFramebuffer());
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_BLEND);
 
-	//Extract only brightness
-	const Shader::ProgramPtr& progHiLumExtract = shaderMap.find("HiLumExtract")->second;
-	progHiLumExtract->UseProgram();
-
-	glBindFramebuffer(GL_FRAMEBUFFER, offBloom[0]->GetFramebuffer());
 	glClear(GL_COLOR_BUFFER_BIT);
-	glViewport(0, 0, offBloom[0]->width(), offBloom[0]->height());
+	glViewport(0, 0, offBloom[0]->Width(), offBloom[0]->Height());
 	progHiLumExtract->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offscreen->GetTexture());
-	glDrawElements(GL_TRIANGLES,  renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
+	glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
 
-	//A blurred image is created from the extracted brightness data
+	///Path4: Bokasi
+
 	const Shader::ProgramPtr& progShrink = shaderMap.find("Shrink")->second;
 	progShrink->UseProgram();
 
 	for (int i = 1; i < bloomBufferCount; ++i) {
-		
+
 		glBindFramebuffer(GL_FRAMEBUFFER, offBloom[i]->GetFramebuffer());
-		glViewport(0, 0, offBloom[i]->width(), offBloom[i]->height());
+		glViewport(0, 0, offBloom[i]->Width(), offBloom[i]->Height());
 		progShrink->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offBloom[i - 1]->GetTexture());
 		glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
 
 	}
 
-	//Blend with data of frame buffer with addition synthesis
+	///Path5: Blend with data of frame buffer with addition synthesis
+
 	const Shader::ProgramPtr& progBlur3x3 = shaderMap.find("Blur3x3")->second;
 
 	glEnable(GL_BLEND);
@@ -800,18 +782,19 @@ void GameEngine::Render() {
 	progBlur3x3->UseProgram();
 
 	for (int i = bloomBufferCount - 1; i > 0; --i) {
-		
+
 		glBindFramebuffer(GL_FRAMEBUFFER, offBloom[i - 1]->GetFramebuffer());
-		glViewport(0, 0, offBloom[i - 1]->width(), offBloom[i - 1]->height());
+		glViewport(0, 0, offBloom[i - 1]->Width(), offBloom[i - 1]->Height());
 		progBlur3x3->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offBloom[i]->GetTexture());
 		glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
 	}
-	
-	//pass4: final output
 
-	//Set Default FrameBuffer
+	///final output:
+
+	const Shader::ProgramPtr& progColorFilter = shaderMap.find("ColorFilter")->second;
+	progColorFilter->UseProgram();
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
 	glDisable(GL_BLEND);
 	glViewport(0, 0, 800, 600);
@@ -832,50 +815,46 @@ void GameEngine::Render() {
 	fontRenderer.Draw();
 
 	{
-		//オフスクリーンバッファの大きさを取得
+		// オフスクリーンバッファの大きさを取得.
 		int width, height;
 		glBindTexture(GL_TEXTURE_2D, offBloom[bloomBufferCount - 1]->GetTexture());
 		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
 		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		//初回(pboIndexForWriting<0の場合)はまだデータがないため、
-		//変換コピーするだけで輝度計算はしない
+		// 初回(pboIndexForWriting<0の場合)はまだデータがないため、
+		// 変換コピーするだけで輝度計算はしない.
 		if (pboIndexForWriting < 0) {
 
-			//オフスクリーンバッファの内容をPBOに変換コピー
+			// オフスクリーンバッファの内容をPBOに変換コピー.
 			const GLuint pboWrite = pbo[1].Id();
 			glBindBuffer(GL_PIXEL_PACK_BUFFER, pboWrite);
 			glBindFramebuffer(GL_FRAMEBUFFER, offBloom[bloomBufferCount - 1]->GetFramebuffer());
 			glReadPixels(0, 0, width, height, GL_RGBA, GL_FLOAT, 0);
-			pboIndexForWriting = 1;
+
 		}
 		else {
 
-			//オフスクリーンバッファの内容をPBOに変換コピー
+			// オフスクリーンバッファの内容をPBOに変換コピー.
 			const GLuint pboWrite = pbo[pboIndexForWriting].Id();
-			//書き込み先
 			glBindBuffer(GL_PIXEL_PACK_BUFFER, pboWrite);
-			//書き込むデータ
 			glBindFramebuffer(GL_FRAMEBUFFER, offBloom[bloomBufferCount - 1]->GetFramebuffer());
-			//0, 0, width, height : 書き込むデータのどこの矩形を描画するか
 			glReadPixels(0, 0, width, height, GL_RGBA, GL_FLOAT, 0);
-				
-			//PBOの内容を読み取って輝度スケールを計算
+
+			// PBOの内容を読み取って輝度スケールを計算.
 			const GLuint pboRead = pbo[pboIndexForWriting ^ 1].Id();
 			glBindBuffer(GL_PIXEL_PACK_BUFFER, pboRead);
 			const GLfloat* p = static_cast<GLfloat*>(glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY));
 			float totalLum = 0;
-			for (int i = 0; i < width*height; ++i) {
+			for (int i = 0; i < width * height; ++i) {
 				totalLum += p[i * 4 + 3];
 			}
+			luminanceScale = 0;
 			luminanceScale = keyValue / std::exp(totalLum / static_cast<float>(width * height));
 			glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
 		}
-
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 	}
-
 }
 

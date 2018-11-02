@@ -26,11 +26,11 @@ class GameEngine {
 public:
 	typedef std::function<void(double)> UpdateFuncType;	//ゲーム状態を更新する関数の型
 
-	///カメラデータ
+														///カメラデータ
 	struct CameraData {
 		glm::vec3 position;
 		glm::vec3 target = { 0, -1, 0 };
-		glm::vec3 up = { 0,0,1 };
+		glm::vec3 up = { 0, 0, 1 };
 	};
 
 	static GameEngine& Instance();
@@ -42,8 +42,8 @@ public:
 	bool LoadTextureFromFile(const char* filename);
 	bool LoadMeshFromFile(const char* filename);
 
-	Entity::Entity* AddEntity(int groupId, const glm::vec3& pos, const char* meshName,const char* texName, Entity::Entity::UpdateFuncType func, const char* shader = nullptr);
-	Entity::Entity* AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName,const char* normalName, Entity::Entity::UpdateFuncType func,const char* shader = nullptr);
+	Entity::Entity* AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, Entity::Entity::UpdateFuncType func, const char* shader = nullptr);
+	Entity::Entity* AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, const char* normalName, Entity::Entity::UpdateFuncType func, const char* shader = nullptr);
 	void RemoveEntity(Entity::Entity*);
 	void RemoveAllEntity();
 	void PushLevel();
@@ -53,29 +53,37 @@ public:
 	///影生成パラメータ
 	struct ShadowParameter {
 		glm::vec3 lightPos;	///< 影を発生させるライトの位置
-		glm::vec3 lightDir; ///< 影を発生させるライトの方向
-		glm::vec3 lightUp;	///< 影を発生させえるライトの上方向
+		glm::vec3 lightDir;	///< 影を発生させるライトの方向
+		glm::vec3 lightUp;	///< 影を発生させるライトの上方向
 		glm::f32 near;		///< 描画範囲のニア平面
 		glm::f32 far;		///< 描画範囲のファー平面
 		glm::vec2 range;	///< 描画範囲の幅と高さ
 	};
-	void Shadow(const ShadowParameter& param) { shadowParameter = param; }
-	const ShadowParameter& Shadow()const { return shadowParameter; }
+	void Shadow(const ShadowParameter& param) {
+		shadowParameter = param;
+		//	std::cout << "shadowParam = Lpos:" << param.lightPos.x << "," << param.lightPos.y << "," << param.lightPos.z << " "
+		//		<< "Ldir:" << param.lightDir.x << "," << param.lightDir.y << "," << param.lightDir.z << " "
+		//		<< "Lup:" << param.lightUp.x << "," << param.lightUp.y << "," << param.lightUp.z << std::endl;
+	}
+	const ShadowParameter& Shadow() const { return shadowParameter; }
 
 	void Light(int index, const Uniform::PointLight& light);
 	const Uniform::PointLight& Light(int index) const;
 	void AmbientLight(const glm::vec4& color);
 	const glm::vec4& AmbientLight() const;
 	void KeyValue(float k) { keyValue = k; }
-	float KeyValue() const { return keyValue; }
-	void Camera(size_t index,const CameraData& cam);
+	const float KeyValue() const { return keyValue; }
+
+	void Camera(size_t index, const CameraData& cam);
 	const CameraData& Camera(size_t index) const;
+
 	void GroupVisibility(int groupId, int index, bool isVisible) {
-		entityBuffer->GroupVisiblity(groupId, index, isVisible);
+		entityBuffer->GroupVisibility(groupId, index, isVisible);
 	}
-	bool GroupVisibility(int groupId, int index)const {
-		return entityBuffer->GroupVisiblity(groupId, index);
+	bool GroupVisibility(int groupId, int index) const {
+		return entityBuffer->GroupVisibility(groupId,index);
 	}
+
 	std::mt19937& Rand();
 	const GamePad& GetGamePad() const;
 
@@ -87,8 +95,18 @@ public:
 	const Entity::CollisionHandlerType& CollisionHandler(int gid0, int gid1) const;
 	void ClearCollisionHandlerList();
 
-	const TexturePtr& GetTexture(const char* filename) const;
+	const TexturePtr& GetTexture(const char* filename) const {
 
+		for (const auto& e : textureStack) {
+			const auto itr = e.find(filename);
+			if (itr != e.end()) {
+				return itr->second;
+			}
+		}
+
+		static const TexturePtr dummy;
+		return dummy;
+	}
 	bool LoadFontFromFile(const char* filename) {
 		return fontRenderer.LoadFromFile(filename);
 	}
@@ -108,12 +126,13 @@ private:
 	GameEngine& operator=(const GameEngine&) = delete;
 	void Update(double  delta);
 	void Render();
-	void RenderShadow() const;
+	void RenderShadow()const;
 
 private:
 
 	bool isInitalized = false;
 	UpdateFuncType updateFunc;
+
 
 	GLuint vbo = 0;
 	GLuint ibo = 0;
@@ -123,7 +142,7 @@ private:
 	int pboIndexForWriting = -1;
 	float luminanceScale = 1.0f;
 	float keyValue = 0.18f;
-	
+
 	UniformBufferPtr uboLight;
 	UniformBufferPtr uboPostEffect;
 	std::unordered_map<std::string, Shader::ProgramPtr> shaderMap;
@@ -133,7 +152,6 @@ private:
 	OffscreenBufferPtr offBloom[bloomBufferCount];
 	OffscreenBufferPtr offDepth;
 	ShadowParameter shadowParameter;
-
 
 	//std::unordered_map<std::string, TexturePtr> textureBuffer;
 	using TextureLevel = std::unordered_map<std::string, TexturePtr>;

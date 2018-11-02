@@ -18,21 +18,22 @@ namespace Entity {
 	*	@param entity
 	*	@param ubo
 	*	@param matViewProjection
+	*	@param viewFlags
 	*/
-	void UpdateUniformVertexData(Entity& entity, void*ubo, const glm::mat4* matViewProjection,const glm::mat4& matDepthVP,glm::u32 viewFlags) {
+	void UpdateUniformVertexData(Entity& entity, void*ubo, const glm::mat4* matVP, const glm::mat4& matDepthVP, glm::u32 viewFlags) {
 
 		Uniform::VertexData data;
 		data.matModel = entity.CalcModelMatrix();
 		data.matNormal = glm::mat4_cast(entity.Rotation());
 
+		//ビュー x 射影 行列の計算
 		for (int i = 0; i < Uniform::maxViewCount; ++i) {
-			if (viewFlags & (1 << i)) {
-
-				data.matMVP[i] = matViewProjection[i] * data.matModel;
-				//auto t = matViewProjection[i] * data.matModel;
-				
+			//viewFlag == falseの時は更新しない
+			if (viewFlags & (1U << i)) {
+				data.matMVP[i] = matVP[i] * data.matModel;
 			}
 		}
+
 		data.matDepthMVP = matDepthVP * data.matModel;
 		data.color = entity.Color();
 		memcpy(ubo, &data, sizeof(data));
@@ -130,8 +131,9 @@ namespace Entity {
 			offset += ubSizePerEntity;
 		}
 		p->collisionHandlerList.reserve(maxGroupId);
-		for (auto& e : p->visiblityFlags) {
-			e = 1;
+
+		for (auto& e : p->visibilityFlags) {
+			e = 1;	//1カメ可視可能
 		}
 
 		return p;
@@ -168,6 +170,7 @@ namespace Entity {
 		LinkEntity* entity = static_cast<LinkEntity*>(freeList.prev);
 		activeList[groupId].Insert(entity);
 
+		entity->name = mesh->Name();
 		entity->groupId = groupId;
 		entity->position = position;
 		entity->rotation = glm::quat();
@@ -205,7 +208,7 @@ namespace Entity {
 			itrUpdate = p->prev;
 		}
 		if (p == itrUpdateRhs) {
-itrUpdateRhs = p->prev;
+			itrUpdateRhs = p->prev;
 		}
 
 		freeList.Insert(p);
@@ -228,6 +231,7 @@ itrUpdateRhs = p->prev;
 				RemoveEntity(static_cast<LinkEntity*>(activeList[groupId].next));
 			}
 		}
+
 	}
 
 	/**
@@ -247,13 +251,9 @@ itrUpdateRhs = p->prev;
 	*	@param matView	View行列
 	*	@param matProj	Projection行列
 	*/
-	void Buffer::Update(double delta, const glm::mat4* matView, const glm::mat4& matProj,const glm::mat4& matDepthVP) {
+	void Buffer::Update(double delta, const glm::mat4* matView, const glm::mat4& matProj, const glm::mat4& matDepthVP) {
 
-		glm::mat4 matVP[Uniform::maxViewCount];
-		for (int i = 0; i < Uniform::maxViewCount; ++i) {
-			matVP[i] = matProj * matView[i];
-		}
-
+		//エンティティの更新処理
 		for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
 			for (itrUpdate = activeList[groupId].next; itrUpdate != &activeList[groupId]; itrUpdate = itrUpdate->next) {
 
@@ -269,7 +269,7 @@ itrUpdateRhs = p->prev;
 			}
 		}
 
-		//衝突判定を実行する
+		//衝突判定処理
 		for (const auto& e : collisionHandlerList) {
 			if (!e.handler) {
 				continue;
@@ -294,12 +294,18 @@ itrUpdateRhs = p->prev;
 		itrUpdate = nullptr;
 		itrUpdateRhs = nullptr;
 
+		//UBOの更新処理
 		uint8_t* p = static_cast<uint8_t*>(ubo->MapBuffer());
-	//	const glm::mat4 matVP = matProj * matView;
+		glm::mat4 matVP[Uniform::maxViewCount];
+		for (int i = 0; i < Uniform::maxViewCount; ++i) {
+			//カメラごとの行列計算処理
+			matVP[i] = matProj * matView[i];
+		}
+		//groupIdごとにVertexData更新処理
 		for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
 			for (itrUpdate = activeList[groupId].next; itrUpdate != &activeList[groupId]; itrUpdate = itrUpdate->next) {
 				LinkEntity& e = *static_cast<LinkEntity*>(itrUpdate);
-				UpdateUniformVertexData(e, p + e.uboOffset, matVP, matDepthVP, visiblityFlags[groupId]);
+				UpdateUniformVertexData(e, p + e.uboOffset, matVP, matDepthVP, visibilityFlags[groupId]);
 			}
 		}
 		ubo->UnmapBuffer();
@@ -314,10 +320,10 @@ itrUpdateRhs = p->prev;
 
 		meshBuffer->BindVAO();
 		for (int viewIndex = 0; viewIndex < Uniform::maxViewCount; ++viewIndex) {
-
 			for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
 
-				if (!(visiblityFlags[groupId] & (1 << viewIndex))) {
+				if (!(visibilityFlags[groupId] & (1 << viewIndex))) {
+					//見えないエンティティは描画しない
 					continue;
 				}
 
@@ -327,10 +333,10 @@ itrUpdateRhs = p->prev;
 					if (e.mesh && e.texture && e.program) {
 
 						e.program->UseProgram();
+						//e.program->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, e.texture->Id());
 						for (size_t i = 0; i < sizeof(e.texture) / sizeof(e.texture[0]); ++i) {
 
-							if (e.texture[i] != nullptr)
-								e.program->BindTexture(GL_TEXTURE0 + i, GL_TEXTURE_2D, e.texture[i]->Id());
+							e.program->BindTexture(GL_TEXTURE0 + i, GL_TEXTURE_2D, e.texture[i]->Id());
 						}
 						e.program->SetViewIndex(viewIndex);
 						ubo->BindBufferRange(e.uboOffset, ubSizePerEntity);
@@ -345,27 +351,23 @@ itrUpdateRhs = p->prev;
 	*	アクティブなエンティティを描画する
 	*
 	*	@param meshBuffer 描画に使用するメッシュバッファへのポインタ
+	*	tips シェーダの設定は外部で行うこと
 	*/
-	void Buffer::DrawDepth(const Mesh::BufferPtr& meshBuffer)const {
+	void Buffer::DrawDepth(const Mesh::BufferPtr& meshBuffer) const {
 
 		meshBuffer->BindVAO();
 		for (int viewIndex = 0; viewIndex < Uniform::maxViewCount; ++viewIndex) {
 			for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
-
-				if (!(visiblityFlags[groupId] & (1 << viewIndex))) {
+				if (!(visibilityFlags[groupId] & (1 << viewIndex))) {
 					continue;
 				}
-
-				for (const Link* itr = activeList[groupId].next; itr != &activeList[groupId]; itr = itr->next) {
-
+				for (const Link* itr = activeList[groupId].next; itr != &activeList[groupId];
+					itr = itr->next) {
 					const LinkEntity& e = *static_cast<const LinkEntity*>(itr);
-					if (e.mesh && e.texture&& e.program) {
-
+					if (e.mesh && e.texture && e.program) {
 						for (size_t i = 0; i < sizeof(e.texture) / sizeof(e.texture[0]); ++i) {
-							
-							if (e.texture[i]) {
-								e.program->BindTexture(GL_TEXTURE0 + i, GL_TEXTURE_2D, e.texture[i]->Id());
-							}
+							e.program->BindTexture(GL_TEXTURE0 + i, GL_TEXTURE_2D,
+								e.texture[i]->Id());
 						}
 						ubo->BindBufferRange(e.uboOffset, ubSizePerEntity);
 						e.mesh->Draw(meshBuffer);
@@ -400,7 +402,7 @@ itrUpdateRhs = p->prev;
 			[&](const CollisionHandlerInfo& e) {
 			return e.groupId[0] == gid0 && e.groupId[1] == gid1; });
 		if (itr == collisionHandlerList.end()) {
-			collisionHandlerList.push_back({ {gid0,gid1},handler });
+			collisionHandlerList.push_back({ { gid0,gid1 },handler });
 		}
 		else {
 			itr->handler = handler;
@@ -409,7 +411,7 @@ itrUpdateRhs = p->prev;
 
 	/**
 	*	衝突解決ハンドラを取得する
-	*	
+	*
 	*	@param gid0	衝突対象のグループID
 	*	@param gid1 衝突対象のグループID
 	*
@@ -420,7 +422,7 @@ itrUpdateRhs = p->prev;
 		if (gid0 > gid1) {
 			std::swap(gid0, gid1);
 		}
-		auto itr =std::find_if(collisionHandlerList.begin(),collisionHandlerList.end(),
+		auto itr = std::find_if(collisionHandlerList.begin(), collisionHandlerList.end(),
 			[&](const CollisionHandlerInfo& e) {
 			return e.groupId[0] == gid0 && e.groupId[1] == gid1; });
 		if (itr == collisionHandlerList.end()) {

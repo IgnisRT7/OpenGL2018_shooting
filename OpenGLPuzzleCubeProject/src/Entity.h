@@ -22,14 +22,14 @@ namespace Entity {
 
 	/// 衝突解決ハンドラポインタ型
 	typedef std::shared_ptr<Buffer> BufferPtr;	///< エンティティバッファ
-	
-	/// 衝突判定ハンドラ型
+
+												/// 衝突判定ハンドラ型
 	using CollisionHandlerType = std::function<void(Entity&, Entity&) >;
 
 	static const int maxGroupId = 31;	///< グループIDの最大値
-	/**
-	*	衝突判定形状
-	*/
+										/**
+										*	衝突判定形状
+										*/
 	struct CollisionData {
 		glm::vec3 min;
 		glm::vec3 max;
@@ -44,10 +44,10 @@ namespace Entity {
 
 	public:
 		/// 状態更新関数型.
-		using UpdateFuncType = std::function<void(Entity&,double)>;
+		using UpdateFuncType = std::function<void(Entity&, double)>;
 
 		void Position(const glm::vec3& v) { position = v; }
-		const glm::vec3& Position() const { return position;}
+		const glm::vec3& Position() const { return position; }
 		void Rotation(const glm::quat& q) { rotation = q; }
 		const glm::quat& Rotation() const { return rotation; }
 		void Scale(const glm::vec3& v) { scale = v; }
@@ -106,21 +106,21 @@ namespace Entity {
 		Entity* AddEntity(int groupId, const glm::vec3& pos, const Mesh::MeshPtr& m, const TexturePtr t[2], const Shader::ProgramPtr& p, Entity::UpdateFuncType func);
 		void RemoveEntity(Entity* entity);
 		void RemoveAllEntity();
-		void Update(double delta, const glm::mat4* matView, const glm::mat4& matProj,const glm::mat4& matDepthVP);
+		void Update(double delta, const glm::mat4* matView, const glm::mat4& matProj, const glm::mat4& matDepthVP);
+
 		void Draw(const Mesh::BufferPtr& meshBuffer) const;
-		void DrawDepth(const Mesh::BufferPtr& meshBufferr)const;
-		void GroupVisiblity(int groupId, int cameraIndex, bool isVisible) {
+		void DrawDepth(const Mesh::BufferPtr& meshBuffer)const;
+		void GroupVisibility(int groupId, int cameraIndex, bool isVisible) {
 			if (isVisible) {
-				visiblityFlags[groupId] |= (1U << cameraIndex);
+				visibilityFlags[groupId] |= (1U << cameraIndex);
 			}
 			else {
-				visiblityFlags[groupId] &= (1U << cameraIndex);
+				visibilityFlags[groupId] &= ~(1U << cameraIndex);
 			}
 		}
-		bool GroupVisiblity(int groupId, int cameraIndex) const {
-			return visiblityFlags[groupId] & (1U << cameraIndex);
+		bool GroupVisibility(int groupId, int cameraIndex) {
+			return visibilityFlags[groupId] & (1U << cameraIndex);
 		}
-
 
 		void CollisionHandler(int gid0, int gid1, CollisionHandlerType hander);
 		const CollisionHandlerType& CollisionHandler(int gid0, int gid1) const;
@@ -153,7 +153,7 @@ namespace Entity {
 		size_t bufferSize;	///< エンティティの総数
 		Link freeList;		///< 未使用のエンティティのリンクリスト
 		Link activeList[maxGroupId + 1];	///< 使用中のエンティティのリンクリスト
-		glm::u32 visiblityFlags[maxGroupId + 1];
+		glm::u32 visibilityFlags[maxGroupId + 1];///<	
 		GLsizeiptr ubSizePerEntity;	///< 各エンティティが使えるUniformBufferのバイト数
 		UniformBufferPtr ubo;	///< エンティティ用UBO
 		Link* itrUpdate = nullptr;	///< UpdateとRemoveEntityの相互作用に対応っするためのイテレータ

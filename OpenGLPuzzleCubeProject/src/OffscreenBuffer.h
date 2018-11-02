@@ -7,7 +7,7 @@
 #include "Texture.h"
 
 class OffscreenBuffer;
-using OffscreenBufferPtr = std::shared_ptr<OffscreenBuffer>; 
+using OffscreenBufferPtr = std::shared_ptr<OffscreenBuffer>;
 
 /**
 *	オフスクリーンバッファ
@@ -15,12 +15,12 @@ using OffscreenBufferPtr = std::shared_ptr<OffscreenBuffer>;
 class OffscreenBuffer {
 public:
 
-	static OffscreenBufferPtr Create(int w, int h,GLenum f = GL_RGBA8);
+	static OffscreenBufferPtr Create(int w, int h, GLenum f = GL_RGBA8);
 	GLuint GetFramebuffer() const { return framebuffer; }
 	GLuint GetTexture() const { return tex->Id(); }
 
-	GLuint width() const { return tex->Width(); }
-	GLuint height() const { return tex->Height(); }
+	GLuint Width() const { return tex->Width(); }
+	GLuint Height() const { return tex->Height(); }
 
 private:
 

@@ -35,12 +35,12 @@ public:
 	VertexArrayObject(const VertexArrayObject&) = delete;
 	VertexArrayObject& operator=(const VertexArrayObject&) = delete;
 
-	void Init(GLuint vbo,GLuint ibo);
+	void Init(GLuint vbo, GLuint ibo);
 	void Destroy();
 	void VertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, size_t offset);
 	void Bind() const;
 	void UnBind() const;
-	
+
 private:
 
 	GLuint id = 0;

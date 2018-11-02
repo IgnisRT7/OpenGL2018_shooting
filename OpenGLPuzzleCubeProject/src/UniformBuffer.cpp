@@ -33,7 +33,7 @@ UniformBufferPtr UniformBuffer::Create(GLsizeiptr size, GLuint bindingPoint, con
 	if (result != GL_NO_ERROR) {
 		std::cerr << "ERROR: UBO '" << name << "'の作成に失敗" << std::endl;
 		return {};
-	}  
+	}
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	p->size = size;
@@ -47,7 +47,7 @@ UniformBufferPtr UniformBuffer::Create(GLsizeiptr size, GLuint bindingPoint, con
 *	デストラクタ
 */
 UniformBuffer::~UniformBuffer() {
-	
+
 	if (ubo) {
 		glDeleteBuffers(1, &ubo);
 	}
@@ -77,7 +77,7 @@ bool UniformBuffer::BUfferSubData(const GLvoid* data, GLintptr offset, GLsizeipt
 	if (offset == 0 && size == 0) {
 		size = this->size;
 	}
-	glBindBuffer(GL_UNIFORM_BUFFER,ubo);
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
 	glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
 	return true;
 }
@@ -101,7 +101,7 @@ void UniformBuffer::BindBufferRange(GLintptr offset, GLsizeiptr size) const
 void* UniformBuffer::MapBuffer() const
 {
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
-	return glMapBufferRange(GL_UNIFORM_BUFFER, 0, size,GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+	return glMapBufferRange(GL_UNIFORM_BUFFER, 0, size, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 }
 
 /**
