@@ -109,6 +109,10 @@ namespace Shader {
 		for (GLint i = 0; i < samperCount; ++i) {
 			glUniform1i(samplerLocation + i, i);
 		}
+
+		if (depthSamplerLocation >= 0) {
+			glUniform1i(depthSamplerLocation, 2);
+		}
 	}
 
 	/**
