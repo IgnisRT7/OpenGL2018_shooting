@@ -72,14 +72,6 @@ static const RenderingPart renderingParts[] = {
 };
 
 /**
-*	部分描画データリスト
-*/
-static const RenderingPart RenderingParts[] = {
-	MakeRenderingPart(12,0),
-	MakeRenderingPart(6,12),
-};
-
-/**
 *	Vertex Buffer Object	を作成する
 *
 *	@param size 頂点データのサイズ
@@ -95,6 +87,7 @@ GLuint CreateVBO(GLsizeiptr size, const GLvoid* data) {
 	glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	return vbo;
+
 }
 
 /**
@@ -718,7 +711,7 @@ void GameEngine::Render() {
 
 	///Path1: Draw shadow.
 
-	RenderShadow();
+	//RenderShadow(); 
 
 	///Path2: Draw entity.
 
