@@ -44,9 +44,9 @@ namespace GameState {
 			}
 
 			//TODO : デバッグ用、敵を透明化させる
-			//auto colorValue = entity.Color();
-			//colorValue.a = 0;
-			//entity.Color(colorValue);
+			auto colorValue = entity.Color();
+			colorValue.a = 0;
+			entity.Color(colorValue);
 
 			//entity.Scale({ 2,5,2 });
 			//entity.Color({ 1,1,1,0.4f });
@@ -82,6 +82,7 @@ namespace GameState {
 	struct UpdateBlast {
 
 		void operator()(Entity::Entity& entity, double delta) {
+			//delta *= 0.2f;
 			timer += delta;
 
 			if (timer >= 0.5) {
@@ -257,14 +258,22 @@ namespace GameState {
 			stageTimer = stageTime;
 			game.Camera(0, { glm::vec4(0,30,0,1),glm::vec3(0,0,10),glm::vec3(0,0,1) });
 			game.Camera(1, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,0,1) });
-			game.GroupVisibility(EntityGroupId_Background, 0, false);
-			game.GroupVisibility(EntityGroupId_Background, 1, true);
+			game.GroupVisibility(EntityGroupId_Background, 0, true);
+			game.GroupVisibility(EntityGroupId_Background, 1, false);
+
+			game.GroupVisibility(EntityGroupId_Enemy, 0, false);
+			game.GroupVisibility(EntityGroupId_Enemy, 0, true);
+
+			game.GroupVisibility(EntityGroupId_Player, 0, false);
+			game.GroupVisibility(EntityGroupId_Player, 0, true);
+
+			game.GroupVisibility(EntityGroupId_Others, 0, false);
+			game.GroupVisibility(EntityGroupId_Others, 0, true);
 
 			game.AmbientLight(glm::vec4(0.05f, 0.1f, 0.2f, 1));
 			game.Light(0, { glm::vec4(40,100,10,1),glm::vec4(12000,12000,12000,1) });
 			game.KeyValue(0.24);
 
-			//TODO: エンティティの配置関係で影の描画に影響あるのか？
 			//シャドウの設定
 			GameEngine::ShadowParameter shadowParam;
 			shadowParam.lightPos = glm::vec3(20, 50, 50);
@@ -354,6 +363,7 @@ namespace GameState {
 
 		interval -= delta;
 
+		//敵の出現処理
 		if (interval <= 0) {
 
 			const std::uniform_real_distribution<> rndInterval(0.5f, 1);
@@ -385,10 +395,10 @@ namespace GameState {
 		game.AddString(glm::vec2(-0.9, 1.0f), player.c_str());
 
 		//カメラ移動処理
-		GameEngine::CameraData camera = game.Camera(1);
+		GameEngine::CameraData camera = game.Camera(0);
 		float cameraMoveValue = fmod(static_cast<float>(stageTimer), 45.0f) * (glm::radians(360.0f) / 45.0f);
 		camera.position.x = glm::cos(cameraMoveValue) * 5.0f;
-		game.Camera(1, camera);
+		game.Camera(0, camera);
 	}
 
 }
