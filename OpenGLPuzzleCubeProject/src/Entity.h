@@ -35,6 +35,12 @@ namespace Entity {
 		glm::vec3 max;
 	};
 
+	struct TransformData {
+		glm::vec3 position;	///	座標
+		glm::vec3 scale;	/// 拡縮
+		glm::quat rotation;	/// 回転
+	};
+
 	/**
 	* エンティティ.
 	*/
@@ -43,26 +49,44 @@ namespace Entity {
 		friend class Buffer;
 
 	public:
+		///transfom parameters getter and setter
+
+		void Position(const glm::vec3& v) { transform.position = v; }
+		const glm::vec3& Position() const { return transform.position; }
+		void LocalPosition(const glm::vec3& v) { localTransform.position = v; }
+		const glm::vec3& WorldPosition() const { return localTransform.position; }
+
+		void Rotation(const glm::quat& q) { transform.rotation = q; }
+		const glm::quat& Rotation() const { return transform.rotation; }
+		void LocalRotation(const glm::vec3& q) { localTransform.rotation = q; }
+		const glm::quat& LocalRotation() const { return localTransform.rotation; }
+
+		void Scale(const glm::vec3& v) { transform.scale = v; }
+		const glm::vec3& Scale() const { return transform.scale; }
+		void LocalScale(const glm::vec3& v) { localTransform.scale = v; }
+		const glm::vec3& LocalScale() const { return localTransform.scale; }
+
+		void Transform(const TransformData t) { transform = t; }
+		const TransformData Transform() const { return transform; }
+		void LocalTransform(const TransformData t) { localTransform = t; }
+		const TransformData LocalTransform() const { return localTransform; }
+
+		glm::mat4 CalcModelMatrix() const;
+
+	public:
+
 		/// 状態更新関数型.
 		using UpdateFuncType = std::function<void(Entity&, double)>;
-
-		void Position(const glm::vec3& v) { position = v; }
-		const glm::vec3& Position() const { return position; }
-		void Rotation(const glm::quat& q) { rotation = q; }
-		const glm::quat& Rotation() const { return rotation; }
-		void Scale(const glm::vec3& v) { scale = v; }
-		const glm::vec3& Scale() const { return scale; }
-		void Velocity(const glm::vec3& v) { velocity = v; }
-		const glm::vec3& Velocity() const { return velocity; }
-		void Color(const glm::vec4& c) { color = c; }
-		const glm::vec4& Color() const { return color; }
 
 		void UpdateFunc(const UpdateFuncType& func) { updateFunc = func; }
 		const UpdateFuncType& UpdateFunc() const { return updateFunc; }
 		void Collision(const CollisionData& c) { colLocal = c; }
 		const CollisionData& Collision() const { return colLocal; }
 
-		glm::mat4 CalcModelMatrix() const;
+		void Velocity(const glm::vec3& v) { velocity = v; }
+		const glm::vec3& Velocity() const { return velocity; }
+		void Color(const glm::vec4& c) { color = c; }
+		const glm::vec4& Color() const { return color; }
 
 		int GroupId() const { return groupId; }
 		void Destroy();
@@ -78,9 +102,9 @@ namespace Entity {
 		int groupId = -1;			///< グループID
 		Buffer* pBuffer = nullptr;	///< 生成元のBufferクラスへのポインタ
 
-		glm::vec3 position;			///< 座標.
-		glm::vec3 scale = glm::vec3(1, 1, 1); ///< 拡大率.
-		glm::quat rotation;			///< 回転.
+		TransformData transform;	///< トランスフォームデータ(ワールド空間)
+		TransformData localTransform;///< トランスフォームデータ(ローカル空間)
+
 		glm::vec3 velocity;			///< 速度.
 		glm::vec4 color = glm::vec4(1, 1, 1, 1);///< 色
 		std::string name;

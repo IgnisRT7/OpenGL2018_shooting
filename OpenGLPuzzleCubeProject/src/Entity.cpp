@@ -46,9 +46,9 @@ namespace Entity {
 	*/
 	glm::mat4 Entity::CalcModelMatrix() const
 	{
-		const glm::mat4 t = glm::translate(glm::mat4(), position);
-		const glm::mat4 r = glm::mat4_cast(rotation);
-		const glm::mat4 s = glm::scale(glm::mat4(), scale);
+		const glm::mat4 t = glm::translate(glm::mat4(), transform.position);
+		const glm::mat4 r = glm::mat4_cast(transform.rotation);
+		const glm::mat4 s = glm::scale(glm::mat4(), transform.scale);
 		return t * r * s;
 	}
 
@@ -69,8 +69,7 @@ namespace Entity {
 	*
 	*	自分はどこにも接続されていない状態になる
 	*/
-	void Buffer::Link::Remove()
-	{
+	void Buffer::Link::Remove(){
 		next->prev = prev;
 		prev->next = next;
 		prev = this;
@@ -172,9 +171,7 @@ namespace Entity {
 
 		entity->name = mesh->Name();
 		entity->groupId = groupId;
-		entity->position = position;
-		entity->rotation = glm::quat();
-		entity->scale = glm::vec3(1, 1, 1);
+		entity->transform = TransformData({ position,glm::vec3(1,1,1),glm::quat() });
 		entity->velocity = glm::vec3();
 		entity->color = glm::vec4(1);
 		entity->mesh = mesh;
@@ -258,14 +255,14 @@ namespace Entity {
 			for (itrUpdate = activeList[groupId].next; itrUpdate != &activeList[groupId]; itrUpdate = itrUpdate->next) {
 
 				LinkEntity& e = *static_cast<LinkEntity*>(itrUpdate);
-				e.position += e.velocity * static_cast<float>(delta);
+				e.transform.position += e.velocity * static_cast<float>(delta);
 
 				if (e.updateFunc) {
 					e.updateFunc(e, delta);
 				}
 
-				e.colWorld.min = e.colLocal.min + e.position;
-				e.colWorld.max = e.colLocal.max + e.position;
+				e.colWorld.min = e.colLocal.min + e.transform.position;
+				e.colWorld.max = e.colLocal.max + e.transform.position;
 			}
 		}
 
@@ -321,6 +318,7 @@ namespace Entity {
 		meshBuffer->BindVAO();
 		for (int viewIndex = 0; viewIndex < Uniform::maxViewCount; ++viewIndex) {
 			for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
+				//std::cout << "groupID: " << groupId << std::endl;
 
 				if (!(visibilityFlags[groupId] & (1 << viewIndex))) {
 					//見えないエンティティは描画しない
@@ -331,6 +329,8 @@ namespace Entity {
 
 					const LinkEntity& e = *static_cast<const LinkEntity*>(itr);
 					if (e.mesh && e.texture && e.program) {
+
+						//std::cout << "DrawEntity name: " << e.name << std::endl;
 
 						e.program->UseProgram();
 						//e.program->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, e.texture->Id());
