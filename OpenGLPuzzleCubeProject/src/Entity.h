@@ -71,7 +71,8 @@ namespace Entity {
 		void LocalTransform(const TransformData t) { localTransform = t; }
 		const TransformData LocalTransform() const { return localTransform; }
 
-		glm::mat4 CalcModelMatrix() const;
+		glm::mat4 CalcModelMatrix();
+		glm::mat4 TransformMatrix() const { return transformMatrix; }
 
 	public:
 
@@ -91,6 +92,8 @@ namespace Entity {
 		int GroupId() const { return groupId; }
 		void Destroy();
 
+		void AddChild(Entity& e);
+
 	private:
 		Entity() = default;
 		~Entity() = default;
@@ -99,11 +102,16 @@ namespace Entity {
 
 	private:
 
+		Entity* parent = nullptr;				///< 親のエンティティ
+		std::vector<Entity*> children;	///< 子のエンティティ
+
 		int groupId = -1;			///< グループID
 		Buffer* pBuffer = nullptr;	///< 生成元のBufferクラスへのポインタ
 
 		TransformData transform;	///< トランスフォームデータ(ワールド空間)
 		TransformData localTransform;///< トランスフォームデータ(ローカル空間)
+
+		glm::mat4 transformMatrix;	
 
 		glm::vec3 velocity;			///< 速度.
 		glm::vec4 color = glm::vec4(1, 1, 1, 1);///< 色
@@ -131,6 +139,8 @@ namespace Entity {
 		void RemoveEntity(Entity* entity);
 		void RemoveAllEntity();
 		void Update(double delta, const glm::mat4* matView, const glm::mat4& matProj, const glm::mat4& matDepthVP);
+
+	//	Entity& GetEntityByName(std::string name);
 
 		void Draw(const Mesh::BufferPtr& meshBuffer) const;
 		void DrawDepth(const Mesh::BufferPtr& meshBuffer)const;

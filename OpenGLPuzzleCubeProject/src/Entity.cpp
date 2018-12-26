@@ -23,6 +23,9 @@ namespace Entity {
 	void UpdateUniformVertexData(Entity& entity, void*ubo, const glm::mat4* matVP, const glm::mat4& matDepthVP, glm::u32 viewFlags) {
 
 		Uniform::VertexData data;
+
+		//TODO: ここで行列計算させずに別で更新処理を設ける。計算済みの行列を受け取るだけにする
+//		data.matModel = entity.TransformMatrix();
 		data.matModel = entity.CalcModelMatrix();
 		data.matNormal = glm::mat4_cast(entity.Rotation());
 
@@ -44,12 +47,20 @@ namespace Entity {
 	*
 	*	@return TRS行列
 	*/
-	glm::mat4 Entity::CalcModelMatrix() const
+	glm::mat4 Entity::CalcModelMatrix()
 	{
+		glm::mat4 parentMatrix = glm::mat4(1);
+		if (parent) {
+			parentMatrix = parent->transformMatrix;
+		}
+			
 		const glm::mat4 t = glm::translate(glm::mat4(), transform.position);
 		const glm::mat4 r = glm::mat4_cast(transform.rotation);
 		const glm::mat4 s = glm::scale(glm::mat4(), transform.scale);
-		return t * r * s;
+
+		transformMatrix = (t * r * s) * parentMatrix;
+
+		return transformMatrix;
 	}
 
 	/**
@@ -132,7 +143,7 @@ namespace Entity {
 		p->collisionHandlerList.reserve(maxGroupId);
 
 		for (auto& e : p->visibilityFlags) {
-			e = 1;	//1カメ可視可能
+			e = 1;	
 		}
 
 		return p;
@@ -291,13 +302,23 @@ namespace Entity {
 		itrUpdate = nullptr;
 		itrUpdateRhs = nullptr;
 
-		//UBOの更新処理
+		//カメラの変換行列(ビュー・射影)の計算処理
 		uint8_t* p = static_cast<uint8_t*>(ubo->MapBuffer());
 		glm::mat4 matVP[Uniform::maxViewCount];
 		for (int i = 0; i < Uniform::maxViewCount; ++i) {
 			//カメラごとの行列計算処理
 			matVP[i] = matProj * matView[i];
 		}
+
+		/*	未実装
+		//ワールド変換行列の計算処理
+		for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
+			for (itrUpdate = activeList[groupId].next; itrUpdate != &activeList[groupId]; itrUpdate = itrUpdate->next) {
+				LinkEntity& e = *static_cast<LinkEntity*>(itrUpdate);
+
+			}
+		}*/
+
 		//groupIdごとにVertexData更新処理
 		for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
 			for (itrUpdate = activeList[groupId].next; itrUpdate != &activeList[groupId]; itrUpdate = itrUpdate->next) {

@@ -186,6 +186,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		return false;
 	}
 
+	//Create VAO for Screen
 	vbo = CreateVBO(sizeof(vertices), vertices);
 	ibo = CreateIBO(sizeof(indices), indices);
 	vao = CreateVAO(vbo, ibo);
@@ -214,6 +215,12 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		return false;
 	}
 
+	//ビューデプスバッファの作成
+	offViewDepth = OffscreenBuffer::Create(2048, 2048, GL_DEPTH_COMPONENT16);
+	if (!offViewDepth) {
+		return false;
+	}
+
 	//テクスチャサイズ取得
 	int offWidth, offHeight;
 	glBindTexture(GL_TEXTURE_2D, offBloom[bloomBufferCount - 1]->GetTexture());
@@ -226,7 +233,6 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	for (auto& e : pbo) {
 		e.Init(GL_PIXEL_PACK_BUFFER, pboByteSize, nullptr, GL_DYNAMIC_READ);
 	}
-
 
 	if (!vbo || !ibo || !vao || !uboLight || !uboPostEffect) {
 
@@ -253,6 +259,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		}
 		shaderMap.insert(std::make_pair(std::string(e[0]), program));
 	}
+
 	//Uniformブロックのバインド
 	shaderMap["Tutorial"]->UniformBlockBinding("VertexData", 0);
 	shaderMap["Tutorial"]->UniformBlockBinding("LightData", 1);
@@ -689,6 +696,7 @@ void GameEngine::Update(double delta) {
 */
 void GameEngine::RenderShadow() const {
 
+	//シャドウバッファを描画先へ紐づけ
 	glBindFramebuffer(GL_FRAMEBUFFER, offDepth->GetFramebuffer());
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
@@ -711,7 +719,7 @@ void GameEngine::Render() {
 
 	///Path1: Draw shadow.
 
-	//RenderShadow(); 
+	RenderShadow(); 
 
 	///Path2: Draw entity.
 

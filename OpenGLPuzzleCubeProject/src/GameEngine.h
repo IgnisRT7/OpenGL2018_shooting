@@ -151,6 +151,7 @@ private:
 	static const int bloomBufferCount = 4;
 	OffscreenBufferPtr offBloom[bloomBufferCount];
 	OffscreenBufferPtr offDepth;
+	OffscreenBufferPtr offViewDepth;
 	ShadowParameter shadowParameter;
 
 	//std::unordered_map<std::string, TexturePtr> textureBuffer;

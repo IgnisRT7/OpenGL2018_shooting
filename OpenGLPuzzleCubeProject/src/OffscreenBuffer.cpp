@@ -79,3 +79,48 @@ OffscreenBuffer::~OffscreenBuffer() {
 		glDeleteRenderbuffers(1, &depthbuffer);
 	}
 }
+
+
+///Gバッファ作成テスト
+
+bool GBuffer::Init(unsigned int WindowWidth, unsigned int WindowHeight) {
+
+
+	auto p = std::make_shared<GBuffer>();
+
+	//
+	glGenFramebuffers(1, &p->m_fbo);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER,p->m_fbo);
+
+	//テクスチャの作成(作成数 = マスキングテクスチャ列挙の数)
+	glGenTextures(GBUFFER_NUM_TEXTURES, p->m_textures);
+	glGenTextures(1, &p->m_depthTexture);
+
+	//
+	for (unsigned int i = 0; i < GBUFFER_NUM_TEXTURES; i++) {
+
+		//テクスチャサイズの設定とフレームバッファへの割り当て
+		glBindTexture(GL_TEXTURE_2D, p->m_textures[i]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, WindowWidth, WindowHeight, 0, GL_RGB, GL_FLOAT, NULL);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, p->m_textures[i], 0);
+	}
+
+	glBindTexture(GL_TEXTURE_2D, p->m_depthTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, WindowWidth, WindowHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, p->m_depthTexture, 0);
+
+	GLenum DrawBuffers[] = { GL_COLOR_ATTACHMENT0,GL_COLOR_ATTACHMENT1,GL_COLOR_ATTACHMENT2,GL_COLOR_ATTACHMENT3 };
+	glDrawBuffers(sizeof(DrawBuffers) / sizeof(GLenum), DrawBuffers);
+
+	GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (Status != GL_FRAMEBUFFER_COMPLETE) {
+		std::cerr << "ERROR: gbuffer::Draw() error" << std::endl;
+		return false;
+	}
+
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	return true;
+
+
+
+}

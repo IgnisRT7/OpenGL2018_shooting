@@ -33,6 +33,26 @@ uniform sampler2DShadow depthSampler;			//‰e‚ÌƒTƒ“ƒvƒ‰
 const float shininess =2;
 const float normFactor = (shininess + 2) * (1.0 / (2.0 * 3.14152926));
 
+const float softShadowScale = 1.0 / 1600.0;
+const vec3 poissonDisc[4] = vec3[](
+  vec3( -0.94201624, -0.39906216, 0 ) * softShadowScale,
+  vec3( 0.94558609, -0.76890725, 0 ) * softShadowScale,
+  vec3( -0.094184101, -0.92938870, 0 ) * softShadowScale,
+  vec3( 0.34495938, 0.29387760, 0 ) * softShadowScale
+  );
+
+  //‰e”ä—¦‚ðŽæ“¾‚·‚é
+  float ShadowRatio(float bias){
+
+	vec3 coord = inDepthCoord;
+	coord.z -= bias;
+	float shadow = 0.0;
+	for(int i = 0; i < 4; ++i){
+		shadow += texture(depthSampler, coord + poissonDisc[i]);
+	}
+	return shadow * (1.0 / 4.0) * 0.5 + 0.5;
+}
+
 void main() {
 
   vec3 normal = texture(colorSampler[1], inTexCoord).xyz * 2 - 1;
@@ -53,12 +73,12 @@ void main() {
 
   float cosTheta = clamp(dot(normal,normalize(lightData.light[0].position.xyz - inWorldPosition)), 0, 1);
   float depthBias = 0.005 * tan(acos(cosTheta));
-  float shadow = texture(depthSampler, inDepthCoord + vec3(0, 0, -depthBias)) * 0.5 + 0.5;
+  float shadow = ShadowRatio(depthBias);
 
   fragColor.rgb *= lightData.ambientColor.rgb + lightColor * shadow;
   fragColor.rgb += specularColor * normFactor * shadow;
 
- //fragColor.rgb = vec3(texture(depthSampler,inDepthCoord + vec3(0, 0, -depthBias)) * 0.5 + 0.5);
+  //fragColor.rgb = vec3(texture(depthSampler,inDepthCoord + vec3(0, 0, -depthBias)) * 0.5 + 0.5);
   //fragColor.rgb = vec3(shadow);
   //fragColor.rgb = vec3(lightData.light[0].color);
 }
