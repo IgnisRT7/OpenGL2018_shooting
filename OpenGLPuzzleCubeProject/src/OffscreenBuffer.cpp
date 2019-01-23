@@ -82,7 +82,7 @@ OffscreenBuffer::~OffscreenBuffer() {
 
 
 ///Gバッファ作成テスト
-
+/*
 bool GBuffer::Init(unsigned int WindowWidth, unsigned int WindowHeight) {
 
 
@@ -123,4 +123,4 @@ bool GBuffer::Init(unsigned int WindowWidth, unsigned int WindowHeight) {
 
 
 
-}
+}*/

@@ -45,8 +45,8 @@ namespace GameState {
 
 			//TODO : デバッグ用、敵を透明化させる
 			auto colorValue = entity.Color();
-			colorValue.a = 0;
-			entity.Color(colorValue);
+			//colorValue.a = 0;
+			//entity.Color(colorValue);
 
 			//entity.Scale({ 2,5,2 });
 			//entity.Color({ 1,1,1,0.4f });
@@ -256,6 +256,11 @@ namespace GameState {
 
 			++stageNo;
 			stageTimer = stageTime;
+
+			if (stageNo == 01) {
+				stageTimer = 3;
+			}
+
 			game.Camera(0, { glm::vec4(0,30,0,1),glm::vec3(0,0,10),glm::vec3(0,0,1) });
 			game.Camera(1, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,0,1) });
 			game.GroupVisibility(EntityGroupId_Background, 0, true);
@@ -273,6 +278,8 @@ namespace GameState {
 			game.AmbientLight(glm::vec4(0.05f, 0.1f, 0.2f, 1));
 			game.Light(0, { glm::vec4(40,100,10,1),glm::vec4(12000,12000,12000,1) });
 			game.KeyValue(0.24);
+
+			
 
 			//シャドウの設定
 			GameEngine::ShadowParameter shadowParam;
@@ -312,7 +319,7 @@ namespace GameState {
 							"Landscape01", "Res/Model/BG02.Diffuse.dds", "Res/Model/BG02.Normal.bmp", &UpdateLandscape);
 					}
 				}
-
+				
 				break;
 			}
 			case 2: {

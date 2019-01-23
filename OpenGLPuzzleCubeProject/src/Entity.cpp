@@ -49,19 +49,74 @@ namespace Entity {
 	*/
 	glm::mat4 Entity::CalcModelMatrix()
 	{
+		//親のトランスフォーム行列の取得(無い場合は単位行列)
 		glm::mat4 parentMatrix = glm::mat4(1);
 		if (parent) {
 			parentMatrix = parent->transformMatrix;
 		}
-			
-		const glm::mat4 t = glm::translate(glm::mat4(), transform.position);
-		const glm::mat4 r = glm::mat4_cast(transform.rotation);
-		const glm::mat4 s = glm::scale(glm::mat4(), transform.scale);
 
-		transformMatrix = (t * r * s) * parentMatrix;
+		///トランスフォーム行列計算処理
+		if (0) {
+			//old
 
+			//TODO:仕様変更のため後々廃止
+//			const glm::mat4 tw = glm::translate(glm::mat4(), transform.position);
+//			const glm::mat4 rw = glm::mat4_cast(transform.rotation);
+//			const glm::mat4 sw = glm::scale(glm::mat4(), transform.scale);
+//			transformMatrix = tw * rw * sw;
+		}
+		else{
+			//new
+
+			//自身(ローカル空間)のトランスフォーム取得と計算
+			const glm::mat4 t = glm::translate(glm::mat4(), localTransform.position);
+			const glm::mat4 r = glm::mat4_cast(localTransform.rotation);
+			const glm::mat4 s = glm::scale(glm::mat4(), localTransform.scale);
+
+			auto localMatrix = t * r * s;
+			//ワールド空間のトランスフォーム行列計算
+			transformMatrix = localMatrix * parentMatrix;
+		}
+
+
+
+		//
+		for (auto& e : children) {
+
+			e->CalcModelMatrix();
+		}
+
+		//TODO: 仕様変更のため後々廃止
 		return transformMatrix;
 	}
+	/**
+	*	エンティティの取り付け処理
+	*/
+	void Entity::AddChild(Entity* e){
+
+		e->parent = this;
+		children.push_back(e);
+	//	node->UpdateTransform();
+	}
+
+	/**
+	*	指定した子エンティティを取り除く
+	*
+	*	@param c 取り除くエンティティ
+	*/
+	void Entity::RemoveChild(Entity* c){
+
+		//自身の子に取り除く対象cがあるかどうか調べる
+		auto itr = std::find_if(children.begin(), children.end(), 
+			[c](const Entity* e) { return e == c; });
+
+		if (itr != children.end()) {
+			(*itr)->parent = nullptr;	//子エンティティからの参照切り離し
+			*itr = nullptr;				//自身の参照の切り離し
+		}
+	}
+
+
 
 	/**
 	*	エンティティを破棄する
@@ -72,6 +127,33 @@ namespace Entity {
 
 		if (pBuffer) {
 			pBuffer->RemoveEntity(this);
+		}
+	}
+
+	/**
+	*	ユーザー定義用の更新処理
+	*
+	*	@param dt 経過時間
+	*/
+	void Entity::Update(float dt){
+
+		//デフォルトでは何もしない
+	}
+	
+	/*
+	*	エンティティのシステム更新処理
+	*/
+	void Entity::UpdateRecursive(float dt){
+
+		//std::cout << "0x" << std::hex <<  this  << std::endl;
+
+		//ユーザー定義更新処理呼び出し
+		Update(dt);
+
+		//子の更新処理呼び出し
+		for (auto e : children) {
+
+			e->UpdateRecursive(dt);
 		}
 	}
 
@@ -180,9 +262,11 @@ namespace Entity {
 		LinkEntity* entity = static_cast<LinkEntity*>(freeList.prev);
 		activeList[groupId].Insert(entity);
 
+		//エンティティデータの初期化処理
 		entity->name = mesh->Name();
 		entity->groupId = groupId;
 		entity->transform = TransformData({ position,glm::vec3(1,1,1),glm::quat() });
+		entity->localTransform = entity->transform;
 		entity->velocity = glm::vec3();
 		entity->color = glm::vec4(1);
 		entity->mesh = mesh;
@@ -191,6 +275,9 @@ namespace Entity {
 		entity->program = program;
 		entity->updateFunc = func;
 		entity->isActive = true;
+
+		//entity->Init();
+
 		return entity;
 	}
 
@@ -239,7 +326,6 @@ namespace Entity {
 				RemoveEntity(static_cast<LinkEntity*>(activeList[groupId].next));
 			}
 		}
-
 	}
 
 	/**
@@ -258,8 +344,14 @@ namespace Entity {
 	*	@param delta	前回の更新からの経過時間
 	*	@param matView	View行列
 	*	@param matProj	Projection行列
+	*	@param matDepthVP 影描画用行列
 	*/
 	void Buffer::Update(double delta, const glm::mat4* matView, const glm::mat4& matProj, const glm::mat4& matDepthVP) {
+
+		//TODO: 
+		//LinkEntity& e = *static_cast<LinkEntity*>(activeList[0].next);強引にルートノードとして引っ張っている
+		//e.UpdateRecursive(delta);
+
 
 		//エンティティの更新処理
 		for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
@@ -268,10 +360,12 @@ namespace Entity {
 				LinkEntity& e = *static_cast<LinkEntity*>(itrUpdate);
 				e.transform.position += e.velocity * static_cast<float>(delta);
 
+				//エンティティ内の更新処理
 				if (e.updateFunc) {
 					e.updateFunc(e, delta);
 				}
 
+				//ワールド空間の衝突判定用座標の更新処理
 				e.colWorld.min = e.colLocal.min + e.transform.position;
 				e.colWorld.max = e.colLocal.max + e.transform.position;
 			}

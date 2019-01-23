@@ -216,6 +216,8 @@
     <None Include="Res\TexCoord.vert" />
     <None Include="Res\Tutorial.frag" />
     <None Include="Res\Tutorial.vert" />
+    <None Include="Res\ViewDepth.frag" />
+    <None Include="Res\ViewDepth.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

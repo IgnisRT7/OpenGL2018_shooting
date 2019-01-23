@@ -37,6 +37,7 @@ private:
 /**
 *	GBufferä«óùÉNÉâÉX
 */
+/*
 class GBuffer {
 public:
 
@@ -52,13 +53,13 @@ public:
 
 
 	static bool Init(unsigned int WindowWidth, unsigned int WindowHeight);
-	void BindForWrinting();
-	void BindForReading();
+	void BindForWrinting() {};
+	void BindForReading() {};
 
 private:
 
 	GBuffer() = default;
-	~GBuffer();
+	~GBuffer() {};
 	GBuffer(const Texture&) = delete;
 	Texture& operator=(const GBuffer&) = delete;
 
@@ -66,3 +67,4 @@ private:
 	GLuint m_textures[GBUFFER_NUM_TEXTURES];
 	GLuint m_depthTexture;
 };
+*/

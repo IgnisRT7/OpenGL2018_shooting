@@ -27,9 +27,10 @@ namespace Entity {
 	using CollisionHandlerType = std::function<void(Entity&, Entity&) >;
 
 	static const int maxGroupId = 31;	///< グループIDの最大値
-										/**
-										*	衝突判定形状
-										*/
+
+	/**
+	*	衝突判定形状
+	*/
 	struct CollisionData {
 		glm::vec3 min;
 		glm::vec3 max;
@@ -37,7 +38,7 @@ namespace Entity {
 
 	struct TransformData {
 		glm::vec3 position;	///	座標
-		glm::vec3 scale;	/// 拡縮
+		glm::vec3 scale = { 1,1,1 };	/// 拡縮
 		glm::quat rotation;	/// 回転
 	};
 
@@ -48,22 +49,22 @@ namespace Entity {
 	{
 		friend class Buffer;
 
+		///トランスフォームデータの取得・設定
 	public:
-		///transfom parameters getter and setter
 
-		void Position(const glm::vec3& v) { transform.position = v; }
+		void Position(const glm::vec3& v) { transform.position = v; LocalPosition(v); }
 		const glm::vec3& Position() const { return transform.position; }
 		void LocalPosition(const glm::vec3& v) { localTransform.position = v; }
 		const glm::vec3& WorldPosition() const { return localTransform.position; }
 
-		void Rotation(const glm::quat& q) { transform.rotation = q; }
+		void Rotation(const glm::quat& q) { transform.rotation = q; LocalRotation(q);}
 		const glm::quat& Rotation() const { return transform.rotation; }
-		void LocalRotation(const glm::vec3& q) { localTransform.rotation = q; }
+		void LocalRotation(const glm::quat& q) { localTransform.rotation = q; }
 		const glm::quat& LocalRotation() const { return localTransform.rotation; }
 
-		void Scale(const glm::vec3& v) { transform.scale = v; }
+		void Scale(const glm::vec3& r) { transform.scale = r; LocalRotation(r); }
 		const glm::vec3& Scale() const { return transform.scale; }
-		void LocalScale(const glm::vec3& v) { localTransform.scale = v; }
+		void LocalScale(const glm::vec3& r) { localTransform.scale = r; }
 		const glm::vec3& LocalScale() const { return localTransform.scale; }
 
 		void Transform(const TransformData t) { transform = t; }
@@ -74,13 +75,20 @@ namespace Entity {
 		glm::mat4 CalcModelMatrix();
 		glm::mat4 TransformMatrix() const { return transformMatrix; }
 
+		///ノード関係
 	public:
 
-		/// 状態更新関数型.
-		using UpdateFuncType = std::function<void(Entity&, double)>;
+		void AddChild(Entity* e);
+		void RemoveChild(Entity* c);
+		bool Init();
 
+	public:
+
+		/// 状態更新関数型. TODO: Update()に処理代用のため後々廃止
+		using UpdateFuncType = std::function<void(Entity&, double)>;
 		void UpdateFunc(const UpdateFuncType& func) { updateFunc = func; }
 		const UpdateFuncType& UpdateFunc() const { return updateFunc; }
+
 		void Collision(const CollisionData& c) { colLocal = c; }
 		const CollisionData& Collision() const { return colLocal; }
 
@@ -92,7 +100,10 @@ namespace Entity {
 		int GroupId() const { return groupId; }
 		void Destroy();
 
-		void AddChild(Entity& e);
+	protected:
+
+		void Update(float dt);
+		
 
 	private:
 		Entity() = default;
@@ -100,9 +111,11 @@ namespace Entity {
 		Entity(const Entity&) = default;
 		Entity& operator=(const Entity&) = default;
 
+		void UpdateRecursive(float dt);
+
 	private:
 
-		Entity* parent = nullptr;				///< 親のエンティティ
+		Entity* parent = nullptr;		///< 親のエンティティ
 		std::vector<Entity*> children;	///< 子のエンティティ
 
 		int groupId = -1;			///< グループID
@@ -111,7 +124,8 @@ namespace Entity {
 		TransformData transform;	///< トランスフォームデータ(ワールド空間)
 		TransformData localTransform;///< トランスフォームデータ(ローカル空間)
 
-		glm::mat4 transformMatrix;	
+		glm::mat4 transformMatrix;	///< トランスフォーム行列
+		glm::mat4 localTransformMatrix;	
 
 		glm::vec3 velocity;			///< 速度.
 		glm::vec4 color = glm::vec4(1, 1, 1, 1);///< 色

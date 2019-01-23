@@ -249,6 +249,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	{ "Shrink", "Res/TexCoord.vert", "Res/Shrink.frag" },
 	{ "Blur3x3", "Res/TexCoord.vert", "Res/Blur3x3.frag" },
 	{ "RenderDepth", "Res/RenderDepth.vert", "Res/RenderDepth.frag" },
+	{"ViewDepth,","Res/ViewDepth.vert","Res/ViewDepth.frag"},
 	};
 	//シェーダのコンパイル
 	shaderMap.reserve(sizeof(shaderNameList) / sizeof(shaderNameList[0]));
@@ -305,6 +306,8 @@ void GameEngine::Run() {
 		prevTime = curTime;
 
 		window.UpdateGamePad();
+
+		
 		Update(glm::min(0.25, delta));
 		Render();
 		window.SwapBuffers();
@@ -667,7 +670,7 @@ void GameEngine::Update(double delta) {
 		updateFunc(delta);
 	}
 
-	//行列計算処理
+	//ビュー・射影行列計算処理
 	const glm::mat4x4 matProj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 1000.0f);
 	glm::mat4x4 matView[Uniform::maxViewCount];
 	for (int i = 0; i < Uniform::maxViewCount; ++i) {
@@ -681,7 +684,6 @@ void GameEngine::Update(double delta) {
 	const glm::mat4 matDepthProj = glm::ortho<float>(
 		-range.x, range.x, -range.y, range.y, shadowParameter.near, shadowParameter.far);
 	//	matDepthProj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 10, 200);
-
 	const glm::mat4 matDepthView = glm::lookAt(
 		shadowParameter.lightPos, shadowParameter.lightPos + shadowParameter.lightDir, shadowParameter.lightUp);
 
@@ -717,11 +719,15 @@ void GameEngine::RenderShadow() const {
 */
 void GameEngine::Render() {
 
-	///Path1: Draw shadow.
+	///Path1-1: render shadow.
 
 	RenderShadow(); 
 
-	///Path2: Draw entity.
+	///path1-2: render sceneDepth 
+
+
+
+	///Path2: Render entity.
 
 	glBindFramebuffer(GL_FRAMEBUFFER, offscreen->GetFramebuffer());
 
