@@ -7,6 +7,8 @@
 #include <iostream>
 #include <algorithm>
 
+#define ENTITY_NEW_VERSION 1
+
 /**
 *	エンティティに関するコードを格納する名前空間
 */
@@ -24,9 +26,12 @@ namespace Entity {
 
 		Uniform::VertexData data;
 
-		//TODO: ここで行列計算させずに別で更新処理を設ける。計算済みの行列を受け取るだけにする
-//		data.matModel = entity.TransformMatrix();
+#ifdef ENTITY_NEW_VERSION
+		data.matModel = entity.TransformMatrix();
+#else
 		data.matModel = entity.CalcModelMatrix();
+#endif 
+
 		data.matNormal = glm::mat4_cast(entity.Rotation());
 
 		//ビュー x 射影 行列の計算
@@ -43,12 +48,18 @@ namespace Entity {
 	}
 
 	/**
-	*	移動・回転・拡縮行列を取得する
+	*	移動・回転・拡縮行列を計算する
 	*
 	*	@return TRS行列
 	*/
 	glm::mat4 Entity::CalcModelMatrix()
 	{
+
+		//すでに計算済みの場合は処理をしない
+		if (isTransformUpdated == true) {
+			return transformMatrix;
+		}
+
 		//親のトランスフォーム行列の取得(無い場合は単位行列)
 		glm::mat4 parentMatrix = glm::mat4(1);
 		if (parent) {
@@ -56,37 +67,32 @@ namespace Entity {
 		}
 
 		///トランスフォーム行列計算処理
-		if (0) {
-			//old
+#ifdef ENTITY_NEW_VERSION //new code
 
-			//TODO:仕様変更のため後々廃止
-//			const glm::mat4 tw = glm::translate(glm::mat4(), transform.position);
-//			const glm::mat4 rw = glm::mat4_cast(transform.rotation);
-//			const glm::mat4 sw = glm::scale(glm::mat4(), transform.scale);
-//			transformMatrix = tw * rw * sw;
-		}
-		else{
-			//new
+		//ローカル空間のトランスフォーム取得と計算
+		const glm::mat4 t = glm::translate(glm::mat4(), localTransform.position);
+		const glm::mat4 r = glm::mat4_cast(localTransform.rotation);
+		const glm::mat4 s = glm::scale(glm::mat4(), localTransform.scale);
 
-			//自身(ローカル空間)のトランスフォーム取得と計算
-			const glm::mat4 t = glm::translate(glm::mat4(), localTransform.position);
-			const glm::mat4 r = glm::mat4_cast(localTransform.rotation);
-			const glm::mat4 s = glm::scale(glm::mat4(), localTransform.scale);
+		auto localMatrix = t * r * s;
 
-			auto localMatrix = t * r * s;
-			//ワールド空間のトランスフォーム行列計算
-			transformMatrix = localMatrix * parentMatrix;
-		}
+		//ワールド空間のトランスフォーム行列計算
+		transformMatrix = localMatrix * parentMatrix;
 
-
-
-		//
+		//子のトランスフォーム更新処理
 		for (auto& e : children) {
+
 
 			e->CalcModelMatrix();
 		}
 
-		//TODO: 仕様変更のため後々廃止
+#else	//TODO: 仕様変更のため後々修正
+
+			const glm::mat4 tw = glm::translate(glm::mat4(), transform.position);
+			const glm::mat4 rw = glm::mat4_cast(transform.rotation);
+			const glm::mat4 sw = glm::scale(glm::mat4(), transform.scale);
+			transformMatrix = tw * rw * sw;
+#endif
 		return transformMatrix;
 	}
 	/**
@@ -96,7 +102,7 @@ namespace Entity {
 
 		e->parent = this;
 		children.push_back(e);
-	//	node->UpdateTransform();
+		CalcModelMatrix();
 	}
 
 	/**
@@ -115,8 +121,6 @@ namespace Entity {
 			*itr = nullptr;				//自身の参照の切り離し
 		}
 	}
-
-
 
 	/**
 	*	エンティティを破棄する
@@ -145,7 +149,7 @@ namespace Entity {
 	*/
 	void Entity::UpdateRecursive(float dt){
 
-		//std::cout << "0x" << std::hex <<  this  << std::endl;
+		//ここでエンティティのシステム更新処理をする
 
 		//ユーザー定義更新処理呼び出し
 		Update(dt);
@@ -285,6 +289,8 @@ namespace Entity {
 	*	エンティティを削除する
 	*
 	*	@param 削除するエンティティのポインタ
+	*	TODO: エンティティの親子関係を見たうえで削除処理を
+	*			しないといけないため要修正
 	*/
 	void Buffer::RemoveEntity(Entity* entity) {
 

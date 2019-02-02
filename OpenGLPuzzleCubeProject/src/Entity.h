@@ -121,9 +121,10 @@ namespace Entity {
 		int groupId = -1;			///< グループID
 		Buffer* pBuffer = nullptr;	///< 生成元のBufferクラスへのポインタ
 
+
+		bool isTransformUpdated;	///< 行列がすでに更新済みかどうか
 		TransformData transform;	///< トランスフォームデータ(ワールド空間)
 		TransformData localTransform;///< トランスフォームデータ(ローカル空間)
-
 		glm::mat4 transformMatrix;	///< トランスフォーム行列
 		glm::mat4 localTransformMatrix;	
 
