@@ -17,6 +17,7 @@ namespace GameState {
 	};
 
 	void UpdateLandscape(Entity::Entity& entity, double delta) {
+		//entity.Velocity(glm::vec3(0, 0, -4.0f *delta));
 		entity.Position(entity.Position() + glm::vec3(0, 0, -4.0f * delta));
 	}
 
@@ -42,14 +43,6 @@ namespace GameState {
 				GameEngine::Instance().RemoveEntity(&entity);
 				return;
 			}
-
-			//TODO : デバッグ用、敵を透明化させる
-			auto colorValue = entity.Color();
-			//colorValue.a = 0;
-			//entity.Color(colorValue);
-
-			//entity.Scale({ 2,5,2 });
-			//entity.Color({ 1,1,1,0.4f });
 
 			// 円盤を回転させる.
 			float rot = glm::angle(entity.Rotation());

@@ -51,6 +51,10 @@ namespace Entity {
 
 		///トランスフォームデータの取得・設定
 	public:
+		Entity() = default;
+		~Entity() = default;
+		Entity(const Entity&) = default;
+		Entity& operator=(const Entity&) = default;
 
 		void Position(const glm::vec3& v) { transform.position = v; LocalPosition(v); }
 		const glm::vec3& Position() const { return transform.position; }
@@ -106,10 +110,6 @@ namespace Entity {
 		
 
 	private:
-		Entity() = default;
-		~Entity() = default;
-		Entity(const Entity&) = default;
-		Entity& operator=(const Entity&) = default;
 
 		void UpdateRecursive(float dt);
 
@@ -183,6 +183,8 @@ namespace Entity {
 		Buffer& operator=(const Buffer&) = delete;
 
 	private:
+
+		Entity rootNode;
 
 		///エンティティ用リンクリスト
 		struct Link {

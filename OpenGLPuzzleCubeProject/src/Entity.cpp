@@ -151,13 +151,25 @@ namespace Entity {
 
 		//ここでエンティティのシステム更新処理をする
 
-		//ユーザー定義更新処理呼び出し
-		Update(dt);
 
-		//子の更新処理呼び出し
-		for (auto e : children) {
+		std::cout << "EntityName:" << (name.empty()? "root" : name) << std::endl;
+		std::cout << "	Pos:" << transform.position.x << ","<< transform.position.y <<","<< transform.position.z<<"," <<std::endl;
 
-			e->UpdateRecursive(dt);
+		//移動量による座標更新
+		transform.position += velocity * static_cast<float>(dt);
+
+		//ユーザー定義更新処理呼び出し(未実装のため従来の関数使用)
+		//Update(dt);
+		if (updateFunc)updateFunc(*this,dt);
+
+		if (children.size()) {
+			std::cout << "child {" << std::endl;
+			//子の更新処理呼び出し
+			for (auto e : children) {
+
+				e->UpdateRecursive(dt);
+			}
+			std::cout << "}" << std::endl;
 		}
 	}
 
@@ -281,6 +293,7 @@ namespace Entity {
 		entity->isActive = true;
 
 		//entity->Init();
+		rootNode.AddChild(entity);
 
 		return entity;
 	}
@@ -353,10 +366,10 @@ namespace Entity {
 	*	@param matDepthVP 影描画用行列
 	*/
 	void Buffer::Update(double delta, const glm::mat4* matView, const glm::mat4& matProj, const glm::mat4& matDepthVP) {
+		
+		rootNode.UpdateRecursive(delta);
+		rootNode.CalcModelMatrix();
 
-		//TODO: 
-		//LinkEntity& e = *static_cast<LinkEntity*>(activeList[0].next);強引にルートノードとして引っ張っている
-		//e.UpdateRecursive(delta);
 
 
 		//エンティティの更新処理
@@ -364,12 +377,6 @@ namespace Entity {
 			for (itrUpdate = activeList[groupId].next; itrUpdate != &activeList[groupId]; itrUpdate = itrUpdate->next) {
 
 				LinkEntity& e = *static_cast<LinkEntity*>(itrUpdate);
-				e.transform.position += e.velocity * static_cast<float>(delta);
-
-				//エンティティ内の更新処理
-				if (e.updateFunc) {
-					e.updateFunc(e, delta);
-				}
 
 				//ワールド空間の衝突判定用座標の更新処理
 				e.colWorld.min = e.colLocal.min + e.transform.position;
@@ -409,15 +416,6 @@ namespace Entity {
 			//カメラごとの行列計算処理
 			matVP[i] = matProj * matView[i];
 		}
-
-		/*	未実装
-		//ワールド変換行列の計算処理
-		for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
-			for (itrUpdate = activeList[groupId].next; itrUpdate != &activeList[groupId]; itrUpdate = itrUpdate->next) {
-				LinkEntity& e = *static_cast<LinkEntity*>(itrUpdate);
-
-			}
-		}*/
 
 		//groupIdごとにVertexData更新処理
 		for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
