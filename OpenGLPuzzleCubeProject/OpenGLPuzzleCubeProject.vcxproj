@@ -24,7 +24,7 @@
     <ProjectGuid>{CC15C813-0B10-4507-8B58-A16CF9578D66}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>OpenGLPuzzleCubeProject</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -73,7 +73,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Ignis\Documents\IgnisRT7\OpenGLPuzzleCubeProject_test\packages\GLMathematics.0.9.5.4\build\native\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Ignisrt7\source\repos\IgnisRT7\OpenGLPuzzleCubeProject_test\packages\GLMathematics.0.9.5.4\build\native\include;C:\Users\Ignis\Documents\IgnisRT7\OpenGLPuzzleCubeProject_test\packages\GLMathematics.0.9.5.4\build\native\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
