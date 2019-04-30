@@ -39,9 +39,12 @@ namespace Font {
 			maxChar = (USHRT_MAX + 1) / 4;
 		}
 
+		//1文字4頂点を文字数分確保する
 		vboCapacity = static_cast<GLsizei>(4 * maxChar);
 		vbo.Init(GL_ARRAY_BUFFER, sizeof(Vertex)*vboCapacity, nullptr, GL_STREAM_DRAW);
-		{
+
+		{	///頂点バッファの初期化
+
 			std::vector<GLushort> tmp;
 			tmp.resize(maxChar * 6);
 			GLushort* p = tmp.data();
@@ -51,6 +54,7 @@ namespace Font {
 				}
 			}
 
+			///インデックスバッファの初期化
 			ibo.Init(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * 6 * maxChar, tmp.data(), GL_STATIC_DRAW);
 		}
 

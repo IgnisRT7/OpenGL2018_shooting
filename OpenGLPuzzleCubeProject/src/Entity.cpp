@@ -7,8 +7,6 @@
 #include <iostream>
 #include <algorithm>
 
-#define ENTITY_NEW_VERSION 1
-
 /**
 *	エンティティに関するコードを格納する名前空間
 */
@@ -25,13 +23,7 @@ namespace Entity {
 	void UpdateUniformVertexData(Entity& entity, void*ubo, const glm::mat4* matVP, const glm::mat4& matDepthVP, glm::u32 viewFlags) {
 
 		Uniform::VertexData data;
-
-#ifdef ENTITY_NEW_VERSION
-		data.matModel = entity.TransformMatrix();
-#else
 		data.matModel = entity.CalcModelMatrix();
-#endif 
-
 		data.matNormal = glm::mat4_cast(entity.Rotation());
 
 		//ビュー x 射影 行列の計算
@@ -48,78 +40,16 @@ namespace Entity {
 	}
 
 	/**
-	*	移動・回転・拡縮行列を計算する
+	*	移動・回転・拡縮行列を取得する
 	*
 	*	@return TRS行列
 	*/
-	glm::mat4 Entity::CalcModelMatrix()
+	glm::mat4 Entity::CalcModelMatrix() const
 	{
-
-		//すでに計算済みの場合は処理をしない
-		if (isTransformUpdated == true) {
-			return transformMatrix;
-		}
-
-		//親のトランスフォーム行列の取得(無い場合は単位行列)
-		glm::mat4 parentMatrix = glm::mat4(1);
-		if (parent) {
-			parentMatrix = parent->transformMatrix;
-		}
-
-		///トランスフォーム行列計算処理
-#ifdef ENTITY_NEW_VERSION //new code
-
-		//ローカル空間のトランスフォーム取得と計算
-		const glm::mat4 t = glm::translate(glm::mat4(), localTransform.position);
-		const glm::mat4 r = glm::mat4_cast(localTransform.rotation);
-		const glm::mat4 s = glm::scale(glm::mat4(), localTransform.scale);
-
-		auto localMatrix = t * r * s;
-
-		//ワールド空間のトランスフォーム行列計算
-		transformMatrix = localMatrix * parentMatrix;
-
-		//子のトランスフォーム更新処理
-		for (auto& e : children) {
-
-
-			e->CalcModelMatrix();
-		}
-
-#else	//TODO: 仕様変更のため後々修正
-
-			const glm::mat4 tw = glm::translate(glm::mat4(), transform.position);
-			const glm::mat4 rw = glm::mat4_cast(transform.rotation);
-			const glm::mat4 sw = glm::scale(glm::mat4(), transform.scale);
-			transformMatrix = tw * rw * sw;
-#endif
-		return transformMatrix;
-	}
-	/**
-	*	エンティティの取り付け処理
-	*/
-	void Entity::AddChild(Entity* e){
-
-		e->parent = this;
-		children.push_back(e);
-		CalcModelMatrix();
-	}
-
-	/**
-	*	指定した子エンティティを取り除く
-	*
-	*	@param c 取り除くエンティティ
-	*/
-	void Entity::RemoveChild(Entity* c){
-
-		//自身の子に取り除く対象cがあるかどうか調べる
-		auto itr = std::find_if(children.begin(), children.end(), 
-			[c](const Entity* e) { return e == c; });
-
-		if (itr != children.end()) {
-			(*itr)->parent = nullptr;	//子エンティティからの参照切り離し
-			*itr = nullptr;				//自身の参照の切り離し
-		}
+		const glm::mat4 t = glm::translate(glm::mat4(), transform.position);
+		const glm::mat4 r = glm::mat4_cast(transform.rotation);
+		const glm::mat4 s = glm::scale(glm::mat4(), transform.scale);
+		return t * r * s;
 	}
 
 	/**
@@ -131,45 +61,6 @@ namespace Entity {
 
 		if (pBuffer) {
 			pBuffer->RemoveEntity(this);
-		}
-	}
-
-	/**
-	*	ユーザー定義用の更新処理
-	*
-	*	@param dt 経過時間
-	*/
-	void Entity::Update(float dt){
-
-		//デフォルトでは何もしない
-	}
-	
-	/*
-	*	エンティティのシステム更新処理
-	*/
-	void Entity::UpdateRecursive(float dt){
-
-		//ここでエンティティのシステム更新処理をする
-
-
-		std::cout << "EntityName:" << (name.empty()? "root" : name) << std::endl;
-		std::cout << "	Pos:" << transform.position.x << ","<< transform.position.y <<","<< transform.position.z<<"," <<std::endl;
-
-		//移動量による座標更新
-		transform.position += velocity * static_cast<float>(dt);
-
-		//ユーザー定義更新処理呼び出し(未実装のため従来の関数使用)
-		//Update(dt);
-		if (updateFunc)updateFunc(*this,dt);
-
-		if (children.size()) {
-			std::cout << "child {" << std::endl;
-			//子の更新処理呼び出し
-			for (auto e : children) {
-
-				e->UpdateRecursive(dt);
-			}
-			std::cout << "}" << std::endl;
 		}
 	}
 
@@ -241,7 +132,7 @@ namespace Entity {
 		p->collisionHandlerList.reserve(maxGroupId);
 
 		for (auto& e : p->visibilityFlags) {
-			e = 1;	
+			e = 1;	//1カメ可視可能
 		}
 
 		return p;
@@ -278,11 +169,9 @@ namespace Entity {
 		LinkEntity* entity = static_cast<LinkEntity*>(freeList.prev);
 		activeList[groupId].Insert(entity);
 
-		//エンティティデータの初期化処理
 		entity->name = mesh->Name();
 		entity->groupId = groupId;
 		entity->transform = TransformData({ position,glm::vec3(1,1,1),glm::quat() });
-		entity->localTransform = entity->transform;
 		entity->velocity = glm::vec3();
 		entity->color = glm::vec4(1);
 		entity->mesh = mesh;
@@ -291,10 +180,6 @@ namespace Entity {
 		entity->program = program;
 		entity->updateFunc = func;
 		entity->isActive = true;
-
-		//entity->Init();
-		rootNode.AddChild(entity);
-
 		return entity;
 	}
 
@@ -302,8 +187,6 @@ namespace Entity {
 	*	エンティティを削除する
 	*
 	*	@param 削除するエンティティのポインタ
-	*	TODO: エンティティの親子関係を見たうえで削除処理を
-	*			しないといけないため要修正
 	*/
 	void Buffer::RemoveEntity(Entity* entity) {
 
@@ -345,6 +228,7 @@ namespace Entity {
 				RemoveEntity(static_cast<LinkEntity*>(activeList[groupId].next));
 			}
 		}
+
 	}
 
 	/**
@@ -363,22 +247,20 @@ namespace Entity {
 	*	@param delta	前回の更新からの経過時間
 	*	@param matView	View行列
 	*	@param matProj	Projection行列
-	*	@param matDepthVP 影描画用行列
 	*/
 	void Buffer::Update(double delta, const glm::mat4* matView, const glm::mat4& matProj, const glm::mat4& matDepthVP) {
-		
-		rootNode.UpdateRecursive(delta);
-		rootNode.CalcModelMatrix();
-
-
 
 		//エンティティの更新処理
 		for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
 			for (itrUpdate = activeList[groupId].next; itrUpdate != &activeList[groupId]; itrUpdate = itrUpdate->next) {
 
 				LinkEntity& e = *static_cast<LinkEntity*>(itrUpdate);
+				e.transform.position += e.velocity * static_cast<float>(delta);
 
-				//ワールド空間の衝突判定用座標の更新処理
+				if (e.updateFunc) {
+					e.updateFunc(e, delta);
+				}
+
 				e.colWorld.min = e.colLocal.min + e.transform.position;
 				e.colWorld.max = e.colLocal.max + e.transform.position;
 			}
@@ -409,14 +291,13 @@ namespace Entity {
 		itrUpdate = nullptr;
 		itrUpdateRhs = nullptr;
 
-		//カメラの変換行列(ビュー・射影)の計算処理
+		//UBOの更新処理
 		uint8_t* p = static_cast<uint8_t*>(ubo->MapBuffer());
 		glm::mat4 matVP[Uniform::maxViewCount];
 		for (int i = 0; i < Uniform::maxViewCount; ++i) {
 			//カメラごとの行列計算処理
 			matVP[i] = matProj * matView[i];
 		}
-
 		//groupIdごとにVertexData更新処理
 		for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
 			for (itrUpdate = activeList[groupId].next; itrUpdate != &activeList[groupId]; itrUpdate = itrUpdate->next) {
@@ -477,13 +358,18 @@ namespace Entity {
 		meshBuffer->BindVAO();
 		for (int viewIndex = 0; viewIndex < Uniform::maxViewCount; ++viewIndex) {
 			for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
+
+				//カメラから見えない設定の場合は表示させない
 				if (!(visibilityFlags[groupId] & (1 << viewIndex))) {
 					continue;
 				}
+
 				for (const Link* itr = activeList[groupId].next; itr != &activeList[groupId];
 					itr = itr->next) {
 					const LinkEntity& e = *static_cast<const LinkEntity*>(itr);
-					if (e.mesh && e.texture && e.program) {
+
+					//データがあるとき かつ castShadowフラグが有効の時に実行
+					if (e.mesh && e.texture && e.program && e.castShadow) {
 						for (size_t i = 0; i < sizeof(e.texture) / sizeof(e.texture[0]); ++i) {
 							e.program->BindTexture(GL_TEXTURE0 + i, GL_TEXTURE_2D,
 								e.texture[i]->Id());
@@ -556,5 +442,30 @@ namespace Entity {
 	*/
 	void Buffer::ClearCollisionHanderList() {
 		collisionHandlerList.clear();
+	}
+
+	/**
+	*	エンティティの検索を行う
+	*
+	*	@param name	エンティティ名
+	*/
+	Entity* Buffer::FindEntity(std::string name) {
+
+		for (int viewIndex = 0; viewIndex < Uniform::maxViewCount; ++viewIndex) {
+			for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
+
+				for (const Link* itr = activeList[groupId].next; itr != &activeList[groupId]; itr = itr->next) {
+
+					const LinkEntity& e = *static_cast<const LinkEntity*>(itr);
+
+					if (e.name == name) {
+
+						return (Entity*)&e;
+					}
+				}
+			}
+		}
+
+		return nullptr;
 	}
 }

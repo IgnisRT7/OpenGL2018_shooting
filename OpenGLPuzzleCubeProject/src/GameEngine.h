@@ -50,6 +50,8 @@ public:
 	void PopLevel();
 	void ClearLevel();
 
+	Entity::Entity* FindEntity(std::string n);
+
 	///影生成パラメータ
 	struct ShadowParameter {
 		glm::vec3 lightPos;	///< 影を発生させるライトの位置
@@ -133,6 +135,8 @@ private:
 	bool isInitalized = false;
 	UpdateFuncType updateFunc;
 
+	glm::vec2 windowSize;
+
 
 	GLuint vbo = 0;
 	GLuint ibo = 0;
@@ -151,7 +155,6 @@ private:
 	static const int bloomBufferCount = 4;
 	OffscreenBufferPtr offBloom[bloomBufferCount];
 	OffscreenBufferPtr offDepth;
-	OffscreenBufferPtr offViewDepth;
 	ShadowParameter shadowParameter;
 
 	//std::unordered_map<std::string, TexturePtr> textureBuffer;

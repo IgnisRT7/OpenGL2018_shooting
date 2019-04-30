@@ -56,7 +56,5 @@ void main(){
 	fragColor.a = 1.0f;
 	fragColor *= inColor;
 
-//		fragColor.rgb = texture(colorSampler[0],inTexCoord).rgb;
-//	fragColor.rgb = bloom;
 	
 }

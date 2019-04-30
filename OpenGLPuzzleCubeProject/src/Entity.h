@@ -27,10 +27,9 @@ namespace Entity {
 	using CollisionHandlerType = std::function<void(Entity&, Entity&) >;
 
 	static const int maxGroupId = 31;	///< グループIDの最大値
-
-	/**
-	*	衝突判定形状
-	*/
+										/**
+										*	衝突判定形状
+										*/
 	struct CollisionData {
 		glm::vec3 min;
 		glm::vec3 max;
@@ -38,7 +37,7 @@ namespace Entity {
 
 	struct TransformData {
 		glm::vec3 position;	///	座標
-		glm::vec3 scale = { 1,1,1 };	/// 拡縮
+		glm::vec3 scale;	/// 拡縮
 		glm::quat rotation;	/// 回転
 	};
 
@@ -49,26 +48,22 @@ namespace Entity {
 	{
 		friend class Buffer;
 
-		///トランスフォームデータの取得・設定
 	public:
-		Entity() = default;
-		~Entity() = default;
-		Entity(const Entity&) = default;
-		Entity& operator=(const Entity&) = default;
+		///transfom parameters getter and setter
 
-		void Position(const glm::vec3& v) { transform.position = v; LocalPosition(v); }
+		void Position(const glm::vec3& v) { transform.position = v; }
 		const glm::vec3& Position() const { return transform.position; }
 		void LocalPosition(const glm::vec3& v) { localTransform.position = v; }
 		const glm::vec3& WorldPosition() const { return localTransform.position; }
 
-		void Rotation(const glm::quat& q) { transform.rotation = q; LocalRotation(q);}
+		void Rotation(const glm::quat& q) { transform.rotation = q; }
 		const glm::quat& Rotation() const { return transform.rotation; }
-		void LocalRotation(const glm::quat& q) { localTransform.rotation = q; }
+		void LocalRotation(const glm::vec3& q) { localTransform.rotation = q; }
 		const glm::quat& LocalRotation() const { return localTransform.rotation; }
 
-		void Scale(const glm::vec3& r) { transform.scale = r; LocalRotation(r); }
+		void Scale(const glm::vec3& v) { transform.scale = v; }
 		const glm::vec3& Scale() const { return transform.scale; }
-		void LocalScale(const glm::vec3& r) { localTransform.scale = r; }
+		void LocalScale(const glm::vec3& v) { localTransform.scale = v; }
 		const glm::vec3& LocalScale() const { return localTransform.scale; }
 
 		void Transform(const TransformData t) { transform = t; }
@@ -76,23 +71,15 @@ namespace Entity {
 		void LocalTransform(const TransformData t) { localTransform = t; }
 		const TransformData LocalTransform() const { return localTransform; }
 
-		glm::mat4 CalcModelMatrix();
-		glm::mat4 TransformMatrix() const { return transformMatrix; }
-
-		///ノード関係
-	public:
-
-		void AddChild(Entity* e);
-		void RemoveChild(Entity* c);
-		bool Init();
+		glm::mat4 CalcModelMatrix() const;
 
 	public:
 
-		/// 状態更新関数型. TODO: Update()に処理代用のため後々廃止
+		/// 状態更新関数型.
 		using UpdateFuncType = std::function<void(Entity&, double)>;
+
 		void UpdateFunc(const UpdateFuncType& func) { updateFunc = func; }
 		const UpdateFuncType& UpdateFunc() const { return updateFunc; }
-
 		void Collision(const CollisionData& c) { colLocal = c; }
 		const CollisionData& Collision() const { return colLocal; }
 
@@ -104,29 +91,22 @@ namespace Entity {
 		int GroupId() const { return groupId; }
 		void Destroy();
 
-	protected:
-
-		void Update(float dt);
-		
+		void CastShadow(bool b) { castShadow = b; }
+		bool CastShadow() { return castShadow; }
 
 	private:
-
-		void UpdateRecursive(float dt);
+		Entity() = default;
+		~Entity() = default;
+		Entity(const Entity&) = default;
+		Entity& operator=(const Entity&) = default;
 
 	private:
-
-		Entity* parent = nullptr;		///< 親のエンティティ
-		std::vector<Entity*> children;	///< 子のエンティティ
 
 		int groupId = -1;			///< グループID
 		Buffer* pBuffer = nullptr;	///< 生成元のBufferクラスへのポインタ
 
-
-		bool isTransformUpdated;	///< 行列がすでに更新済みかどうか
 		TransformData transform;	///< トランスフォームデータ(ワールド空間)
 		TransformData localTransform;///< トランスフォームデータ(ローカル空間)
-		glm::mat4 transformMatrix;	///< トランスフォーム行列
-		glm::mat4 localTransformMatrix;	
 
 		glm::vec3 velocity;			///< 速度.
 		glm::vec4 color = glm::vec4(1, 1, 1, 1);///< 色
@@ -141,6 +121,7 @@ namespace Entity {
 		CollisionData colWorld;		///< ワールド座標系の衝突形状
 
 		bool isActive = false; ///< アクティブなエンティティならtrue, 非アクティブならfalse.
+		bool castShadow = true;		///< このエンティティは影を落とすかどうか
 	};
 
 	/**
@@ -154,8 +135,6 @@ namespace Entity {
 		void RemoveEntity(Entity* entity);
 		void RemoveAllEntity();
 		void Update(double delta, const glm::mat4* matView, const glm::mat4& matProj, const glm::mat4& matDepthVP);
-
-	//	Entity& GetEntityByName(std::string name);
 
 		void Draw(const Mesh::BufferPtr& meshBuffer) const;
 		void DrawDepth(const Mesh::BufferPtr& meshBuffer)const;
@@ -175,6 +154,8 @@ namespace Entity {
 		const CollisionHandlerType& CollisionHandler(int gid0, int gid1) const;
 		void ClearCollisionHanderList();
 
+		Entity* FindEntity(std::string name);
+
 	private:
 
 		Buffer() = default;
@@ -183,8 +164,6 @@ namespace Entity {
 		Buffer& operator=(const Buffer&) = delete;
 
 	private:
-
-		Entity rootNode;
 
 		///エンティティ用リンクリスト
 		struct Link {

@@ -32,39 +32,6 @@ private:
 	TexturePtr tex;			///< フレームバッファ用テクスチャ
 	GLuint depthbuffer = 0;	///< 震度バッファオブジェクト
 	GLuint framebuffer = 0;	///< フレームバッファオブジェクト
+
+
 };
-
-/**
-*	GBuffer管理クラス
-*/
-/*
-class GBuffer {
-public:
-
-	enum GBUFFER_TEXTURE_TYPE {
-		GBUFFER_TEXTURE_TYPE_POSITION,	//座標
-		GBUFFER_TEXTURE_TYPE_DIFFUSE,	//基本色
-		GBUFFER_TEXTURE_TYPE_NORMAL,	//ワールド空間の法線
-		GBUFFER_TEXTURE_TYPE_TEXCOORD,	//
-		GBUFFER_TEXTURE_TYPE_SCENEDEPTH,//ビュー空間内の深度値
-		GBUFFER_NUM_TEXTURES,
-	};
-
-
-
-	static bool Init(unsigned int WindowWidth, unsigned int WindowHeight);
-	void BindForWrinting() {};
-	void BindForReading() {};
-
-private:
-
-	GBuffer() = default;
-	~GBuffer() {};
-	GBuffer(const Texture&) = delete;
-	Texture& operator=(const GBuffer&) = delete;
-
-	GLuint m_fbo;
-	GLuint m_textures[GBUFFER_NUM_TEXTURES];
-	GLuint m_depthTexture;
-};
-*/

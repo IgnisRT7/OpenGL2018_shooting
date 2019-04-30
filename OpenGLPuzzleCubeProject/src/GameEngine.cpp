@@ -178,6 +178,8 @@ GameEngine& GameEngine::Instance() {
 */
 bool GameEngine::Init(int w, int h, const char* title) {
 
+	windowSize = glm::vec2(w, h);
+
 	if (isInitalized) {
 		return true;
 	}
@@ -186,7 +188,6 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		return false;
 	}
 
-	//Create VAO for Screen
 	vbo = CreateVBO(sizeof(vertices), vertices);
 	ibo = CreateIBO(sizeof(indices), indices);
 	vao = CreateVAO(vbo, ibo);
@@ -194,15 +195,16 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	uboLight = UniformBuffer::Create(sizeof(Uniform::LightData), 1, "LightData");
 	uboPostEffect = UniformBuffer::Create(sizeof(Uniform::PostEffectData), 2, "PostEffectData");
 
-	offscreen = OffscreenBuffer::Create(800, 600, GL_RGBA16F);
+	offscreen = OffscreenBuffer::Create(static_cast<int>(windowSize.x), static_cast<int>(windowSize.y), GL_RGBA16F);
 	if (!offscreen) {
 		return false;
 	}
 
+
 	//縮小バッファ作成コード(ブルームエフェクト用)
 	for (int i = 0, scale = 4; i < bloomBufferCount; ++i, scale *= 4) {
-		const int w = 800 / scale;
-		const int h = 600 / scale;
+		const int w = static_cast<int>(windowSize.x) / scale;
+		const int h = static_cast<int>(windowSize.y) / scale;
 		offBloom[i] = OffscreenBuffer::Create(w, h, GL_RGBA16F);
 		if (!offBloom[i]) {
 			return false;
@@ -210,14 +212,8 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	}
 
 	//デプスシャドウバッファ作成
-	offDepth = OffscreenBuffer::Create(2048, 2048, GL_DEPTH_COMPONENT16);
+	offDepth = OffscreenBuffer::Create(1024, 1024, GL_DEPTH_COMPONENT32);
 	if (!offDepth) {
-		return false;
-	}
-
-	//ビューデプスバッファの作成
-	offViewDepth = OffscreenBuffer::Create(2048, 2048, GL_DEPTH_COMPONENT16);
-	if (!offViewDepth) {
 		return false;
 	}
 
@@ -234,6 +230,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		e.Init(GL_PIXEL_PACK_BUFFER, pboByteSize, nullptr, GL_DYNAMIC_READ);
 	}
 
+
 	if (!vbo || !ibo || !vao || !uboLight || !uboPostEffect) {
 
 		std::cerr << "ERROR: GameEngineの初期化に失敗" << std::endl;
@@ -249,7 +246,6 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	{ "Shrink", "Res/TexCoord.vert", "Res/Shrink.frag" },
 	{ "Blur3x3", "Res/TexCoord.vert", "Res/Blur3x3.frag" },
 	{ "RenderDepth", "Res/RenderDepth.vert", "Res/RenderDepth.frag" },
-	{"ViewDepth,","Res/ViewDepth.vert","Res/ViewDepth.frag"},
 	};
 	//シェーダのコンパイル
 	shaderMap.reserve(sizeof(shaderNameList) / sizeof(shaderNameList[0]));
@@ -260,7 +256,6 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		}
 		shaderMap.insert(std::make_pair(std::string(e[0]), program));
 	}
-
 	//Uniformブロックのバインド
 	shaderMap["Tutorial"]->UniformBlockBinding("VertexData", 0);
 	shaderMap["Tutorial"]->UniformBlockBinding("LightData", 1);
@@ -275,6 +270,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 
 	textureStack.push_back(TextureLevel());
 
+	//エンティティバッファの作成
 	entityBuffer = Entity::Buffer::Create(1024, sizeof(Uniform::VertexData), 0, "VertexData");
 	if (!entityBuffer) {
 		std::cerr << "ERROR: GameEngineの初期化に失敗" << std::endl;
@@ -283,7 +279,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 
 	rand.seed(std::random_device()());
 
-	fontRenderer.Init(1024, glm::vec2(800, 600));
+	fontRenderer.Init(1024, windowSize);
 
 	isInitalized = true;
 	return true;
@@ -306,8 +302,6 @@ void GameEngine::Run() {
 		prevTime = curTime;
 
 		window.UpdateGamePad();
-
-		
 		Update(glm::min(0.25, delta));
 		Render();
 		window.SwapBuffers();
@@ -638,6 +632,16 @@ void GameEngine::ClearLevel() {
 }
 
 /**
+*	エンティティバッファからエンティティを探す
+*
+*	@param name	エンティティ名
+*/
+Entity::Entity* GameEngine::FindEntity(std::string name) {
+
+	return entityBuffer->FindEntity(name);
+}
+
+/**
 *	デストラクタ
 */
 GameEngine::~GameEngine() {
@@ -670,7 +674,7 @@ void GameEngine::Update(double delta) {
 		updateFunc(delta);
 	}
 
-	//ビュー・射影行列計算処理
+	//行列計算処理
 	const glm::mat4x4 matProj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 1000.0f);
 	glm::mat4x4 matView[Uniform::maxViewCount];
 	for (int i = 0; i < Uniform::maxViewCount; ++i) {
@@ -684,6 +688,7 @@ void GameEngine::Update(double delta) {
 	const glm::mat4 matDepthProj = glm::ortho<float>(
 		-range.x, range.x, -range.y, range.y, shadowParameter.near, shadowParameter.far);
 	//	matDepthProj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 10, 200);
+
 	const glm::mat4 matDepthView = glm::lookAt(
 		shadowParameter.lightPos, shadowParameter.lightPos + shadowParameter.lightDir, shadowParameter.lightUp);
 
@@ -698,7 +703,6 @@ void GameEngine::Update(double delta) {
 */
 void GameEngine::RenderShadow() const {
 
-	//シャドウバッファを描画先へ紐づけ
 	glBindFramebuffer(GL_FRAMEBUFFER, offDepth->GetFramebuffer());
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
@@ -719,15 +723,11 @@ void GameEngine::RenderShadow() const {
 */
 void GameEngine::Render() {
 
-	///Path1-1: render shadow.
+	///Path1: Draw shadow.
 
 	RenderShadow(); 
 
-	///path1-2: render sceneDepth 
-
-
-
-	///Path2: Render entity.
+	///Path2: Draw entity.
 
 	glBindFramebuffer(GL_FRAMEBUFFER, offscreen->GetFramebuffer());
 
@@ -735,8 +735,8 @@ void GameEngine::Render() {
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glViewport(0, 0, 800, 600);
-	glScissor(0, 0, 800, 600);
+	glViewport(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
+	glScissor(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
 	glClearColor(0.1f, 0.3f, 0.5f, 1.0f);
 	glClearDepth(1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -804,7 +804,7 @@ void GameEngine::Render() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glDisable(GL_BLEND);
-	glViewport(0, 0, 800, 600);
+	glViewport(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
 
 	glBindVertexArray(vao);
 

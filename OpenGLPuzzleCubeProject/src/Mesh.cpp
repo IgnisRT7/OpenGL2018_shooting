@@ -21,12 +21,6 @@ namespace Mesh {
 
 	};
 
-	struct BoneWeight {
-
-		int index;
-		float weight;
-	};
-
 	/**
 	*	Vertex Buffer Object	を作成する
 	*
@@ -236,8 +230,7 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 			}
 		}
 
-		FbxNode* pRootNode = fbxScene->GetRootNode();
-		if (!Convert(pRootNode)) {
+		if (!Convert(fbxScene->GetRootNode())) {
 			std::cerr << "ERROR: " << filename << "の変換に失敗" << std::endl;
 			return false;
 		}
@@ -463,55 +456,6 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 		}
 
 		meshList.push_back(std::move(mesh));
-
-		//スキンの数を取得
-		int skinCount = fbxMesh->GetDeformerCount(FbxDeformer::eSkin);
-
-		if (skinCount <= 0) {
-			std::cerr << "スキンがありませんでした" << std::endl;
-		}
-
-		for (int sCount = 0; sCount < skinCount; ++sCount) {
-
-			//スキンを取得
-			FbxDeformer* pDeformer = fbxMesh->GetDeformer(sCount, FbxDeformer::eSkin);
-
-			if (pDeformer->GetDeformerType() != FbxDeformer::eSkin) {
-
-				std::cerr << "Error: デフォーマーはスキンではありませんでした。" << std::endl;
-			}
-
-			FbxSkin * pSkin = static_cast<FbxSkin *>(pDeformer);
-
-			//クラスターの数を取得
-			int clusterNum = pSkin->GetClusterCount();
-
-			for (int cCount = 0; cCount < clusterNum; ++cCount) {
-
-				//クラスタの取得
-				FbxCluster* pCluster = pSkin->GetCluster(cCount);
-
-				//影響を与える頂点情報を取得
-
-				int pointNum = pCluster->GetControlPointIndicesCount();
-				int* pointAry = pCluster->GetControlPointIndices();
-				double* weightAry = pCluster->GetControlPointWeights();
-
-				for (int pCount = 0; pCount < pointNum; ++pointNum) {
-
-					//頂点インデックスとウェイトを取得
-					int index = pointAry[pCount];
-					float weight = (float)weightAry[pCount];
-
-				}
-
-				//ボーン行列を取得する
-				FbxAMatrix initMat;
-				pCluster->GetTransformLinkMatrix(initMat);
-			}
-
-
-		}
 		return true;
 	}
 
