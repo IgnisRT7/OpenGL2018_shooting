@@ -96,6 +96,45 @@ namespace GameState {
 
 	};
 
+	struct EnemyLaunchType {
+
+		void operator()(Entity::Entity& entity, float delta) {
+
+			GameEngine& game = GameEngine::Instance();
+
+			time += delta;
+
+			if (time >= spawnMax * spawnInterval) {
+				//スポーン終了
+
+				std::cout << "EnemyLaunchType is Destroyed!" << std::endl;
+
+				entity.Destroy();
+				return;
+			}
+
+			if (launchIndex < static_cast<int>(time / spawnInterval)) {
+
+				std::cout << "敵がスポーンしたよ" << std::endl;
+
+				auto tpe = UpdateToroid();
+
+				game.AddEntity(EntityGroupId_Enemy, entity.Position(),
+					"Toroid", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", UpdateToroid(1));
+				//game.AddEntity(EntityGroupId_Enemy, entity.Position(), "mesh","texture",UpdateToroid());
+
+				launchIndex++;
+			}
+		}
+
+		float spawnInterval = 2.0f;	//スポーンする間隔
+		float spawnMax = 5;			//スポーン数
+		float time;					//経過時間
+		int launchIndex = -1;		//出撃している敵の数
+		int enemyType = -1;			//出撃する敵の種類
+	};
+
+
 	
 
 	/**
@@ -350,6 +389,9 @@ namespace GameState {
 			game.LoadTextureFromFile("Res/Model/Toroid.dds");
 			game.LoadTextureFromFile("Res/Model/Toroid.Normal.bmp");
 
+
+
+
 			switch (stageNo % 3) {
 			case 1: {
 
@@ -429,8 +471,10 @@ namespace GameState {
 			for (int i = rndAddingCount(game.Rand()); i > 0; --i) {
 				const glm::vec3 pos(distributerX(game.Rand()), 0, distributerZ(game.Rand()));
 
-				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, pos,
-					"Toroid", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", UpdateToroid(1))) {
+
+
+				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, glm::vec3(0),
+					"Res/Model/Toroid.fbx", "Res/Model/Player.dds", EnemyLaunchType())) {
 
 					p->Velocity(glm::vec3(pos.x < 0 ? 0.5f : -0.5f, 0, -1.0f));
 					p->Collision(collisionDataList[EntityGroupId_Enemy]);
@@ -459,34 +503,5 @@ namespace GameState {
 		game.Camera(0, camera);
 	}
 
-	struct EnemyLaunchType {
-		
-		void operator()(Entity::Entity& entity, float delta) {
-			
-			time += delta;
-
-			if (time >= spawnMax * spawnInterval) {
-				//スポーン終了
-
-				entity.Destroy();
-				return;
-			}
-			if (launchIndex < static_cast<int>(time / spawnInterval)) {
-
-				//GameEngine::AddEntity(EntityGroupId_Enemy,)
-
-				launchIndex++;
-			}
-
-			
-
-		}
-
-		float spawnInterval = 2.0f;	//スポーンする間隔
-		float spawnMax = 1;			//スポーン数
-		float time;					//経過時間
-		int launchIndex = -1;		//出撃している敵の数
-
-	};
 
 }
