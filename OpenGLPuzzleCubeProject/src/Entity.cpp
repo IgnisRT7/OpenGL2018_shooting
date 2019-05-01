@@ -169,7 +169,7 @@ namespace Entity {
 		LinkEntity* entity = static_cast<LinkEntity*>(freeList.prev);
 		activeList[groupId].Insert(entity);
 
-		entity->name = mesh->Name();
+		entity->name = mesh ? mesh->Name() : "none";
 		entity->groupId = groupId;
 		entity->transform = TransformData({ position,glm::vec3(1,1,1),glm::quat() });
 		entity->velocity = glm::vec3();
