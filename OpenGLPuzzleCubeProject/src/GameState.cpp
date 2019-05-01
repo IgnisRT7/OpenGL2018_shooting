@@ -54,13 +54,33 @@ namespace GameState {
 
 				//タイトル画面からメインゲーム画面の更新処理へ移行
 				game.UpdateFunc(MainGame());
+
 			}
 		}
 		else if (game.GetGamePad().buttonDown & GamePad::START) {
 			game.PlayAudio(1, CRI_SAMPLECUESHEET_START);
 			timer = 2;
 		}
+
+
+
 	}
 
-
 }
+
+class TestClassEnemy {
+public:
+	TestClassEnemy() {}
+	virtual void operator()(double d) {//nanimmosinai
+	}
+};
+
+class TestClassEnemyTypeA : public TestClassEnemy {
+public:
+	TestClassEnemyTypeA() {}
+
+	void operator()(double d) override {
+		std::cout << "fdjaoiejwroiae" << std::endl;
+	}
+};
+

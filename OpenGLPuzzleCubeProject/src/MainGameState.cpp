@@ -83,8 +83,9 @@ namespace GameState {
 			entity.Rotation(glm::angleAxis(rot, glm::vec3(0, 1, 0)));
 
 			//画面外判定処理
-			if (std::abs(pos.x) > 40.0f || std::abs(pos.z) > 40.0f) {
+			if (std::abs(pos.x) > 200.0f || std::abs(pos.z) > 200.0f) {
 				GameEngine::Instance().RemoveEntity(&entity);
+				std::cout << "Toroid is destroyed!" << std::endl;
 				return;
 			}
 
@@ -117,17 +118,18 @@ namespace GameState {
 
 				std::cout << "敵がスポーンしたよ" << std::endl;
 
-				auto tpe = UpdateToroid();
 
-				game.AddEntity(EntityGroupId_Enemy, entity.Position(),
-					"Toroid", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", UpdateToroid(1));
+				Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, entity.Position(),
+					"Toroid", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", UpdateToroid(0));
 				//game.AddEntity(EntityGroupId_Enemy, entity.Position(), "mesh","texture",UpdateToroid());
+
+				p->Collision(collisionDataList[EntityGroupId_Enemy]);
 
 				launchIndex++;
 			}
 		}
 
-		float spawnInterval = 2.0f;	//スポーンする間隔
+		float spawnInterval = 0.5;	//スポーンする間隔
 		float spawnMax = 5;			//スポーン数
 		float time;					//経過時間
 		int launchIndex = -1;		//出撃している敵の数
@@ -352,7 +354,7 @@ namespace GameState {
 
 			++stageNo;
 			stageTimer = stageTime;
-			game.Camera(0, { glm::vec4(0,30,0,1),glm::vec3(0,0,10),glm::vec3(0,0,1) });
+			game.Camera(0, { glm::vec4(0,100,0,1),glm::vec3(0,0,10),glm::vec3(0,0,1) });
 			game.Camera(1, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,0,1) });
 			game.GroupVisibility(EntityGroupId_Background, 0, true);
 			game.GroupVisibility(EntityGroupId_Background, 1, false);
@@ -448,6 +450,7 @@ namespace GameState {
 			}
 			}
 
+
 			auto pPlayer = game.AddEntity(EntityGroupId_Player, glm::vec3(0, 0, 0),
 				"Aircraft", "Res/Model/Player.dds", UpdatePlayer());
 			pPlayer->Collision(collisionDataList[EntityGroupId_Player]);
@@ -462,26 +465,24 @@ namespace GameState {
 
 		interval -= delta;
 
-		//敵の出現処理
+		//敵スポナーの出現処理
 		if (interval <= 0) {
 
 			const std::uniform_real_distribution<> rndInterval(0.5f, 1);
 			const std::uniform_int_distribution<> rndAddingCount(1, 5);
 
-			for (int i = rndAddingCount(game.Rand()); i > 0; --i) {
+			//for (int i = rndAddingCount(game.Rand()); i > 0; --i) {
 				const glm::vec3 pos(distributerX(game.Rand()), 0, distributerZ(game.Rand()));
 
-
-
-				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, glm::vec3(0),
+				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, pos,
 					"Res/Model/Toroid.fbx", "Res/Model/Player.dds", EnemyLaunchType())) {
 
-					p->Velocity(glm::vec3(pos.x < 0 ? 0.5f : -0.5f, 0, -1.0f));
-					p->Collision(collisionDataList[EntityGroupId_Enemy]);
+					//p->Velocity(glm::vec3(pos.x < 0 ? 0.5f : -0.5f, 0, -1.0f));
+					p->Collision(collisionDataList[EntityGroupId_Others]);
 				}
-			}
+			//}
 
-			interval = rndInterval(game.Rand());
+			interval = 5;// rndInterval(game.Rand());
 
 		}
 

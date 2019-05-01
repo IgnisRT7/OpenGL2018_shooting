@@ -17,6 +17,8 @@ namespace GameState {
 		EntityGroupId_Others
 	};
 
+	struct UpdatePlayer;
+
 	///タイトル画面
 	class Title {
 	public:
@@ -37,16 +39,22 @@ namespace GameState {
 	public:
 
 		MainGame();
-		//explicit MainGame(Entity::Entity* p);
 		void operator()(double delta);
 		
 	private:
 
-		//Entity::Entity* pSpaceSphere = nullptr;
-		//Entity::Entity* pPlayer = nullptr;
+		UpdatePlayer* p;
+			
 		double interval = 0;
 		int stageNo = 0;
 		double stageTimer = -1;
+	};
+
+	class sample {
+	public:
+
+		sample(){ }
+		void operator()(double delta) {}
 	};
 
 	///ゲームオーバー画面
