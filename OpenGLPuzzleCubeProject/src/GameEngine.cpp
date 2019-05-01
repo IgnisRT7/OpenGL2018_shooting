@@ -195,13 +195,14 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	uboLight = UniformBuffer::Create(sizeof(Uniform::LightData), 1, "LightData");
 	uboPostEffect = UniformBuffer::Create(sizeof(Uniform::PostEffectData), 2, "PostEffectData");
 
+	//バックバッファ作成
 	offscreen = OffscreenBuffer::Create(static_cast<int>(windowSize.x), static_cast<int>(windowSize.y), GL_RGBA16F);
 	if (!offscreen) {
 		return false;
 	}
 
 
-	//縮小バッファ作成コード(ブルームエフェクト用)
+	//ブルームエフェクト用縮小バッファ作成
 	for (int i = 0, scale = 4; i < bloomBufferCount; ++i, scale *= 4) {
 		const int w = static_cast<int>(windowSize.x) / scale;
 		const int h = static_cast<int>(windowSize.y) / scale;
@@ -216,6 +217,13 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	if (!offDepth) {
 		return false;
 	}
+
+	//ステンシルマスク用バッファ作成
+	offStencil = OffscreenBuffer::Create(1024, 1024, GL_RGBA16F);
+	if (!offStencil) {
+		return false;
+	}
+
 
 	//テクスチャサイズ取得
 	int offWidth, offHeight;
@@ -726,6 +734,27 @@ void GameEngine::Render() {
 	///Path1: Draw shadow.
 
 	RenderShadow(); 
+
+	///path ?: Draw stencil
+
+	//glBindFramebuffer(GL_FRAMEBUFFER, offStencil->GetFramebuffer());
+
+	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_ALWAYS, 1, 0);
+	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+	glColorMask(0, 0, 0, 0);
+	glDepthMask(0);
+
+	glViewport(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
+	glScissor(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
+
+	glClearStencil(0);
+
+
+	glColorMask(1, 1, 1, 1);
+	glDepthMask(1);
+
+	glDisable(GL_STENCIL_TEST);
 
 	///Path2: Draw entity.
 

@@ -151,13 +151,15 @@ private:
 	UniformBufferPtr uboPostEffect;
 	std::unordered_map<std::string, Shader::ProgramPtr> shaderMap;
 
-	OffscreenBufferPtr offscreen;
-	static const int bloomBufferCount = 4;
-	OffscreenBufferPtr offBloom[bloomBufferCount];
-	OffscreenBufferPtr offDepth;
-	ShadowParameter shadowParameter;
+	//オフスクリーンバッファ群
+	OffscreenBufferPtr offscreen;					/// バックバッファ
+	static const int bloomBufferCount = 4;			
+	OffscreenBufferPtr offBloom[bloomBufferCount];	/// ブルームバッファ
+	OffscreenBufferPtr offDepth;					/// 深度バッファ
+	ShadowParameter shadowParameter;				
 
-	//std::unordered_map<std::string, TexturePtr> textureBuffer;
+	OffscreenBufferPtr offStencil;					/// ステンシルバッファ
+
 	using TextureLevel = std::unordered_map<std::string, TexturePtr>;
 	static const size_t minimalStackSize = 1;
 	std::vector<TextureLevel> textureStack;
