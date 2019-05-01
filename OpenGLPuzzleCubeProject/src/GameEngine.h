@@ -128,7 +128,8 @@ private:
 	GameEngine& operator=(const GameEngine&) = delete;
 	void Update(double  delta);
 	void Render();
-	void RenderShadow()const;
+	void RenderShadow() const;
+	void RenderStencil() const;
 
 private:
 

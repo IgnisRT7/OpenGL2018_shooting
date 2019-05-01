@@ -382,6 +382,36 @@ namespace Entity {
 		}
 	}
 
+	void Buffer::DrawStencil(const Mesh::BufferPtr& meshBuffer )const {
+
+		meshBuffer->BindVAO();
+		for (int viewIndex = 0; viewIndex < Uniform::maxViewCount; ++viewIndex) {
+			for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
+
+				//カメラから見えない設定の場合は表示させない
+				if (!(visibilityFlags[groupId] & (1 << viewIndex))) {
+					continue;
+				}
+
+				for (const Link* itr = activeList[groupId].next; itr != &activeList[groupId];
+					itr = itr->next) {
+					const LinkEntity& e = *static_cast<const LinkEntity*>(itr);
+
+					//データがあるとき かつ castStencilフラグが有効の時に実行
+					if (e.mesh && e.texture && e.program && e.castStencil) {
+						//for (size_t i = 0; i < sizeof(e.texture) / sizeof(e.texture[0]); ++i) {
+						//	e.program->BindTexture(GL_TEXTURE0 + i, GL_TEXTURE_2D,
+						//		e.texture[i]->Id());
+						//}
+						ubo->BindBufferRange(e.uboOffset, ubSizePerEntity);
+						e.mesh->Draw(meshBuffer);
+					}
+				}
+			}
+		}
+
+	}
+
 	/**
 	*	衝突解決ハンドラを設定する
 	*

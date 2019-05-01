@@ -92,7 +92,9 @@ namespace Entity {
 		void Destroy();
 
 		void CastShadow(bool b) { castShadow = b; }
-		bool CastShadow() { return castShadow; }
+		bool CastShadow() const { return castShadow; }
+		void CastStencil(bool b) { castStencil = b; }
+		bool CastStencil() const { return castStencil; }
 
 	private:
 		Entity() = default;
@@ -122,6 +124,7 @@ namespace Entity {
 
 		bool isActive = false; ///< アクティブなエンティティならtrue, 非アクティブならfalse.
 		bool castShadow = true;		///< このエンティティは影を落とすかどうか
+		bool castStencil = false;	///< ステンシルバッファに描画するかどうか
 	};
 
 	/**
@@ -138,6 +141,7 @@ namespace Entity {
 
 		void Draw(const Mesh::BufferPtr& meshBuffer) const;
 		void DrawDepth(const Mesh::BufferPtr& meshBuffer)const;
+		void DrawStencil(const Mesh::BufferPtr& meshBuffer)const;
 		void GroupVisibility(int groupId, int cameraIndex, bool isVisible) {
 			if (isVisible) {
 				visibilityFlags[groupId] |= (1U << cameraIndex);

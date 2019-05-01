@@ -727,6 +727,34 @@ void GameEngine::RenderShadow() const {
 }
 
 /**
+*	ƒXƒeƒ“ƒVƒ‹‚Î‚Á‚Ó‚ ‚ð•`‰æ‚·‚é
+*/
+void GameEngine::RenderStencil() const {
+
+	glBindFramebuffer(GL_FRAMEBUFFER, offStencil->GetFramebuffer());
+
+	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_ALWAYS, 1, 0);
+	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+	glViewport(0, 0, offStencil->Width(), offStencil->Height());
+	glScissor(0, 0, offStencil->Width(), offStencil->Height());
+	glColorMask(0, 0, 0, 0);
+	glDepthMask(0);
+
+	glViewport(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
+	glScissor(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
+
+	glClearStencil(0);
+
+	entityBuffer->DrawStencil(meshBuffer);
+
+	glColorMask(1, 1, 1, 1);
+	glDepthMask(1);
+
+	glDisable(GL_STENCIL_TEST);
+}
+
+/**
 *	ƒQ[ƒ€‚Ìó‘Ô‚ð•`‰æ‚·‚é
 */
 void GameEngine::Render() {
@@ -736,25 +764,8 @@ void GameEngine::Render() {
 	RenderShadow(); 
 
 	///path ?: Draw stencil
+	RenderStencil();
 
-	//glBindFramebuffer(GL_FRAMEBUFFER, offStencil->GetFramebuffer());
-
-	glEnable(GL_STENCIL_TEST);
-	glStencilFunc(GL_ALWAYS, 1, 0);
-	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-	glColorMask(0, 0, 0, 0);
-	glDepthMask(0);
-
-	glViewport(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
-	glScissor(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
-
-	glClearStencil(0);
-
-
-	glColorMask(1, 1, 1, 1);
-	glDepthMask(1);
-
-	glDisable(GL_STENCIL_TEST);
 
 	///Path2: Draw entity.
 
