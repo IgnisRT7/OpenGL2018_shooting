@@ -1,8 +1,10 @@
 #version 410
 
-layout(location=0) out float fragStencil;
+uniform vec4 fillColor = vec4(1,1,1,1);
+
+layout(location=0) out vec4 fragStencil;
 
 void main(){
 
-	fragStencil = 1.0f;
+	fragStencil = fillColor;
 }
