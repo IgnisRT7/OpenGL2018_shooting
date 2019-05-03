@@ -80,8 +80,13 @@ namespace Entity {
 
 		void UpdateFunc(const UpdateFuncType& func) { updateFunc = func; }
 		const UpdateFuncType& UpdateFunc() const { return updateFunc; }
-		void Collision(const CollisionData& c) { colLocal = c; }
+		void Collision(const CollisionData& c) { colLocal = c; UpdateCollisionData(); }
 		const CollisionData& Collision() const { return colLocal; }
+		void UpdateCollisionData() {
+
+			this->colWorld.min = this->colLocal.min + this->transform.position;
+			this->colWorld.max = this->colLocal.max + this->transform.position;
+		}
 
 		void Velocity(const glm::vec3& v) { velocity = v; }
 		const glm::vec3& Velocity() const { return velocity; }
