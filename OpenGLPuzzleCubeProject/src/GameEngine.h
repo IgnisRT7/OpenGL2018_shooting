@@ -42,8 +42,8 @@ public:
 	bool LoadTextureFromFile(const char* filename);
 	bool LoadMeshFromFile(const char* filename);
 
-	Entity::Entity* AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, Entity::Entity::UpdateFuncType func, const char* shader = nullptr);
-	Entity::Entity* AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, const char* normalName, Entity::Entity::UpdateFuncType func, const char* shader = nullptr);
+	Entity::Entity* AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, Entity::EntityDataBasePtr eData, const char* shader = nullptr);
+	Entity::Entity* AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, const char* normalName, Entity::EntityDataBasePtr eData, const char* shader = nullptr);
 	void RemoveEntity(Entity::Entity*);
 	void RemoveAllEntity();
 	void PushLevel();
@@ -63,9 +63,6 @@ public:
 	};
 	void Shadow(const ShadowParameter& param) {
 		shadowParameter = param;
-		//	std::cout << "shadowParam = Lpos:" << param.lightPos.x << "," << param.lightPos.y << "," << param.lightPos.z << " "
-		//		<< "Ldir:" << param.lightDir.x << "," << param.lightDir.y << "," << param.lightDir.z << " "
-		//		<< "Lup:" << param.lightUp.x << "," << param.lightUp.y << "," << param.lightUp.z << std::endl;
 	}
 	const ShadowParameter& Shadow() const { return shadowParameter; }
 

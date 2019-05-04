@@ -213,7 +213,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	}
 
 	//デプスシャドウバッファ作成
-	offDepth = OffscreenBuffer::Create(1024, 1024, GL_DEPTH_COMPONENT32);
+	offDepth = OffscreenBuffer::Create(2048, 2048, GL_DEPTH_COMPONENT16);
 	if (!offDepth) {
 		return false;
 	}
@@ -233,7 +233,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	//PBOを作成
-	const int pboByteSize = offWidth * offHeight * sizeof(GLfloat) * 4;//tips :vec4 == GLfloat * 4
+	const int pboByteSize = offWidth * offHeight * sizeof(GLfloat) * 4;
 	for (auto& e : pbo) {
 		e.Init(GL_PIXEL_PACK_BUFFER, pboByteSize, nullptr, GL_DYNAMIC_READ);
 	}
@@ -254,6 +254,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	{ "Shrink", "Res/TexCoord.vert", "Res/Shrink.frag" },
 	{ "Blur3x3", "Res/TexCoord.vert", "Res/Blur3x3.frag" },
 	{ "RenderDepth", "Res/RenderDepth.vert", "Res/RenderDepth.frag" },
+	{"RenderStencil","Res/RenderStencil.vert","Res/RenderStencil.frag"},
 	};
 	//シェーダのコンパイル
 	shaderMap.reserve(sizeof(shaderNameList) / sizeof(shaderNameList[0]));
@@ -264,6 +265,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		}
 		shaderMap.insert(std::make_pair(std::string(e[0]), program));
 	}
+
 	//Uniformブロックのバインド
 	shaderMap["Tutorial"]->UniformBlockBinding("VertexData", 0);
 	shaderMap["Tutorial"]->UniformBlockBinding("LightData", 1);
@@ -393,9 +395,9 @@ bool GameEngine::LoadMeshFromFile(const char* filename) {
 *			回転や拡大率はこのポインタ経由で設定する
 *			なお、このポインタをアプリケーション側で保持する必要はない
 */
-Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, Entity::Entity::UpdateFuncType func, const char* shader) {
+Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, Entity::EntityDataBasePtr eData, const char* shader) {
 
-	return AddEntity(groupId, pos, meshName, texName, nullptr, func, shader);
+	return AddEntity(groupId, pos, meshName, texName, nullptr, eData, shader);
 }
 
 /**
@@ -414,7 +416,7 @@ Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const c
 *			回転や拡大率はこのポインタ経由で設定する
 *			なお、このポインタをアプリケーション側で保持する必要はない
 */
-Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, const char* normalName, Entity::Entity::UpdateFuncType func, const char* shader) {
+Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, const char* normalName, Entity::EntityDataBasePtr eData, const char* shader) {
 
 	decltype(shaderMap)::const_iterator itr = shaderMap.end();
 	if (shader) {
@@ -436,7 +438,7 @@ Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const c
 	else {
 		tex[1] = GetTexture("Res/Model/Dummy.Normal.bmp");
 	}
-	return entityBuffer->AddEntity(groupId, pos, mesh, tex, itr->second, func);
+	return entityBuffer->AddEntity(groupId, pos, mesh, tex, itr->second, eData);
 }
 
 /**
@@ -562,7 +564,7 @@ const GamePad& GameEngine::GetGamePad() const {
 *	Func(グループID=1のエンティティ、グループID=10のエンティティ)
 *	のように呼び出される
 */
-void GameEngine::CollisionHandler(int gid0, int gid1, Entity::CollisionHandlerType handler) {
+void GameEngine::CollisionHandler(int gid0, int gid1, Entity::CollisionHandlerType handler = nullptr) {
 	entityBuffer->CollisionHandler(gid0, gid1, handler);
 }
 
@@ -733,25 +735,19 @@ void GameEngine::RenderStencil() const {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, offStencil->GetFramebuffer());
 
-	glEnable(GL_STENCIL_TEST);
-	glStencilFunc(GL_ALWAYS, 1, 0);
-	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
 	glViewport(0, 0, offStencil->Width(), offStencil->Height());
 	glScissor(0, 0, offStencil->Width(), offStencil->Height());
-	glColorMask(0, 0, 0, 0);
-	glDepthMask(0);
 
 	glViewport(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
 	glScissor(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
 
-	glClearStencil(0);
+	glClearColor(0, 0, 0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	const Shader::ProgramPtr& progStencil = shaderMap.find("RenderStencil")->second;
+	progStencil->UseProgram();
 	entityBuffer->DrawStencil(meshBuffer);
 
-	glColorMask(1, 1, 1, 1);
-	glDepthMask(1);
-
-	glDisable(GL_STENCIL_TEST);
 }
 
 /**
@@ -856,6 +852,7 @@ void GameEngine::Render() {
 	uboPostEffect->BUfferSubData(&postEffect);
 	progColorFilter->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offscreen->GetTexture());
 	progColorFilter->BindTexture(GL_TEXTURE1, GL_TEXTURE_2D, offBloom[0]->GetTexture());
+	progColorFilter->BindTexture(GL_TEXTURE2, GL_TEXTURE_2D, offStencil->GetTexture());
 
 	glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
 

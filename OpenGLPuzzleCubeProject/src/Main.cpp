@@ -7,6 +7,8 @@
 #include "../Res/Audio/SampleCueSheet.h"
 #include <random>
 
+#include "user/TitleScene.h"
+
 ///エンティティの衝突グループID
 enum EntityGroupId {
 	EntityGroupId_Player,
@@ -32,7 +34,6 @@ int main() {
 	game.LoadFontFromFile("Res/Font.fnt");
 
 	game.PushLevel();
-	
 	game.UpdateFunc(GameState::Title());
 	game.Run();
 

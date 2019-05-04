@@ -180,6 +180,8 @@
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\Uniform.h" />
     <ClInclude Include="src\UniformBuffer.h" />
+    <ClInclude Include="src\user\GameMainScene.h" />
+    <ClInclude Include="src\user\TitleScene.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
@@ -188,15 +190,15 @@
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\Font.cpp" />
     <ClCompile Include="src\GameEngine.cpp" />
-    <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\GLFWEW.cpp" />
     <ClCompile Include="src\Main.cpp" />
-    <ClCompile Include="src\MainGameState.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\OffscreenBuffer.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\UniformBuffer.cpp" />
+    <ClCompile Include="src\user\GameMainScene.cpp" />
+    <ClCompile Include="src\user\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -212,6 +214,8 @@
     <None Include="Res\posterization.vert" />
     <None Include="Res\RenderDepth.frag" />
     <None Include="Res\RenderDepth.vert" />
+    <None Include="Res\RenderStencil.frag" />
+    <None Include="Res\RenderStencil.vert" />
     <None Include="Res\Shrink.frag" />
     <None Include="Res\TexCoord.vert" />
     <None Include="Res\Tutorial.frag" />
