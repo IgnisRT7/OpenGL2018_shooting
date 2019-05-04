@@ -77,7 +77,13 @@ namespace Entity {
 
 		glm::mat4 CalcModelMatrix() const;
 
-		EntityDataBasePtr& EntityData() { return entityData; }
+		EntityDataBasePtr EntityData() { return entityData; }
+
+		template<typename T>
+		std::shared_ptr<T> CastTo() {
+
+			return std::dynamic_pointer_cast<T>(entityData);
+		}
 
 	public:
 

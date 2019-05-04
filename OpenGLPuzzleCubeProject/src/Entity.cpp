@@ -178,7 +178,6 @@ namespace Entity {
 		entity->texture[0] = texture[0];
 		entity->texture[1] = texture[1];
 		entity->program = program;
-//		entity->updateFunc = func;
 		entity->entityData = eData;
 		if (eData) {
 			eData->_Entity(*dynamic_cast<Entity*>(entity));
@@ -326,7 +325,7 @@ namespace Entity {
 		meshBuffer->BindVAO();
 		for (int viewIndex = 0; viewIndex < Uniform::maxViewCount; ++viewIndex) {
 			for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
-				//std::cout << "groupID: " << groupId << std::endl;
+
 
 				if (!(visibilityFlags[groupId] & (1 << viewIndex))) {
 					//見えないエンティティは描画しない
