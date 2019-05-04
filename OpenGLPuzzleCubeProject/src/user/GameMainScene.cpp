@@ -84,14 +84,14 @@ namespace GameState {
 	void PlayerShot::Initialize() {
 
 		entity->CastShadow(false);
+
+		entity->Velocity(glm::vec3(0, 0, 40));
 	}
 
 	/**
 	*	自機の弾の更新処理
 	*/
 	void PlayerShot::Update(double delta) {
-
-		entity->Velocity(movVec);
 
 		const glm::vec3 pos = entity->Position();
 		if (std::abs(pos.x) > 40 || pos.z < -4 || pos.z > 40) {
@@ -108,25 +108,22 @@ namespace GameState {
 	/// アイテムクラスの定義
 
 	void Item::Initialize() {
+		//entity->Scale({ 50,50,50 });
 		entity->Velocity({ 0,0,-5 });
+		entity->Color({ 1,0,0,1 });
 	}
 
 	void Item::Update(double delta) {
+		std::cout << "dfaera" << std::endl;
+
+		glm::vec3 pos = entity->Position();
+
+		//画面外判定処理
+		if (std::abs(pos.x) > 200.0f || std::abs(pos.z) > 200.0f) {
+			GameEngine::Instance().RemoveEntity(entity);
+			return;
+		}
 	}
-
-	class Parent {
-	public:
-
-		Parent() {}
-		void Update() { std::cout << "parent" << std::endl; }
-	};
-
-	class Child : public Parent{
-	public:
-
-		Child() {}
-		void Update() { std::cout << "child" << std::endl; }
-	};
 
 	void Item::CollisionEnter(Entity::Entity& e) {
 
@@ -139,36 +136,29 @@ namespace GameState {
 
 	/// プレイヤークラスの定義
 
-	void Player::StageStart() {
-
-		entity->Position({ 0,0,-10 });
-		startMovValue = 10;
-		isStartingMove = true;
-	}
-
 	/**
 	*	ステージ開始後に行われる処理
 	*/
 	void Player::StartMove(double delta) {
 
-		float movVel = static_cast<float>(delta) * 20;
-
-		if ((startMovValue -= movVel) > 0) {
-
-			//std::cout << startMovValue << std::endl;
-			entity->Velocity({ 0,0,movVel * 10 });
-		}
-		else {
-
+		if (entity->Position().z >= 0) {
+			
 			isStartingMove = false;
+			entity->Velocity(glm::vec3(0, 0, 0));
 		}
+	}
 
+	void Player::Initialize() {
+
+		entity->Position(glm::vec3(0, 0, -8));
+		entity->Velocity(glm::vec3(0, 0, 15));
+		startMovValue = 100;
+		isStartingMove = true;
 	}
 
 	void Player::Update(double delta) {
 
 		timer += static_cast<float>(delta);
-
 
 		if (isStartingMove) {
 			StartMove(delta);
@@ -218,11 +208,15 @@ namespace GameState {
 				if (shotInterval <= 0) {
 
 					glm::vec3 pos = entity->Position();
-					pos.x -= 0.3f;
+					float bulletInterval = 1.0f;
+					glm::vec3 leftPos = glm::vec3(pos.x - (multiShotNum - 1) / 2 * bulletInterval, pos.y, pos.z);
 
 					game.PlayAudio(0, 0);
-					for (int i = 0; i < 2; ++i) {
-						if (Entity::Entity* p = game.AddEntity(EntityGroupId_PlayerShot, pos, "NormalShot", "Res/Model/Player.dds", std::make_shared<PlayerShot>(), "NonLighting")) {
+					for (int i = 0; i < multiShotNum; ++i) {
+
+						if (Entity::Entity* p = game.AddEntity(EntityGroupId_PlayerShot, leftPos + glm::vec3(i*bulletInterval, 0, 0),
+							"NormalShot", "Res/Model/Player.dds", std::make_shared<PlayerShot>(), "NonLighting")) {
+
 							p->Velocity(glm::vec3(0, 0, 200));
 							p->Collision(collisionDataList[EntityGroupId_PlayerShot]);
 						}
@@ -235,6 +229,30 @@ namespace GameState {
 			else {
 				shotInterval = 0;
 			}
+		}
+	}
+
+	/**
+	*	プレイヤーの衝突判定処理
+	*/
+	void Player::CollisionEnter(Entity::Entity& entity) {
+
+		if (auto i = entity.CastTo<Item>()) {
+
+			if (i->ItemType() == 1) {
+				moveSpeed = glm::min(10.0f, moveSpeed + 1);
+			}
+			else {
+
+				multiShotNum = glm::min(5, multiShotNum + 1);
+
+			}
+		}
+		else if (entity.CastTo<Toroid>()) {
+
+			Initialize();
+
+
 		}
 	}
 
@@ -317,9 +335,10 @@ namespace GameState {
 				p->Color(glm::vec4(1.0f, 0.75f, 0.5f, 1.0f));
 				game.UserVariable("score") += 100;
 			}
-
-			if (Entity::Entity* p = game.AddEntity(EntityGroupId_Item, entity->Position(), "ItemBox", "Res/Model/ItemBox.dds", std::make_shared<Item>())) {
-				std::cout << "アイテム落とした" << std::endl;
+		
+			//アイテム
+			if (Entity::Entity* p = game.AddEntity(EntityGroupId_Item, entity->Position(), "Toroid","Res/Model/Toroid.dds",std::make_shared<Item>())){//"ItemBox", "Res/Model/ItemBox.dds", std::make_shared<Item>())) {
+				p->Collision(collisionDataList[EntityGroupId_Item]);
 			}
 
 		
@@ -492,7 +511,6 @@ namespace GameState {
 			auto pPlayer = game.AddEntity(EntityGroupId_Player, glm::vec3(0, 0, 0),
 				"Aircraft", "Res/Model/Player.dds", playerData);
 			pPlayer->Collision(collisionDataList[EntityGroupId_Player]);
-			playerData->StageStart();
 
 		}
 

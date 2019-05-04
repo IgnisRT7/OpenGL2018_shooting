@@ -54,7 +54,7 @@ namespace GameState {
 
 	private:
 
-		glm::vec3 movVec = { 0,0,80 };
+		//glm::vec3 movVec = { 0,0,80 };
 	};
 
 	/// アイテム
@@ -66,6 +66,12 @@ namespace GameState {
 		void Update(double delta) override;
 
 		void CollisionEnter(Entity::Entity& e) override ;
+
+		int ItemType() { return itemType; }
+
+	private:
+
+		int itemType = 1;
 	};
 
 
@@ -73,11 +79,14 @@ namespace GameState {
 	class Player : public Entity::EntityDataBase{
 	public:
 
-		void Initialize() override {}
+		void Initialize() override;
 
 		void Update(double delta) override;
 
-		void StageStart();
+		void CollisionEnter(Entity::Entity& entity) override;
+
+		void damage();
+
 		void StartMove(double delta);
 
 	private:
@@ -87,11 +96,15 @@ namespace GameState {
 		float moveSpeed = 5.0f;
 
 		float timer = 0;
+		float damageTimer;
 
 		glm::vec3 moveBox[2] =
 		{ {-25, -120, -1},{25, 100, 80} };		/// プレイヤーの可動域
 
-		double shotInterval = 0;	///発射されるまでのクールタイム
+		double shotInterval = 0;	/// 発射されるまでのクールタイム
+		int multiShotNum = 1;			/// 一度に発射できる弾数
+
+
 	};
 
 	/// 敵
