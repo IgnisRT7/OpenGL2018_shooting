@@ -152,7 +152,7 @@ namespace Entity {
 	*			回転や拡大率を設定する場合は個のポインタ経由で行う
 	*			このポインタをアプリケーション側で保持する必要はない
 	*/
-	Entity* Buffer::AddEntity(int groupId, const glm::vec3& position, const Mesh::MeshPtr& mesh, const TexturePtr texture[2], const Shader::ProgramPtr& program, Entity::UpdateFuncType func) {
+	Entity* Buffer::AddEntity(int groupId, const glm::vec3& position, const Mesh::MeshPtr& mesh, const TexturePtr texture[2], const Shader::ProgramPtr& program, EntityDataBasePtr eData) {
 
 		if (freeList.prev == freeList.next) {
 			std::cerr << "WARNING in Entity::Buffer::AddEntity: "
@@ -178,7 +178,12 @@ namespace Entity {
 		entity->texture[0] = texture[0];
 		entity->texture[1] = texture[1];
 		entity->program = program;
-		entity->updateFunc = func;
+//		entity->updateFunc = func;
+		entity->entityData = eData;
+		if (eData) {
+			eData->_Entity(*dynamic_cast<Entity*>(entity));
+			eData->Initialize();
+		}
 		entity->isActive = true;
 		return entity;
 	}
@@ -257,8 +262,9 @@ namespace Entity {
 				LinkEntity& e = *static_cast<LinkEntity*>(itrUpdate);
 				e.transform.position += e.velocity * static_cast<float>(delta);
 
-				if (e.updateFunc) {
-					e.updateFunc(e, delta);
+				if (e.entityData) {
+					e.entityData->Update(delta);
+
 				}
 
 				e.colWorld.min = e.colLocal.min + e.transform.position;
@@ -268,9 +274,7 @@ namespace Entity {
 
 		//衝突判定処理
 		for (const auto& e : collisionHandlerList) {
-			if (!e.handler) {
-				continue;
-			}
+			
 			Link* listL = &activeList[e.groupId[0]];
 			Link* listR = &activeList[e.groupId[1]];
 			for (itrUpdate = listL->next; itrUpdate != listL; itrUpdate = itrUpdate->next) {
@@ -281,7 +285,11 @@ namespace Entity {
 						continue;
 					}
 
-					e.handler(*entityL, *entityR);
+					//e.handler(*entityL, *entityR);
+					
+					if(entityL->entityData) entityL->entityData->CollisionEnter(*entityR);
+					if(entityR->entityData) entityR->entityData->CollisionEnter(*entityL);
+
 					if (entityL != itrUpdate) {
 						break;
 					}
@@ -336,7 +344,9 @@ namespace Entity {
 						//e.program->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, e.texture->Id());
 						for (size_t i = 0; i < sizeof(e.texture) / sizeof(e.texture[0]); ++i) {
 
-							e.program->BindTexture(GL_TEXTURE0 + i, GL_TEXTURE_2D, e.texture[i]->Id());
+							if (e.texture[i]) {
+								e.program->BindTexture(GL_TEXTURE0 + i, GL_TEXTURE_2D, e.texture[i]->Id());
+							}
 						}
 						e.program->SetViewIndex(viewIndex);
 						ubo->BindBufferRange(e.uboOffset, ubSizePerEntity);
@@ -428,7 +438,7 @@ namespace Entity {
 	*	Func(グループID=1のエンティティ,グループID=10のエンティティ)
 	*	のように呼び出される
 	*/
-	void Buffer::CollisionHandler(int gid0, int gid1, CollisionHandlerType handler) {
+	void Buffer::CollisionHandler(int gid0, int gid1, CollisionHandlerType handler = nullptr) {
 
 		if (gid0 > gid1) {
 			std::swap(gid0, gid1);
@@ -436,12 +446,13 @@ namespace Entity {
 		auto itr = std::find_if(collisionHandlerList.begin(), collisionHandlerList.end(),
 			[&](const CollisionHandlerInfo& e) {
 			return e.groupId[0] == gid0 && e.groupId[1] == gid1; });
-		if (itr == collisionHandlerList.end()) {
+		if (itr == collisionHandlerList.end() || handler) {
 			collisionHandlerList.push_back({ { gid0,gid1 },handler });
 		}
 		else {
 			itr->handler = handler;
 		}
+
 	}
 
 	/**

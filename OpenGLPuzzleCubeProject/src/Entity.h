@@ -18,7 +18,10 @@ namespace Entity {
 
 	class Entity;
 	class Buffer;
+	class EntityDataBase;
+
 	using BufferPtr = std::shared_ptr<Buffer>;
+	using EntityDataBasePtr = std::shared_ptr<EntityDataBase>;
 
 	/// 衝突解決ハンドラポインタ型
 	typedef std::shared_ptr<Buffer> BufferPtr;	///< エンティティバッファ
@@ -47,6 +50,7 @@ namespace Entity {
 	class Entity
 	{
 		friend class Buffer;
+		friend class EntityDataBase;
 
 	public:
 		///transfom parameters getter and setter
@@ -72,6 +76,8 @@ namespace Entity {
 		const TransformData LocalTransform() const { return localTransform; }
 
 		glm::mat4 CalcModelMatrix() const;
+
+		EntityDataBasePtr& EntityData() { return entityData; }
 
 	public:
 
@@ -130,6 +136,8 @@ namespace Entity {
 		bool isActive = false; ///< アクティブなエンティティならtrue, 非アクティブならfalse.
 		bool castShadow = true;		///< このエンティティは影を落とすかどうか
 		bool castStencil = false;	///< ステンシルバッファに描画するかどうか
+
+		EntityDataBasePtr entityData;	///< 外部でユーザーが定義するエンティティ付属データ
 	};
 
 	/**
@@ -139,7 +147,7 @@ namespace Entity {
 	public:
 		static BufferPtr Create(size_t maxEntityCount, GLsizeiptr ubSizePerEntity, int bindingPoint, const char* name);
 
-		Entity* AddEntity(int groupId, const glm::vec3& pos, const Mesh::MeshPtr& m, const TexturePtr t[2], const Shader::ProgramPtr& p, Entity::UpdateFuncType func);
+		Entity* AddEntity(int groupId, const glm::vec3& pos, const Mesh::MeshPtr& m, const TexturePtr t[2], const Shader::ProgramPtr& p, EntityDataBasePtr ed);
 		void RemoveEntity(Entity* entity);
 		void RemoveAllEntity();
 		void Update(double delta, const glm::mat4* matView, const glm::mat4& matProj, const glm::mat4& matDepthVP);
@@ -198,11 +206,36 @@ namespace Entity {
 		Link* itrUpdate = nullptr;	///< UpdateとRemoveEntityの相互作用に対応っするためのイテレータ
 		Link* itrUpdateRhs = nullptr;
 
+		//衝突判定用ハンドラ
 		struct CollisionHandlerInfo {
 			int groupId[2];
 			CollisionHandlerType handler;
 		};
 		std::vector<CollisionHandlerInfo> collisionHandlerList;
 
+
+
+	};
+
+	//エンティティに付属する情報の管理クラス
+	class EntityDataBase {
+	public:
+
+		EntityDataBase() {}
+
+		//初期化処理
+		virtual void Initialize() = 0;
+
+		//更新処理
+		virtual void Update(double d) = 0;
+
+		//衝突判定処理
+		virtual void CollisionEnter(Entity& e) {}
+
+		void _Entity(Entity& e) { entity = &e; }
+
+	protected:
+
+		Entity* entity;
 	};
 }
