@@ -167,7 +167,7 @@ namespace GameState {
 
 			float colorAlpha = (damageTimer <= 0) ? 1 : glm::abs(glm::sin(damageTimer*speedMul));
 
-			entity->Color(glm::vec4(1, 1, 1, colorAlpha);
+			entity->Color(glm::vec4(1, 1, 1, colorAlpha));
 		}
 		
 
