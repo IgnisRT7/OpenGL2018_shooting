@@ -7,7 +7,8 @@
 #include "../../GameState.h"
 
 #include "Bullet.h"
-
+#include "Item.h"
+#include "Enemy.h"
 
 namespace GameState {
 
