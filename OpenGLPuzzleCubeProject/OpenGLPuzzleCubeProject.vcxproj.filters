@@ -9,11 +9,11 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="src\User">
-      <UniqueIdentifier>{fcb3cc61-d273-4408-bf78-9ef3ddaa792f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Engine">
       <UniqueIdentifier>{4911e164-a55a-4b91-b34b-188f8f0aa283}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\User">
+      <UniqueIdentifier>{fcb3cc61-d273-4408-bf78-9ef3ddaa792f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

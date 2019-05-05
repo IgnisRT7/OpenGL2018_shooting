@@ -73,7 +73,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Ignisrt7\source\repos\IgnisRT7\OpenGLPuzzleCubeProject_test\packages\GLMathematics.0.9.5.4\build\native\include;C:\Users\Ignis\Documents\IgnisRT7\OpenGLPuzzleCubeProject_test\packages\GLMathematics.0.9.5.4\build\native\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Ignisrt7\source\repos\IgnisRT7\OpenGLPuzzleCubeProject_test\packages\GLMathematics.0.9.5.4\build\native\include;C:\Users\Ignis\Documents\IgnisRT7\OpenGLPuzzleCubeProject_test\packages\GLMathematics.0.9.5.4\build\native\include;$(IncludePath);C:\Users\Ignisrt7\source\repos\IgnisRT7\OpenGLPuzzleCubeProject_test\packages\GLMathematics.0.9.5.4\build\native\include</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -82,7 +82,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\Ignis\Documents\IgnisRT7\OpenGLPuzzleCubeProject_test\packages\GLMathematics.0.9.5.4\build\native\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Ignis\Documents\IgnisRT7\OpenGLPuzzleCubeProject_test\packages\GLMathematics.0.9.5.4\build\native\include;$(IncludePath);C:\Users\Ignisrt7\source\repos\IgnisRT7\OpenGLPuzzleCubeProject_test\packages\GLMathematics.0.9.5.4\build\native\include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
