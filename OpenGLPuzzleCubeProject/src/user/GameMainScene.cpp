@@ -7,6 +7,8 @@
 #include "../../Res/Audio/SampleCueSheet.h"
 #include "../GameEngine.h"
 
+#include "Entity/Bullet.h"
+
 namespace GameState {
 
 	/// 背景
@@ -80,7 +82,7 @@ namespace GameState {
 
 	/**
 	*	自機の弾の初期化処理
-	*/
+	*
 	void PlayerShot::Initialize() {
 
 		entity->CastShadow(false);
@@ -90,7 +92,7 @@ namespace GameState {
 
 	/**
 	*	自機の弾の更新処理
-	*/
+	*
 	void PlayerShot::Update(double delta) {
 
 		const glm::vec3 pos = entity->Position();
@@ -103,7 +105,7 @@ namespace GameState {
 	void PlayerShot::CollisionEnter(Entity::Entity& e) {
 
 		entity->Destroy();
-	}
+	}*/
 
 	/// アイテムクラスの定義
 
@@ -146,7 +148,7 @@ namespace GameState {
 
 	/**
 	*	ステージ開始後に行われる処理
-	*/
+	*
 	void Player::StartMove(double delta) {
 
 		if (entity->Position().z >= 0) {
@@ -211,13 +213,13 @@ namespace GameState {
 
 			/**
 			*	画面輝度の設定
-			*/
+			*
 			if (gamepad.buttonDown & GamePad::B ) {
 			
 				game.KeyValue(glm::min(1.0, game.KeyValue() + delta));
 			}
-			else if(gamepad.buttonDown & GamePad::X){
-				
+			else if (gamepad.buttonDown & GamePad::X) {
+
 				game.KeyValue(glm::max(0.0, game.KeyValue() - delta));
 			}
 
@@ -264,7 +266,7 @@ namespace GameState {
 
 	/**
 	*	プレイヤーの衝突判定処理
-	*/
+	*
 	void Player::CollisionEnter(Entity::Entity& entity) {
 
 		if (auto i = entity.CastTo<Item>()) {
@@ -287,7 +289,7 @@ namespace GameState {
 			}
 
 		}
-	}
+	}*/
 
 	/// 敵クラスの定義
 
@@ -447,6 +449,8 @@ namespace GameState {
 		if (stageTimer < 0) {
 
 			++stageNo;
+
+			///カメラの設定
 			game.Camera(0, { glm::vec4(0,30,0,1),glm::vec3(0,0,10),glm::vec3(0,0,1) });
 			game.Camera(1, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,0,1) });
 			game.GroupVisibility(EntityGroupId_Background, 0, true);
@@ -461,11 +465,12 @@ namespace GameState {
 			game.GroupVisibility(EntityGroupId_Others, 0, false);
 			game.GroupVisibility(EntityGroupId_Others, 0, true);
 
+			/// ライト・輝度の設定
 			game.AmbientLight(glm::vec4(0.05f, 0.1f, 0.2f, 1));
 			game.Light(0, { glm::vec4(1,100,1,1),glm::vec4(12000,12000,12000,1) });
 			game.KeyValue(0.24f);
 
-			//シャドウの設定
+			/// シャドウの設定
 			GameEngine::ShadowParameter shadowParam;
 			shadowParam.lightPos = glm::vec3(20, 50, 50);
 			shadowParam.lightDir = glm::normalize(glm::vec3(-25, -50, 25));
@@ -475,6 +480,7 @@ namespace GameState {
 			shadowParam.range = glm::vec2(300, 300);
 			game.Shadow(shadowParam);
 
+			/// エンティティの初期化
 			game.RemoveAllEntity();
 			game.ClearLevel();
 			game.LoadMeshFromFile("Res/Model/Player.fbx");

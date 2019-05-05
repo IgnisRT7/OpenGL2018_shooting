@@ -3,6 +3,7 @@
 */
 #pragma once
 #include "../Entity.h"
+#include "Entity/Player.h"
 
 
 namespace GameState {
@@ -42,7 +43,7 @@ namespace GameState {
 
 	/**
 	*	自機の弾の更新
-	*/
+	
 	class PlayerShot : public Entity::EntityDataBase{
 	public:
 
@@ -55,7 +56,7 @@ namespace GameState {
 	private:
 
 		//glm::vec3 movVec = { 0,0,80 };
-	};
+	};*/
 
 	/// アイテム
 	class Item : public Entity::EntityDataBase {
@@ -78,6 +79,7 @@ namespace GameState {
 
 
 	/// プレイヤー
+	/*
 	class Player : public Entity::EntityDataBase{
 	public:
 
@@ -107,6 +109,7 @@ namespace GameState {
 		int multiShotNum = 1;			/// 一度に発射できる弾数
 		
 	};
+	*/
 
 	/// 敵
 	class Toroid : public Entity::EntityDataBase{
