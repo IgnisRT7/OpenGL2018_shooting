@@ -160,11 +160,21 @@ namespace GameState {
 
 		timer += static_cast<float>(delta);
 
+		//“_–Åˆ—
+		if (damageTimer > 0) {
+			const float speedMul = 10.0f;
+			damageTimer -= static_cast<float>(delta);
+
+			float colorAlpha = (damageTimer <= 0) ? 1 : glm::abs(glm::sin(damageTimer*speedMul));
+
+			entity->Color(glm::vec4(1, 1, 1, colorAlpha);
+		}
+		
+
 		if (isStartingMove) {
 			StartMove(delta);
 		}
 		else {
-
 
 			GameEngine& game = GameEngine::Instance();
 
@@ -250,8 +260,11 @@ namespace GameState {
 		}
 		else if (entity.CastTo<Toroid>()) {
 
-			Initialize();
+			if (damageTimer <= 0) {
 
+				Initialize();
+				damageTimer = 4.0f;
+			}
 
 		}
 	}
