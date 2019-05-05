@@ -102,7 +102,7 @@ void main(){
 
 //	vec2 centerCoord = (inTexCoord - 0.5) * 2;
 
-	fragColor.rgb = texture(colorSampler[2],inTexCoord).rgb ;
+//	fragColor.rgb = texture(colorSampler[2],inTexCoord).rgb ;
 //	- texture(colorSampler[2],inTexCoord * 0.8).rgb; 
 	//fragColor.rgb =vec3( length( texture(colorSampler[2],).rgb));
 	//fragColor.rgb = vec3(GetSobelValue(inTexCoord));

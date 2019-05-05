@@ -7,7 +7,7 @@
 #include "../../Res/Audio/SampleCueSheet.h"
 #include "../GameEngine.h"
 
-#include "Entity/Bullet.h"
+#include "Entity/Enemy.h"
 
 namespace GameState {
 
@@ -30,7 +30,7 @@ namespace GameState {
 	/**
 	*	背景の更新処理
 	*/
-	void SpaceSphereMain::Update(double delta){
+	void SpaceSphereMain::Update(double delta) {
 
 		glm::vec3 rotSpace = glm::eulerAngles(entity->Rotation());
 		rotSpace.x += static_cast<float>(glm::radians(2.5) * delta);
@@ -41,7 +41,7 @@ namespace GameState {
 
 	/**
 	*	初期化処理
-	*/
+	*
 	void Blast::Initialize() {
 
 		entity->CastShadow(false);
@@ -49,7 +49,7 @@ namespace GameState {
 
 	/**
 	*	更新処理
-	*/
+	*
 	void Blast::Update(double delta) {
 
 		timer += delta;
@@ -76,7 +76,7 @@ namespace GameState {
 		glm::vec3 euler = glm::eulerAngles(entity->Rotation());
 		euler.y += glm::radians(60.0f) + static_cast<float>(delta);
 		entity->Rotation(glm::quat(euler));
-	}
+	}*/
 
 	/// 自機弾のクラス定義
 
@@ -111,7 +111,7 @@ namespace GameState {
 
 	/**
 	*	アイテムの初期化処理
-	*/
+	*
 	void Item::Initialize() {
 		//entity->Scale({ 50,50,50 });
 		entity->Velocity({ 0,0,-5 });
@@ -120,7 +120,7 @@ namespace GameState {
 
 	/**
 	*	アイテムの更新処理
-	*/
+	*
 	void Item::Update(double delta) {
 
 		glm::vec3 pos = entity->Position();
@@ -134,14 +134,14 @@ namespace GameState {
 
 	/**
 	*	アイテムの衝突判定処理
-	*/
+	*
 	void Item::CollisionEnter(Entity::Entity& e) {
 
 		auto p = e.EntityData();
 
 		entity->Destroy();
 
-	}
+	}*/
 
 
 	/// プレイヤークラスの定義
@@ -295,7 +295,7 @@ namespace GameState {
 
 	/**
 	*	敵の初期化処理
-	*/
+	*
 	void Toroid::Initialize() {
 		entity->CastShadow(false);
 		entity->CastStencil(true);	//TODO : ステンシルマスクのテスト用
@@ -305,7 +305,7 @@ namespace GameState {
 
 	/**
 	*	敵の更新処理
-	*/
+	*
 	void Toroid::Update(double delta) {
 
 		timer += static_cast<float>(delta);
@@ -395,7 +395,7 @@ namespace GameState {
 
 	/**
 	*	敵スポナーの更新処理
-	*/
+	*
 	void EnemyLaunchType::Update(double delta) {
 
 		GameEngine& game = GameEngine::Instance();
@@ -421,7 +421,7 @@ namespace GameState {
 
 			launchIndex++;
 		}
-	}
+	}*/
 
 
 	///メインゲーム画面のクラス定義

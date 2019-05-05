@@ -80,6 +80,12 @@
     <ClInclude Include="src\user\Entity\Item.h">
       <Filter>src\User\Entity</Filter>
     </ClInclude>
+    <ClInclude Include="src\user\Entity\Enemy.h">
+      <Filter>src\User\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="src\user\Entity\Effect.h">
+      <Filter>src\User\Entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Audio.cpp">
@@ -131,6 +137,12 @@
       <Filter>src\User\Entity</Filter>
     </ClCompile>
     <ClCompile Include="src\user\Entity\Item.cpp">
+      <Filter>src\User\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="src\user\Entity\Enemy.cpp">
+      <Filter>src\User\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="src\user\Entity\Effect.cpp">
       <Filter>src\User\Entity</Filter>
     </ClCompile>
   </ItemGroup>

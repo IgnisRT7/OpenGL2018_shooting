@@ -181,6 +181,8 @@
     <ClInclude Include="src\Uniform.h" />
     <ClInclude Include="src\UniformBuffer.h" />
     <ClInclude Include="src\user\Entity\Bullet.h" />
+    <ClInclude Include="src\user\Entity\Effect.h" />
+    <ClInclude Include="src\user\Entity\Enemy.h" />
     <ClInclude Include="src\user\Entity\Item.h" />
     <ClInclude Include="src\user\Entity\Player.h" />
     <ClInclude Include="src\user\GameMainScene.h" />
@@ -201,6 +203,8 @@
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\UniformBuffer.cpp" />
     <ClCompile Include="src\user\Entity\Bullet.cpp" />
+    <ClCompile Include="src\user\Entity\Effect.cpp" />
+    <ClCompile Include="src\user\Entity\Enemy.cpp" />
     <ClCompile Include="src\user\Entity\Item.cpp" />
     <ClCompile Include="src\user\Entity\Player.cpp" />
     <ClCompile Include="src\user\GameMainScene.cpp" />
