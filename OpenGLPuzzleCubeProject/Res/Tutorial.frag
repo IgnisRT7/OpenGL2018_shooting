@@ -58,7 +58,9 @@ void main() {
   fragColor.rgb *= lightData.ambientColor.rgb + lightColor * shadow;
   fragColor.rgb += specularColor * normFactor * shadow;
 
-  //fragColor.rgb = vec3(texture(depthSampler,inDepthCoord + vec3(0, 0, -depthBias)) * 0.5 + 0.5);
-  //fragColor.rgb = vec3(shadow);
+  //fragColor.rgb = texture(colorSampler[0],inTexCoord).rgb;	//テクスチャマッピングのみの描画
+ 
+  //fragColor.rgb = vec3(texture(depthSampler,inDepthCoord + vec3(0, 0, -depthBias)) * 0.5 + 0.5);	//影のみの描画
+
   //fragColor.rgb = vec3(lightData.light[0].color);
 }
