@@ -107,14 +107,19 @@ namespace GameState {
 
 	/// アイテムクラスの定義
 
+	/**
+	*	アイテムの初期化処理
+	*/
 	void Item::Initialize() {
 		//entity->Scale({ 50,50,50 });
 		entity->Velocity({ 0,0,-5 });
 		entity->Color({ 1,0,0,1 });
 	}
 
+	/**
+	*	アイテムの更新処理
+	*/
 	void Item::Update(double delta) {
-		std::cout << "dfaera" << std::endl;
 
 		glm::vec3 pos = entity->Position();
 
@@ -125,6 +130,9 @@ namespace GameState {
 		}
 	}
 
+	/**
+	*	アイテムの衝突判定処理
+	*/
 	void Item::CollisionEnter(Entity::Entity& e) {
 
 		auto p = e.EntityData();
@@ -162,10 +170,10 @@ namespace GameState {
 
 		//点滅処理
 		if (damageTimer > 0) {
-			const float speedMul = 10.0f;
+			const float speedMul = 30.0f;
 			damageTimer -= static_cast<float>(delta);
 
-			float colorAlpha = (damageTimer <= 0) ? 1 : glm::abs(glm::sin(damageTimer*speedMul));
+			float colorAlpha = damageTimer <= 0 ? 1 : glm::max(0.0f,(glm::sin(damageTimer*speedMul)));
 
 			entity->Color(glm::vec4(1, 1, 1, colorAlpha));
 		}
@@ -199,6 +207,18 @@ namespace GameState {
 			}
 			if (vec.x || vec.z) {
 				vec = glm::normalize(vec) * moveSpeed;
+			}
+
+			/**
+			*	画面輝度の設定
+			*/
+			if (gamepad.buttonDown & GamePad::B ) {
+			
+				game.KeyValue(glm::min(1.0, game.KeyValue() + delta));
+			}
+			else if(gamepad.buttonDown & GamePad::X){
+				
+				game.KeyValue(glm::max(0.0, game.KeyValue() - delta));
 			}
 
 
@@ -250,7 +270,7 @@ namespace GameState {
 		if (auto i = entity.CastTo<Item>()) {
 
 			if (i->ItemType() == 1) {
-				moveSpeed = glm::min(10.0f, moveSpeed + 1);
+				moveSpeed = glm::min(10.0f, moveSpeed + 2);
 			}
 			else {
 
@@ -277,6 +297,8 @@ namespace GameState {
 	void Toroid::Initialize() {
 		entity->CastShadow(false);
 		entity->CastStencil(true);	//TODO : ステンシルマスクのテスト用
+
+		//auto p = GameEngine::Instance().FindEntityData<Player>();
 	}
 
 	/**
@@ -349,12 +371,15 @@ namespace GameState {
 				game.UserVariable("score") += 100;
 			}
 		
-			//アイテム
-			if (Entity::Entity* p = game.AddEntity(EntityGroupId_Item, entity->Position(), "Toroid","Res/Model/Toroid.dds",std::make_shared<Item>())){//"ItemBox", "Res/Model/ItemBox.dds", std::make_shared<Item>())) {
-				p->Collision(collisionDataList[EntityGroupId_Item]);
-			}
+			if (isItemDrop) {
+				
+				int itemID = rand()  % 2;
 
-		
+				//アイテム
+				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Item, entity->Position(), "ItemBox", "Res/Model/ItemBox.dds", std::make_shared<Item>(itemID))) {//"ItemBox", "Res/Model/ItemBox.dds", std::make_shared<Item>())) {
+					p->Collision(collisionDataList[EntityGroupId_Item]);
+				}
+			}
 
 			//爆発音
 			game.PlayAudio(1, CRI_SAMPLECUESHEET_BOMB);
@@ -382,10 +407,13 @@ namespace GameState {
 			return;
 		}
 
+		//敵の出撃処理
 		if (launchIndex < static_cast<int>(time / spawnInterval)) {
 
+			bool isItemDrop = spawnMax == (launchIndex + 2);
+
 			Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, entity->Position(),
-				"Toroid", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", std::make_shared<Toroid>(0));
+				"Toroid", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", std::make_shared<Toroid>(0,isItemDrop));
 
 			p->Collision(collisionDataList[EntityGroupId_Enemy]);
 
@@ -414,7 +442,7 @@ namespace GameState {
 	void MainGame::operator()(double delta) {
 
 		GameEngine& game = GameEngine::Instance();
-		static const float stageTime = 10;
+		static const float stageTime = 30;
 
 		if (stageTimer < 0) {
 
@@ -484,7 +512,7 @@ namespace GameState {
 			}
 			case 2: {
 
-				stageTimer = 60;
+				stageTimer = 30;
 
 				game.KeyValue(0.24f);
 				game.LoadMeshFromFile("Res/Model/City01.fbx");
@@ -520,10 +548,11 @@ namespace GameState {
 			}
 			}
 
-			auto playerData = std::make_shared<Player>();
-			auto pPlayer = game.AddEntity(EntityGroupId_Player, glm::vec3(0, 0, 0),
-				"Aircraft", "Res/Model/Player.dds", playerData);
-			pPlayer->Collision(collisionDataList[EntityGroupId_Player]);
+			auto playerEntity = game.AddEntity(EntityGroupId_Player, glm::vec3(0, 0, 0),
+				"Aircraft", "Res/Model/Player.dds", std::make_shared<Player>());
+			playerEntity->Collision(collisionDataList[EntityGroupId_Player]);
+
+			playerData = playerEntity->CastTo<Player>();
 
 		}
 
@@ -550,17 +579,16 @@ namespace GameState {
 				//p->Velocity(glm::vec3(pos.x < 0 ? 0.5f : -0.5f, 0, -1.0f));
 				p->Collision(collisionDataList[EntityGroupId_Others]);
 			}
-			//}
 
-			interval = 5;// rndInterval(game.Rand());
+			interval = 5;
 
 		}
 
 		//スコア表示処理
 		char str[16];
 		snprintf(str, 16, "%08.0f", game.UserVariable("score"));
-		game.FontScale(glm::vec2(1.5));
-		game.FontColor(glm::vec4(1, 1, 1, 1));
+		game.FontScale(glm::vec2(3.0f));
+		game.FontColor(glm::vec4(1, 0, 0, 1));
 		game.AddString(glm::vec2(-0.3f, 1.0f), str);
 
 		snprintf(str, 16, "%02.0f", game.UserVariable("player"));

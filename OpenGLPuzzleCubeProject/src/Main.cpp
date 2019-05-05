@@ -21,7 +21,7 @@ enum EntityGroupId {
 int main() {
 
 	GameEngine& game = GameEngine::Instance();
-	if (!game.Init(800, 600, "OpenGL Tutorial")) {
+	if (!game.Init(1600, 1200, "OpenGL Tutorial")) {
 		return 1;
 	}
 

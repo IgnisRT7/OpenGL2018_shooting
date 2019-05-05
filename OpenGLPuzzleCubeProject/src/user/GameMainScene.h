@@ -61,6 +61,8 @@ namespace GameState {
 	class Item : public Entity::EntityDataBase {
 	public:
 
+		Item::Item(int type = 0) : itemType(type) {}
+
 		void Initialize() override;
 
 		void Update(double delta) override;
@@ -103,15 +105,14 @@ namespace GameState {
 
 		double shotInterval = 0;	/// 発射されるまでのクールタイム
 		int multiShotNum = 1;			/// 一度に発射できる弾数
-
-
+		
 	};
 
 	/// 敵
 	class Toroid : public Entity::EntityDataBase{
 	public:
 
-		Toroid(int typeID = 0) :enemyType(typeID) {}
+		Toroid(int typeID = 0,bool itemDrop = false) : enemyType(typeID),isItemDrop(itemDrop) {}
 
 		void Initialize() override;
 
@@ -125,6 +126,7 @@ namespace GameState {
 		int enemyType = 0;
 		int hp = 2;
 
+		bool isItemDrop = false;
 	};
 
 	/// 敵スポナー
@@ -153,7 +155,7 @@ namespace GameState {
 
 	private:
 
-		//UpdatePlayer playerData;
+		std::shared_ptr<Player> playerData;
 
 		double interval = 0;
 		int stageNo = 0;

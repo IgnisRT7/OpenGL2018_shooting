@@ -510,7 +510,7 @@ namespace Entity {
 	*	エンティティの検索を指定した型で検索を行う
 	*/
 	template<typename T>
-	std::shared_ptr<T> Buffer::FindEntity() {
+	std::shared_ptr<T> Buffer::FindEntityData() {
 
 		for (int viewIndex = 0; viewIndex < Uniform::maxViewCount; ++viewIndex) {
 			for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
