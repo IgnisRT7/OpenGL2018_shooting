@@ -179,6 +179,9 @@ namespace Entity {
 
 		Entity* FindEntity(std::string name);
 
+		template<typename T> 
+		std::shared_ptr<T> FindEntity();
+
 	private:
 
 		Buffer() = default;

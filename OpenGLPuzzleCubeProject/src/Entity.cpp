@@ -408,10 +408,7 @@ namespace Entity {
 
 					//データがあるとき かつ castStencilフラグが有効の時に実行
 					if (e.mesh && e.texture && e.program && e.castStencil) {
-						//for (size_t i = 0; i < sizeof(e.texture) / sizeof(e.texture[0]); ++i) {
-						//	e.program->BindTexture(GL_TEXTURE0 + i, GL_TEXTURE_2D,
-						//		e.texture[i]->Id());
-						//}
+
 						ubo->BindBufferRange(e.uboOffset, ubSizePerEntity);
 						e.mesh->Draw(meshBuffer);
 					}
@@ -508,4 +505,33 @@ namespace Entity {
 
 		return nullptr;
 	}
+
+	/**
+	*	エンティティの検索を指定した型で検索を行う
+	*/
+	template<typename T>
+	std::shared_ptr<T> Buffer::FindEntity() {
+
+		for (int viewIndex = 0; viewIndex < Uniform::maxViewCount; ++viewIndex) {
+			for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
+
+				for (const Link* itr = activeList[groupId].next; itr != &activeList[groupId]; itr = itr->next) {
+
+					const LinkEntity& e = *static_cast<const LinkEntity*>(itr);
+
+					auto& eData = e.CastTo<T>();
+
+					if (eData != nullptr) {
+						//指定した型のエンティティが存在していた
+
+						return eData;
+					}
+
+				}
+			}
+		}
+
+	}
+
+
 }
