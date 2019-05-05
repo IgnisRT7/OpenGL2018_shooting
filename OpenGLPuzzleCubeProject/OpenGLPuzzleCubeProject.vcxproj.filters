@@ -15,6 +15,9 @@
     <Filter Include="src\User">
       <UniqueIdentifier>{fcb3cc61-d273-4408-bf78-9ef3ddaa792f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\User\Entity">
+      <UniqueIdentifier>{b170046a-9cc0-4a96-9e0c-20508bdaceff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Audio.h">
@@ -68,6 +71,15 @@
     <ClInclude Include="src\user\GameMainScene.h">
       <Filter>src\User</Filter>
     </ClInclude>
+    <ClInclude Include="src\user\Entity\Player.h">
+      <Filter>src\User\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="src\user\Entity\Bullet.h">
+      <Filter>src\User\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="src\user\Entity\Item.h">
+      <Filter>src\User\Entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Audio.cpp">
@@ -111,6 +123,15 @@
     </ClCompile>
     <ClCompile Include="src\user\GameMainScene.cpp">
       <Filter>src\User</Filter>
+    </ClCompile>
+    <ClCompile Include="src\user\Entity\Player.cpp">
+      <Filter>src\User\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="src\user\Entity\Bullet.cpp">
+      <Filter>src\User\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="src\user\Entity\Item.cpp">
+      <Filter>src\User\Entity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
