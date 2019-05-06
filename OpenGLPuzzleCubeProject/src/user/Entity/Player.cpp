@@ -111,7 +111,9 @@ namespace GameState {
 
 					glm::vec3 pos = entity->Position();
 					float bulletInterval = 1.0f;
-					glm::vec3 leftPos = glm::vec3(pos.x - (multiShotNum - 1) / 2 * bulletInterval, pos.y, pos.z);
+					int bulletHalfIntrval = multiShotNum % 2 == 0 ? bulletInterval / 2 : 0;
+
+					glm::vec3 leftPos = glm::vec3(pos.x - bulletInterval * (multiShotNum - 1) / 2, pos.y, pos.z);
 
 					game.PlayAudio(0, 0);
 					for (int i = 0; i < multiShotNum; ++i) {
