@@ -238,6 +238,9 @@ namespace Entity {
 		//更新処理
 		virtual void Update(double d) = 0;
 
+		//ダメージ処理
+		virtual void Damage(float p) {}
+
 		//衝突判定処理
 		virtual void CollisionEnter(Entity& e) {}
 
