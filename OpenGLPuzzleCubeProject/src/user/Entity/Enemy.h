@@ -7,15 +7,20 @@
 
 namespace GameState {
 
+	class EnemyBulletManager;
+
 	/// “G
 	class Toroid : public Entity::EntityDataBase {
 	public:
 
-		Toroid(int typeID = 0, bool itemDrop = false) : enemyType(typeID), isItemDrop(itemDrop) {}
+		Toroid(int typeID = 0, bool itemDrop = false) :
+			enemyType(typeID), isItemDrop(itemDrop) {}
 
 		void Initialize() override;
 
 		void Update(double delta) override;
+
+		void Damage(float) override;
 
 		void CollisionEnter(Entity::Entity& e) override;
 
@@ -26,6 +31,8 @@ namespace GameState {
 		int hp = 2;
 
 		bool isItemDrop = false;
+
+		std::shared_ptr<EnemyBulletManager> bulletManager;
 	};
 
 	/// “GƒXƒ|ƒi[
@@ -42,4 +49,25 @@ namespace GameState {
 		int launchIndex = -1;		//oŒ‚‚µ‚Ä‚¢‚é“G‚Ì”
 		int enemyType = -1;			//oŒ‚‚·‚é“G‚Ìí—Ş
 	};
+
+	///“G‚Ì’e‚ÌŠÇ—ƒVƒXƒeƒ€
+	class EnemyBulletManager {
+	public:
+		
+		EnemyBulletManager(Entity::Entity& p, Entity::Entity* t = nullptr) :
+			parent(p),target(t),timer(shotInterval){}
+
+		void Update(double delta);
+
+
+	private:
+		float timer = 0;
+		float shotInterval = 2;
+		
+		Entity::Entity& parent;
+		Entity::Entity* target;
+	};
+
+
+
 }

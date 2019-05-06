@@ -9,6 +9,8 @@
 
 #include "Effect.h"
 #include "Item.h"
+#include "Bullet.h"
+#include "Player.h"
 
 namespace GameState {
 
@@ -20,7 +22,7 @@ namespace GameState {
 		entity->CastShadow(false);
 		entity->CastStencil(true);	//TODO : ステンシルマスクのテスト用
 
-		//auto p = GameEngine::Instance().FindEntityData<Player>();
+		bulletManager = std::make_shared<EnemyBulletManager>(*entity);
 	}
 
 	/**
@@ -29,6 +31,8 @@ namespace GameState {
 	void Toroid::Update(double delta) {
 
 		timer += static_cast<float>(delta);
+
+		if (bulletManager)bulletManager->Update(delta);
 
 		float rot = glm::angle(entity->Rotation());
 		const glm::vec3 pos = entity->Position();
@@ -55,6 +59,7 @@ namespace GameState {
 		}
 		case 2: ///プレイヤーキャラへ軽追尾
 
+			
 
 
 			break;
@@ -79,7 +84,10 @@ namespace GameState {
 		}
 	}
 
-	void Toroid::CollisionEnter(Entity::Entity& e) {
+	/**
+	*	ダメージ処理
+	*/
+	void Toroid::Damage(float p) {
 
 		if (--hp <= 0) {
 
@@ -98,7 +106,7 @@ namespace GameState {
 				int itemID = rand() % 2;
 
 				//アイテム
-				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Item, entity->Position(), "ItemBox", "Res/Model/ItemBox.dds", std::make_shared<Item>(itemID))) {//"ItemBox", "Res/Model/ItemBox.dds", std::make_shared<Item>())) {
+				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Item, entity->Position(), "ItemBox", "Res/Model/ItemBox.dds", std::make_shared<Item>(itemID), "NonLighting")) {
 					p->Collision(collisionDataList[EntityGroupId_Item]);
 				}
 			}
@@ -108,7 +116,12 @@ namespace GameState {
 
 			entity->Destroy();
 		}
+	}
 
+	/**
+	*	衝突判定処理
+	*/
+	void Toroid::CollisionEnter(Entity::Entity& e) {
 	}
 
 	/// 敵スポナーのクラス定義
@@ -132,7 +145,7 @@ namespace GameState {
 		//敵の出撃処理
 		if (launchIndex < static_cast<int>(time / spawnInterval)) {
 
-			bool isItemDrop = spawnMax == (launchIndex + 2);
+			bool isItemDrop = spawnMax == (launchIndex + 2);	///最後に出撃する敵のみアイテムドロップする
 
 			Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, entity->Position(),
 				"Toroid", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", std::make_shared<Toroid>(0, isItemDrop));
@@ -140,6 +153,27 @@ namespace GameState {
 			p->Collision(collisionDataList[EntityGroupId_Enemy]);
 
 			launchIndex++;
+		}
+	}
+
+	/**
+	*	更新処理
+	*/
+	void EnemyBulletManager::Update(double delta) {
+
+		GameEngine& game = GameEngine::Instance();
+
+
+
+		timer -= static_cast<float>(delta);
+
+		if (timer < 0) {
+
+			if (Entity::Entity* p = game.AddEntity(EntityGroupId_EnemyShot, parent.Position(),
+				"NormalShot", "Res/Model/Player.dds", std::make_shared<Bullet>(parent.Velocity() * 1.1f), "NonLighting")) {
+
+				timer = shotInterval;
+			}
 		}
 	}
 
