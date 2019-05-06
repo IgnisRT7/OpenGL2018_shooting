@@ -106,7 +106,9 @@ namespace GameState {
 				int itemID = rand() % 2;
 
 				//ƒAƒCƒeƒ€
-				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Item, entity->Position(), "ItemBox", "Res/Model/ItemBox.dds", std::make_shared<Item>(itemID), "NonLighting")) {
+				std::string texName = itemID ? "Res/Model/ItemBoxSpeed.dds" : "Res/Model/ItemBoxBullet.dds";
+
+				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Item, entity->Position(), "ItemBox", texName.c_str(), std::make_shared<Item>(itemID))) {
 					p->Collision(collisionDataList[EntityGroupId_Item]);
 				}
 			}

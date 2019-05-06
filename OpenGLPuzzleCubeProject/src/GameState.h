@@ -4,6 +4,12 @@
 #pragma once
 #include "Entity.h"
 
+#ifndef DDDDDDD
+#define DDDDDDD
+
+#define WINDOW_SIZE_W	800
+#define WINDOW_SIZE_H	600
+
 namespace GameState {
 
 	///エンティティの衝突グループID
@@ -28,5 +34,9 @@ namespace GameState {
 		{ glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.0f,1.0f,1.0f) },
 	};
 
+	//glm::vec2 ScreenRange = glm::vec2();
+
 }
 
+
+#endif

@@ -47,6 +47,7 @@ namespace GameState {
 		GameEngine& game = GameEngine::Instance();
 		game.ClearCollisionHandlerList();
 		game.CollisionHandler(EntityGroupId_PlayerShot, EntityGroupId_Enemy, nullptr);
+		game.CollisionHandler(EntityGroupId_EnemyShot, EntityGroupId_Player, nullptr);
 		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Enemy,nullptr);
 		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Item, nullptr);
 
@@ -105,7 +106,8 @@ namespace GameState {
 			game.LoadTextureFromFile("Res/Model/Player.dds");
 			game.LoadTextureFromFile("Res/Model/Toroid.dds");
 			game.LoadTextureFromFile("Res/Model/Toroid.Normal.bmp");
-			game.LoadTextureFromFile("Res/Model/ItemBox.dds");
+			game.LoadTextureFromFile("Res/Model/ItemBoxSpeed.dds");
+			game.LoadTextureFromFile("Res/Model/ItemBoxBullet.dds");
 
 			switch (stageNo % 3) {
 			case 1: {
@@ -140,7 +142,7 @@ namespace GameState {
 				game.LoadTextureFromFile("Res/Model/City01.Diffuse.dds");
 				game.LoadTextureFromFile("Res/Model/City01.Normal.bmp");
 
-				//îwåiÇÃçXêVèàóù
+				//îwåiÇÃèâä˙âªèàóù
 				for (int z = 0; z < 5; ++z) {
 					const float offsetZ = static_cast<float>(z * 40);
 
@@ -191,13 +193,11 @@ namespace GameState {
 			const std::uniform_real_distribution<> rndInterval(0.5f, 1);
 			const std::uniform_int_distribution<> rndAddingCount(1, 5);
 
-			//for (int i = rndAddingCount(game.Rand()); i > 0; --i) {
 			const glm::vec3 pos(distributerX(game.Rand()), 0, distributerZ(game.Rand()));
 
 			if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, glm::vec3(0, 0, 50),
 				"Res/Model/Toroid.fbx", "Res/Model/Player.dds", std::make_shared<EnemyLaunchType>())) {
 
-				//p->Velocity(glm::vec3(pos.x < 0 ? 0.5f : -0.5f, 0, -1.0f));
 				p->Collision(collisionDataList[EntityGroupId_Others]);
 			}
 
@@ -210,11 +210,10 @@ namespace GameState {
 		snprintf(str, 16, "%08.0f", game.UserVariable("score"));
 		game.FontScale(glm::vec2(3.0f));
 		game.FontColor(glm::vec4(1, 0, 0, 1));
-		game.AddString(glm::vec2(-0.3f, 1.0f), str);
+		//game.AddString(glm::vec2(-0.3f, 1.0f), str);
 
-		snprintf(str, 16, "%02.0f", game.UserVariable("player"));
-		std::string player = std::string("p - 0") + std::to_string((int)game.UserVariable("player"));
-		game.AddString(glm::vec2(-0.9, 1.0f), player.c_str());
+		snprintf(str, 16, "P :%02.0f", glm::max(0.0,static_cast<double>(playerData->RemainingPlayer())));
+		game.AddString(glm::vec2(-0.9, 1.0f), str);
 
 		//ÉJÉÅÉâà⁄ìÆèàóù
 		GameEngine::CameraData camera = game.Camera(0);

@@ -34,11 +34,11 @@ namespace GameState {
 
 	private:
 
-		std::shared_ptr<Player> playerData;
-
+		double stageTimer = -1;
 		double interval = 0;
 		int stageNo = 0;
-		double stageTimer = -1;
+
+		std::shared_ptr<Player> playerData;
 
 	};
 
