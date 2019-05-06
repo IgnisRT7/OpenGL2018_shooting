@@ -2,7 +2,7 @@
 *	@file Bullet.cpp
 */
 #include "Bullet.h"
-
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace GameState {
 
@@ -14,14 +14,17 @@ namespace GameState {
 
 		entity->CastShadow(false);
 
-		entity->Velocity(target ? target->Position() - entity->Position() : velocity);
+		entity->Velocity(target ? (target->Position() - entity->Position()) * glm::length(velocity) : velocity);
 
+		glm::mat4 r = glm::lookAt(glm::vec3(0), -velocity, glm::vec3(0, 1, 0));
+		entity->Rotation(glm::quat_cast(r));
 	}
 
 	/**
 	*	自機の弾の更新処理
 	*/
 	void Bullet::Update(double delta) {
+
 
 
 		//範囲外処理
