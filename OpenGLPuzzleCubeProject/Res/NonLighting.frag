@@ -7,5 +7,8 @@ out vec4 fragColor;
 uniform sampler2D colorSampler;
 
 void main(){
-	fragColor = inColor * texture(colorSampler, inTexCoord);
+
+	vec4 vColor = length(inColor) < 0.1 ? vec4(1) : inColor;
+
+	fragColor = vColor * texture(colorSampler, inTexCoord);
 }
