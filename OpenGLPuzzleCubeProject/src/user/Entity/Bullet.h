@@ -7,12 +7,11 @@
 
 namespace GameState {
 
-
-	/**
-	*	自機の弾の更新
-	*/
-	class PlayerShot : public Entity::EntityDataBase {
+	/// 自機の弾クラス
+	class Bullet : public Entity::EntityDataBase {
 	public:
+		
+		Bullet(glm::vec3 v = glm::vec3(0, 0, 1), Entity::Entity* t = nullptr) :velocity(v), target(t) {}
 
 		void Initialize() override;
 
@@ -22,7 +21,8 @@ namespace GameState {
 
 	private:
 
-		//glm::vec3 movVec = { 0,0,80 };
+		glm::vec3 velocity;
+		Entity::Entity* target;
 	};
 
 
