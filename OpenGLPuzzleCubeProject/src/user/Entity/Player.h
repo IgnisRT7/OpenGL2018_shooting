@@ -16,7 +16,7 @@ namespace GameState {
 
 		void CollisionEnter(Entity::Entity& entity) override;
 
-		void damage();
+		void Damage(float p) override;
 
 		void StartMove(double delta);
 

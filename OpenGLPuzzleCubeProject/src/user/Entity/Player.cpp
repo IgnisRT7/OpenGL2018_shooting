@@ -9,6 +9,10 @@
 #include "Bullet.h"
 #include "Item.h"
 #include "Enemy.h"
+#include "Effect.h"
+
+#include "../../../Res/Audio/SampleSound_acf.h"
+#include "../../../Res/Audio/SampleCueSheet.h"
 
 namespace GameState {
 
@@ -113,7 +117,7 @@ namespace GameState {
 					for (int i = 0; i < multiShotNum; ++i) {
 
 						if (Entity::Entity* p = game.AddEntity(EntityGroupId_PlayerShot, leftPos + glm::vec3(i*bulletInterval, 0, 0),
-							"NormalShot", "Res/Model/Player.dds", std::make_shared<PlayerShot>(), "NonLighting")) {
+							"NormalShot", "Res/Model/Player.dds", std::make_shared<Bullet>(), "NonLighting")) {
 
 							p->Velocity(glm::vec3(0, 0, 200));
 							p->Collision(collisionDataList[EntityGroupId_PlayerShot]);
@@ -131,11 +135,38 @@ namespace GameState {
 	}
 
 	/**
-	*	プレイヤーの衝突判定処理
+	*	ダメージ処理
+	*/
+	void Player::Damage(float p) {
+
+		if (damageTimer <= 0) {
+
+			GameEngine& game = GameEngine::Instance();
+
+			//爆発エフェクト
+			if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, entity->Position(), "Blast", "Res/Model/Toroid.dds", std::make_shared<Blast>())) {
+				const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
+				p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
+				p->Color(glm::vec4(1.0f, 0.75f, 0.5f, 1.0f));
+				game.UserVariable("score") += 100;
+			}
+
+			//爆発音
+			game.PlayAudio(1, CRI_SAMPLECUESHEET_BOMB);
+
+
+			Initialize();
+			damageTimer = 4.0f;
+		}
+	}
+
+	/**
+	*	衝突判定処理
 	*/
 	void Player::CollisionEnter(Entity::Entity& entity) {
 
 		if (auto i = entity.CastTo<Item>()) {
+			//アイテムの効果を受ける
 
 			if (i->ItemType() == 1) {
 				moveSpeed = glm::min(10.0f, moveSpeed + 2);
@@ -146,14 +177,10 @@ namespace GameState {
 
 			}
 		}
-		else if (entity.CastTo<Toroid>()) {
+		if (auto e = entity.CastTo<Toroid>()) {
+			//敵にダメージを与える
 
-			if (damageTimer <= 0) {
-
-				Initialize();
-				damageTimer = 4.0f;
-			}
-
+			e->Damage(1);
 		}
 	}
 
