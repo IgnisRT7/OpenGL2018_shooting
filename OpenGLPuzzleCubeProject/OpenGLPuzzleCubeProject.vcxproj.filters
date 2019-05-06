@@ -86,6 +86,9 @@
     <ClInclude Include="src\user\Entity\Effect.h">
       <Filter>src\User\Entity</Filter>
     </ClInclude>
+    <ClInclude Include="src\user\GameEndScene.h">
+      <Filter>src\User</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Audio.cpp">
@@ -144,6 +147,9 @@
     </ClCompile>
     <ClCompile Include="src\user\Entity\Effect.cpp">
       <Filter>src\User\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="src\user\GameEndScene.cpp">
+      <Filter>src\User</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

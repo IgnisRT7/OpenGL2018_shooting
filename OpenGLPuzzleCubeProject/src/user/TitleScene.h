@@ -2,6 +2,7 @@
 *	@file TitleScene.h
 */
 #pragma once
+#include "../Entity.h"
 
 namespace GameState {
 

@@ -117,10 +117,13 @@ public:
 
 	double& UserVariable(const char* name) { return userNumbers[name]; }
 
+	/*
 	template<typename T>
 	std::shared_ptr<T> FindEntityData() {
 		return entityBuffer->FindEntityData<T>();
-	}
+	}*/
+
+	Entity::Entity* FindEntity(Entity::FindEntityFunc f);
 
 private:
 

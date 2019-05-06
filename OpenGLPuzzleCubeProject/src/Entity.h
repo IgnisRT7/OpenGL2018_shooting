@@ -22,6 +22,7 @@ namespace Entity {
 
 	using BufferPtr = std::shared_ptr<Buffer>;
 	using EntityDataBasePtr = std::shared_ptr<EntityDataBase>;
+	using FindEntityFunc = std::function<bool(Entity*)>;
 
 	/// 衝突解決ハンドラポインタ型
 	typedef std::shared_ptr<Buffer> BufferPtr;	///< エンティティバッファ
@@ -177,7 +178,7 @@ namespace Entity {
 		const CollisionHandlerType& CollisionHandler(int gid0, int gid1) const;
 		void ClearCollisionHanderList();
 
-		Entity* FindEntity(std::string name);
+		Entity* FindEntity(FindEntityFunc f);
 
 		template<typename T> 
 		std::shared_ptr<T> FindEntityData();

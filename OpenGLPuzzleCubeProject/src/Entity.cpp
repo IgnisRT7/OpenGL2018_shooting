@@ -486,19 +486,22 @@ namespace Entity {
 	*
 	*	@param name	エンティティ名
 	*/
-	Entity* Buffer::FindEntity(std::string name) {
+	Entity* Buffer::FindEntity(FindEntityFunc searchFunc) {
+
+		if (searchFunc) return nullptr;
 
 		for (int viewIndex = 0; viewIndex < Uniform::maxViewCount; ++viewIndex) {
 			for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
 
-				for (const Link* itr = activeList[groupId].next; itr != &activeList[groupId]; itr = itr->next) {
+				for (Link* itr = activeList[groupId].next; itr != &activeList[groupId]; itr = itr->next) {
 
-					const LinkEntity& e = *static_cast<const LinkEntity*>(itr);
+					 LinkEntity* e = static_cast< LinkEntity*>(itr);
 
-					if (e.name == name) {
-
-						return (Entity*)&e;
+					
+					 if (searchFunc(dynamic_cast<Entity*>(e))) {
+						 return dynamic_cast<Entity*>(e);
 					}
+
 				}
 			}
 		}

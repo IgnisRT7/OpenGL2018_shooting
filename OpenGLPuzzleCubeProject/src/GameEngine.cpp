@@ -644,11 +644,12 @@ void GameEngine::ClearLevel() {
 /**
 *	エンティティバッファからエンティティを探す
 *
-*	@param name	エンティティ名
+*	@param name	エンティティを探すための関数ポインタ
 */
-Entity::Entity* GameEngine::FindEntity(std::string name) {
+Entity::Entity* GameEngine::FindEntity(Entity::FindEntityFunc f)
+{
 
-	return entityBuffer->FindEntity(name);
+	return entityBuffer->FindEntity(f);
 }
 
 /**

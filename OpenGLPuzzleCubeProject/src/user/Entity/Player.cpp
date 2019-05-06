@@ -113,15 +113,14 @@ namespace GameState {
 					float bulletInterval = 1.0f;
 					int bulletHalfIntrval = multiShotNum % 2 == 0 ? bulletInterval / 2 : 0;
 
-					glm::vec3 leftPos = glm::vec3(pos.x - bulletInterval * (multiShotNum - 1) / 2, pos.y, pos.z);
+					glm::vec3 leftPos = glm::vec3(pos.x - bulletInterval * (multiShotNum - 1) / 2 , pos.y, pos.z);
 
 					game.PlayAudio(0, 0);
 					for (int i = 0; i < multiShotNum; ++i) {
 
 						if (Entity::Entity* p = game.AddEntity(EntityGroupId_PlayerShot, leftPos + glm::vec3(i*bulletInterval, 0, 0),
-							"NormalShot", "Res/Model/Player.dds", std::make_shared<Bullet>(), "NonLighting")) {
+							"NormalShot", "Res/Model/Player.dds", std::make_shared<Bullet>(glm::vec3(0, 0, 200)), "NonLighting")) {
 
-							p->Velocity(glm::vec3(0, 0, 200));
 							p->Collision(collisionDataList[EntityGroupId_PlayerShot]);
 						}
 						pos.x += 0.25f;

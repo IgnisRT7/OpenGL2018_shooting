@@ -55,6 +55,17 @@ namespace GameState {
 	}
 
 	/**
+	*	テスト用プレイヤー捜索関数
+	*/
+	bool SearchPlayer(Entity::Entity* entity) {
+
+		if (entity->CastTo<Player>()) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	*	メインゲーム画面の更新
 	*/
 	void MainGame::operator()(double delta) {
@@ -205,12 +216,14 @@ namespace GameState {
 
 		}
 
+		auto playertest = game.FindEntity(SearchPlayer);
+
 		//スコア表示処理
 		char str[16];
 		snprintf(str, 16, "%08.0f", game.UserVariable("score"));
 		game.FontScale(glm::vec2(3.0f));
 		game.FontColor(glm::vec4(1, 0, 0, 1));
-		//game.AddString(glm::vec2(-0.3f, 1.0f), str);
+		game.AddString(glm::vec2(-0.3f, 1.0f), str);
 
 		snprintf(str, 16, "P :%02.0f", glm::max(0.0,static_cast<double>(playerData->RemainingPlayer())));
 		game.AddString(glm::vec2(-0.9, 1.0f), str);
@@ -221,10 +234,4 @@ namespace GameState {
 		camera.position.x = glm::cos(cameraMoveValue) * 5.0f;
 		game.Camera(0, camera);
 	}
-
-
-
-
-
-
 }
