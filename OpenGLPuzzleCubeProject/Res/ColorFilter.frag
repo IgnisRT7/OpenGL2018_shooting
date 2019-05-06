@@ -74,35 +74,46 @@ float GetSobelValue(vec2 texCoord){
 		length(GetOffsetedTexture(texCoord, vec2( 0, -1)))	 * 2;
 		length(GetOffsetedTexture(texCoord, vec2( 1, -1)))	 * 1;
 
-	return 0;
+	return abs(val1);
 }
 
+bool debugDrawStencil = true;
 
 void main(){
 
-	vec4 ts;
-	ts.xy = vec2(0.25) / vec2(textureSize(colorSampler[1],0));
-	ts.zw = -ts.xy;
-	fragColor.rgb = texture(colorSampler[0],inTexCoord).rgb;
+	if(!debugDrawStencil){
+
+		vec4 ts;
+		ts.xy = vec2(0.25) / vec2(textureSize(colorSampler[1],0));
+		ts.zw = -ts.xy;
+		fragColor.rgb = texture(colorSampler[0],inTexCoord).rgb;
 
 
-	vec3 bloom = texture(colorSampler[1],inTexCoord + ts.xy).rgb;
-	bloom += texture(colorSampler[1],inTexCoord + ts.zy).rgb;
-	bloom += texture(colorSampler[1],inTexCoord + ts.xw).rgb;
-	bloom += texture(colorSampler[1],inTexCoord + ts.zw).rgb;
-	bloom *= 1.0 / 4.0;
+		vec3 bloom = texture(colorSampler[1],inTexCoord + ts.xy).rgb;
+		bloom += texture(colorSampler[1],inTexCoord + ts.zy).rgb;
+		bloom += texture(colorSampler[1],inTexCoord + ts.xw).rgb;
+		bloom += texture(colorSampler[1],inTexCoord + ts.zw).rgb;
+		bloom *= 1.0 / 4.0;
 
-	fragColor.rgb = texture(colorSampler[0],inTexCoord).rgb;
-	fragColor.rgb += bloom;
-	fragColor.rgb *= postEffect.luminanceScale;
-	fragColor.rgb = ACESFilimicToneMapping(fragColor.rgb);
-	fragColor.rgb += (postEffect.matColor * vec4(fragColor.rgb,1)).rgb;
-	fragColor.a = 1.0f;
-	fragColor *= inColor;
+		fragColor.rgb = texture(colorSampler[0],inTexCoord).rgb;
+		fragColor.rgb += bloom;
+		fragColor.rgb *= postEffect.luminanceScale;
+		fragColor.rgb = ACESFilimicToneMapping(fragColor.rgb);
+		fragColor.rgb += (postEffect.matColor * vec4(fragColor.rgb,1)).rgb;
+		fragColor.a = 1.0f;
+		fragColor *= inColor;
+	}
+	else{
+		
+		float s = GetSobelValue(inTexCoord);
+
+		fragColor.rgb = vec3(s);
+
+	}
 
 //	vec2 centerCoord = (inTexCoord - 0.5) * 2;
 
-//	fragColor.rgb = texture(colorSampler[2],inTexCoord).rgb ;
+
 //	- texture(colorSampler[2],inTexCoord * 0.8).rgb; 
 	//fragColor.rgb =vec3( length( texture(colorSampler[2],).rgb));
 	//fragColor.rgb = vec3(GetSobelValue(inTexCoord));
