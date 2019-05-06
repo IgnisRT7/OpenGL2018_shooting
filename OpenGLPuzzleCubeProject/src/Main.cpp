@@ -9,19 +9,10 @@
 
 #include "user/TitleScene.h"
 
-///エンティティの衝突グループID
-enum EntityGroupId {
-	EntityGroupId_Player,
-	EntityGroupId_PlayerShot,
-	EntityGroupId_Enemy,
-	EntityGroupId_EnemyShot,
-	EntityGroupId_Others,
-};
-
 int main() {
 
 	GameEngine& game = GameEngine::Instance();
-	if (!game.Init(1600, 1200, "OpenGL Tutorial")) {
+	if (!game.Init(WINDOW_SIZE_W,WINDOW_SIZE_H, "OpenGL Tutorial")) {
 		return 1;
 	}
 
