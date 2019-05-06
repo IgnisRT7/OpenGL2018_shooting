@@ -70,7 +70,7 @@ namespace Font {
 			return false;
 		}
 
-		reciprocalScreenSize = 2.0f / screen;
+		reciprocalScreenSize = 1.0f / screen;
 		return true;
 	}
 
