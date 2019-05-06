@@ -20,6 +20,8 @@ namespace GameState {
 
 		void StartMove(double delta);
 
+		int RemainingPlayer()const { return remainingPlayer; }
+
 	private:
 
 		bool isStartingMove = true;		/// スタート直後の移動処理
@@ -35,5 +37,6 @@ namespace GameState {
 		double shotInterval = 0;	/// 発射されるまでのクールタイム
 		int multiShotNum = 1;			/// 一度に発射できる弾数
 
+		int remainingPlayer = 3;		/// プレイヤー残機
 	};
 }

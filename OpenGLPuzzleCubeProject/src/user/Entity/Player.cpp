@@ -154,7 +154,12 @@ namespace GameState {
 			//”š”­‰¹
 			game.PlayAudio(1, CRI_SAMPLECUESHEET_BOMB);
 
+			if (--remainingPlayer < 0) {
 
+				game.RemoveEntity(entity);
+				return;
+			}
+			
 			Initialize();
 			damageTimer = 4.0f;
 		}
