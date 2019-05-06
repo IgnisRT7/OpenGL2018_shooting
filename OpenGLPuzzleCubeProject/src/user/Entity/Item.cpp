@@ -14,6 +14,7 @@ namespace GameState {
 		entity->Scale({ 0.8f,0.8f,0.8f });
 		entity->Velocity({ 0,0,-5 });
 		entity->Color({ 1,1,1,1 });
+		//entity->Rotation(glm::angleAxis(90.0f, glm::vec3(0, 0, 1)));
 	}
 
 	/**
@@ -21,11 +22,11 @@ namespace GameState {
 	*/
 	void Item::Update(double delta) {
 
+		//‚­‚é‚­‚é‰ñ“]‚³‚¹‚é
+		glm::quat addR = glm::angleAxis(5 * static_cast<float>(delta), glm::vec3(-1, 0, 0));
+		entity->Rotation(entity->Rotation() * addR);
+
 		glm::vec3 pos = entity->Position();
-
-
-
-		entity->Rotation();
 
 		//‰æ–ÊŠO”»’èˆ—
 		if (std::abs(pos.x) > 200.0f || std::abs(pos.z) > 200.0f) {
