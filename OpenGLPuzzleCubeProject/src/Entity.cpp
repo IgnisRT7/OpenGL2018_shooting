@@ -286,8 +286,12 @@ namespace Entity {
 
 					//e.handler(*entityL, *entityR);
 					
-					if(entityL->entityData) entityL->entityData->CollisionEnter(*entityR);
-					if(entityR->entityData) entityR->entityData->CollisionEnter(*entityL);
+					if (entityL->entityData) {
+						entityL->entityData->CollisionEnter(*entityR);
+					}
+					if (entityR->entityData) {
+						entityR->entityData->CollisionEnter(*entityL);
+					}
 
 					if (entityL != itrUpdate) {
 						break;

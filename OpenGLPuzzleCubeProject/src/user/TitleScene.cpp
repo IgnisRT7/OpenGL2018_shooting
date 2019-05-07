@@ -58,19 +58,20 @@ namespace GameState {
 
 		const float offset = timer == 0 ? 0 : (2.0f - timer) * (2.0f - timer) * 2.0f;
 		game.FontColor(glm::vec4(1, 1, 1, 1));
-		game.FontScale(glm::vec2(5));
-		game.AddString(glm::vec2(-0.65 + offset, 0.3), "STAR FIGHTER");
-		game.FontScale(glm::vec2(1));
-		game.AddString(glm::vec2(0.05f + offset, 0), "The ultimate in Manned-Fighter");
+		game.FontScale(glm::vec2(8));
+		game.AddString(glm::vec2(-0.5 + offset, 0.3), "STAR FIGHTER");
+		game.FontScale(glm::vec2(2));
+		game.AddString(glm::vec2(-0.05f + offset, 0), "The ultimate in Manned-Fighter");
 
 		static float tmpTimer = 0;
 		tmpTimer += static_cast<float>(delta);
 		auto f = (sinf(glm::radians((float)tmpTimer)) + 1) / 2;
 
 		game.FontColor(glm::vec4(1.0f, 0, 0, 0));
-		game.FontScale(glm::vec2(2));
+		game.FontScale(glm::vec2(3));
 		game.AddString(glm::vec2(-0.3, -0.5), "Pressed Enter...");
 
+		
 		auto gamepad = game.GetGamePad();
 
 		if (gamepad.buttonDown & GamePad::B) {

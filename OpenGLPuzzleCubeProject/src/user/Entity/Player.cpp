@@ -84,7 +84,7 @@ namespace GameState {
 
 			/**
 			*	‰æ–Ê‹P“x‚ÌÝ’è
-			*/
+			*
 			if (gamepad.buttonDown & GamePad::B) {
 
 				game.KeyValue(glm::min(1.0, game.KeyValue() + delta));
@@ -92,7 +92,7 @@ namespace GameState {
 			else if (gamepad.buttonDown & GamePad::X) {
 
 				game.KeyValue(glm::max(0.0, game.KeyValue() - delta));
-			}
+			}*/
 
 
 			entity->Velocity(vec);
@@ -188,6 +188,7 @@ namespace GameState {
 			//“G‚Éƒ_ƒ[ƒW‚ð—^‚¦‚é
 
 			e->Damage(1);
+			Damage(1);
 		}
 	}
 

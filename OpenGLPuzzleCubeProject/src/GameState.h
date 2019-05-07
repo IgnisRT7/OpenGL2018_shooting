@@ -7,8 +7,8 @@
 #ifndef DDDDDDD
 #define DDDDDDD
 
-#define WINDOW_SIZE_W	800
-#define WINDOW_SIZE_H	600
+#define WINDOW_SIZE_W	1600
+#define WINDOW_SIZE_H	1200
 
 namespace GameState {
 

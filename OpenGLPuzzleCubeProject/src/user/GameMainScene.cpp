@@ -187,9 +187,6 @@ namespace GameState {
 			auto playerEntity = game.AddEntity(EntityGroupId_Player, glm::vec3(0, 0, 0),
 				"Aircraft", "Res/Model/Player.dds",playerData);
 
-
-			playerData = playerEntity->CastTo<Player>();
-
 		}
 
 		stageTimer -= delta;
@@ -208,7 +205,7 @@ namespace GameState {
 
 			const glm::vec3 pos(distributerX(game.Rand()), 0, distributerZ(game.Rand()));
 
-			if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, glm::vec3(0, 0, 50),
+			if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, pos,
 				"Res/Model/Toroid.fbx", "Res/Model/Player.dds", std::make_shared<EnemyLaunchType>())) {
 
 				p->Collision(collisionDataList[EntityGroupId_Others]);
@@ -229,13 +226,13 @@ namespace GameState {
 		if (sceneTimer <= 0) {
 			//スコア表示処理
 			char str[16];
-			snprintf(str, 16, "%08.0f", game.UserVariable("score"));
-			game.FontScale(glm::vec2(3.0f));
+			snprintf(str, 16, "SCORE :%08.0f", game.UserVariable("score"));
+			game.FontScale(glm::vec2(5));
 			game.FontColor(glm::vec4(1, 0, 0, 1));
-			game.AddString(glm::vec2(-0.3f, 1.0f), str);
+			game.AddString(glm::vec2(-0.95f, 0.95f), str);
 
 			snprintf(str, 16, "P :%02.0f", glm::max(0.0, static_cast<double>(playerData->RemainingPlayer())));
-			game.AddString(glm::vec2(-0.9, 1.0f), str);
+			game.AddString(glm::vec2(-0.95f, 0.8f), str);
 
 			//カメラ移動処理
 			GameEngine::CameraData camera = game.Camera(0);

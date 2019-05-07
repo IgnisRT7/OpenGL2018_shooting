@@ -46,21 +46,22 @@ namespace GameState{
 
 		const float offset = timer == 0 ? 0 : (2.0f - timer) * (2.0f - timer) * 2.0f;
 		game.FontColor(glm::vec4(1, 0, 0, 1));
-		game.FontScale(glm::vec2(5));
-		game.AddString(glm::vec2(-0.65, 0.3), "GAME OVER...");
+		game.FontScale(glm::vec2(10));
+		game.AddString(glm::vec2(-0.55, 0.3), "GAME OVER...");
 
 		char str[16];
 		snprintf(str, 16, "SCORE : %08.0f", game.UserVariable("score"));
-		game.FontColor(glm::vec4(1, 1, 1, 1));
-		game.FontScale(glm::vec2(4));
-		game.AddString(glm::vec2(-0.5, -0.2), str);
+		game.FontColor(glm::vec4(0, 0, 0, 1));
+		game.FontScale(glm::vec2(5));
+		game.AddString(glm::vec2(-0.4, -0.2), str);
 
-		game.FontColor(glm::vec4(1, 1, 1, 1));
-		game.FontScale(glm::vec2(2));
-		game.AddString(glm::vec2(-0.5, -0.5), "Pressed enter to title...");
+		//game.FontColor(glm::vec4(1, 1, 1, 1));
+		game.FontScale(glm::vec2(3));
+		game.AddString(glm::vec2(-0.4, -0.5), "Pressed enter to title...");
 
 		auto gamepad = game.GetGamePad();
 
+		/*
 		if (gamepad.buttonDown & GamePad::B) {
 
 			game.KeyValue(glm::min(1.0, game.KeyValue() + delta));
@@ -68,7 +69,7 @@ namespace GameState{
 		else if (gamepad.buttonDown & GamePad::X) {
 
 			game.KeyValue(glm::max(0.0, game.KeyValue() - delta));
-		}
+		}*/
 
 
 		if (timer > 0) {
