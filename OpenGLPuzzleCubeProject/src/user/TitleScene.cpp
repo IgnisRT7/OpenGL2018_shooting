@@ -53,11 +53,8 @@ namespace GameState {
 	*/
 	void Title::operator()(double delta) {
 
-
-
 		GameEngine& game = GameEngine::Instance();
 		game.Camera(0, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,0,1) });
-
 
 		const float offset = timer == 0 ? 0 : (2.0f - timer) * (2.0f - timer) * 2.0f;
 		game.FontColor(glm::vec4(1, 1, 1, 1));
