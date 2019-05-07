@@ -36,6 +36,8 @@ namespace GameState {
 
 		double stageTimer = -1;
 		double interval = 0;
+
+		float sceneTimer=0;
 		int stageNo = 0;
 
 		std::shared_ptr<Player> playerData;
