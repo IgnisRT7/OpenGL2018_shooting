@@ -30,6 +30,7 @@ namespace GameState {
 
 	void Player::Initialize() {
 
+		entity->Collision(collisionDataList[EntityGroupId_Player]);
 		entity->Position(glm::vec3(0, 0, -8));
 		entity->Velocity(glm::vec3(0, 0, 15));
 		startMovValue = 100;

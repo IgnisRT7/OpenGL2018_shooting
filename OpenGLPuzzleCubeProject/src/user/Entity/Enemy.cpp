@@ -19,7 +19,7 @@ namespace GameState {
 	*	敵の初期化処理
 	*/
 	void Toroid::Initialize() {
-		entity->CastShadow(false);
+		entity->CastShadow(true);
 		entity->CastStencil(true);	//TODO : ステンシルマスクのテスト用
 
 		bulletManager = std::make_shared<EnemyBulletManager>(*entity);
