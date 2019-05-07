@@ -9,6 +9,8 @@
 
 #include "Entity/Enemy.h"
 
+#include "GameEndScene.h"
+
 namespace GameState {
 
 	/// 背景
@@ -123,7 +125,7 @@ namespace GameState {
 			switch (stageNo % 3) {
 			case 1: {
 
-				stageTimer = 10;
+				stageTimer = 30;
 
 				game.KeyValue(0.16f);
 
@@ -184,7 +186,7 @@ namespace GameState {
 
 			auto playerEntity = game.AddEntity(EntityGroupId_Player, glm::vec3(0, 0, 0),
 				"Aircraft", "Res/Model/Player.dds",playerData);
-			playerEntity->Collision(collisionDataList[EntityGroupId_Player]);
+
 
 			playerData = playerEntity->CastTo<Player>();
 
@@ -218,20 +220,34 @@ namespace GameState {
 
 		auto playertest = game.FindEntity(SearchPlayer);
 
-		//スコア表示処理
-		char str[16];
-		snprintf(str, 16, "%08.0f", game.UserVariable("score"));
-		game.FontScale(glm::vec2(3.0f));
-		game.FontColor(glm::vec4(1, 0, 0, 1));
-		game.AddString(glm::vec2(-0.3f, 1.0f), str);
+		if (sceneTimer == 0 && playerData->RemainingPlayer() < 0) {
 
-		snprintf(str, 16, "P :%02.0f", glm::max(0.0,static_cast<double>(playerData->RemainingPlayer())));
-		game.AddString(glm::vec2(-0.9, 1.0f), str);
+			if (sceneTimer == 0) sceneTimer = 3;
+		}
 
-		//カメラ移動処理
-		GameEngine::CameraData camera = game.Camera(0);
-		float cameraMoveValue = fmod(static_cast<float>(stageTimer), 45.0f) * (glm::radians(360.0f) / 45.0f);
-		camera.position.x = glm::cos(cameraMoveValue) * 5.0f;
-		game.Camera(0, camera);
+
+		if (sceneTimer <= 0) {
+			//スコア表示処理
+			char str[16];
+			snprintf(str, 16, "%08.0f", game.UserVariable("score"));
+			game.FontScale(glm::vec2(3.0f));
+			game.FontColor(glm::vec4(1, 0, 0, 1));
+			game.AddString(glm::vec2(-0.3f, 1.0f), str);
+
+			snprintf(str, 16, "P :%02.0f", glm::max(0.0, static_cast<double>(playerData->RemainingPlayer())));
+			game.AddString(glm::vec2(-0.9, 1.0f), str);
+
+			//カメラ移動処理
+			GameEngine::CameraData camera = game.Camera(0);
+			float cameraMoveValue = fmod(static_cast<float>(stageTimer), 45.0f) * (glm::radians(360.0f) / 45.0f);
+			camera.position.x = glm::cos(cameraMoveValue) * 5.0f;
+			game.Camera(0, camera);
+		}
+		else {
+
+			if ((sceneTimer -= delta) <= 0) {
+				game.UpdateFunc(GameEnd());
+			}
+		}
 	}
 }
