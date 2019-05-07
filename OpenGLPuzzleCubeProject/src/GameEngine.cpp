@@ -218,7 +218,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		return false;
 	}
 
-	//ステンシルマスク用バッファ作成
+	//ステンシル用バッファ作成
 	offStencil = OffscreenBuffer::Create(1024, 1024, GL_RGBA16F);
 	if (!offStencil) {
 		return false;
@@ -739,8 +739,8 @@ void GameEngine::RenderStencil() const {
 	glViewport(0, 0, offStencil->Width(), offStencil->Height());
 	glScissor(0, 0, offStencil->Width(), offStencil->Height());
 
-	glViewport(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
-	glScissor(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
+//	glViewport(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
+//	glScissor(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
 
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
