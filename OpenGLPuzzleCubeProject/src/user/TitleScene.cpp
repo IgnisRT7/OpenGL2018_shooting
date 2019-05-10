@@ -50,6 +50,8 @@ namespace GameState {
 
 	/*
 	*	タイトル画面の更新
+	*
+	*	@param delta 経過時間
 	*/
 	void Title::operator()(double delta) {
 

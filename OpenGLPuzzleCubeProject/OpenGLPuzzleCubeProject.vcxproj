@@ -166,6 +166,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DebugLog.h" />
+    <ClInclude Include="DebugLog.cpp" />
     <ClInclude Include="src\Audio.h" />
     <ClInclude Include="src\BufferObject.h" />
     <ClInclude Include="src\Entity.h" />

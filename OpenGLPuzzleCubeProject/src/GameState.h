@@ -4,11 +4,8 @@
 #pragma once
 #include "Entity.h"
 
-#ifndef DDDDDDD
-#define DDDDDDD
-
-#define WINDOW_SIZE_W	1600
-#define WINDOW_SIZE_H	1200
+#define WINDOW_SIZE_W	800
+#define WINDOW_SIZE_H	600
 
 namespace GameState {
 
@@ -37,6 +34,3 @@ namespace GameState {
 	//glm::vec2 ScreenRange = glm::vec2();
 
 }
-
-
-#endif

@@ -38,9 +38,6 @@
     <ClInclude Include="src\GamePad.h">
       <Filter>src\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="src\GameState.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="src\GLFWEW.h">
       <Filter>src\Engine</Filter>
     </ClInclude>
@@ -88,6 +85,15 @@
     </ClInclude>
     <ClInclude Include="src\user\GameEndScene.h">
       <Filter>src\User</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameState.h">
+      <Filter>src\User</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugLog.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugLog.cpp">
+      <Filter>src\Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

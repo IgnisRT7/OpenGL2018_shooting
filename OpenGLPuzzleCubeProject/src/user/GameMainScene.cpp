@@ -227,12 +227,29 @@ namespace GameState {
 			//スコア表示処理
 			char str[16];
 			snprintf(str, 16, "SCORE :%08.0f", game.UserVariable("score"));
-			game.FontScale(glm::vec2(5));
+			game.FontScale(glm::vec2(3));
 			game.FontColor(glm::vec4(1, 0, 0, 1));
 			game.AddString(glm::vec2(-0.95f, 0.95f), str);
 
 			snprintf(str, 16, "P :%02.0f", glm::max(0.0, static_cast<double>(playerData->RemainingPlayer())));
 			game.AddString(glm::vec2(-0.95f, 0.8f), str);
+			
+			static int bufferCount = 0;
+			static float fpsBuffer[60];
+
+			fpsBuffer[++bufferCount % 60] = delta;
+
+			float fps = 0;
+			for (int i = 0; i < 60; i++) {
+				fps += fpsBuffer[i];
+			}
+
+			fps /= 60.0f;
+			fps = 1 / fps;
+
+			snprintf(str, 16, "P :%02.0f",fps);
+			game.AddString(glm::vec2(-0.95f, 0.65f), str);
+
 
 			//カメラ移動処理
 			GameEngine::CameraData camera = game.Camera(0);
