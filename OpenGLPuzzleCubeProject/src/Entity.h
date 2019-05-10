@@ -113,6 +113,8 @@ namespace Entity {
 		bool CastShadow() const { return castShadow; }
 		void CastStencil(bool b) { castStencil = b; }
 		bool CastStencil() const { return castStencil; }
+		void StencilColor(glm::vec4 v) { stencilColor = v; }
+		glm::vec4 StencilColor() const { return stencilColor; }
 
 	private:
 		Entity() = default;
@@ -143,6 +145,7 @@ namespace Entity {
 		bool isActive = false; ///< アクティブなエンティティならtrue, 非アクティブならfalse.
 		bool castShadow = true;		///< このエンティティは影を落とすかどうか
 		bool castStencil = false;	///< ステンシルバッファに描画するかどうか
+		glm::vec4 stencilColor = glm::vec4(1);	///< ステンシルバッファを描画する際の描画色
 
 		EntityDataBasePtr entityData;	///< 外部でユーザーが定義するエンティティ付属データ
 	};
@@ -161,7 +164,7 @@ namespace Entity {
 
 		void Draw(const Mesh::BufferPtr& meshBuffer) const;
 		void DrawDepth(const Mesh::BufferPtr& meshBuffer)const;
-		void DrawStencil(const Mesh::BufferPtr& meshBuffer)const;
+		void DrawStencil(const Mesh::BufferPtr& meshBuffer,const Shader::ProgramPtr& program)const;
 		void GroupVisibility(int groupId, int cameraIndex, bool isVisible) {
 			if (isVisible) {
 				visibilityFlags[groupId] |= (1U << cameraIndex);

@@ -6,6 +6,8 @@
 #include <GL/glew.h>
 #include <string>
 #include <memory>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 
 namespace Shader {
@@ -28,6 +30,12 @@ namespace Shader {
 		void BindTexture(GLenum unit, GLenum type, GLuint texture);
 		void BindShadowTexture(GLenum type, GLuint texture);
 		void SetViewIndex(int index);
+		void SetVectorParameter(glm::vec3 p, std::string name) {
+			GLint vecLocation = glGetUniformLocation(program, name.c_str());
+			if (vecLocation > 0) {
+				glUniform4fv(vecLocation,1 ,glm::value_ptr(glm::vec4(p.x,p.y,p.z,1.0f)));
+			}
+		}
 
 	private:
 		Program() = default;

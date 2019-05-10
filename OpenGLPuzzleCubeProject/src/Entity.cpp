@@ -395,7 +395,7 @@ namespace Entity {
 		}
 	}
 
-	void Buffer::DrawStencil(const Mesh::BufferPtr& meshBuffer )const {
+	void Buffer::DrawStencil(const Mesh::BufferPtr& meshBuffer ,const Shader::ProgramPtr& program)const {
 
 		meshBuffer->BindVAO();
 		for (int viewIndex = 0; viewIndex < Uniform::maxViewCount; ++viewIndex) {
@@ -413,6 +413,7 @@ namespace Entity {
 					//データがあるとき かつ castStencilフラグが有効の時に実行
 					if (e.mesh && e.texture && e.program && e.castStencil) {
 
+						program->SetVectorParameter(e.StencilColor(), "stencilColor");
 						ubo->BindBufferRange(e.uboOffset, ubSizePerEntity);
 						e.mesh->Draw(meshBuffer);
 					}

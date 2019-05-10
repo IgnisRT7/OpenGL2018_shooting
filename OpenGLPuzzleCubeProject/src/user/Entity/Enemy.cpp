@@ -21,6 +21,7 @@ namespace GameState {
 	void Toroid::Initialize() {
 		entity->CastShadow(true);
 		entity->CastStencil(true);	//TODO : ステンシルマスクのテスト用
+		entity->StencilColor(glm::vec4(1, 0, 1, 1));
 
 		bulletManager = std::make_shared<EnemyBulletManager>(*entity);
 	}

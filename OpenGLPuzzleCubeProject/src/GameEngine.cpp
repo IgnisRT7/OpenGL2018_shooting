@@ -8,6 +8,7 @@
 #include "Audio.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include "../DebugLog.h"
 
 ///	頂点データ型
 struct Vertex {
@@ -300,8 +301,6 @@ bool GameEngine::Init(int w, int h, const char* title) {
 */
 void GameEngine::Run() {
 	;
-
-	const double delta = 1.0 / 60.0;
 	GLFWEW::Window& window = GLFWEW::Window::Instance();
 
 	double prevTime = glfwGetTime();
@@ -739,15 +738,14 @@ void GameEngine::RenderStencil() const {
 	glViewport(0, 0, offStencil->Width(), offStencil->Height());
 	glScissor(0, 0, offStencil->Width(), offStencil->Height());
 
-//	glViewport(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
-//	glScissor(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
-
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	const Shader::ProgramPtr& progStencil = shaderMap.find("RenderStencil")->second;
+
 	progStencil->UseProgram();
-	entityBuffer->DrawStencil(meshBuffer);
+	progStencil->SetVectorParameter(glm::vec3(1, 0, 0), "stencilColor");
+	entityBuffer->DrawStencil(meshBuffer,progStencil);
 
 }
 
