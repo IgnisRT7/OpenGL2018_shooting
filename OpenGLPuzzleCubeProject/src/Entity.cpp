@@ -413,8 +413,8 @@ namespace Entity {
 					//データがあるとき かつ castStencilフラグが有効の時に実行
 					if (e.mesh && e.texture && e.program && e.castStencil) {
 
-						program->SetVectorParameter(e.StencilColor(), "stencilColor");
 						ubo->BindBufferRange(e.uboOffset, ubSizePerEntity);
+						program->SetVectorParameter(e.StencilColor(), "stencilColor");
 						e.mesh->Draw(meshBuffer);
 					}
 				}
