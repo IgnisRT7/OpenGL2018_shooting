@@ -117,6 +117,8 @@ public:
 
 	double& UserVariable(const char* name) { return userNumbers[name]; }
 
+	void ToggleDrawOutline() { isDrawOutline = !isDrawOutline; }
+
 	/*
 	template<typename T>
 	std::shared_ptr<T> FindEntityData() {
@@ -152,6 +154,8 @@ private:
 	int pboIndexForWriting = -1;
 	float luminanceScale = 1.0f;
 	float keyValue = 0.18f;
+
+	bool isDrawOutline = false;		///< アウトラインを描画するか否か
 
 	UniformBufferPtr uboLight;
 	UniformBufferPtr uboPostEffect;
