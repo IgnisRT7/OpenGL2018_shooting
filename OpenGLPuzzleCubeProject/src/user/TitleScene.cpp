@@ -7,6 +7,7 @@
 #include "../GameEngine.h"
 #include "../GameState.h"
 #include "GameMainScene.h"
+#include "ModelLoadTestscene.h"
 
 #include "../../Res/Audio/SampleSound_acf.h"
 #include "../../Res/Audio/SampleCueSheet.h"
@@ -91,7 +92,7 @@ namespace GameState {
 			if (timer <= 0) {
 
 				//タイトル画面からメインゲーム画面の更新処理へ移行
-				game.UpdateFunc(MainGame());
+				game.UpdateFunc(ModelLoadTestScene());
 
 			}
 		}
