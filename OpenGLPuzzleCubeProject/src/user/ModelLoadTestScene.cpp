@@ -48,8 +48,8 @@ ModelLoadTestScene::ModelLoadTestScene(){
 	
 	auto p = game.AddEntity(GameState::EntityGroupId_Player, glm::vec3(0,10,0), "Cube", "Res/Model/BG02.Diffuse.dds",nullptr);
 
-	game.LoadMeshFromFile("Res/Model/moca2.fbx");
-	auto m = game.AddEntity(GameState::EntityGroupId_Player, glm::vec3(0, 15, 0), "青葉モカ_mesh", "Res/Model/BG02.Diffuse.dds", nullptr);
+	///game.LoadMeshFromFile("Res/Model/moca2.fbx");
+	//auto m = game.AddEntity(GameState::EntityGroupId_Player, glm::vec3(0, 15, 0), "青葉モカ_mesh", "Res/Model/BG02.Diffuse.dds", nullptr);
 
 
 
@@ -60,37 +60,57 @@ void ModelLoadTestScene::operator()(double delta) {
 	GameEngine& game = GameEngine::Instance();
 	const GamePad& gamepad = game.GetGamePad();
 
-	glm::vec3 vec = glm::vec3(0);
-
-	if (gamepad.buttons & GamePad::DPAD_RIGHT) {
-		vec.x += 1;
-	}
-	else if (gamepad.buttons & GamePad::DPAD_LEFT) {
-		vec.x -= 1;
-	}
-	if (gamepad.buttons & GamePad::DPAD_UP) {
-		vec.z += 1;
-	}
-	else if (gamepad.buttons & GamePad::DPAD_DOWN) {
-		vec.z -= 1;
-	}
-
-	if (vec.length() != 0) {
+	if (gamepad.mouseButtons & GamePad::MOUSE_RIGHT_BUTTON) {
 
 		GameEngine::CameraData camera = game.Camera(0);
 
 		glm::vec3 cameraDir = camera.target - camera.position;
-		
-		
+		glm::vec3 vec = glm::vec3(0);
+		glm::ivec3 rot = glm::vec3(0);
 
-		glm::quat q = glm::rotation(glm::vec3(0,0,-1), glm::normalize(cameraDir));
+		static glm::quat q;
 
-		glm::vec3 vel = q * (vec * 10.0f * static_cast<float>(delta));
+		if (gamepad.buttons & GamePad::DPAD_RIGHT) {
+			vec.x += 1;
+		}
+		else if (gamepad.buttons & GamePad::DPAD_LEFT) {
+			vec.x -= 1;
+		}
+		if (gamepad.buttons & GamePad::DPAD_UP) {
+			vec.z += 1;
+		}
+		else if (gamepad.buttons & GamePad::DPAD_DOWN) {
+			vec.z -= 1;
+		}
+		vec *= -1;
 
-		camera.position += vel;
-		camera.target = camera.position + cameraDir;
+		glm::ivec2 mouseVel = gamepad.mouseVelocity;
+		if (mouseVel.x != 0 || mouseVel.y != 0) {
+			
+			rot.z = glm::radians(mouseVel.x * 5.0f * delta);
+			rot.x = glm::radians(mouseVel.y * 5.0f * delta);
+
+			q += glm::quat(rot);
+			glm::vec3 newCameraDir = q * cameraDir;
+			camera.target = camera.position + newCameraDir;
+			game.Camera(0, camera);
+		}
+
+		if (vec.x != 0 || vec.y != 0) {
+
+			cameraDir = camera.target - camera.position;
+
+			glm::quat qt = glm::rotation(glm::vec3(0, 0, -1), glm::normalize(cameraDir));
+
+			glm::vec3 vel = qt * (vec * 10.0f * static_cast<float>(delta));
+
+			camera.position += vel;
+			camera.target = camera.position + cameraDir;
+
+		}
 
 		game.Camera(0, camera);
+
 	}
 
 //	glm::rotate(glm::quat())

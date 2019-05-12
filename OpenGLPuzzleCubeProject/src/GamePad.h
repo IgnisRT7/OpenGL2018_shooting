@@ -36,6 +36,7 @@ struct GamePad {
 	uint32_t mouseButtonDown;
 
 	glm::vec2 mousePosition;
+	glm::vec2 mouseVelocity;
 	int mouseWheelY;
 
 };

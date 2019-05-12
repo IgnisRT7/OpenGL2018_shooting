@@ -241,7 +241,7 @@ namespace GLFWEW {
 				{ GLFW_KEY_X,GamePad::Y },
 			};
 			for (const auto& e : keyMap) {
-				const int key = glfwGetKey(window,e.glfwCode);
+				const int key = glfwGetKey(window, e.glfwCode);
 				if (key == GLFW_PRESS) {
 					gamepad.buttons |= e.gamepadCode;
 				}
@@ -266,7 +266,7 @@ namespace GLFWEW {
 				gamepad.mouseButtons |= e.mouseCode;
 			}
 			else if(key == GLFW_RELEASE){
-				gamepad.buttons &= e.mouseCode;
+				gamepad.mouseButtons &= e.mouseCode;
 			}
 		}
 		gamepad.mouseButtonDown = gamepad.mouseButtons & ~prevMouseButtons;
@@ -274,7 +274,9 @@ namespace GLFWEW {
 		///マウスの座標更新処理
 		double mousex, mousey;
 		glfwGetCursorPos(window, &mousex, &mousey);
-		gamepad.mousePosition = glm::vec2(static_cast<float>(mousex), static_cast<float>(mousey));
+		glm::vec2 newMousePos = glm::vec2(static_cast<float>(mousex), static_cast<float>(mousey));
 
+		gamepad.mouseVelocity = newMousePos - gamepad.mousePosition;
+		gamepad.mousePosition = newMousePos;
 	}
 } //namespace GLFWEW
