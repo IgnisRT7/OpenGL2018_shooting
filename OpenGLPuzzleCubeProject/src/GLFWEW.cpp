@@ -161,6 +161,7 @@ namespace GLFWEW {
 	void Window::UpdateGamePad() {
 
 		const uint32_t prevButtons = gamepad.buttons;
+		const uint32_t prevMouseButtons = gamepad.mouseButtons;
 		int axesCount, buttonCount;
 
 		//軸入力とボタン入力の取得
@@ -168,6 +169,7 @@ namespace GLFWEW {
 		const uint8_t* buttons = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttonCount);
 
 		if (axes && buttons && axesCount >= 2 && buttonCount >= 8) {
+			///軸入力の処理
 
 			gamepad.buttons &= (GamePad::DPAD_UP | GamePad::DPAD_DOWN | GamePad::DPAD_LEFT | GamePad::DPAD_RIGHT);
 
@@ -207,6 +209,7 @@ namespace GLFWEW {
 			}
 		}
 		else {
+			///キー入力の更新処理
 
 			static const struct {
 				int glfwCode;
@@ -234,5 +237,26 @@ namespace GLFWEW {
 		}
 		gamepad.buttonDown = gamepad.buttons & ~prevButtons;
 
+		static const struct {
+			int glfwMouseCode;
+			uint32_t mouseCode;
+		} mouseMap[] = {
+			{ GLFW_MOUSE_BUTTON_LEFT,GamePad::MOUSE_LEFT_BUTTON},
+			{ GLFW_MOUSE_BUTTON_RIGHT,GamePad::MOUSE_RIGHT_BUTTON},
+		};
+		for (auto& e : mouseMap){
+			int key = glfwGetMouseButton(window,e.glfwMouseCode);
+			if (key == GLFW_PRESS) {
+				gamepad.mouseButtons |= e.mouseCode;
+			}
+			else if(key == GLFW_RELEASE){
+				gamepad.buttons &= e.mouseCode;
+			}
+		}
+		gamepad.mouseButtonDown = gamepad.mouseButtons & ~prevMouseButtons;
+
+		double mousex, mousey;
+		glfwGetCursorPos(window, &mousex, &mousey);
+		gamepad.mousePosition = glm::vec2(static_cast<float>(mousex), static_cast<float>(mousey));
 	}
 } //namespace GLFWEW

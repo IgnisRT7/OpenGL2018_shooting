@@ -145,7 +145,7 @@ private:
 
 	glm::vec2 windowSize;
 
-
+	//最終出力用バッファ
 	GLuint vbo = 0;
 	GLuint ibo = 0;
 	GLuint vao = 0;

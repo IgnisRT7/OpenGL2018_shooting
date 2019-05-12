@@ -3,6 +3,8 @@
 */
 #pragma once
 #include <stdint.h>
+#include <map>
+#include <glm/glm.hpp>
 
 /**
 *	ゲームパッド情報
@@ -21,7 +23,35 @@ struct GamePad {
 		Y = 0x0100,
 		L = 0x0200,
 		R = 0x0400,
+
+		MOUSE_LEFT_BUTTON = 0x01,
+		MOUSE_RIGHT_BUTTON = 0x02,
+		MOUSE_MIDDLE_BUTTON = 0x04,
 	};
+
 	uint32_t buttons;	///< 押されている間フラグが立つ
 	uint32_t buttonDown;///< 押された瞬間だけフラグが立つ
+
+	uint32_t mouseButtons;
+	uint32_t mouseButtonDown;
+
+	glm::vec2 mousePosition;
 };
+
+class InputManager {
+public:
+	
+
+	void Initialize();
+
+	void Update();
+	
+	std::map<int, uint32_t> keyMap;
+
+private:
+
+	InputManager() = default;
+	InputManager(const InputManager&) = delete;
+	InputManager& operator=(const InputManager&) = delete;
+};
+
