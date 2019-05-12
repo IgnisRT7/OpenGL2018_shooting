@@ -19,6 +19,19 @@ namespace GLFWEW {
 	}
 
 	/**
+	*	マウスのスクロール情報を取得する
+	*
+	*	@param window ウインドウハンドル
+	*	@param xPos		X方向のスクロール情報
+	*	@param yPos		Y方向のスクロール情報
+	*/
+	void GetScrollInfo(GLFWwindow* window, double xPos, double yPos) {
+
+		Window& inst = Window::Instance();
+		const_cast<GamePad&>(inst.GetGamePad()).mouseWheelY = yPos;
+	}
+
+	/**
 	*	シングルトンインスタンスを取得する
 	*
 	*	@return Windowのシングルトンインスタンス
@@ -66,6 +79,7 @@ namespace GLFWEW {
 
 		if (!isGLFWInitialized) {
 			glfwSetErrorCallback(ErrorCallback);
+
 			if (glfwInit() != GL_TRUE) {
 				return false;
 			}
@@ -78,6 +92,7 @@ namespace GLFWEW {
 				return false;
 			}
 			glfwMakeContextCurrent(window);
+			glfwSetScrollCallback(window, GetScrollInfo);
 		}
 
 		if (glewInit() != GLEW_OK) {
@@ -237,6 +252,7 @@ namespace GLFWEW {
 		}
 		gamepad.buttonDown = gamepad.buttons & ~prevButtons;
 
+		///マウスのボタン入力処理
 		static const struct {
 			int glfwMouseCode;
 			uint32_t mouseCode;
@@ -255,8 +271,10 @@ namespace GLFWEW {
 		}
 		gamepad.mouseButtonDown = gamepad.mouseButtons & ~prevMouseButtons;
 
+		///マウスの座標更新処理
 		double mousex, mousey;
 		glfwGetCursorPos(window, &mousex, &mousey);
 		gamepad.mousePosition = glm::vec2(static_cast<float>(mousex), static_cast<float>(mousey));
+
 	}
 } //namespace GLFWEW
