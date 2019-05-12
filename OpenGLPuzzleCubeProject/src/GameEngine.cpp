@@ -274,7 +274,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	shaderMap["HiLumExtract"]->UniformBlockBinding("PostEffectData", 2);
 
 	//meshBufferçÏê¨
-	meshBuffer = Mesh::Buffer::Create(100 * 1024, 100 * 1024);
+	meshBuffer = Mesh::Buffer::Create(1000 * 1024, 1000 * 1024);
 	if (!meshBuffer) {
 		std::cerr << "ERROR: GameEngineÇÃèâä˙âªÇ…é∏îs" << std::endl;
 	}
