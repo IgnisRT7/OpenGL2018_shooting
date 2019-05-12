@@ -260,3 +260,5 @@ paket-files/
 __pycache__/
 *.pyc
 /OpenGLPuzzleCubeProject/Res/Model/黒野氏データ
+/OpenGLPuzzleCubeProject/Res/Model/moca2.fbx
+/OpenGLPuzzleCubeProject/Res/Model/moca.fbx
