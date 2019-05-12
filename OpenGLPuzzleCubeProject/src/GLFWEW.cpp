@@ -232,7 +232,7 @@ namespace GLFWEW {
 				}
 			}
 		}
-		gamepad.buttonDown = gamepad.buttons & prevButtons;
+		gamepad.buttonDown = gamepad.buttons & ~prevButtons;
 
 	}
 } //namespace GLFWEW

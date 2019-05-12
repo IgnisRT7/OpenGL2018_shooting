@@ -836,6 +836,8 @@ void GameEngine::Render() {
 	const Shader::ProgramPtr& progColorFilter = shaderMap.find("ColorFilter")->second;
 	progColorFilter->UseProgram();
 
+	progColorFilter->SetBoolParameter(isDrawOutline, "isDrawOutline");
+	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glDisable(GL_BLEND);

@@ -175,6 +175,8 @@ namespace GameState {
 			if (Entity::Entity* p = game.AddEntity(EntityGroupId_EnemyShot, parent.Position(),
 				"NormalShot", "Res/Model/Player.dds", std::make_shared<Bullet>(parent.Velocity() * 1.1f), "NonLighting")) {
 
+				p->CastStencil(true);
+				p->StencilColor(glm::vec4(1, 0, 1, 1));
 				timer = shotInterval;
 			}
 		}

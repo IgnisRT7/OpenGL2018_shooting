@@ -20,6 +20,8 @@ namespace GameState {
 
 		void StartMove(double delta);
 
+		void ShotBullet();
+
 		int RemainingPlayer()const { return remainingPlayer; }
 
 	private:
