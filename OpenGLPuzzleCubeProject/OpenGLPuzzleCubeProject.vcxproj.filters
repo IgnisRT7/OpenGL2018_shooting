@@ -95,6 +95,12 @@
     <ClInclude Include="DebugLog.cpp">
       <Filter>src\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="src\user\ModelLoadTestscene.h">
+      <Filter>src\User</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Audio.cpp">
@@ -156,6 +162,12 @@
     </ClCompile>
     <ClCompile Include="src\user\GameEndScene.cpp">
       <Filter>src\User</Filter>
+    </ClCompile>
+    <ClCompile Include="src\user\ModelLoadTestScene.cpp">
+      <Filter>src\User</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>src\Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

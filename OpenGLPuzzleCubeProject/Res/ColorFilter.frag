@@ -144,7 +144,7 @@ void main(){
 		fragColor *= inColor;
 
 		//アウトライン効果をミックスさせたものを書き出す
-		fragColor.rgb = mix(fragColor.rgb,texture(colorSampler[2],inTexCoord).rgb,GetEdge(colorSampler[2],inTexCoord));
+		//fragColor.rgb = mix(fragColor.rgb,texture(colorSampler[2],inTexCoord).rgb,GetEdge(colorSampler[2],inTexCoord));
 
 		//ステンシルバッファをそのまま書き出す
 		//fragColor.rgb = texture(colorSampler[2],inTexCoord).rgb;
@@ -152,7 +152,8 @@ void main(){
 		//ステンシルバッファにアウトラインを出したものを書き出す
 		//fragColor.rgb = texture(colorSampler[2],inTexCoord).rgb * GetEdge(colorSampler[2],inTexCoord);
 
-		//fragColor.rgb = GausianFilter(colorSampler[2],inTexCoord).rgb;
+		//fragColor.rgb = texture(colorSampler[0],inTexCoord).rgb;
+
 		//vec3(GetEdge(colorSampler[2],inTexCoord));
 
 //	vec2 centerCoord = (inTexCoord - 0.5) * 2;

@@ -22,6 +22,23 @@ namespace Font {
 		float xadvance = 0;	///< カーソルを進める距離
 	};
 
+	class StringData {
+	public:
+
+		void AddString() {
+
+
+		}
+
+		void String(std::string& s) { string = s; }
+
+	private:
+
+		std::string string;
+		glm::vec2 size;
+		glm::vec4 color;
+	};
+
 	/**
 	*	ビットマップフォント描画クラス
 	*/

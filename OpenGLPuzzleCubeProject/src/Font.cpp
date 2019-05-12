@@ -133,6 +133,7 @@ namespace Font {
 		}
 		++line;
 
+		//
 		fontList.resize(128);
 		for (int i = 0; i < charCount; ++i) {
 			FontInfo font;
