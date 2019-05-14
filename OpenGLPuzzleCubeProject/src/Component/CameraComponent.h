@@ -1,0 +1,71 @@
+/**
+*	@file CameraComponent.h
+*/
+#pragma once
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <memory>
+
+class SceneComponent;
+using SceneComponentPtr = std::shared_ptr<SceneComponent>;
+
+/**
+*	シーンコンポーネント
+*	TODO: ココに書くべき処理ではないため後に移行するように
+*/
+class SceneComponent {
+public:
+
+private:
+};
+
+/**
+*	カメラのコンポーネントクラス
+*/
+class CameraComponent :public SceneComponent{
+public:
+
+	virtual glm::mat4& ViewMatrix() const;
+	virtual glm::mat4& ProjctionMatrix() const;
+
+	virtual void Initialize() {};
+	virtual void Update(float delta) {};
+
+	void Position(glm::vec3& p) { position = p; }
+	void Direction(glm::vec3& d) { direction = d; }
+	void UpVector(glm::vec3& u) { up = u; }
+	void Fov(float f) { fov = f; }
+	void Aspect(float a) { aspect = a; }
+	void Near(float n) { near = n; }
+	void Far(float f) { far = f; }
+
+protected:
+
+	glm::vec3 position = glm::vec3(0, 0, 0);		/// カメラ座標
+	glm::vec3 direction = glm::vec3(0, 0, 1);		/// カメラ向き
+	glm::vec3 up = glm::vec3(0, 1, 0);			/// カメラ姿勢
+
+	float fov = 45.0f;		/// 画角
+	float aspect = 1.0f;	/// アスペクト比
+	float near = 0.1f;		/// 最近点
+	float far = 1000.0f;	/// 最遠点
+
+};
+
+class CameraDebugComponent : public CameraComponent {
+public:
+
+private:
+
+	void Initialize() override;
+	void Update(float delta) override;
+
+	glm::vec3 forward;
+	glm::vec3 right;
+	glm::vec3 upLocal;
+
+};
+
+
+
+
