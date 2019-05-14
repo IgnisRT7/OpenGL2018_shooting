@@ -20,7 +20,7 @@ namespace GameState {
 
 	private:
 
-		double timer = 0;
-		bool isInitialized = false;
+		double timer = 0;			/// Œo‰ßŽžŠÔ
+
 	};
 }

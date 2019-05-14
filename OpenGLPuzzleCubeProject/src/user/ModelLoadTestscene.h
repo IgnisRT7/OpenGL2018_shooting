@@ -12,4 +12,7 @@ public:
 
 private:
 
+	float moveSpeed = 10.0f;
+	float rotateSpeed = 10.0f;
+
 };

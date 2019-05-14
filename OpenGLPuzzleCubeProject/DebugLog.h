@@ -2,6 +2,8 @@
 #include <vector>
 #include <utility>
 
+#ifdef USE_DEBUGLOGGER
+
 /*
 *	デバッグ用文字出力クラス
 */
@@ -24,3 +26,5 @@ private:
 	std::vector<std::pair<std::string, uint32_t> > tagList;
 
 };
+
+#endif

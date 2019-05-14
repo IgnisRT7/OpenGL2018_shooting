@@ -26,9 +26,8 @@ namespace GLFWEW {
 	*	@param yPos		Y方向のスクロール情報
 	*/
 	void GetScrollInfo(GLFWwindow* window, double xPos, double yPos) {
-
-		Window& inst = Window::Instance();
-		const_cast<GamePad&>(inst.GetGamePad()).mouseWheelY = yPos;
+		
+		Window::Instance().UpdateMouseWheel(xPos, yPos);
 	}
 
 	/**
@@ -235,8 +234,10 @@ namespace GLFWEW {
 				{ GLFW_KEY_LEFT,GamePad::DPAD_LEFT },
 				{ GLFW_KEY_RIGHT,GamePad::DPAD_RIGHT },
 				{ GLFW_KEY_ENTER,GamePad::START },
-				{ GLFW_KEY_A,GamePad::A },
-				{ GLFW_KEY_S,GamePad::B },
+				{ GLFW_KEY_A,GamePad::A | GamePad::DPAD_LEFT},
+				{ GLFW_KEY_S,GamePad::B | GamePad::DPAD_DOWN},
+				{ GLFW_KEY_W,GamePad::DPAD_UP},
+				{ GLFW_KEY_D,GamePad::DPAD_RIGHT},
 				{ GLFW_KEY_Z,GamePad::X },
 				{ GLFW_KEY_X,GamePad::Y },
 			};
@@ -278,5 +279,22 @@ namespace GLFWEW {
 
 		gamepad.mouseVelocity = newMousePos - gamepad.mousePosition;
 		gamepad.mousePosition = newMousePos;
+
+	}
+
+	/**
+	*	マウスホイールの値の更新処理
+	*
+	*	@param x	ホイールXの回転量
+	*	@param y	ホイールYの回転量
+	*/
+	void Window::UpdateMouseWheel(float x, float y){
+
+		static glm::vec2 prev = glm::vec2(0);
+
+		gamepad.mouseWheelY = y - prev.y;
+
+		prev = glm::vec2(x, y);
+
 	}
 } //namespace GLFWEW

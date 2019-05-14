@@ -19,6 +19,8 @@ namespace GameState {
 
 	/**
 	*	アイテムの更新処理
+	*
+	*	@param  delta	経過時間
 	*/
 	void Item::Update(double delta) {
 
@@ -37,6 +39,8 @@ namespace GameState {
 
 	/**
 	*	アイテムの衝突判定処理
+	*
+	*	@param e	衝突してきたエンティティ
 	*/
 	void Item::CollisionEnter(Entity::Entity& e) {
 

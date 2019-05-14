@@ -50,9 +50,6 @@
     <ClInclude Include="src\Shader.h">
       <Filter>src\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="src\Texture.h">
       <Filter>src\Engine</Filter>
     </ClInclude>

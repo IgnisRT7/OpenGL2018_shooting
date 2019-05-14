@@ -28,6 +28,8 @@ namespace GameState {
 
 	/**
 	*	敵の更新処理
+	*
+	*	@param delta	経過時間
 	*/
 	void Toroid::Update(double delta) {
 
@@ -87,6 +89,8 @@ namespace GameState {
 
 	/**
 	*	ダメージ処理
+	*
+	*	@param p	ダメージ量
 	*/
 	void Toroid::Damage(float p) {
 
@@ -123,6 +127,8 @@ namespace GameState {
 
 	/**
 	*	衝突判定処理
+	*
+	*	@param e	衝突してきたエンティティ
 	*/
 	void Toroid::CollisionEnter(Entity::Entity& e) {
 	}
@@ -131,6 +137,8 @@ namespace GameState {
 
 	/**
 	*	敵スポナーの更新処理
+	*
+	*	@param delta	経過時間
 	*/
 	void EnemyLaunchType::Update(double delta) {
 
@@ -161,6 +169,8 @@ namespace GameState {
 
 	/**
 	*	更新処理
+	*
+	*	@param delta	経過時間
 	*/
 	void EnemyBulletManager::Update(double delta) {
 

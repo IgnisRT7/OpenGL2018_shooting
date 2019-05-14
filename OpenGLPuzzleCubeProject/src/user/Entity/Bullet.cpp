@@ -22,6 +22,8 @@ namespace GameState {
 
 	/**
 	*	自機の弾の更新処理
+	*
+	*	@param delta	経過時間
 	*/
 	void Bullet::Update(double delta) {
 
@@ -35,6 +37,11 @@ namespace GameState {
 		}
 	}
 
+	/**
+	*	衝突処理
+	*
+	*	@param e	衝突してきたエンティティ
+	*/
 	void Bullet::CollisionEnter(Entity::Entity& e) {
 
 		entity->Destroy();

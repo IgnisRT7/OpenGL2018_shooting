@@ -31,20 +31,9 @@ namespace Shader {
 		void BindShadowTexture(GLenum type, GLuint texture);
 		void SetViewIndex(int index);
 
-		void SetVectorParameter(glm::vec3 p, std::string name) {
-			GLint vecLocation = glGetUniformLocation(program, name.c_str());
-			if (vecLocation > 0) {
-				glUniform4fv(vecLocation,1 ,glm::value_ptr(glm::vec4(p.x,p.y,p.z,1.0f)));
-			}
-		}
+		void SetVectorParameter(glm::vec3 p, std::string name);
 
-		void SetBoolParameter(bool b, std::string name) {
-
-			GLint bLocation = glGetUniformLocation(program, name.c_str());
-			if (bLocation > 0) {
-				glUniform1i(bLocation, b);
-			}
-		}
+		void SetBoolParameter(bool b, std::string name);
 
 
 	private:

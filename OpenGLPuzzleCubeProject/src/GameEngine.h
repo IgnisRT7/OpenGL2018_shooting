@@ -20,6 +20,26 @@
 #include <random>
 
 /**
+*	カメラのコンポーネントクラス
+*/
+class CameraComponent {
+public:
+
+	glm::mat4 calcMatrix() const;
+
+	void Rotation(glm::quat q);
+	void Position(glm::vec3& p) { pos = p; }
+	void LoodAt(glm::vec3& p, glm::vec3& t) { pos = p; dir = t - p; }
+
+private:
+
+	glm::vec3 pos;	///< カメラの位置
+	glm::vec3 dir;	///< カメラの向き
+	glm::vec3 up = glm::vec3(0, 1, 0);
+
+};
+
+/**
 *	ゲームエンジンクラス
 */
 class GameEngine {
@@ -30,7 +50,7 @@ public:
 	struct CameraData {
 		glm::vec3 position;
 		glm::vec3 target = { 0, -1, 0 };
-		glm::vec3 up = { 0, 0, 1 };
+		glm::vec3 up = { 0, 1, 0 };
 	};
 
 	static GameEngine& Instance();
@@ -94,18 +114,7 @@ public:
 	const Entity::CollisionHandlerType& CollisionHandler(int gid0, int gid1) const;
 	void ClearCollisionHandlerList();
 
-	const TexturePtr& GetTexture(const char* filename) const {
-
-		for (const auto& e : textureStack) {
-			const auto itr = e.find(filename);
-			if (itr != e.end()) {
-				return itr->second;
-			}
-		}
-
-		static const TexturePtr dummy;
-		return dummy;
-	}
+	const TexturePtr& GetTexture(const char* filename) const;
 	bool LoadFontFromFile(const char* filename) {
 		return fontRenderer.LoadFromFile(filename);
 	}

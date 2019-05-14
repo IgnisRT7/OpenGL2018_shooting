@@ -165,17 +165,8 @@ namespace Entity {
 		void Draw(const Mesh::BufferPtr& meshBuffer) const;
 		void DrawDepth(const Mesh::BufferPtr& meshBuffer)const;
 		void DrawStencil(const Mesh::BufferPtr& meshBuffer,const Shader::ProgramPtr& program)const;
-		void GroupVisibility(int groupId, int cameraIndex, bool isVisible) {
-			if (isVisible) {
-				visibilityFlags[groupId] |= (1U << cameraIndex);
-			}
-			else {
-				visibilityFlags[groupId] &= ~(1U << cameraIndex);
-			}
-		}
-		bool GroupVisibility(int groupId, int cameraIndex) {
-			return visibilityFlags[groupId] & (1U << cameraIndex);
-		}
+		void GroupVisibility(int groupId, int cameraIndex, bool isVisible);
+		bool GroupVisibility(int groupId, int cameraIndex) { return visibilityFlags[groupId] & (1U << cameraIndex); }
 
 		void CollisionHandler(int gid0, int gid1, CollisionHandlerType hander);
 		const CollisionHandlerType& CollisionHandler(int gid0, int gid1) const;

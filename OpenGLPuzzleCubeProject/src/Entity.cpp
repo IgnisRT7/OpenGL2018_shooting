@@ -28,7 +28,7 @@ namespace Entity {
 
 		//ビュー x 射影 行列の計算
 		for (int i = 0; i < Uniform::maxViewCount; ++i) {
-			//viewFlag == falseの時は更新しない
+			//描画対象ではないものは更新しない
 			if (viewFlags & (1U << i)) {
 				data.matMVP[i] = matVP[i] * data.matModel;
 			}
@@ -395,6 +395,12 @@ namespace Entity {
 		}
 	}
 
+	/**
+	*	ステンシルバッファの描画
+	*
+	*	@param meshBuffer	メッシュバッファ
+	*	@param prograrm		使用するプログラムオブジェクト
+	*/
 	void Buffer::DrawStencil(const Mesh::BufferPtr& meshBuffer ,const Shader::ProgramPtr& program)const {
 
 		meshBuffer->BindVAO();
@@ -421,6 +427,23 @@ namespace Entity {
 			}
 		}
 
+	}
+
+	/**
+	*	表示するGroupIDの設定
+	*
+	*	@param groupId		適用するGroupID
+	*	@param cameraIndex	適用するカメラのインデックス番号
+	*	@param isVisible	表示フラグ
+	*/
+	void Buffer::GroupVisibility(int groupId, int cameraIndex, bool isVisible){
+
+		if (isVisible) {
+			visibilityFlags[groupId] |= (1U << cameraIndex);
+		}
+		else {
+			visibilityFlags[groupId] &= ~(1U << cameraIndex);
+		}
 	}
 
 	/**

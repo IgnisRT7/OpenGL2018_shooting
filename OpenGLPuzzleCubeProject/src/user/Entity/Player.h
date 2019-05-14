@@ -31,7 +31,7 @@ namespace GameState {
 		float moveSpeed = 5.0f;
 
 		float timer = 0;
-		float damageTimer;
+		float damageTimer;				/// –³“GŠÔ
 
 		glm::vec3 moveBox[2] =
 		{ {-25, -120, -1},{25, 100, 80} };		/// ƒvƒŒƒCƒ„[‚Ì‰Â“®ˆæ

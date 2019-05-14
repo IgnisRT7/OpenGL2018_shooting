@@ -1,11 +1,21 @@
 #include "DebugLog.h"
 
+#ifdef USE_DEBUG_LOGGER
+
+/**
+*	インスタンスの取得
+*/
 OutputLogDebugger& OutputLogDebugger::Instance() {
 
 	static OutputLogDebugger instance;
 	return instance;
 }
 
+/**
+*	タグの追加
+*
+*	@param タグ名
+*/
 void OutputLogDebugger::AddTag(std::string tagName) {
 
 	auto result = std::find(tagList.begin(), tagList.end(), tagName);
@@ -16,3 +26,5 @@ void OutputLogDebugger::AddTag(std::string tagName) {
 	}
 
 }
+
+#endif

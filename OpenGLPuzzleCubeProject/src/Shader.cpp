@@ -158,6 +158,33 @@ namespace Shader {
 	}
 
 	/**
+	*	ベクトル型のパラメータを設定する
+	*
+	*	@param p	ベクトル
+	*	@param n	パラメータ名
+	*/
+	void Program::SetVectorParameter(glm::vec3 p, std::string name) {
+		GLint vecLocation = glGetUniformLocation(program, name.c_str());
+		if (vecLocation > 0) {
+			glUniform4fv(vecLocation, 1, glm::value_ptr(glm::vec4(p.x, p.y, p.z, 1.0f)));
+		}
+	}
+
+	/**
+	*	ブール型のパラメータを設定する
+	*
+	*	@param b	ブーリアン値
+	*	@param name	パラメータ名
+	*/
+	void Program::SetBoolParameter(bool b, std::string name) {
+
+		GLint bLocation = glGetUniformLocation(program, name.c_str());
+		if (bLocation > 0) {
+			glUniform1i(bLocation, b);
+		}
+	}
+
+	/**
 	*	シェーダコードをコンパイルする
 	*
 	*	@param type シェーダの種類

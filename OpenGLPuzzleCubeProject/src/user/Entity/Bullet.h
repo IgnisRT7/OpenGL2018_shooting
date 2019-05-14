@@ -7,7 +7,7 @@
 
 namespace GameState {
 
-	/// 自機の弾クラス
+	/// 弾クラス
 	class Bullet : public Entity::EntityDataBase {
 	public:
 		

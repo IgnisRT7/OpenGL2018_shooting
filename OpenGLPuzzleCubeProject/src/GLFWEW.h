@@ -23,6 +23,8 @@ namespace GLFWEW {
 		void SwapBuffers() const;
 		const GamePad& GetGamePad() const;
 		void UpdateGamePad();
+		void UpdateMouseWheel(float x, float y);
+		void ClearWheel() { gamepad.mouseWheelY = 0; }
 
 	private:
 

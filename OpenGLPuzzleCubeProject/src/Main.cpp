@@ -11,6 +11,7 @@
 
 int main() {
 
+
 	GameEngine& game = GameEngine::Instance();
 	if (!game.Init(WINDOW_SIZE_W,WINDOW_SIZE_H, "OpenGL Tutorial")) {
 		return 1;

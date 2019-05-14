@@ -23,7 +23,7 @@ namespace GameState {
 
 	private:
 
-		int itemType = 1;
+		int itemType = 1;	/// ƒAƒCƒeƒ€‚Ìí—Ş
 	};
 
 }

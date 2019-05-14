@@ -26,13 +26,13 @@ namespace GameState {
 
 	private:
 
-		float timer = 0;
-		int enemyType = 0;
-		int hp = 2;
+		float timer = 0;	/// 
+		int enemyType = 0;	/// 移動タイプ
+		int hp = 2;			/// 体力
 
 		bool isItemDrop = false;
 
-		std::shared_ptr<EnemyBulletManager> bulletManager;
+		std::shared_ptr<EnemyBulletManager> bulletManager;	/// 弾の管理クラス
 	};
 
 	/// 敵スポナー
@@ -43,11 +43,11 @@ namespace GameState {
 
 		void Update(double delta) override;
 
-		float spawnInterval = 0.5;	//スポーンする間隔
-		float spawnMax = 5;			//スポーン数
-		float time;					//経過時間
-		int launchIndex = -1;		//出撃している敵の数
-		int enemyType = -1;			//出撃する敵の種類
+		float spawnInterval = 0.5;	/// スポーンする間隔
+		float spawnMax = 5;			/// スポーン数
+		float time;					/// 経過時間
+		int launchIndex = -1;		/// 出撃している敵の数
+		int enemyType = -1;			/// 出撃する敵の種類
 	};
 
 	///敵の弾の管理システム
@@ -62,10 +62,10 @@ namespace GameState {
 
 	private:
 		float timer = 0;
-		float shotInterval = 2;
+		float shotInterval = 2;		/// 弾の発射間隔
 		
-		Entity::Entity& parent;
-		Entity::Entity* target;
+		Entity::Entity& parent;		/// 弾の発射元
+		Entity::Entity* target;		/// 弾の追尾対象
 	};
 
 

@@ -306,6 +306,8 @@ void GameEngine::Run() {
 	double prevTime = glfwGetTime();
 	while (!window.ShouldClose()) {
 
+		//window.ClearWheel();
+
 		const double curTime = glfwGetTime();
 		const double delta = curTime - prevTime;
 		prevTime = curTime;
@@ -581,10 +583,31 @@ const Entity::CollisionHandlerType& GameEngine::CollisionHandler(int gid0, int g
 }
 
 /**
-*	衝突ハンドdらのリストをクリアする
+*	衝突ハンドラのリストをクリアする
 */
 void GameEngine::ClearCollisionHandlerList() {
 	entityBuffer->ClearCollisionHanderList();
+}
+
+/**
+*	テクスチャの取得
+*
+*	@param filename テクスチャ名
+*
+*	@return true	取得したテクスチャ
+*	@return false	ダミーのテクスチャ
+*/
+const TexturePtr& GameEngine::GetTexture(const char* filename) const {
+
+	for (const auto& e : textureStack) {
+		const auto itr = e.find(filename);
+		if (itr != e.end()) {
+			return itr->second;
+		}
+	}
+
+	static const TexturePtr dummy;
+	return dummy;
 }
 
 /**
@@ -903,3 +926,17 @@ void GameEngine::Render() {
 	}
 }
 
+/**
+*	ビュー空間上での行列計算を行います
+*
+*	@return ビュー変換行列
+*/
+glm::mat4 CameraComponent::calcMatrix() const{
+	return glm::lookAt(pos, pos + dir, glm::vec3(0, 1, 0));
+}
+
+void CameraComponent::Rotation(glm::quat q){
+
+	//dir *= 
+
+}

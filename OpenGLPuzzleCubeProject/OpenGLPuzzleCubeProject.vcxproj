@@ -192,7 +192,6 @@
     <ClInclude Include="src\user\GameMainScene.h" />
     <ClInclude Include="src\user\ModelLoadTestscene.h" />
     <ClInclude Include="src\user\TitleScene.h" />
-    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene.cpp" />

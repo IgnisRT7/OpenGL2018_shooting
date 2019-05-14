@@ -6,8 +6,8 @@
 namespace GameState {
 
 	/**
-*	‰Šú‰»ˆ—
-*/
+	*	‰Šú‰»ˆ—
+	*/
 	void Blast::Initialize() {
 
 		entity->CastShadow(false);

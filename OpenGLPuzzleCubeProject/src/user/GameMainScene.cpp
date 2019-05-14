@@ -80,8 +80,8 @@ namespace GameState {
 			++stageNo;
 
 			///ÉJÉÅÉâÇÃê›íË
-			game.Camera(0, { glm::vec4(0,30,0,1),glm::vec3(0,0,10),glm::vec3(0,0,1) });
-			game.Camera(1, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,0,1) });
+			game.Camera(0, { glm::vec4(0,30,0,1),glm::vec3(0,0,10),glm::vec3(0,1,0) });
+			game.Camera(1, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,1,0) });
 			game.GroupVisibility(EntityGroupId_Background, 0, true);
 			game.GroupVisibility(EntityGroupId_Background, 1, false);
 
