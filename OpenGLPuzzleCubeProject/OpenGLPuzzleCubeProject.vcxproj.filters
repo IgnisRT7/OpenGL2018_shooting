@@ -18,6 +18,9 @@
     <Filter Include="src\User\Entity">
       <UniqueIdentifier>{b170046a-9cc0-4a96-9e0c-20508bdaceff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Component">
+      <UniqueIdentifier>{55d1ef7c-1222-41d6-a399-aac896af343f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Audio.h">
@@ -98,6 +101,9 @@
     <ClInclude Include="Scene.h">
       <Filter>src\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="src\Component\CameraComponent.h">
+      <Filter>src\Engine\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Audio.cpp">
@@ -165,6 +171,9 @@
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraComponent.cpp">
+      <Filter>src\Engine\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

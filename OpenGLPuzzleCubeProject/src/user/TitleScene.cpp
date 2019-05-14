@@ -92,7 +92,7 @@ namespace GameState {
 			if (timer <= 0) {
 
 				//タイトル画面からメインゲーム画面の更新処理へ移行
-				game.UpdateFunc(ModelLoadTestScene());
+				game.UpdateFunc(MainGame());
 
 			}
 		}

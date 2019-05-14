@@ -19,25 +19,8 @@
 #include <functional>
 #include <random>
 
-/**
-*	カメラのコンポーネントクラス
-*/
-class CameraComponent {
-public:
 
-	glm::mat4 calcMatrix() const;
 
-	void Rotation(glm::quat q);
-	void Position(glm::vec3& p) { pos = p; }
-	void LoodAt(glm::vec3& p, glm::vec3& t) { pos = p; dir = t - p; }
-
-private:
-
-	glm::vec3 pos;	///< カメラの位置
-	glm::vec3 dir;	///< カメラの向き
-	glm::vec3 up = glm::vec3(0, 1, 0);
-
-};
 
 /**
 *	ゲームエンジンクラス
@@ -192,5 +175,8 @@ private:
 	std::mt19937 rand;
 
 	std::unordered_map<std::string, double> userNumbers;
+
+	//TODO : 試作用カメラコンポーネント
+	//SceneComponentPtr cameraComp;
 
 };

@@ -13,6 +13,7 @@
 #include <functional>
 #include <iostream>
 #include <string>
+#include "Component/CameraComponent.h"
 
 namespace Entity {
 
@@ -148,6 +149,8 @@ namespace Entity {
 		glm::vec4 stencilColor = glm::vec4(1);	///< ステンシルバッファを描画する際の描画色
 
 		EntityDataBasePtr entityData;	///< 外部でユーザーが定義するエンティティ付属データ
+		
+		//SceneComponentPtr& component;	///< コンポーネントのデータ
 	};
 
 	/**

@@ -171,6 +171,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="src\Audio.h" />
     <ClInclude Include="src\BufferObject.h" />
+    <ClInclude Include="src\Component\CameraComponent.h" />
     <ClInclude Include="src\Entity.h" />
     <ClInclude Include="src\Font.h" />
     <ClInclude Include="src\GameEngine.h" />
@@ -194,6 +195,7 @@
     <ClInclude Include="src\user\TitleScene.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="src\Audio.cpp" />
     <ClCompile Include="src\BufferObject.cpp" />

@@ -214,7 +214,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	}
 
 	//デプスシャドウバッファ作成
-	offDepth = OffscreenBuffer::Create(2048, 2048, GL_DEPTH_COMPONENT16);
+	offDepth = OffscreenBuffer::Create(4096, 4096, GL_DEPTH_COMPONENT32);
 	if (!offDepth) {
 		return false;
 	}
@@ -287,6 +287,8 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		std::cerr << "ERROR: GameEngineの初期化に失敗" << std::endl;
 		return false;
 	}
+
+	//cameraComp = std::make_shared<CameraDebugComponent>();
 
 	rand.seed(std::random_device()());
 
@@ -708,7 +710,7 @@ void GameEngine::Update(double delta) {
 	}
 
 	//行列計算処理
-	const glm::mat4x4 matProj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 1000.0f);
+	glm::mat4x4 matProj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 1000.0f);
 	glm::mat4x4 matView[Uniform::maxViewCount];
 	for (int i = 0; i < Uniform::maxViewCount; ++i) {
 
@@ -716,14 +718,19 @@ void GameEngine::Update(double delta) {
 		matView[i] = glm::lookAt(cam.position, cam.target, cam.up);
 	}
 
+	//TODO : 試作デバッグ用 カメラの情報取得
+	//matProj = std::dynamic_pointer_cast<CameraComponent>(cameraComp)->ProjctionMatrix();
+	//matView[0] = std::dynamic_pointer_cast<CameraComponent>(cameraComp)->ViewMatrix(); 
+
 	//シャドウの設定
 	const glm::vec2 range = shadowParameter.range * 0.5f;
 	const glm::mat4 matDepthProj = glm::ortho<float>(
 		-range.x, range.x, -range.y, range.y, shadowParameter.near, shadowParameter.far);
-	//	matDepthProj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 10, 200);
 
 	const glm::mat4 matDepthView = glm::lookAt(
 		shadowParameter.lightPos, shadowParameter.lightPos + shadowParameter.lightDir, shadowParameter.lightUp);
+
+
 
 	//エンティティバッファの更新
 	entityBuffer->Update(delta, matView, matProj, matDepthProj * matDepthView);
@@ -740,6 +747,8 @@ void GameEngine::RenderShadow() const {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
+
 	glDisable(GL_BLEND);
 	glViewport(0, 0, offDepth->Width(), offDepth->Height());
 	glScissor(0, 0, offDepth->Width(), offDepth->Height());
@@ -749,6 +758,8 @@ void GameEngine::RenderShadow() const {
 	const Shader::ProgramPtr& progDepth = shaderMap.find("RenderDepth")->second;
 	progDepth->UseProgram();
 	entityBuffer->DrawDepth(meshBuffer);
+
+	glCullFace(GL_BACK);
 }
 
 /**
@@ -926,17 +937,3 @@ void GameEngine::Render() {
 	}
 }
 
-/**
-*	ビュー空間上での行列計算を行います
-*
-*	@return ビュー変換行列
-*/
-glm::mat4 CameraComponent::calcMatrix() const{
-	return glm::lookAt(pos, pos + dir, glm::vec3(0, 1, 0));
-}
-
-void CameraComponent::Rotation(glm::quat q){
-
-	//dir *= 
-
-}
