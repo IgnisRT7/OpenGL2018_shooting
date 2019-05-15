@@ -19,9 +19,6 @@
 #include <functional>
 #include <random>
 
-
-
-
 /**
 *	ゲームエンジンクラス
 */
@@ -29,7 +26,7 @@ class GameEngine {
 public:
 	typedef std::function<void(double)> UpdateFuncType;	//ゲーム状態を更新する関数の型
 
-														///カメラデータ
+	///カメラデータ
 	struct CameraData {
 		glm::vec3 position;
 		glm::vec3 target = { 0, -1, 0 };
