@@ -48,10 +48,32 @@ namespace GameState {
 
 		GameEngine& game = GameEngine::Instance();
 		game.ClearCollisionHandlerList();
+
+		///衝突判定用ハンドラの定義
 		game.CollisionHandler(EntityGroupId_PlayerShot, EntityGroupId_Enemy, nullptr);
 		game.CollisionHandler(EntityGroupId_EnemyShot, EntityGroupId_Player, nullptr);
 		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Enemy,nullptr);
 		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Item, nullptr);
+
+		///カメラの設定
+		game.Camera(0, { glm::vec4(0,30,0,1),glm::vec3(0,0,10),glm::vec3(0,1,0) });
+		game.Camera(1, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,1,0) });
+
+		game.GroupVisibility(EntityGroupId_Background, 0, true);
+		game.GroupVisibility(EntityGroupId_Background, 1, false);
+
+		game.GroupVisibility(EntityGroupId_Enemy, 0, false);
+		game.GroupVisibility(EntityGroupId_Enemy, 0, true);
+
+		game.GroupVisibility(EntityGroupId_Player, 0, false);
+		game.GroupVisibility(EntityGroupId_Player, 0, true);
+
+		game.GroupVisibility(EntityGroupId_Others, 0, false);
+		game.GroupVisibility(EntityGroupId_Others, 0, true);
+
+		/// ライト・輝度の設定
+		game.AmbientLight(glm::vec4(0.05f, 0.1f, 0.2f, 1));
+		game.Light(0, { glm::vec4(1,100,1,1),glm::vec4(12000,12000,12000,1) });
 
 		playerData = std::make_shared<Player>();
 	}
@@ -79,24 +101,6 @@ namespace GameState {
 
 			++stageNo;
 
-			///カメラの設定
-			game.Camera(0, { glm::vec4(0,30,0,1),glm::vec3(0,0,10),glm::vec3(0,1,0) });
-			game.Camera(1, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,1,0) });
-			game.GroupVisibility(EntityGroupId_Background, 0, true);
-			game.GroupVisibility(EntityGroupId_Background, 1, false);
-
-			game.GroupVisibility(EntityGroupId_Enemy, 0, false);
-			game.GroupVisibility(EntityGroupId_Enemy, 0, true);
-
-			game.GroupVisibility(EntityGroupId_Player, 0, false);
-			game.GroupVisibility(EntityGroupId_Player, 0, true);
-
-			game.GroupVisibility(EntityGroupId_Others, 0, false);
-			game.GroupVisibility(EntityGroupId_Others, 0, true);
-
-			/// ライト・輝度の設定
-			game.AmbientLight(glm::vec4(0.05f, 0.1f, 0.2f, 1));
-			game.Light(0, { glm::vec4(1,100,1,1),glm::vec4(12000,12000,12000,1) });
 			game.KeyValue(0.24f);
 
 			/// シャドウの設定
@@ -222,7 +226,6 @@ namespace GameState {
 			if (sceneTimer == 0) sceneTimer = 3;
 		}
 
-
 		if (sceneTimer <= 0) {
 			//スコア表示処理
 			char str[16];
@@ -252,10 +255,10 @@ namespace GameState {
 
 
 			//カメラ移動処理
-			GameEngine::CameraData camera = game.Camera(0);
+			/*GameEngine::CameraData camera = game.Camera(0);
 			float cameraMoveValue = fmod(static_cast<float>(stageTimer), 45.0f) * (glm::radians(360.0f) / 45.0f);
 			camera.position.x = glm::cos(cameraMoveValue) * 5.0f;
-			game.Camera(0, camera);
+			game.Camera(0, camera);*/
 		}
 		else {
 
