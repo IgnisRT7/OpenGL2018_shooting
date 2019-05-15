@@ -56,8 +56,13 @@ namespace GameState {
 		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Item, nullptr);
 
 		///カメラの設定
-		game.Camera(0, { glm::vec4(0,30,0,1),glm::vec3(0,0,10),glm::vec3(0,1,0) });
-		game.Camera(1, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,1,0) });
+		//game.Camera(0, { glm::vec4(0,30,0,1),glm::vec3(0,0,10),glm::vec3(0,1,0) });
+		//game.Camera(1, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,1,0) });
+
+		game.MainCamera(std::static_pointer_cast<CameraComponent>(std::make_shared<CameraDebugComponent>()));
+
+		//TODO : 試作用メインカメラに対しての設定処理
+		game.MainCamera()->ViewMatrixParam(glm::vec3(0, 30, -30), glm::vec3(0, -1, 1), glm::vec3(0, 1, 0));
 
 		game.GroupVisibility(EntityGroupId_Background, 0, true);
 		game.GroupVisibility(EntityGroupId_Background, 1, false);

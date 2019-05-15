@@ -48,7 +48,8 @@ namespace GameState {
 			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
 		game.KeyValue(0.01f);
 
-		game.Camera(0, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,1,0) });
+		//game.Camera(0, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,1,0) });
+		game.MainCamera()->ViewMatrixParam(glm::vec3(0, 20, -8), glm::vec3(0, -20, 20), glm::vec3(0, 1, 0));
 	}
 
 	/*
