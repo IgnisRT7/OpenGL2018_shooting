@@ -31,13 +31,16 @@ public:
 	virtual void Initialize() {};
 	virtual void Update(float delta) {};
 
-	void Position(glm::vec3& p) { position = p; }
+	void Position(glm::vec3& p) { position = p; }		
 	void Direction(glm::vec3& d) { direction = d; }
 	void UpVector(glm::vec3& u) { up = u; }
 	void Fov(float f) { fov = f; }
 	void Aspect(float a) { aspect = a; }
 	void Near(float n) { near = n; }
 	void Far(float f) { far = f; }
+
+	void ViewMatrixParam(glm::vec3& p, glm::vec3& d, glm::vec3 u) { position = p; direction = d; up = u; }
+	void ProjMatrixParam(float f, float a, float n, float fa) { far = f; aspect = a; near = n; far = fa; }
 
 protected:
 
@@ -52,6 +55,9 @@ protected:
 
 };
 
+/**
+*	デバッグ用　カメラ操作クラス
+*/
 class CameraDebugComponent : public CameraComponent {
 public:
 
