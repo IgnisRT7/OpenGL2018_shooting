@@ -288,7 +288,9 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		return false;
 	}
 
-	//cameraComp = std::make_shared<CameraDebugComponent>();
+	//TODO : 試作用カメラコンポーネント作成
+	mainCamera = std::make_shared<CameraComponent>();
+	mainCamera->Aspect(windowSize.x / windowSize.y);
 
 	rand.seed(std::random_device()());
 
@@ -710,17 +712,26 @@ void GameEngine::Update(double delta) {
 	}
 
 	//行列計算処理
-	glm::mat4x4 matProj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 1000.0f);
+	/*glm::mat4x4 matProj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 1000.0f);
 	glm::mat4x4 matView[Uniform::maxViewCount];
 	for (int i = 0; i < Uniform::maxViewCount; ++i) {
 
 		CameraData& cam = camera[i];
 		matView[i] = glm::lookAt(cam.position, cam.target, cam.up);
-	}
+	}*/
 
-	//TODO : 試作デバッグ用 カメラの情報取得
-	//matProj = std::dynamic_pointer_cast<CameraComponent>(cameraComp)->ProjctionMatrix();
-	//matView[0] = std::dynamic_pointer_cast<CameraComponent>(cameraComp)->ViewMatrix(); 
+	glm::mat4 matProj;
+	glm::mat4 matView[4];
+
+	if (mainCamera) {
+
+		//TODO: 試作メインカメラの更新処理
+		mainCamera->Update(delta);
+
+		//TODO : 試作デバッグ用 メインカメラからビュー・射影変換行列の取得
+		matProj = std::dynamic_pointer_cast<CameraComponent>(mainCamera)->ProjctionMatrix();
+		matView[0] = std::dynamic_pointer_cast<CameraComponent>(mainCamera)->ViewMatrix();
+	}
 
 	//シャドウの設定
 	const glm::vec2 range = shadowParameter.range * 0.5f;

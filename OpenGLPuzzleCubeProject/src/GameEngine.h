@@ -19,6 +19,9 @@
 #include <functional>
 #include <random>
 
+#define COMPONENT_TYPEPTR(type) std::shared_ptr<type>			///シーンコンポーネントの型用マクロ
+
+
 /**
 *	ゲームエンジンクラス
 */
@@ -108,6 +111,9 @@ public:
 
 	void ToggleDrawOutline() { isDrawOutline = !isDrawOutline; }
 
+	void MainCamera(COMPONENT_TYPEPTR(CameraComponent)& c) { mainCamera = c; }
+	const COMPONENT_TYPEPTR(CameraComponent)& MainCamera() const { return mainCamera; }
+
 	/*
 	template<typename T>
 	std::shared_ptr<T> FindEntityData() {
@@ -173,7 +179,7 @@ private:
 
 	std::unordered_map<std::string, double> userNumbers;
 
-	//TODO : 試作用カメラコンポーネント
-	//SceneComponentPtr cameraComp;
+	//TODO : 試作用メインカメラコンポーネント
+	COMPONENT_TYPEPTR(CameraComponent) mainCamera;
 
 };
