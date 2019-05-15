@@ -6,11 +6,18 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "GamePad.h"
+#include <map>
+#include <vector>
 
 #define GL_DEBUG_STRING(str) std::cerr << str;
 
 
 namespace GLFWEW {
+
+	struct stKeyMap {
+		int glfwCode;		/// GLEW上でのコード定義
+		uint32_t keyCode;	/// 実際に使用されるビット値
+	};
 
 	/**
 	*	GLFWとGLEWのラッパークラス
@@ -25,6 +32,7 @@ namespace GLFWEW {
 		void UpdateGamePad();
 		void UpdateMouseWheel(float x, float y);
 		void ClearWheel() { gamepad.mouseWheelY = 0; }
+		void SetKeyMap(std::vector<stKeyMap>& k);
 
 	private:
 
@@ -37,6 +45,10 @@ namespace GLFWEW {
 		bool isInitialized;
 		GLFWwindow* window;
 		GamePad gamepad;
+
+		std::map<int, uint32_t> keyMap;
+
+
 	};
 
 

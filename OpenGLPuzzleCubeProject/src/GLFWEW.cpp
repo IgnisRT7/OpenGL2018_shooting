@@ -99,6 +99,16 @@ namespace GLFWEW {
 			return false;
 		}
 
+		//デフォルトのキーマップの設定コード
+		SetKeyMap(std::vector<stKeyMap>() = {
+			{ GLFW_KEY_W, GamePad::DPAD_UP },
+			{ GLFW_KEY_A, GamePad::DPAD_LEFT },
+			{ GLFW_KEY_S, GamePad::DPAD_DOWN },
+			{ GLFW_KEY_D, GamePad::DPAD_RIGHT },
+			{ GLFW_KEY_ENTER,GamePad::START},
+			{ GLFW_KEY_SPACE,GamePad::A},
+			});
+
 		const GLubyte* renderer = glGetString(GL_RENDERER);
 		std::cout << "Renderer: " << renderer << std::endl;
 		const GLubyte* version = glGetString(GL_VERSION);
@@ -224,7 +234,7 @@ namespace GLFWEW {
 		}
 		else {
 			///キー入力の更新処理
-
+			/*
 			static const struct {
 				int glfwCode;
 				uint32_t gamepadCode;
@@ -248,6 +258,18 @@ namespace GLFWEW {
 				}
 				else if (key == GLFW_RELEASE) {
 					gamepad.buttons &= ~e.gamepadCode;
+				}
+			}*/
+
+			for (auto itr = this->keyMap.begin(); itr != this->keyMap.end(); itr++) {
+				
+				//マップ内のキー(glfwのキーコード)の入力状態を取得
+				const int key = glfwGetKey(window, itr->first);
+				if (key == GLFW_PRESS) {
+					gamepad.buttons |= itr->second;
+				}
+				else if (key == GLFW_RELEASE) {
+					gamepad.buttons &= ~itr->second;
 				}
 			}
 		}
@@ -297,4 +319,21 @@ namespace GLFWEW {
 		prev = glm::vec2(x, y);
 
 	}
+
+	/**
+	*	キーのマッピングの設定
+	*
+	*	@param k キーマッピングのデータ
+	*/
+	void Window::SetKeyMap(std::vector<stKeyMap>& k){
+
+		keyMap.clear();
+
+		for (stKeyMap& keyValue : k) {
+			
+			keyMap[keyValue.glfwCode] = keyValue.keyCode;
+		}
+		
+	}
+
 } //namespace GLFWEW
