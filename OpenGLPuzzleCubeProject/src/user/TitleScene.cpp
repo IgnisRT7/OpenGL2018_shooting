@@ -47,6 +47,8 @@ namespace GameState {
 		auto e = game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
 			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
 		game.KeyValue(0.01f);
+
+		game.Camera(0, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,1,0) });
 	}
 
 	/*
@@ -57,13 +59,12 @@ namespace GameState {
 	void Title::operator()(double delta) {
 
 		GameEngine& game = GameEngine::Instance();
-		game.Camera(0, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,0,1) });
 
 		const float offset = timer == 0 ? 0 : (2.0f - timer) * (2.0f - timer) * 2.0f;
 		game.FontColor(glm::vec4(1, 1, 1, 1));
-		game.FontScale(glm::vec2(8));
+		game.FontScale(glm::vec2(4));
 		game.AddString(glm::vec2(-0.5 + offset, 0.3), "STAR FIGHTER");
-		game.FontScale(glm::vec2(2));
+		game.FontScale(glm::vec2(1));
 		game.AddString(glm::vec2(-0.05f + offset, 0), "The ultimate in Manned-Fighter");
 
 		static float tmpTimer = 0;
@@ -71,7 +72,7 @@ namespace GameState {
 		auto f = (sinf(glm::radians((float)tmpTimer)) + 1) / 2;
 
 		game.FontColor(glm::vec4(1.0f, 0, 0, 0));
-		game.FontScale(glm::vec2(3));
+		game.FontScale(glm::vec2(2));
 		game.AddString(glm::vec2(-0.3, -0.5), "Pressed Enter...");
 
 		
