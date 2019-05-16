@@ -29,13 +29,6 @@ class GameEngine {
 public:
 	typedef std::function<void(double)> UpdateFuncType;	//ゲーム状態を更新する関数の型
 
-	///カメラデータ
-	struct CameraData {
-		glm::vec3 position;
-		glm::vec3 target = { 0, -1, 0 };
-		glm::vec3 up = { 0, 1, 0 };
-	};
-
 	static GameEngine& Instance();
 	bool Init(int w, int h, const char* title);
 	void Run();
@@ -76,9 +69,6 @@ public:
 	void KeyValue(float k) { keyValue = k; }
 	const float KeyValue() const { return keyValue; }
 
-	void Camera(size_t index, const CameraData& cam);
-	const CameraData& Camera(size_t index) const;
-
 	void GroupVisibility(int groupId, int index, bool isVisible) {
 		entityBuffer->GroupVisibility(groupId, index, isVisible);
 	}
@@ -93,8 +83,7 @@ public:
 	void PlayAudio(int playerId, int cueId);
 	void StopAudio(int playerId);
 
-	void CollisionHandler(int gid0, int gid1, Entity::CollisionHandlerType handler);
-	const Entity::CollisionHandlerType& CollisionHandler(int gid0, int gid1) const;
+	void CollisionHandler(int gid0, int gid1);
 	void ClearCollisionHandlerList();
 
 	const TexturePtr& GetTexture(const char* filename) const;
@@ -174,7 +163,6 @@ private:
 	Font::Renderer fontRenderer;
 
 	Uniform::LightData lightData;
-	CameraData camera[Uniform::maxViewCount];
 	std::mt19937 rand;
 
 	std::unordered_map<std::string, double> userNumbers;

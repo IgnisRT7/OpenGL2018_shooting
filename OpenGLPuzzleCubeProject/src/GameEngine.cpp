@@ -516,28 +516,6 @@ const glm::vec4& GameEngine::AmbientLight() const {
 }
 
 /**
-*	視点の位置と姿勢を設定する
-*
-*	@param index 設定するカメラのインデックス
-*	@param cam 設定するカメラデータ
-*/
-void GameEngine::Camera(size_t index, const CameraData& cam) {
-	camera[index] = cam;
-	lightData.eyePos[index] = glm::vec4(cam.position, 0);
-}
-
-/**
-*	視点の位置と姿勢を取得する
-*
-*	@param index 取得するカメラのインデックス
-*
-*	@rerturn カメラデータ
-*/
-const GameEngine::CameraData& GameEngine::Camera(size_t index) const {
-	return camera[index];
-}
-
-/**
 *	乱数オブジェクトを取得する
 *
 *	@return 乱数オブジェクト
@@ -569,21 +547,8 @@ const GamePad& GameEngine::GetGamePad() const {
 *	Func(グループID=1のエンティティ、グループID=10のエンティティ)
 *	のように呼び出される
 */
-void GameEngine::CollisionHandler(int gid0, int gid1, Entity::CollisionHandlerType handler = nullptr) {
-	entityBuffer->CollisionHandler(gid0, gid1, handler);
-}
-
-/**
-*	衝突解決ハンドラを取得する
-*
-*	@param gid0	衝突対象のグループID
-*	@param gid1 衝突対象のグループID
-*
-*	@return 衝突解決ハンドラ
-*/
-const Entity::CollisionHandlerType& GameEngine::CollisionHandler(int gid0, int gid1) const {
-
-	return entityBuffer->CollisionHandler(gid0, gid1);
+void GameEngine::CollisionHandler(int gid0, int gid1) {
+	entityBuffer->CollisionHandler(gid0, gid1);
 }
 
 /**
@@ -711,21 +676,11 @@ void GameEngine::Update(double delta) {
 		updateFunc(delta);
 	}
 
-	//行列計算処理
-	/*glm::mat4x4 matProj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 1000.0f);
-	glm::mat4x4 matView[Uniform::maxViewCount];
-	for (int i = 0; i < Uniform::maxViewCount; ++i) {
-
-		CameraData& cam = camera[i];
-		matView[i] = glm::lookAt(cam.position, cam.target, cam.up);
-	}*/
-
 	glm::mat4 matProj;
 	glm::mat4 matView[4];
 
 	if (mainCamera) {
 
-		//TODO: 試作メインカメラの更新処理
 		mainCamera->Update(delta);
 
 		//TODO : 試作デバッグ用 メインカメラからビュー・射影変換行列の取得
