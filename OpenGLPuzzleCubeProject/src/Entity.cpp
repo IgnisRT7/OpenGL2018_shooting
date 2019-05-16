@@ -462,7 +462,7 @@ namespace Entity {
 	*	Func(グループID=1のエンティティ,グループID=10のエンティティ)
 	*	のように呼び出される
 	*/
-	void Buffer::CollisionHandler(int gid0, int gid1, CollisionHandlerType handler = nullptr) {
+	void Buffer::CollisionHandler(int gid0, int gid1) {
 
 		if (gid0 > gid1) {
 			std::swap(gid0, gid1);
@@ -470,11 +470,8 @@ namespace Entity {
 		auto itr = std::find_if(collisionHandlerList.begin(), collisionHandlerList.end(),
 			[&](const CollisionHandlerInfo& e) {
 			return e.groupId[0] == gid0 && e.groupId[1] == gid1; });
-		if (itr == collisionHandlerList.end() || handler) {
-			collisionHandlerList.push_back({ { gid0,gid1 },handler });
-		}
-		else {
-			itr->handler = handler;
+		if (itr == collisionHandlerList.end() ) {
+			collisionHandlerList.push_back({ gid0,gid1 });
 		}
 
 	}

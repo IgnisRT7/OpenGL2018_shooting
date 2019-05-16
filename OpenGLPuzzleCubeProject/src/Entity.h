@@ -28,9 +28,6 @@ namespace Entity {
 	/// 衝突解決ハンドラポインタ型
 	typedef std::shared_ptr<Buffer> BufferPtr;	///< エンティティバッファ
 
-												/// 衝突判定ハンドラ型
-	using CollisionHandlerType = std::function<void(Entity&, Entity&) >;
-
 	static const int maxGroupId = 31;	///< グループIDの最大値
 										/**
 										*	衝突判定形状
@@ -171,8 +168,7 @@ namespace Entity {
 		void GroupVisibility(int groupId, int cameraIndex, bool isVisible);
 		bool GroupVisibility(int groupId, int cameraIndex) { return visibilityFlags[groupId] & (1U << cameraIndex); }
 
-		void CollisionHandler(int gid0, int gid1, CollisionHandlerType hander);
-		const CollisionHandlerType& CollisionHandler(int gid0, int gid1) const;
+		void CollisionHandler(int gid0, int gid1);
 		void ClearCollisionHanderList();
 
 		Entity* FindEntity(FindEntityFunc f);
