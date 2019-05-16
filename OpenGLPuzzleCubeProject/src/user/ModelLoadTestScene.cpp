@@ -42,7 +42,9 @@ ModelLoadTestScene::ModelLoadTestScene(){
 				"Landscape01", "Res/Model/BG02.Diffuse.dds", "Res/Model/BG02.Normal.bmp", nullptr);
 		}
 	}
-	game.Camera(0, { glm::vec4(0,30,-15,1),glm::vec3(0,0,0),glm::vec3(0,1,0) });
+
+	game.MainCamera(std::static_pointer_cast<CameraComponent>(std::make_shared<CameraDebugComponent>()));
+	
 
 	game.LoadMeshFromFile("Res/Model/sampleField.fbx");
 	
@@ -52,75 +54,7 @@ ModelLoadTestScene::ModelLoadTestScene(){
 
 void ModelLoadTestScene::operator()(double delta) {
 
-	GameEngine& game = GameEngine::Instance();
-	const GamePad& gamepad = game.GetGamePad();
 
-	if (gamepad.mouseWheelY) {
-		std::cout << gamepad.mouseWheelY << std::endl;
-	}
-
-	if (gamepad.mouseButtons & GamePad::MOUSE_RIGHT_BUTTON) {
-
-		GameEngine::CameraData camera = game.Camera(0);
-
-		glm::vec3 vec = glm::vec3(0);
-		glm::vec3 rot = glm::vec3(0);
-
-		if (gamepad.buttons & GamePad::DPAD_RIGHT) {
-			vec.x += 1;
-		}
-		else if (gamepad.buttons & GamePad::DPAD_LEFT) {
-			vec.x -= 1;
-		}
-		if (gamepad.buttons & GamePad::DPAD_UP) {
-			vec.z -= 1;
-		}
-		else if (gamepad.buttons & GamePad::DPAD_DOWN) {
-			vec.z += 1;
-		}
-		vec *= -1;
-
-		glm::ivec2 mouseVel = gamepad.mouseVelocity;
-		float mouseSensitivy = 2.0f;
-		rot.y = mouseVel.x * mouseSensitivy * delta;
-		rot.x = mouseVel.y * mouseSensitivy * delta * -1.0f;
-		rot *= rotateSpeed;
-
-		//カメラのZ軸(ワールド空間)
-		glm::vec3 cameraForward = glm::normalize(camera.target - camera.position);
-		//カメラのX軸(ワールド空間)
-		glm::vec3 cameraRight = glm::normalize(glm::cross(camera.up, cameraForward));
-		//カメラのY軸(ワールド空間)
-		glm::vec3 cameraUp = glm::normalize(glm::cross(cameraForward, cameraRight));
-
-
-		if (vec.x != 0 || vec.z != 0) {
-			//カメラの移動
-
-			glm::vec3 vel = glm::normalize(cameraForward * vec.z + cameraRight * vec.x) * moveSpeed * static_cast<float>(delta);
-
-			camera.target += vel;
-			camera.position += vel;
-		}
-
-		if (mouseVel.x != 0 || mouseVel.y != 0) {
-			//カメラの回転
-
-			//カメラのY軸回転
-			glm::quat rotateY = glm::angleAxis(glm::radians(rot.y), cameraUp);
-			//カメラのX軸回転
-			glm::quat rotateX = glm::angleAxis(glm::radians(rot.x), cameraRight);
-			//回転の合成
-			glm::quat rotateXY = rotateY * rotateX;
-
-			glm::vec3 newDir = cameraForward * rotateXY;
-
-			camera.target = camera.position + newDir;
-
-		}
-
-		game.Camera(0,camera);
-	}
 
 
 }

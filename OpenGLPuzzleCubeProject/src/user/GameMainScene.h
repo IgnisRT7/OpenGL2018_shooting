@@ -42,6 +42,7 @@ namespace GameState {
 
 		std::shared_ptr<Player> playerData;
 
+
 	};
 
 }

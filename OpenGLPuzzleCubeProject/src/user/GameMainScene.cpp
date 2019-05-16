@@ -50,14 +50,10 @@ namespace GameState {
 		game.ClearCollisionHandlerList();
 
 		///衝突判定用ハンドラの定義
-		game.CollisionHandler(EntityGroupId_PlayerShot, EntityGroupId_Enemy, nullptr);
-		game.CollisionHandler(EntityGroupId_EnemyShot, EntityGroupId_Player, nullptr);
-		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Enemy,nullptr);
-		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Item, nullptr);
-
-		///カメラの設定
-		//game.Camera(0, { glm::vec4(0,30,0,1),glm::vec3(0,0,10),glm::vec3(0,1,0) });
-		//game.Camera(1, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,1,0) });
+		game.CollisionHandler(EntityGroupId_PlayerShot, EntityGroupId_Enemy);
+		game.CollisionHandler(EntityGroupId_EnemyShot, EntityGroupId_Player);
+		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Enemy);
+		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Item);
 
 		game.MainCamera(std::static_pointer_cast<CameraComponent>(std::make_shared<CameraDebugComponent>()));
 
