@@ -41,6 +41,7 @@ public:
 
 	void ViewMatrixParam(glm::vec3& p, glm::vec3& d, glm::vec3 u) { position = p; direction = d; up = u; }
 	void ProjMatrixParam(float f, float a, float n, float fa) { far = f; aspect = a; near = n; far = fa; }
+	void LookAt(glm::vec3 pos, glm::vec3 at) { position = pos; direction = glm::normalize(at - pos); }
 
 protected:
 
