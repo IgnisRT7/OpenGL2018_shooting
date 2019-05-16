@@ -3,6 +3,7 @@
 */
 #pragma once
 #include "../Entity.h"
+#include "../user/Entity/Player.h"
 
 namespace GameState {
 
@@ -29,7 +30,7 @@ namespace GameState {
 		bool initial = true;
 		float timer = 0;
 
-		TitleSpaceSphere spaceSphere;
+		std::shared_ptr<PlayerForProduction> player;
 	};
 }
 

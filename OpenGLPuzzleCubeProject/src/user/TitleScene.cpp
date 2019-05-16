@@ -43,13 +43,25 @@ namespace GameState {
 		game.ClearLevel();
 		game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
 		game.LoadTextureFromFile("Res/Model/SpaceSphere.dds");
+		game.LoadMeshFromFile("Res/Model/Player.fbx");
+		game.LoadTextureFromFile("Res/Model/Player.dds");
 
-		auto e = game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
-			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
 		game.KeyValue(0.01f);
 
 		//game.Camera(0, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,1,0) });
 		game.MainCamera()->ViewMatrixParam(glm::vec3(0, 20, -8), glm::vec3(0, -20, 20), glm::vec3(0, 1, 0));
+
+		game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
+			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
+
+		
+		player = std::make_shared<PlayerForProduction>();
+		game.AddEntity(EntityGroupId_Others, glm::vec3(0, 0, 0), "Aircraft", "Res/Model/Player.dds", player, "NonLighting");
+
+		auto cam = std::make_shared<CameraDebugComponent>();
+		cam->LookAt(glm::vec3(0, 30, -10), glm::vec3(0, 0, 0));
+		game.MainCamera(std::static_pointer_cast<CameraComponent>(cam));
+		
 	}
 
 	/*
@@ -79,16 +91,6 @@ namespace GameState {
 		
 		auto gamepad = game.GetGamePad();
 
-		if (gamepad.buttonDown & GamePad::B) {
-
-			game.KeyValue(glm::min(1.0, game.KeyValue() + delta));
-		}
-		else if (gamepad.buttonDown & GamePad::X) {
-
-			game.KeyValue(glm::max(0.0, game.KeyValue() - delta));
-		}
-
-
 		if (timer > 0) {
 			timer -= static_cast<float>(delta);
 			if (timer <= 0) {
@@ -101,6 +103,7 @@ namespace GameState {
 		else if (game.GetGamePad().buttonDown & GamePad::START) {
 			game.PlayAudio(1, CRI_SAMPLECUESHEET_START);
 			timer = 2;
+			player->MoveStart();
 		}
 	}
 
