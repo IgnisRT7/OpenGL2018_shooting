@@ -6,7 +6,10 @@
 #include "../../Entity.h"
 
 namespace GameState {
-	/// プレイヤー
+
+	/*
+	*	プレイヤークラス	ゲーム画面操縦用
+	*/
 	class Player : public Entity::EntityDataBase {
 	public:
 
@@ -41,4 +44,23 @@ namespace GameState {
 
 		int remainingPlayer = 3;		/// プレイヤー残機
 	};
+
+	/**
+	*	プレイヤークラス　タイトル画面演出用
+	*/
+	class PlayerForProduction :public Entity::EntityDataBase {
+	public:
+		void Initialize() override;
+		void Update(double delta) override {};
+
+		void MoveStart() { entity->Velocity(glm::vec3(0, 0, moveSpeed)); }
+
+	private:
+
+		bool isMoveStart = false;
+		float timer = 0;
+		float moveSpeed = 20.0f;
+	};
+
+
 }

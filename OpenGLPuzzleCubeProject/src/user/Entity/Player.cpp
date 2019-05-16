@@ -178,6 +178,9 @@ namespace GameState {
 		}
 	}
 
+	/**
+	*	’e‚Ì”­ŽËˆ—
+	*/
 	void Player::ShotBullet() {
 
 		GameEngine& game = GameEngine::Instance();
@@ -203,4 +206,11 @@ namespace GameState {
 	}
 
 
+	/**
+	*	‰Šú‰»ˆ—
+	*/
+	void PlayerForProduction::Initialize(){
+
+		entity->Position(glm::vec3(0, 0, -20));
+	}
 }
