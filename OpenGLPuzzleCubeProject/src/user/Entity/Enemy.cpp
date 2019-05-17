@@ -24,8 +24,6 @@ namespace GameState {
 		entity->StencilColor(glm::vec4(1, 0, 1, 1));
 
 		bulletManager = std::make_shared<EnemyBulletManager>(*entity);
-
-		return;
 	}
 
 	/**
@@ -33,9 +31,9 @@ namespace GameState {
 	*
 	*	@param delta	経過時間
 	*/
-	void Toroid::Update(float delta) {
+	void Toroid::Update(double delta) {
 
-		timer += delta;
+		timer += static_cast<float>(delta);
 
 		if (bulletManager)bulletManager->Update(delta);
 
@@ -44,7 +42,6 @@ namespace GameState {
 
 		GameEngine& game = GameEngine::Instance();
 
-		auto e = game.FindEntityData<Player>();
 
 		// 移動処理
 		switch (enemyType) {
@@ -77,7 +74,7 @@ namespace GameState {
 		}
 
 		// 円盤を回転させる.
-		rot += glm::radians(180.0f) * delta;
+		rot += glm::radians(180.0f) * static_cast<float>(delta);
 		if (rot > glm::pi<float>() * 2.0f) {
 			rot -= glm::pi<float>() * 2.0f;
 		}
@@ -143,11 +140,11 @@ namespace GameState {
 	*
 	*	@param delta	経過時間
 	*/
-	void EnemyLaunchType::Update(float delta) {
+	void EnemyLaunchType::Update(double delta) {
 
 		GameEngine& game = GameEngine::Instance();
 
-		time += delta;
+		time += static_cast<float>(delta);
 
 		if (time >= spawnMax * spawnInterval) {
 			//スポーン終了
@@ -175,24 +172,22 @@ namespace GameState {
 	*
 	*	@param delta	経過時間
 	*/
-	void EnemyBulletManager::Update(float delta) {
+	void EnemyBulletManager::Update(double delta) {
 
 		GameEngine& game = GameEngine::Instance();
 
-		timer -= delta;
+
+
+		timer -= static_cast<float>(delta);
 
 		if (timer < 0) {
 
-			Entity::Entity* player = game.FindEntityData<Player>();
-
 			if (Entity::Entity* p = game.AddEntity(EntityGroupId_EnemyShot, parent.Position(),
-				"NormalShot", "Res/Model/Player.dds", std::make_shared<Bullet>(
-					parent.Velocity(),player), "NonLighting")) {
+				"NormalShot", "Res/Model/Player.dds", std::make_shared<Bullet>(parent.Velocity() * 1.1f), "NonLighting")) {
 
 				p->CastStencil(true);
 				p->StencilColor(glm::vec4(1, 0, 1, 1));
 				timer = shotInterval;
-
 			}
 		}
 	}

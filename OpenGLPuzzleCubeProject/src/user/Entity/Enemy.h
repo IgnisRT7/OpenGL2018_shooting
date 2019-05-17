@@ -18,7 +18,7 @@ namespace GameState {
 
 		void Initialize() override;
 
-		void Update(float delta) override;
+		void Update(double delta) override;
 
 		void Damage(float) override;
 
@@ -41,7 +41,7 @@ namespace GameState {
 
 		void Initialize() override {}
 
-		void Update(float delta) override;
+		void Update(double delta) override;
 
 		float spawnInterval = 0.5;	/// スポーンする間隔
 		float spawnMax = 5;			/// スポーン数
@@ -57,7 +57,7 @@ namespace GameState {
 		EnemyBulletManager(Entity::Entity& p, Entity::Entity* t = nullptr) :
 			parent(p),target(t),timer(shotInterval){}
 
-		void Update(float delta);
+		void Update(double delta);
 
 
 	private:
