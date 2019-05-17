@@ -16,7 +16,7 @@ namespace GameState {
 	/**
 	*	更新処理
 	*/
-	void Blast::Update(double delta) {
+	void Blast::Update(float delta) {
 
 		timer += delta;
 
@@ -24,8 +24,8 @@ namespace GameState {
 			entity->Destroy();
 			return;
 		}
-		const float variation = static_cast<float>(timer * 4);	//変化量
-		entity->Scale(glm::vec3(static_cast<float>(1 + variation)));	//徐々に拡大していく
+		const float variation = timer * 4.0f;	//変化量
+		entity->Scale(glm::vec3(1.0f + variation));	//徐々に拡大していく
 
 																	//時間経過で色と透明度を変化させる
 		static const glm::vec4 color[] = {
@@ -40,7 +40,7 @@ namespace GameState {
 
 		//Y軸回転させる
 		glm::vec3 euler = glm::eulerAngles(entity->Rotation());
-		euler.y += glm::radians(60.0f) + static_cast<float>(delta);
+		euler.y += glm::radians(60.0f) + delta;
 		entity->Rotation(glm::quat(euler));
 	}
 

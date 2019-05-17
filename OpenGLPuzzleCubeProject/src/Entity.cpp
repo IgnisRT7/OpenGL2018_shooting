@@ -69,7 +69,7 @@ namespace Entity {
 	*
 	*	自分はどこにも接続されていない状態になる
 	*/
-	void Buffer::Link::Remove(){
+	void Buffer::Link::Remove() {
 		next->prev = prev;
 		prev->next = next;
 		prev = this;
@@ -252,20 +252,21 @@ namespace Entity {
 	*	@param matView	View行列
 	*	@param matProj	Projection行列
 	*/
-	void Buffer::Update(double delta, const glm::mat4* matView, const glm::mat4& matProj, const glm::mat4& matDepthVP) {
+	void Buffer::Update(float delta, const glm::mat4* matView, const glm::mat4& matProj, const glm::mat4& matDepthVP) {
 
 		//エンティティの更新処理
 		for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
 			for (itrUpdate = activeList[groupId].next; itrUpdate != &activeList[groupId]; itrUpdate = itrUpdate->next) {
 
 				LinkEntity& e = *static_cast<LinkEntity*>(itrUpdate);
-				e.transform.position += e.velocity * static_cast<float>(delta);
 
+				e.transform.position += e.velocity * delta;
 				if (e.entityData) {
 					e.entityData->Update(delta);
 
 				}
 
+				//コリジョンデータをワールド空間上に展開
 				e.colWorld.min = e.colLocal.min + e.transform.position;
 				e.colWorld.max = e.colLocal.max + e.transform.position;
 			}
@@ -273,7 +274,7 @@ namespace Entity {
 
 		//衝突判定処理
 		for (const auto& e : collisionHandlerList) {
-			
+
 			Link* listL = &activeList[e.groupId[0]];
 			Link* listR = &activeList[e.groupId[1]];
 			for (itrUpdate = listL->next; itrUpdate != listL; itrUpdate = itrUpdate->next) {
@@ -285,7 +286,7 @@ namespace Entity {
 					}
 
 					//e.handler(*entityL, *entityR);
-					
+
 					if (entityL->entityData) {
 						entityL->entityData->CollisionEnter(*entityR);
 					}
@@ -401,7 +402,7 @@ namespace Entity {
 	*	@param meshBuffer	メッシュバッファ
 	*	@param prograrm		使用するプログラムオブジェクト
 	*/
-	void Buffer::DrawStencil(const Mesh::BufferPtr& meshBuffer ,const Shader::ProgramPtr& program)const {
+	void Buffer::DrawStencil(const Mesh::BufferPtr& meshBuffer, const Shader::ProgramPtr& program)const {
 
 		meshBuffer->BindVAO();
 		for (int viewIndex = 0; viewIndex < Uniform::maxViewCount; ++viewIndex) {
@@ -436,7 +437,7 @@ namespace Entity {
 	*	@param cameraIndex	適用するカメラのインデックス番号
 	*	@param isVisible	表示フラグ
 	*/
-	void Buffer::GroupVisibility(int groupId, int cameraIndex, bool isVisible){
+	void Buffer::GroupVisibility(int groupId, int cameraIndex, bool isVisible) {
 
 		if (isVisible) {
 			visibilityFlags[groupId] |= (1U << cameraIndex);
@@ -462,7 +463,7 @@ namespace Entity {
 	*	Func(グループID=1のエンティティ,グループID=10のエンティティ)
 	*	のように呼び出される
 	*/
-	void Buffer::CollisionHandler(int gid0, int gid1, CollisionHandlerType handler = nullptr) {
+	void Buffer::CollisionHandler(int gid0, int gid1) {
 
 		if (gid0 > gid1) {
 			std::swap(gid0, gid1);
@@ -470,11 +471,8 @@ namespace Entity {
 		auto itr = std::find_if(collisionHandlerList.begin(), collisionHandlerList.end(),
 			[&](const CollisionHandlerInfo& e) {
 			return e.groupId[0] == gid0 && e.groupId[1] == gid1; });
-		if (itr == collisionHandlerList.end() || handler) {
-			collisionHandlerList.push_back({ { gid0,gid1 },handler });
-		}
-		else {
-			itr->handler = handler;
+		if (itr == collisionHandlerList.end() ) {
+			collisionHandlerList.push_back({ gid0,gid1 });
 		}
 
 	}
@@ -486,7 +484,7 @@ namespace Entity {
 	*	@param gid1 衝突対象のグループID
 	*
 	*	@return 衝突解決ハンドラ
-	*/
+	*
 	const CollisionHandlerType& Buffer::CollisionHandler(int gid0, int gid1) const {
 
 		if (gid0 > gid1) {
@@ -500,7 +498,7 @@ namespace Entity {
 			return dummy;
 		}
 		return itr->handler;
-	}
+	}*/
 
 	/**
 	*	全ての衝突解決ハンドラを削除する
@@ -523,11 +521,11 @@ namespace Entity {
 
 				for (Link* itr = activeList[groupId].next; itr != &activeList[groupId]; itr = itr->next) {
 
-					 LinkEntity* e = static_cast< LinkEntity*>(itr);
+					LinkEntity* e = static_cast<LinkEntity*>(itr);
 
-					
-					 if (searchFunc(dynamic_cast<Entity*>(e))) {
-						 return dynamic_cast<Entity*>(e);
+
+					if (searchFunc(dynamic_cast<Entity*>(e))) {
+						return dynamic_cast<Entity*>(e);
 					}
 
 				}
@@ -536,33 +534,4 @@ namespace Entity {
 
 		return nullptr;
 	}
-
-	/**
-	*	エンティティの検索を指定した型で検索を行う
-	*/
-	template<typename T>
-	std::shared_ptr<T> Buffer::FindEntityData() {
-
-		for (int viewIndex = 0; viewIndex < Uniform::maxViewCount; ++viewIndex) {
-			for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
-
-				for (const Link* itr = activeList[groupId].next; itr != &activeList[groupId]; itr = itr->next) {
-
-					const LinkEntity& e = *static_cast<const LinkEntity*>(itr);
-
-					auto& eData = e.CastTo<T>();
-
-					if (eData != nullptr) {
-						//指定した型のエンティティが存在していた
-
-						return eData;
-					}
-
-				}
-			}
-		}
-
-	}
-
-
 }

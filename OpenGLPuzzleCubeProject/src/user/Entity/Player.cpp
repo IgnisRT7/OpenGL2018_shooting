@@ -19,7 +19,7 @@ namespace GameState {
 	/**
 	*	ステージ開始後に行われる処理
 	*/
-	void Player::StartMove(double delta) {
+	void Player::StartMove(float delta) {
 
 		if (entity->Position().z >= 0) {
 
@@ -40,14 +40,14 @@ namespace GameState {
 		isStartingMove = true;
 	}
 
-	void Player::Update(double delta) {
+	void Player::Update(float delta) {
 
-		timer += static_cast<float>(delta);
+		timer += delta;
 
 		//点滅処理
 		if (damageTimer > 0) {
 			const float speedMul = 30.0f;
-			damageTimer -= static_cast<float>(delta);
+			damageTimer -= delta;
 
 			float colorAlpha = damageTimer <= 0 ? 1 : glm::max(0.0f, (glm::sin(damageTimer*speedMul)));
 
@@ -111,7 +111,7 @@ namespace GameState {
 				if ((shotInterval -= delta) <= 0) {
 
 					ShotBullet();
-					shotInterval = 0.1f - static_cast<float>(std::abs(shotInterval));
+					shotInterval = 0.1f - std::abs(shotInterval);
 				}
 			}
 			else {

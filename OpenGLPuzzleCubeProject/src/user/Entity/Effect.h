@@ -16,11 +16,11 @@ namespace GameState {
 
 		void Initialize() override;
 
-		void Update(double delta) override;
+		void Update(float delta) override;
 
 	private:
 
-		double timer = 0;			/// Œo‰ßŽžŠÔ
+		float timer = 0;			/// Œo‰ßŽžŠÔ
 
 	};
 }

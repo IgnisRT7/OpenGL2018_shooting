@@ -15,6 +15,7 @@
 #include <string>
 #include "Component/CameraComponent.h"
 
+
 namespace Entity {
 
 	class Entity;
@@ -29,7 +30,7 @@ namespace Entity {
 	typedef std::shared_ptr<Buffer> BufferPtr;	///< エンティティバッファ
 
 												/// 衝突判定ハンドラ型
-	using CollisionHandlerType = std::function<void(Entity&, Entity&) >;
+	//using CollisionHandlerType = std::function<void(Entity&, Entity&) >;
 
 	static const int maxGroupId = 31;	///< グループIDの最大値
 										/**
@@ -82,7 +83,7 @@ namespace Entity {
 		EntityDataBasePtr EntityData() { return entityData; }
 
 		template<typename T>
-		std::shared_ptr<T> CastTo() {
+		const std::shared_ptr<T> CastTo() {
 
 			return std::dynamic_pointer_cast<T>(entityData);
 		}
@@ -149,7 +150,7 @@ namespace Entity {
 		glm::vec4 stencilColor = glm::vec4(1);	///< ステンシルバッファを描画する際の描画色
 
 		EntityDataBasePtr entityData;	///< 外部でユーザーが定義するエンティティ付属データ
-		
+
 		//SceneComponentPtr& component;	///< コンポーネントのデータ
 	};
 
@@ -163,22 +164,47 @@ namespace Entity {
 		Entity* AddEntity(int groupId, const glm::vec3& pos, const Mesh::MeshPtr& m, const TexturePtr t[2], const Shader::ProgramPtr& p, EntityDataBasePtr ed);
 		void RemoveEntity(Entity* entity);
 		void RemoveAllEntity();
-		void Update(double delta, const glm::mat4* matView, const glm::mat4& matProj, const glm::mat4& matDepthVP);
+		void Update(float delta, const glm::mat4* matView, const glm::mat4& matProj, const glm::mat4& matDepthVP);
 
 		void Draw(const Mesh::BufferPtr& meshBuffer) const;
 		void DrawDepth(const Mesh::BufferPtr& meshBuffer)const;
-		void DrawStencil(const Mesh::BufferPtr& meshBuffer,const Shader::ProgramPtr& program)const;
+		void DrawStencil(const Mesh::BufferPtr& meshBuffer, const Shader::ProgramPtr& program)const;
 		void GroupVisibility(int groupId, int cameraIndex, bool isVisible);
 		bool GroupVisibility(int groupId, int cameraIndex) { return visibilityFlags[groupId] & (1U << cameraIndex); }
 
-		void CollisionHandler(int gid0, int gid1, CollisionHandlerType hander);
-		const CollisionHandlerType& CollisionHandler(int gid0, int gid1) const;
+		void CollisionHandler(int gid0, int gid1);
+		//const CollisionHandlerType& CollisionHandler(int gid0, int gid1) const;
 		void ClearCollisionHanderList();
 
 		Entity* FindEntity(FindEntityFunc f);
 
-		template<typename T> 
-		std::shared_ptr<T> FindEntityData();
+		
+		template<typename T>
+		Entity* FindEntityData() {
+
+			for (int viewIndex = 0; viewIndex < Uniform::maxViewCount; ++viewIndex) {
+				for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
+
+					for (Link* itr = activeList[groupId].next; itr != &activeList[groupId]; itr = itr->next) {
+						
+						LinkEntity* e = static_cast<LinkEntity*>(itr);
+						Entity* e1 = dynamic_cast<Entity*>(e);
+
+						std::shared_ptr<T> eData = nullptr;
+						eData = e1->CastTo<T>();
+
+						if (eData != nullptr) {
+							//指定した型のエンティティが存在していた
+
+							return e1;
+						}
+
+					}
+				}
+			}
+			return nullptr;
+		}
+
 
 	private:
 
@@ -216,7 +242,6 @@ namespace Entity {
 		//衝突判定用ハンドラ
 		struct CollisionHandlerInfo {
 			int groupId[2];
-			CollisionHandlerType handler;
 		};
 		std::vector<CollisionHandlerInfo> collisionHandlerList;
 
@@ -234,7 +259,7 @@ namespace Entity {
 		virtual void Initialize() = 0;
 
 		//更新処理
-		virtual void Update(double d) = 0;
+		virtual void Update(float d) = 0;
 
 		//ダメージ処理
 		virtual void Damage(float p) {}

@@ -14,7 +14,7 @@ namespace GameState {
 
 		void Initialize() override;
 
-		void Update(double delta) override;
+		void Update(float delta) override;
 	};
 
 	///”wŒi‚ÌXV(‰ñ“])
@@ -22,7 +22,7 @@ namespace GameState {
 
 		void Initialize() override;
 
-		void Update(double delta) override;
+		void Update(float delta) override;
 	};
 	
 	///ƒƒCƒ“ƒQ[ƒ€‰æ–Ê
@@ -30,7 +30,7 @@ namespace GameState {
 	public:
 
 		MainGame();
-		void operator()(double delta);
+		void operator()(float delta);
 
 	private:
 

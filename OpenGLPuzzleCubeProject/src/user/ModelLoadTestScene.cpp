@@ -52,7 +52,7 @@ ModelLoadTestScene::ModelLoadTestScene(){
 
 }
 
-void ModelLoadTestScene::operator()(double delta) {
+void ModelLoadTestScene::operator()(float delta) {
 
 
 

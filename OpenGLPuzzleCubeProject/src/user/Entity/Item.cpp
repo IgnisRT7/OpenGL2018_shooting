@@ -22,10 +22,10 @@ namespace GameState {
 	*
 	*	@param  delta	Œo‰ßŽžŠÔ
 	*/
-	void Item::Update(double delta) {
+	void Item::Update(float delta) {
 
 		//‚­‚é‚­‚é‰ñ“]‚³‚¹‚é
-		glm::quat addR = glm::angleAxis(5 * static_cast<float>(delta), glm::vec3(-1, 0, 0));
+		glm::quat addR = glm::angleAxis(5 * delta, glm::vec3(-1, 0, 0));
 		entity->Rotation(entity->Rotation() * addR);
 
 		glm::vec3 pos = entity->Position();

@@ -3,6 +3,7 @@
 */
 #include "Bullet.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include "../../GameState.h"
 
 namespace GameState {
 
@@ -13,8 +14,9 @@ namespace GameState {
 	void Bullet::Initialize() {
 
 		entity->CastShadow(false);
+		entity->Collision(GameState::collisionDataList[EntityGroupId_EnemyShot]);
 
-		entity->Velocity(target ? (target->Position() - entity->Position()) * glm::length(velocity) : velocity);
+		entity->Velocity(target ? glm::normalize(target->Position() - entity->Position()) * glm::length(velocity) : velocity);
 
 		glm::mat4 r = glm::lookAt(glm::vec3(0), -velocity, glm::vec3(0, 1, 0));
 		entity->Rotation(glm::quat_cast(r));
@@ -25,7 +27,7 @@ namespace GameState {
 	*
 	*	@param delta	Œo‰ßŽžŠÔ
 	*/
-	void Bullet::Update(double delta) {
+	void Bullet::Update(float delta) {
 
 
 

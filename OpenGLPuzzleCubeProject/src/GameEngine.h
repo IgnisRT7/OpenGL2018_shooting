@@ -46,7 +46,7 @@ public:
 	void PopLevel();
 	void ClearLevel();
 
-	Entity::Entity* FindEntity(std::string n);
+	//Entity::Entity* FindEntity(std::string n);
 
 	///âeê∂ê¨ÉpÉâÉÅÅ[É^
 	struct ShadowParameter {
@@ -103,21 +103,21 @@ public:
 	void MainCamera(COMPONENT_TYPEPTR(CameraComponent)& c) { mainCamera = c; }
 	const COMPONENT_TYPEPTR(CameraComponent)& MainCamera() const { return mainCamera; }
 
-	/*
+	
 	template<typename T>
-	std::shared_ptr<T> FindEntityData() {
+	Entity::Entity* FindEntityData() {
 		return entityBuffer->FindEntityData<T>();
-	}*/
+	}
 
-	Entity::Entity* FindEntity(Entity::FindEntityFunc f);
-
+	//Entity::Entity* FindEntity(Entity::FindEntityFunc f);
+	
 private:
 
 	GameEngine() = default;
 	~GameEngine();
 	GameEngine(const GameEngine&) = delete;
 	GameEngine& operator=(const GameEngine&) = delete;
-	void Update(double  delta);
+	void Update(float  delta);
 	void Render();
 	void RenderShadow() const;
 	void RenderStencil() const;

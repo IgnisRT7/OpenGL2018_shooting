@@ -7,7 +7,7 @@ struct ModelLoadTestScene {
 public:
 
 	ModelLoadTestScene();
-	void operator()(double delta);
+	void operator()(float delta);
 
 
 private:

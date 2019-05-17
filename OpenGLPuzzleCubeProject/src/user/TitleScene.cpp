@@ -19,10 +19,10 @@ namespace GameState {
 	void TitleSpaceSphere::Initialize() {
 	}
 
-	void TitleSpaceSphere::Update(double delta) {
+	void TitleSpaceSphere::Update(float delta) {
 
 		glm::vec3 rotSpace = glm::eulerAngles(entity->Rotation());
-		rotSpace.x += static_cast<float>(glm::radians(2.5) * delta);
+		rotSpace.x += glm::radians(2.5f) * delta;
 		entity->Rotation(rotSpace);
 	}
 
@@ -69,7 +69,7 @@ namespace GameState {
 	*
 	*	@param delta 経過時間
 	*/
-	void Title::operator()(double delta) {
+	void Title::operator()(float delta) {
 
 		GameEngine& game = GameEngine::Instance();
 
@@ -81,7 +81,7 @@ namespace GameState {
 		game.AddString(glm::vec2(-0.05f + offset, 0), "The ultimate in Manned-Fighter");
 
 		static float tmpTimer = 0;
-		tmpTimer += static_cast<float>(delta);
+		tmpTimer += delta;
 		auto f = (sinf(glm::radians((float)tmpTimer)) + 1) / 2;
 
 		game.FontColor(glm::vec4(1.0f, 0, 0, 0));
@@ -92,7 +92,7 @@ namespace GameState {
 		auto gamepad = game.GetGamePad();
 
 		if (timer > 0) {
-			timer -= static_cast<float>(delta);
+			timer -= delta;
 			if (timer <= 0) {
 
 				//タイトル画面からメインゲーム画面の更新処理へ移行

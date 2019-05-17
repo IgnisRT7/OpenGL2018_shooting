@@ -1,4 +1,4 @@
-/**
+v/**
 *	@file Entity.cpp
 */
 #include "Enemy.h"
@@ -24,6 +24,8 @@ namespace GameState {
 		entity->StencilColor(glm::vec4(1, 0, 1, 1));
 
 		bulletManager = std::make_shared<EnemyBulletManager>(*entity);
+
+		return;
 	}
 
 	/**
@@ -31,9 +33,9 @@ namespace GameState {
 	*
 	*	@param delta	経過時間
 	*/
-	void Toroid::Update(double delta) {
+	void Toroid::Update(float delta) {
 
-		timer += static_cast<float>(delta);
+		timer += delta;
 
 		if (bulletManager)bulletManager->Update(delta);
 
@@ -42,6 +44,7 @@ namespace GameState {
 
 		GameEngine& game = GameEngine::Instance();
 
+		auto e = game.FindEntityData<Player>();
 
 		// 移動処理
 		switch (enemyType) {
@@ -62,7 +65,7 @@ namespace GameState {
 		}
 		case 2: ///プレイヤーキャラへ軽追尾
 
-			
+
 
 
 			break;
@@ -74,7 +77,7 @@ namespace GameState {
 		}
 
 		// 円盤を回転させる.
-		rot += glm::radians(180.0f) * static_cast<float>(delta);
+		rot += glm::radians(180.0f) * delta;
 		if (rot > glm::pi<float>() * 2.0f) {
 			rot -= glm::pi<float>() * 2.0f;
 		}
@@ -140,11 +143,11 @@ namespace GameState {
 	*
 	*	@param delta	経過時間
 	*/
-	void EnemyLaunchType::Update(double delta) {
+	void EnemyLaunchType::Update(float delta) {
 
 		GameEngine& game = GameEngine::Instance();
 
-		time += static_cast<float>(delta);
+		time += delta;
 
 		if (time >= spawnMax * spawnInterval) {
 			//スポーン終了
@@ -172,22 +175,24 @@ namespace GameState {
 	*
 	*	@param delta	経過時間
 	*/
-	void EnemyBulletManager::Update(double delta) {
+	void EnemyBulletManager::Update(float delta) {
 
 		GameEngine& game = GameEngine::Instance();
 
-
-
-		timer -= static_cast<float>(delta);
+		timer -= delta;
 
 		if (timer < 0) {
 
+			Entity::Entity* player = game.FindEntityData<Player>();
+
 			if (Entity::Entity* p = game.AddEntity(EntityGroupId_EnemyShot, parent.Position(),
-				"NormalShot", "Res/Model/Player.dds", std::make_shared<Bullet>(parent.Velocity() * 1.1f), "NonLighting")) {
+				"NormalShot", "Res/Model/Player.dds", std::make_shared<Bullet>(
+					parent.Velocity(), player), "NonLighting")) {
 
 				p->CastStencil(true);
 				p->StencilColor(glm::vec4(1, 0, 1, 1));
 				timer = shotInterval;
+
 			}
 		}
 	}

@@ -38,7 +38,7 @@ namespace GameState{
 	/**
 	*	XVˆ—
 	*/
-	void GameEnd::operator()(double delta){
+	void GameEnd::operator()(float delta){
 
 		GameEngine& game = GameEngine::Instance();
 
@@ -71,7 +71,7 @@ namespace GameState{
 
 
 		if (timer > 0) {
-			timer -= static_cast<float>(delta);
+			timer -= delta;
 			if (timer <= 0) {
 
 				game.UpdateFunc(Title());

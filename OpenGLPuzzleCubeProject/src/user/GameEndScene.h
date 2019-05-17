@@ -15,7 +15,7 @@ namespace GameState{
 
 		void Initialize();
 
-		void operator()(double delta);
+		void operator()(float delta);
 
 	private:
 

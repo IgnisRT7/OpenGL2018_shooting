@@ -12,7 +12,7 @@ namespace GameState {
 
 		void Initialize() override;
 
-		void Update(double delta) override;
+		void Update(float delta) override;
 	};
 
 	///ƒ^ƒCƒgƒ‹‰æ–Ê
@@ -23,7 +23,7 @@ namespace GameState {
 
 		void Initialize();
 
-		void operator()(double delta) ;
+		void operator()(float delta) ;
 
 	private:
 

@@ -17,7 +17,7 @@ namespace GameState {
 	void Landscape::Initialize() {
 	}
 
-	void Landscape::Update(double delta) {
+	void Landscape::Update(float delta) {
 		entity->Position(entity->Position() + glm::vec3(0, 0, -4.0f * delta));
 	}
 
@@ -32,10 +32,10 @@ namespace GameState {
 	/**
 	*	”wŒi‚ÌXVˆ—
 	*/
-	void SpaceSphereMain::Update(double delta) {
+	void SpaceSphereMain::Update(float delta) {
 
 		glm::vec3 rotSpace = glm::eulerAngles(entity->Rotation());
-		rotSpace.x += static_cast<float>(glm::radians(2.5) * delta);
+		rotSpace.x += glm::radians(2.5f) * delta;
 		entity->Rotation(rotSpace);
 	}
 
@@ -93,7 +93,7 @@ namespace GameState {
 	/**
 	*	ƒƒCƒ“ƒQ[ƒ€‰æ–Ê‚ÌXV
 	*/
-	void MainGame::operator()(double delta) {
+	void MainGame::operator()(float delta) {
 
 		GameEngine& game = GameEngine::Instance();
 		static const float stageTime = 30;
@@ -219,8 +219,6 @@ namespace GameState {
 			interval = 5;
 
 		}
-
-		auto playertest = game.FindEntity(SearchPlayer);
 
 		if (sceneTimer == 0 && playerData->RemainingPlayer() < 0) {
 

@@ -15,13 +15,13 @@ namespace GameState {
 
 		void Initialize() override;
 
-		void Update(double delta) override;
+		void Update(float delta) override;
 
 		void CollisionEnter(Entity::Entity& entity) override;
 
 		void Damage(float p) override;
 
-		void StartMove(double delta);
+		void StartMove(float delta);
 
 		void ShotBullet();
 
@@ -39,7 +39,7 @@ namespace GameState {
 		glm::vec3 moveBox[2] =
 		{ {-25, -120, -1},{25, 100, 80} };		/// プレイヤーの可動域
 
-		double shotInterval = 0;	/// 発射されるまでのクールタイム
+		float shotInterval = 0;	/// 発射されるまでのクールタイム
 		int multiShotNum = 1;			/// 一度に発射できる弾数
 
 		int remainingPlayer = 3;		/// プレイヤー残機
@@ -51,7 +51,7 @@ namespace GameState {
 	class PlayerForProduction :public Entity::EntityDataBase {
 	public:
 		void Initialize() override;
-		void Update(double delta) override {};
+		void Update(float delta) override {};
 
 		void MoveStart() { entity->Velocity(glm::vec3(0, 0, moveSpeed)); }
 

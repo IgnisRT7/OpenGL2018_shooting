@@ -313,11 +313,11 @@ void GameEngine::Run() {
 		//window.ClearWheel();
 
 		const double curTime = glfwGetTime();
-		const double delta = curTime - prevTime;
+		const float delta = static_cast<float>(curTime - prevTime);
 		prevTime = curTime;
 
 		window.UpdateGamePad();
-		Update(glm::min(0.25, delta));
+		Update(glm::min(0.25f, delta));
 		Render();
 		window.SwapBuffers();
 
@@ -636,12 +636,12 @@ void GameEngine::ClearLevel() {
 *	エンティティバッファからエンティティを探す
 *
 *	@param name	エンティティを探すための関数ポインタ
-*/
+*
 Entity::Entity* GameEngine::FindEntity(Entity::FindEntityFunc f)
 {
 
-	return entityBuffer->FindEntity(f);
-}
+	//return entityBuffer->FindEntity(f);
+}*/
 
 /**
 *	デストラクタ
@@ -667,7 +667,7 @@ GameEngine::~GameEngine() {
 *
 *	@param delta	前回の更新からの経過時間(秒)
 */
-void GameEngine::Update(double delta) {
+void GameEngine::Update(float delta) {
 
 	fontRenderer.MapBuffer();
 
