@@ -23,6 +23,7 @@ namespace GameState {
 		entity->CastStencil(true);	//TODO : ステンシルマスクのテスト用
 		entity->StencilColor(glm::vec4(1, 0, 1, 1));
 
+		entity->Collision(collisionDataList[EntityGroupId_Enemy]);
 		bulletManager = std::make_shared<EnemyBulletManager>(*entity);
 
 		return;
