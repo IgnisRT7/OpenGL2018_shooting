@@ -310,8 +310,6 @@ void GameEngine::Run() {
 	double prevTime = glfwGetTime();
 	while (!window.ShouldClose()) {
 
-		//window.ClearWheel();
-
 		const double curTime = glfwGetTime();
 		const float delta = static_cast<float>(curTime - prevTime);
 		prevTime = curTime;
@@ -333,13 +331,14 @@ void GameEngine::Run() {
 /**
 *	状態更新関数を設定する
 *
-*	@param 設定する更新関数
+*	@param func 設定する更新関数
+*	@param timer シーン移行までのタイマー
 */
-void GameEngine::UpdateFunc(const UpdateFuncType& func) {
+void GameEngine::UpdateFunc(const UpdateFuncType& func, float timer) {
 
 	updateFunc = func;
+	sceneFadeTimer = timer;
 }
-
 /**
 *	状態更新関数を取得する
 *
@@ -498,7 +497,7 @@ const Uniform::PointLight& GameEngine::Light(int index)const {
 }
 
 /**
-*	環境公を設定する
+*	環境光を設定する
 *
 *	@param color	環境光の明るさ
 */
@@ -600,6 +599,7 @@ void GameEngine::PlayAudio(int playerId, int cueId) {
 *	@copydoc Audio::Stop
 */
 void GameEngine::StopAudio(int playerId) {
+
 	Audio::Stop(playerId);
 }
 
@@ -633,17 +633,6 @@ void GameEngine::ClearLevel() {
 }
 
 /**
-*	エンティティバッファからエンティティを探す
-*
-*	@param name	エンティティを探すための関数ポインタ
-*
-Entity::Entity* GameEngine::FindEntity(Entity::FindEntityFunc f)
-{
-
-	//return entityBuffer->FindEntity(f);
-}*/
-
-/**
 *	デストラクタ
 */
 GameEngine::~GameEngine() {
@@ -669,6 +658,14 @@ GameEngine::~GameEngine() {
 */
 void GameEngine::Update(float delta) {
 
+	if (isSceneFadeStart){
+		if ((sceneFadeTimer -= delta) < 0) {
+
+			isSceneFadeStart = false;
+			sceneFadeTimer = 3.0f;
+		}
+	}
+
 	fontRenderer.MapBuffer();
 
 	//全体の更新処理
@@ -680,6 +677,7 @@ void GameEngine::Update(float delta) {
 	glm::mat4 matView[4];
 
 	if (mainCamera) {
+		//メインカメラからビュー・射影変換行列の情報を取得する
 
 		mainCamera->Update(delta);
 
@@ -695,8 +693,6 @@ void GameEngine::Update(float delta) {
 
 	const glm::mat4 matDepthView = glm::lookAt(
 		shadowParameter.lightPos, shadowParameter.lightPos + shadowParameter.lightDir, shadowParameter.lightUp);
-
-
 
 	//エンティティバッファの更新
 	entityBuffer->Update(delta, matView, matProj, matDepthProj * matDepthView);
@@ -733,6 +729,11 @@ void GameEngine::RenderShadow() const {
 */
 void GameEngine::RenderStencil() const {
 
+	if (!isDrawOutline) {
+		//ステンシルバッファは現状アウトラインのみなので描画しない場合は切っておく
+		return;
+	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, offStencil->GetFramebuffer());
 
 	glViewport(0, 0, offStencil->Width(), offStencil->Height());
@@ -750,19 +751,9 @@ void GameEngine::RenderStencil() const {
 }
 
 /**
-*	ゲームの状態を描画する
+*	エンティティを描画する
 */
-void GameEngine::Render() {
-
-	///Path1: Draw shadow.
-
-	RenderShadow(); 
-
-	///path ?: Draw stencil
-	RenderStencil();
-
-
-	///Path2: Draw entity.
+void GameEngine::RenderEntity() const {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, offscreen->GetFramebuffer());
 
@@ -772,23 +763,26 @@ void GameEngine::Render() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glViewport(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
 	glScissor(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
+
 	glClearColor(0.1f, 0.3f, 0.5f, 1.0f);
 	glClearDepth(1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	shaderMap.find("Tutorial")->second->BindShadowTexture(GL_TEXTURE_2D, offDepth->GetTexture());
 
-	//LightSetting
 	uboLight->BUfferSubData(&lightData);
-	//Draw entity
+
+	///エンティティごとに描画に使用するシェーダが異なるためここでは設定しない
+
 	entityBuffer->Draw(meshBuffer);
+}
 
-	///Path3: Extract only brightness
+/**
+*	ブルームエフェクトを描画します
+*/
+void GameEngine::RenderBloomEffect() const {
 
-	glBindVertexArray(vao);
-
-	const Shader::ProgramPtr& progHiLumExtract = shaderMap.find("HiLumExtract")->second;
-	progHiLumExtract->UseProgram();
+	///明るい部分の抽出処理
 
 	glBindFramebuffer(GL_FRAMEBUFFER, offBloom[0]->GetFramebuffer());
 
@@ -798,6 +792,12 @@ void GameEngine::Render() {
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	glViewport(0, 0, offBloom[0]->Width(), offBloom[0]->Height());
+
+	glBindVertexArray(vao);
+
+	const Shader::ProgramPtr& progHiLumExtract = shaderMap.find("HiLumExtract")->second;
+	progHiLumExtract->UseProgram();
+
 	progHiLumExtract->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offscreen->GetTexture());
 	glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
 
@@ -815,7 +815,7 @@ void GameEngine::Render() {
 
 	}
 
-	///Path5: Blend with data of frame buffer with addition synthesis
+	///フレームバッファに対してぼかし加工を行います
 
 	const Shader::ProgramPtr& progBlur3x3 = shaderMap.find("Blur3x3")->second;
 
@@ -831,21 +831,25 @@ void GameEngine::Render() {
 		glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
 	}
 
-	///final output:
+}
 
-	const Shader::ProgramPtr& progColorFilter = shaderMap.find("ColorFilter")->second;
-	progColorFilter->UseProgram();
+/**
+*	オフスクリーンバッファに描画する
+*/
+void GameEngine::RenderOffscreen() const{
 
-	progColorFilter->SetBoolParameter(isDrawOutline, "isDrawOutline");
-	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glDisable(GL_BLEND);
 	glViewport(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
 
-	glBindVertexArray(vao);
-
+	const Shader::ProgramPtr& progColorFilter = shaderMap.find("ColorFilter")->second;
 	progColorFilter->UseProgram();
+
+	progColorFilter->SetFloatParameter(isSceneFadeStart ? (sceneFadeTimer / 3) : 1, "scenFadeTimerRate");
+	progColorFilter->SetBoolParameter(isDrawOutline, "isDrawOutline");
+
+	glBindVertexArray(vao);
 
 	Uniform::PostEffectData postEffect;
 	postEffect.luminanceScale = luminanceScale;
@@ -856,6 +860,23 @@ void GameEngine::Render() {
 	progColorFilter->BindTexture(GL_TEXTURE2, GL_TEXTURE_2D, offStencil->GetTexture());
 
 	glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
+
+}
+
+/**
+*	ゲームの状態を描画する
+*/
+void GameEngine::Render() {
+
+	//RenderShadow(); 
+
+	RenderStencil();
+
+	RenderEntity();
+
+	RenderBloomEffect();
+	
+	RenderOffscreen();
 
 	fontRenderer.Draw();
 
@@ -871,7 +892,7 @@ void GameEngine::Render() {
 		// 変換コピーするだけで輝度計算はしない.
 		if (pboIndexForWriting < 0) {
 
-			// オフスクリーンバッファの内容をPBOに変換コピー.
+			// オフスクリーンバッファの内容をPBOに変換コピー
 			const GLuint pboWrite = pbo[1].Id();
 			glBindBuffer(GL_PIXEL_PACK_BUFFER, pboWrite);
 			glBindFramebuffer(GL_FRAMEBUFFER, offBloom[bloomBufferCount - 1]->GetFramebuffer());

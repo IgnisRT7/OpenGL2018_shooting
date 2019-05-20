@@ -18,6 +18,7 @@
 #include <glm/glm.hpp>
 #include <functional>
 #include <random>
+#include "../Scene.h"
 
 #define COMPONENT_TYPEPTR(type) std::shared_ptr<type>			///シーンコンポーネントの型用マクロ
 
@@ -32,7 +33,7 @@ public:
 	static GameEngine& Instance();
 	bool Init(int w, int h, const char* title);
 	void Run();
-	void UpdateFunc(const UpdateFuncType& func);
+	void UpdateFunc(const UpdateFuncType& func,float t=0);
 	const UpdateFuncType& UpdateFunc() const;
 
 	bool LoadTextureFromFile(const char* filename);
@@ -102,11 +103,14 @@ public:
 
 	void MainCamera(COMPONENT_TYPEPTR(CameraComponent)& c) { mainCamera = c; }
 	const COMPONENT_TYPEPTR(CameraComponent)& MainCamera() const { return mainCamera; }
-
 	
 	template<typename T>
 	Entity::Entity* FindEntityData() {
 		return entityBuffer->FindEntityData<T>();
+	}
+
+	void SceneFadeStart(bool param) {
+		isSceneFadeStart = param; 
 	}
 
 	//Entity::Entity* FindEntity(Entity::FindEntityFunc f);
@@ -119,12 +123,17 @@ private:
 	GameEngine& operator=(const GameEngine&) = delete;
 	void Update(float  delta);
 	void Render();
+	void RenderEntity() const;
 	void RenderShadow() const;
 	void RenderStencil() const;
+	void RenderBloomEffect() const;
+	void RenderOffscreen() const;
 
 private:
-
+	
 	bool isInitalized = false;
+
+	//TODO : 後にシーンクラスに移行予定
 	UpdateFuncType updateFunc;
 
 	glm::vec2 windowSize;
@@ -134,6 +143,7 @@ private:
 	GLuint ibo = 0;
 	GLuint vao = 0;
 
+	//画面輝度を調整するためのPBO
 	BufferObject pbo[2];
 	int pboIndexForWriting = -1;
 	float luminanceScale = 1.0f;
@@ -167,7 +177,12 @@ private:
 
 	std::unordered_map<std::string, double> userNumbers;
 
+	float sceneFadeTimer = 3.0f;
+	bool isSceneFadeStart = false;
+
 	//TODO : 試作用メインカメラコンポーネント
 	COMPONENT_TYPEPTR(CameraComponent) mainCamera;
+
+	//SceneStack sceneStack;
 
 };
