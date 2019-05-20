@@ -13,14 +13,14 @@
 class Scene {
 public:
 
-	Scene(const char* name);
+	Scene(const char* name = "NoName");
 	Scene(const Scene&) = delete;
 	Scene& operator=(const Scene&) = delete;
 	virtual ~Scene();
 
 	virtual bool Initialize() = 0 {};
 	virtual void Update(float delta) = 0 {};
-	virtual void Render() = 0 {};
+//	virtual void Render() = 0 {};
 	virtual void Finalize() = 0 {};
 
 	virtual void Play() = 0;

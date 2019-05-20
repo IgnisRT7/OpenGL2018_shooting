@@ -11,7 +11,7 @@
 */
 Scene::Scene(const char* name) : name(name) {
 
-	std::cout << "Scene コンストラクタ: " << name << "\n";
+	std::cout << "[ Scene::() ] " << name << std::endl;
 }
 
 /**
@@ -20,7 +20,7 @@ Scene::Scene(const char* name) : name(name) {
 Scene::~Scene() {
 
 	Finalize();
-	std::cout << "[Scene::~() " << name << std::endl;
+	std::cout << "[ Scene::~() ] " << name << std::endl;
 }
 
 /**
@@ -29,7 +29,7 @@ Scene::~Scene() {
 void Scene::Play() {
 
 	isActive = true;
-	std::cout << "[ Scene::Play " << name << " がプレイ可能になりました] " << std::endl;
+	std::cout << "[ Scene::Play ]" << name << " がプレイ可能になりました" << std::endl;
 }
 
 /**
@@ -38,7 +38,7 @@ void Scene::Play() {
 void Scene::Stop() {
 
 	isActive = false;
-	std::cout << "[ Scene::Stop " << name << " が停止しました " << std::endl;
+	std::cout << "[ Scene::Stop ]" << name << " が停止しました " << std::endl;
 }
 
 /**
@@ -80,9 +80,10 @@ void SceneStack::Push(ScenePtr scene) {
 		Current().Stop();
 	}
 	stack.push_back(scene);
-	std::cout << "[ SceneStack::Push " << scene->Name() << "(シーン)が プッシュされました]" << std::endl;
+	std::cout << "[ SceneStack::Push ] " << scene->Name() << "(シーン)が プッシュされました" << std::endl;
 	Current().Initialize();
 	Current().Play();
+	std::cout << "[ SceneStack::Push ] " << scene->Name() << "(シーン)の初期化が完了しました" << std::endl;
 }
 
 /**
@@ -101,7 +102,7 @@ void SceneStack::Pop() {
 
 	const std::string sceneName = Current().Name();
 	stack.pop_back();
-	std::cout << "[シーン ポップ]" << sceneName << std::endl;
+	std::cout << "[SceneStack::Pop ] "<< sceneName << std::endl;
 
 	if (!stack.empty()) {
 		Current().Play();
@@ -117,7 +118,7 @@ void SceneStack::Replace(ScenePtr scene) {
 
 	std::string sceneName = "(empty)";
 	if (stack.empty()) {
-		std::cout << "[シーン リプレース] [警告]シーンスタックが空です" << std::endl;
+		std::cout << "[ SceneStack::Replace ] [警告]シーンスタックが空です" << std::endl;
 	}
 	else {
 
@@ -131,7 +132,7 @@ void SceneStack::Replace(ScenePtr scene) {
 
 	//シーンの追加と初期化と実行処理
 	stack.push_back(scene);
-	std::cout << "シーン リプレース" << sceneName << "->" << scene->Name() << std::endl;
+	std::cout << "[ SceneStack::Replace ]" << sceneName << "->" << scene->Name() << std::endl;
 	Current().Initialize();
 	Current().Play();
 }
@@ -177,14 +178,15 @@ bool SceneStack::Empty() const {
 /**
 *	シーンを更新する
 *
-*	@param deltaTime	前回からの経過時間
+*	@param delta	前回からの経過時間
 */
-void SceneStack::Update(float deltaTime) {
+void SceneStack::Update(float delta) {
 
-	for (ScenePtr& e : stack) {
+	/*for (ScenePtr& e : stack) {
 		
 		e->Update(deltaTime);
-	}
+	}*/
+	Current().Update(delta);
 }
 
 
