@@ -42,5 +42,5 @@ void main() {
   outDepthCoord = ((vertexData.matDepthMVP * vec4(vPosition,1.0)) * 0.5 + 0.5).xyz;
 
 
-  gl_Position = vertexData.matMVP[viewIndex] * vec4(vPosition, 1);                  
+  gl_Position = vertexData.matMVP[viewIndex] * vec4(vPosition, 1.0);                  
 }

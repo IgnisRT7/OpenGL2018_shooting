@@ -57,28 +57,39 @@ float ShadowRatio(float bias){
 
 void main() {
 
+
   vec3 normal = texture(colorSampler[1], inTexCoord).xyz * 2 - 1;
   normal = inTBN * normal;
+
   vec3 lightColor = vec3(0);
   vec3 specularColor = vec3(0);
+
   for (int i = 0; i < maxLightCount; ++i) {
+
     vec3 lightVector = lightData.light[i].position.xyz - inWorldPosition;
     float lightPower = 1.0 / (dot(lightVector, lightVector) + 0.00001);
     vec3 normalizedLightVector = normalize(lightVector);
     float cosTheta = clamp(dot(normal, normalizedLightVector), 0, 1);
     lightColor += lightData.light[i].color.rgb * cosTheta * lightPower;
+
     vec3 eyeVector = normalize(lightData.eyePos[viewIndex].xyz - lightData.light[i].position.xyz);
     specularColor += lightData.light[i].color.rgb * 
 		pow(max(dot(eyeVector, reflect(normalizedLightVector, normal)), 0), shininess) * lightPower * 0.25;
   }
+
   fragColor = inColor * texture(colorSampler[0], inTexCoord);
 
   float cosTheta = clamp(dot(normal,normalize(lightData.light[0].position.xyz - inWorldPosition)), 0, 1);
   float depthBias = 0.005 * tan(acos(cosTheta));
   float shadow = ShadowRatio(depthBias);
 
-  fragColor.rgb *= lightData.ambientColor.rgb + lightColor * shadow;
+  fragColor.rgb *= lightColor * shadow + lightData.ambientColor.rgb;
   fragColor.rgb += specularColor * normFactor * shadow;
+
+  //fragColor.rgb = lightColor;
+
+
+  //fragColor.rgb = normalize(normal) * 0.5 + 0.5;
 
   //fragColor.rgb = texture(colorSampler[0],inTexCoord).rgb;	//テクスチャマッピングのみの描画
  
