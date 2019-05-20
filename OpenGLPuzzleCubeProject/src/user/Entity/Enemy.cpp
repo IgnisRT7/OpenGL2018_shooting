@@ -1,4 +1,4 @@
-v/**
+/**
 *	@file Entity.cpp
 */
 #include "Enemy.h"
@@ -11,6 +11,7 @@ v/**
 #include "Item.h"
 #include "Bullet.h"
 #include "Player.h"
+
 
 namespace GameState {
 
