@@ -26,7 +26,6 @@ namespace Entity {
 	using EntityDataBasePtr = std::shared_ptr<EntityDataBase>;
 	using FindEntityFunc = std::function<bool(Entity*)>;
 
-	/// 衝突解決ハンドラポインタ型
 	typedef std::shared_ptr<Buffer> BufferPtr;	///< エンティティバッファ
 
 	static const int maxGroupId = 31;	///< グループIDの最大値
