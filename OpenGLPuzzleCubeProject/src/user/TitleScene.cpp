@@ -48,18 +48,14 @@ namespace GameState {
 
 		game.KeyValue(0.01f);
 
-		//game.Camera(0, { glm::vec4(0,20,-8,1),glm::vec3(0,0,12),glm::vec3(0,1,0) });
-		game.MainCamera()->ViewMatrixParam(glm::vec3(0, 20, -8), glm::vec3(0, -20, 20), glm::vec3(0, 1, 0));
-
 		game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
 			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
-
 		
 		player = std::make_shared<PlayerForProduction>();
 		game.AddEntity(EntityGroupId_Others, glm::vec3(0, 0, 0), "Aircraft", "Res/Model/Player.dds", player, "NonLighting");
 
 		auto cam = std::make_shared<CameraDebugComponent>();
-		cam->LookAt(glm::vec3(0, 30, -10), glm::vec3(0, 0, 0));
+		game.MainCamera()->LookAt(glm::vec3(0, 10, -30), glm::vec3(0, -1, 1));
 		game.MainCamera(std::static_pointer_cast<CameraComponent>(cam));
 		
 	}
@@ -73,7 +69,7 @@ namespace GameState {
 
 		GameEngine& game = GameEngine::Instance();
 
-		const float offset = timer == 0 ? 0 : (2.0f - timer) * (2.0f - timer) * 2.0f;
+		const float offset = timer == 0 ? 0 : (3.0f - timer) * (3.0f - timer) * 3.0f;
 		game.FontColor(glm::vec4(1, 1, 1, 1));
 		game.FontScale(glm::vec2(4));
 		game.AddString(glm::vec2(-0.5 + offset, 0.3), "STAR FIGHTER");
@@ -91,19 +87,24 @@ namespace GameState {
 		
 		auto gamepad = game.GetGamePad();
 
+		static std::shared_ptr<MainGame> gameMain;
+
 		if (timer > 0) {
 			timer -= delta;
 			if (timer <= 0) {
 
+				gameMain = std::make_shared<MainGame>();
 				//タイトル画面からメインゲーム画面の更新処理へ移行
-				game.UpdateFunc(MainGame());
+				game.UpdateFunc(*gameMain);
 
 			}
 		}
 		else if (game.GetGamePad().buttonDown & GamePad::START) {
 			game.PlayAudio(1, CRI_SAMPLECUESHEET_START);
-			timer = 2;
+			timer = 3;
 			player->MoveStart();
+			game.SceneFadeStart(true);
+
 		}
 	}
 

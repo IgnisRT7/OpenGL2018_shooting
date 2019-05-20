@@ -31,8 +31,13 @@ namespace GameState {
 
 		MainGame();
 		void operator()(float delta);
+		void ResourceLoad();
 
 	private:
+
+		int resourceCount = 0;
+		float nextLoadTimer = 0;
+		bool isResourceLoaded = false;
 
 		double stageTimer = -1;
 		double interval = 0;
@@ -41,6 +46,7 @@ namespace GameState {
 		int stageNo = 0;
 
 		std::shared_ptr<Player> playerData;
+		float cameraChangeTimer = 3.0f;
 
 
 	};

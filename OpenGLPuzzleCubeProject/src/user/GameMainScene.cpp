@@ -18,7 +18,7 @@ namespace GameState {
 	}
 
 	void Landscape::Update(float delta) {
-		entity->Position(entity->Position() + glm::vec3(0, 0, -4.0f * delta));
+		entity->Position(entity->Position() + glm::vec3(0, 0, -10.0f * delta));
 	}
 
 	/// 背景(ステージ3用)
@@ -47,18 +47,17 @@ namespace GameState {
 	MainGame::MainGame() {
 
 		GameEngine& game = GameEngine::Instance();
+
 		game.ClearCollisionHandlerList();
+		/// エンティティの初期化
+		game.RemoveAllEntity();
+		game.ClearLevel();
 
 		///衝突判定用ハンドラの定義
 		game.CollisionHandler(EntityGroupId_PlayerShot, EntityGroupId_Enemy);
 		game.CollisionHandler(EntityGroupId_EnemyShot, EntityGroupId_Player);
 		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Enemy);
 		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Item);
-
-		game.MainCamera(std::static_pointer_cast<CameraComponent>(std::make_shared<CameraDebugComponent>()));
-
-		//TODO : 試作用メインカメラに対しての設定処理
-		game.MainCamera()->ViewMatrixParam(glm::vec3(0, 30, -30), glm::vec3(0, -1, 1), glm::vec3(0, 1, 0));
 
 		game.GroupVisibility(EntityGroupId_Background, 0, true);
 		game.GroupVisibility(EntityGroupId_Background, 1, false);
@@ -72,22 +71,36 @@ namespace GameState {
 		game.GroupVisibility(EntityGroupId_Others, 0, false);
 		game.GroupVisibility(EntityGroupId_Others, 0, true);
 
+		game.LoadMeshFromFile("Res/Model/Player.fbx");
+		game.LoadMeshFromFile("Res/Model/Blast.fbx");
+		game.LoadMeshFromFile("Res/Model/Toroid.fbx");
+		game.LoadMeshFromFile("Res/Model/ItemBox.fbx");
+		game.LoadTextureFromFile("Res/Model/Player.dds");
+		game.LoadTextureFromFile("Res/Model/Toroid.dds");
+		game.LoadTextureFromFile("Res/Model/Toroid.Normal.bmp");
+		game.LoadTextureFromFile("Res/Model/ItemBoxSpeed.dds");
+		game.LoadTextureFromFile("Res/Model/ItemBoxBullet.dds");
+
+//		game.PushLevel();
+		game.LoadMeshFromFile("Res/Model/Landscape.fbx");
+		game.LoadTextureFromFile("Res/Model/BG02.Diffuse.dds");
+		game.LoadTextureFromFile("Res/Model/BG02.Normal.bmp");
+
+		game.LoadMeshFromFile("Res/Model/City01.fbx");
+		game.LoadTextureFromFile("Res/Model/City01.Diffuse.dds");
+		game.LoadTextureFromFile("Res/Model/City01.Normal.bmp");
+
+		game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
+		game.LoadTextureFromFile("Res/Model/SpaceSphere.bmp");
+
 		/// ライト・輝度の設定
 		game.AmbientLight(glm::vec4(0.05f, 0.1f, 0.2f, 1));
 		game.Light(0, { glm::vec4(1,100,1,1),glm::vec4(12000,12000,12000,1) });
 
 		playerData = std::make_shared<Player>();
-	}
-
-	/**
-	*	テスト用プレイヤー捜索関数
-	*/
-	bool SearchPlayer(Entity::Entity* entity) {
-
-		if (entity->CastTo<Player>()) {
-			return true;
-		}
-		return false;
+		auto camera = std::make_shared<CameraDebugComponent>();
+		camera->LookAt(glm::vec3(0, 20, 0), glm::vec3(0,0,10));
+		game.MainCamera(std::dynamic_pointer_cast<CameraComponent>(camera));
 	}
 
 	/**
@@ -96,9 +109,12 @@ namespace GameState {
 	void MainGame::operator()(float delta) {
 
 		GameEngine& game = GameEngine::Instance();
+
 		static const float stageTime = 30;
 
 		if (stageTimer < 0) {
+
+			game.RemoveAllEntity();
 
 			++stageNo;
 
@@ -114,29 +130,12 @@ namespace GameState {
 			shadowParam.range = glm::vec2(300, 300);
 			game.Shadow(shadowParam);
 
-			/// エンティティの初期化
-			game.RemoveAllEntity();
-			game.ClearLevel();
-			game.LoadMeshFromFile("Res/Model/Player.fbx");
-			game.LoadMeshFromFile("Res/Model/Blast.fbx");
-			game.LoadMeshFromFile("Res/Model/Toroid.fbx");
-			game.LoadMeshFromFile("Res/Model/ItemBox.fbx");
-			game.LoadTextureFromFile("Res/Model/Player.dds");
-			game.LoadTextureFromFile("Res/Model/Toroid.dds");
-			game.LoadTextureFromFile("Res/Model/Toroid.Normal.bmp");
-			game.LoadTextureFromFile("Res/Model/ItemBoxSpeed.dds");
-			game.LoadTextureFromFile("Res/Model/ItemBoxBullet.dds");
-
 			switch (stageNo % 3) {
 			case 1: {
 
 				stageTimer = 30;
 
 				game.KeyValue(0.16f);
-
-				game.LoadMeshFromFile("Res/Model/Landscape.fbx");
-				game.LoadTextureFromFile("Res/Model/BG02.Diffuse.dds");
-				game.LoadTextureFromFile("Res/Model/BG02.Normal.bmp");
 
 				//背景の更新処理
 				for (int z = 0; z < 5; ++z) {
@@ -156,9 +155,6 @@ namespace GameState {
 				stageTimer = 30;
 
 				game.KeyValue(0.24f);
-				game.LoadMeshFromFile("Res/Model/City01.fbx");
-				game.LoadTextureFromFile("Res/Model/City01.Diffuse.dds");
-				game.LoadTextureFromFile("Res/Model/City01.Normal.bmp");
 
 				//背景の初期化処理
 				for (int z = 0; z < 5; ++z) {
@@ -180,14 +176,13 @@ namespace GameState {
 				stageTimer = 30;
 
 				game.KeyValue(0.02f);
-				game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
-				game.LoadTextureFromFile("Res/Model/SpaceSphere.bmp");
 				game.AddEntity(EntityGroupId_Background, glm::vec3(0),
 					"SpaceSphere", "Res/Model/SpaceSphere.bmp", std::make_shared<SpaceSphereMain>(), "NonLighting");
 
 				break;
 			}
 			}
+
 
 			auto playerEntity = game.AddEntity(EntityGroupId_Player, glm::vec3(0, 0, 0),
 				"Aircraft", "Res/Model/Player.dds",playerData);
