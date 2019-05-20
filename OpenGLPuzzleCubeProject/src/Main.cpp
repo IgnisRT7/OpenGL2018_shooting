@@ -26,7 +26,11 @@ int main() {
 	game.LoadFontFromFile("Res/Font.fnt");
 
 	game.PushLevel();
-	game.UpdateFunc(GameState::Title());
+
+	//TODO : タイトルシーンへ移行
+	//game.UpdateFunc(GameState::Title());
+	game.PushScene(std::make_shared<GameState::Title>());
+
 	game.Run();
 
 	return 0;
