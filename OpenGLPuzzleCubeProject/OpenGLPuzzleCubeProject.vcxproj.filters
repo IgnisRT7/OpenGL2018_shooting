@@ -169,14 +169,14 @@
     <ClCompile Include="src\user\GameMainScene.cpp">
       <Filter>src\User\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="src\Main.cpp">
-      <Filter>src\User\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="src\user\ModelLoadTestScene.cpp">
       <Filter>src\User\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\user\TitleScene.cpp">
       <Filter>src\User\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Main.cpp">
+      <Filter>src\User</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
