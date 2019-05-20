@@ -29,13 +29,11 @@ namespace Entity {
 	/// 衝突解決ハンドラポインタ型
 	typedef std::shared_ptr<Buffer> BufferPtr;	///< エンティティバッファ
 
-												/// 衝突判定ハンドラ型
-	//using CollisionHandlerType = std::function<void(Entity&, Entity&) >;
-
 	static const int maxGroupId = 31;	///< グループIDの最大値
-										/**
-										*	衝突判定形状
-										*/
+
+	/**
+	*	衝突判定形状
+	*/
 	struct CollisionData {
 		glm::vec3 min;
 		glm::vec3 max;
@@ -132,6 +130,7 @@ namespace Entity {
 		TransformData transform;	///< トランスフォームデータ(ワールド空間)
 		TransformData localTransform;///< トランスフォームデータ(ローカル空間)
 
+		glm::vec3 forward = glm::vec3(1, 0, 0);
 		glm::vec3 velocity;			///< 速度.
 		glm::vec4 color = glm::vec4(1, 1, 1, 1);///< 色
 		std::string name;
@@ -173,7 +172,6 @@ namespace Entity {
 		bool GroupVisibility(int groupId, int cameraIndex) { return visibilityFlags[groupId] & (1U << cameraIndex); }
 
 		void CollisionHandler(int gid0, int gid1);
-		//const CollisionHandlerType& CollisionHandler(int gid0, int gid1) const;
 		void ClearCollisionHanderList();
 
 		Entity* FindEntity(FindEntityFunc f);
