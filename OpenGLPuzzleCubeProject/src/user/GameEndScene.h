@@ -4,18 +4,25 @@
 #pragma once
 
 #include "TitleScene.h"
+#include "../../Scene.h"
 
 namespace GameState{
 
 	///ƒ^ƒCƒgƒ‹‰æ–Ê
-	class GameEnd {
+	class GameEnd : public Scene{
 	public:
 
-		GameEnd();
+		GameEnd() : Scene("GameEnd") {}
 
-		void Initialize();
+		bool Initialize() override;
+		void Update(float delta) override;
+		void Finalize() override;
 
-		void operator()(float delta);
+		void Play() override {}
+		void Stop() override {}
+		void Hide() override {}
+		
+//		void operator()(float delta);
 
 	private:
 

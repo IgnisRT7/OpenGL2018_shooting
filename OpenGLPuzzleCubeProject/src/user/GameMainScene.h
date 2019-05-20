@@ -4,7 +4,7 @@
 #pragma once
 #include "../Entity.h"
 #include "Entity/Player.h"
-
+#include "../../Scene.h"
 
 namespace GameState {
 
@@ -26,12 +26,20 @@ namespace GameState {
 	};
 	
 	///ƒƒCƒ“ƒQ[ƒ€‰æ–Ê
-	class MainGame {
+	class MainGame : public Scene{
 	public:
 
-		MainGame();
-		void operator()(float delta);
-		void ResourceLoad();
+		MainGame() :Scene("MainGame") {}
+
+		bool Initialize() override;
+		void Update(float d) override;
+		void Finalize() override;
+		void Play() override { Initialize(); };
+		void Stop() override {};
+		void Hide() override {};
+
+		//void operator()(float delta);
+		//void ResourceLoad();
 
 	private:
 
@@ -48,7 +56,7 @@ namespace GameState {
 		std::shared_ptr<Player> playerData;
 		float cameraChangeTimer = 3.0f;
 
-
+		std::string jirer;
 	};
 
 }

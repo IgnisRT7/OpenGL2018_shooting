@@ -12,39 +12,35 @@
 namespace GameState{
 
 	/**
-	*	コンストラクタ
-	*/
-	GameEnd::GameEnd() {
-
-	}
-
-	/**
 	*	初期化処理
 	*/
-	void GameState::GameEnd::Initialize(){
+	bool GameState::GameEnd::Initialize(){
 
 		GameEngine& game = GameEngine::Instance();
 
-		game.RemoveAllEntity();
-		game.ClearLevel();
 		game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
 		game.LoadTextureFromFile("Res/Model/SpaceSphere.dds");
 
 		auto e = game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
-			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
+			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLightin44g");
 		game.KeyValue(0.01f);
+
+		game.MainCamera(std::make_shared<CameraComponent>());
+		game.MainCamera()->LookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
+
+		return true;
 	}
 
 	/**
 	*	更新処理
 	*/
-	void GameEnd::operator()(float delta){
+	void GameEnd::Update(float delta){
 
 		GameEngine& game = GameEngine::Instance();
 
 		const float offset = timer == 0 ? 0 : (2.0f - timer) * (2.0f - timer) * 2.0f;
 		game.FontColor(glm::vec4(1, 0, 0, 1));
-		game.FontScale(glm::vec2(10));
+		game.FontScale(glm::vec2(5));
 		game.AddString(glm::vec2(-0.55, 0.3), "GAME OVER...");
 
 		char str[16];
@@ -53,35 +49,35 @@ namespace GameState{
 		game.FontScale(glm::vec2(5));
 		game.AddString(glm::vec2(-0.4, -0.2), str);
 
-		//game.FontColor(glm::vec4(1, 1, 1, 1));
-		game.FontScale(glm::vec2(3));
+		game.FontColor(glm::vec4(1, 1, 1, 1));
+		game.FontScale(glm::vec2(2));
 		game.AddString(glm::vec2(-0.4, -0.5), "Pressed enter to title...");
 
 		auto gamepad = game.GetGamePad();
-
-		/*
-		if (gamepad.buttonDown & GamePad::B) {
-
-			game.KeyValue(glm::min(1.0, game.KeyValue() + delta));
-		}
-		else if (gamepad.buttonDown & GamePad::X) {
-
-			game.KeyValue(glm::max(0.0, game.KeyValue() - delta));
-		}*/
-
 
 		if (timer > 0) {
 			timer -= delta;
 			if (timer <= 0) {
 
-				game.UpdateFunc(Title());
-
+				game.PopScene();
 			}
 		}
 		else if (game.GetGamePad().buttonDown & GamePad::START) {
 			game.PlayAudio(1, CRI_SAMPLECUESHEET_START);
 			timer = 2;
 		}
+	}
+
+	/**
+	*	終了処理
+	*/
+	void GameEnd::Finalize(){
+
+		GameEngine& game = GameEngine::Instance();
+
+		game.ClearCollisionHandlerList();
+		game.RemoveAllEntity();
+		game.ClearLevel();
 	}
 
 }

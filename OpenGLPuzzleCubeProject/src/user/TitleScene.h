@@ -4,6 +4,8 @@
 #pragma once
 #include "../Entity.h"
 #include "../user/Entity/Player.h"
+#include "../../Scene.h"
+#include <memory>
 
 namespace GameState {
 
@@ -16,14 +18,20 @@ namespace GameState {
 	};
 
 	///ƒ^ƒCƒgƒ‹‰æ–Ê
-	class Title {
+	class Title : public Scene{
 	public:
 
-		Title();
+		Title() : Scene("Title") {}
 
-		void Initialize();
+		bool Initialize() override;
+		void Update(float delta) override;
+		void Finalize() override;
+		void Play() override;
+		void Stop() override {};
+		void Hide() override {}
 
-		void operator()(float delta) ;
+
+		//void operator()(float delta) ;
 
 	private:
 

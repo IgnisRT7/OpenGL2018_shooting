@@ -39,19 +39,15 @@ namespace GameState {
 		entity->Rotation(rotSpace);
 	}
 
+
 	///メインゲーム画面のクラス定義
 
 	/**
-	*	メインゲーム画面のコンストラクタ
+	*	初期化処理
 	*/
-	MainGame::MainGame() {
+	bool MainGame::Initialize(){
 
 		GameEngine& game = GameEngine::Instance();
-
-		game.ClearCollisionHandlerList();
-		/// エンティティの初期化
-		game.RemoveAllEntity();
-		game.ClearLevel();
 
 		///衝突判定用ハンドラの定義
 		game.CollisionHandler(EntityGroupId_PlayerShot, EntityGroupId_Enemy);
@@ -59,18 +55,7 @@ namespace GameState {
 		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Enemy);
 		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Item);
 
-		game.GroupVisibility(EntityGroupId_Background, 0, true);
-		game.GroupVisibility(EntityGroupId_Background, 1, false);
-
-		game.GroupVisibility(EntityGroupId_Enemy, 0, false);
-		game.GroupVisibility(EntityGroupId_Enemy, 0, true);
-
-		game.GroupVisibility(EntityGroupId_Player, 0, false);
-		game.GroupVisibility(EntityGroupId_Player, 0, true);
-
-		game.GroupVisibility(EntityGroupId_Others, 0, false);
-		game.GroupVisibility(EntityGroupId_Others, 0, true);
-
+		//リソースのロード
 		game.LoadMeshFromFile("Res/Model/Player.fbx");
 		game.LoadMeshFromFile("Res/Model/Blast.fbx");
 		game.LoadMeshFromFile("Res/Model/Toroid.fbx");
@@ -81,7 +66,6 @@ namespace GameState {
 		game.LoadTextureFromFile("Res/Model/ItemBoxSpeed.dds");
 		game.LoadTextureFromFile("Res/Model/ItemBoxBullet.dds");
 
-//		game.PushLevel();
 		game.LoadMeshFromFile("Res/Model/Landscape.fbx");
 		game.LoadTextureFromFile("Res/Model/BG02.Diffuse.dds");
 		game.LoadTextureFromFile("Res/Model/BG02.Normal.bmp");
@@ -99,14 +83,16 @@ namespace GameState {
 
 		playerData = std::make_shared<Player>();
 		auto camera = std::make_shared<CameraDebugComponent>();
-		camera->LookAt(glm::vec3(0, 20, 0), glm::vec3(0,0,10));
+		camera->LookAt(glm::vec3(0, 20, 0), glm::vec3(0, 0, 10));
 		game.MainCamera(std::dynamic_pointer_cast<CameraComponent>(camera));
+
+		return true;
 	}
 
 	/**
 	*	メインゲーム画面の更新
 	*/
-	void MainGame::operator()(float delta) {
+	void MainGame::Update(float delta) {
 
 		GameEngine& game = GameEngine::Instance();
 
@@ -151,6 +137,8 @@ namespace GameState {
 				break;
 			}
 			case 2: {
+				game.ReplaceScene(std::make_shared<GameEnd>());
+				return;
 
 				stageTimer = 30;
 
@@ -247,18 +235,25 @@ namespace GameState {
 			snprintf(str, 16, "P :%02.0f",fps);
 			game.AddString(glm::vec2(-0.95f, 0.65f), str);
 
-
-			//カメラ移動処理
-			/*GameEngine::CameraData camera = game.Camera(0);
-			float cameraMoveValue = fmod(static_cast<float>(stageTimer), 45.0f) * (glm::radians(360.0f) / 45.0f);
-			camera.position.x = glm::cos(cameraMoveValue) * 5.0f;
-			game.Camera(0, camera);*/
 		}
 		else {
 
 			if ((sceneTimer -= delta) <= 0) {
-				game.UpdateFunc(GameEnd());
+				game.ReplaceScene(std::make_shared<GameEnd>());
 			}
 		}
+	}
+
+	/**
+	*	終了処理
+	*/
+	void MainGame::Finalize(){
+
+		GameEngine& game = GameEngine::Instance();
+
+		//TODO :ココで全てのエンティティを削除する場合、前シーンのリソースも削除されるため回避策を考えなければならない
+		game.ClearCollisionHandlerList();
+		game.RemoveAllEntity();
+	//	game.ClearLevel();
 	}
 }

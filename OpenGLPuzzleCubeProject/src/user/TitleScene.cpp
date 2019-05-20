@@ -28,19 +28,16 @@ namespace GameState {
 
 	/// タイトルクラス定義
 
-	Title::Title() {
-		Initialize();
-	}
 
 	/**
 	*	タイトル画面の初期化
 	*/
-	void Title::Initialize() {
+	bool Title::Initialize() {
 		
 		GameEngine& game = GameEngine::Instance();
 
 		game.RemoveAllEntity();
-		game.ClearLevel();
+		//game.ClearLevel();
 		game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
 		game.LoadTextureFromFile("Res/Model/SpaceSphere.dds");
 		game.LoadMeshFromFile("Res/Model/Player.fbx");
@@ -57,7 +54,8 @@ namespace GameState {
 		auto cam = std::make_shared<CameraDebugComponent>();
 		game.MainCamera()->LookAt(glm::vec3(0, 10, -30), glm::vec3(0, -1, 1));
 		game.MainCamera(std::static_pointer_cast<CameraComponent>(cam));
-		
+	
+		return true;
 	}
 
 	/*
@@ -65,7 +63,7 @@ namespace GameState {
 	*
 	*	@param delta 経過時間
 	*/
-	void Title::operator()(float delta) {
+	void Title::Update(float delta){
 
 		GameEngine& game = GameEngine::Instance();
 
@@ -87,15 +85,16 @@ namespace GameState {
 		
 		auto gamepad = game.GetGamePad();
 
-		static std::shared_ptr<MainGame> gameMain;
+		//static std::shared_ptr<MainGame> gameMain;
 
 		if (timer > 0) {
 			timer -= delta;
 			if (timer <= 0) {
 
-				gameMain = std::make_shared<MainGame>();
+				//gameMain = std::make_shared<MainGame>();
 				//タイトル画面からメインゲーム画面の更新処理へ移行
-				game.UpdateFunc(*gameMain);
+				//game.UpdateFunc(*gameMain);
+				game.PushScene(std::make_shared<MainGame>());
 
 			}
 		}
@@ -106,6 +105,24 @@ namespace GameState {
 			game.SceneFadeStart(true);
 
 		}
+	}
+
+	/**
+	*	終了処理
+	*/
+	void Title::Finalize(){
+		GameEngine& game = GameEngine::Instance();
+		game.RemoveAllEntity();
+		game.ClearCollisionHandlerList();
+		game.ClearLevel();
+	}
+
+	/**
+	*	開始処理
+	*/
+	void Title::Play(){
+		Title::Initialize();
+		timer = 0;
 	}
 
 }
