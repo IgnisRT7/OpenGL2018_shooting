@@ -16,18 +16,19 @@ public:
 	Scene(const char* name);
 	Scene(const Scene&) = delete;
 	Scene& operator=(const Scene&) = delete;
-	virtual ~Scene() {}
+	virtual ~Scene();
 
 	virtual bool Initialize() = 0 {};
 	virtual void Update(float delta) = 0 {};
 	virtual void Render() = 0 {};
 	virtual void Finalize() = 0 {};
 
-	virtual void Play();
-	virtual void Stop();
-	virtual void Hide();
+	virtual void Play() = 0;
+	virtual void Stop() = 0;
+	virtual void Hide() = 0;
 
-	const std::string Name() const;
+	const std::string& Name() const;
+	bool IsActive() const { return isActive; }
 
 protected:
 
@@ -46,16 +47,18 @@ public:
 
 	static SceneStack& Instance();
 
-	void PushScene(ScenePtr);
+	void Push(ScenePtr s);
 	void Pop();
-	void Replace(ScenePtr);
+	void Replace(ScenePtr s);
 	Scene& Current();
 	const Scene& Current()const;
 	size_t Size() const;
 	bool Empty() const;
 
 	void Update(float);
-	void Render();
+	//void Render();
+
+	void PreLoad(ScenePtr);
 
 private:
 
@@ -65,6 +68,7 @@ private:
 	~SceneStack() = default;
 
 	std::vector<ScenePtr> stack;
+
 
 	std::vector<ScenePtr> buffer;
 
