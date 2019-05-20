@@ -658,6 +658,8 @@ GameEngine::~GameEngine() {
 */
 void GameEngine::Update(float delta) {
 
+	SceneStack& sceneStack = SceneStack::Instance();
+
 	if (isSceneFadeStart){
 		if ((sceneFadeTimer -= delta) < 0) {
 
@@ -672,6 +674,8 @@ void GameEngine::Update(float delta) {
 	if (updateFunc) {
 		updateFunc(delta);
 	}
+
+	sceneStack.Update(delta);
 
 	glm::mat4 matProj;
 	glm::mat4 matView[4];
@@ -867,6 +871,10 @@ void GameEngine::RenderOffscreen() const{
 *	ƒQ[ƒ€‚Ìó‘Ô‚ð•`‰æ‚·‚é
 */
 void GameEngine::Render() {
+
+	if (!SceneStack::Instance().Current().IsActive()) {
+		return;
+	}
 
 	//RenderShadow(); 
 

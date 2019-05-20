@@ -3,6 +3,9 @@
 */
 #pragma once
 
+#include <glm/glm.hpp>
+#include <functional>
+#include <random>
 #include <GL/glew.h>
 
 #include "Uniform.h"
@@ -15,9 +18,7 @@
 #include "Uniform.h"
 #include "GamePad.h"
 #include "Font.h"
-#include <glm/glm.hpp>
-#include <functional>
-#include <random>
+
 #include "../Scene.h"
 
 #define COMPONENT_TYPEPTR(type) std::shared_ptr<type>			///シーンコンポーネントの型用マクロ
@@ -47,7 +48,6 @@ public:
 	void PopLevel();
 	void ClearLevel();
 
-	//Entity::Entity* FindEntity(std::string n);
 
 	///影生成パラメータ
 	struct ShadowParameter {
@@ -113,7 +113,11 @@ public:
 		isSceneFadeStart = param; 
 	}
 
-	//Entity::Entity* FindEntity(Entity::FindEntityFunc f);
+	void PushScene(ScenePtr s) { SceneStack::Instance().Push(s); }
+
+	void PopScene() { SceneStack::Instance().Pop(); }
+
+	void ReplaceScene(ScenePtr s) { SceneStack::Instance().Replace(s); }
 	
 private:
 
