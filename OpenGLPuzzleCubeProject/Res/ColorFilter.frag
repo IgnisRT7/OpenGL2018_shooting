@@ -3,6 +3,7 @@
 layout(location=0) in vec4 inColor;
 layout(location=1) in vec2 inTexCoord;
 
+uniform float scenFadeTimerRate;
 
 out vec4 fragColor;
 
@@ -140,8 +141,9 @@ void main(){
 		fragColor.rgb *= postEffect.luminanceScale;
 		fragColor.rgb = ACESFilimicToneMapping(fragColor.rgb);
 		fragColor.rgb += (postEffect.matColor * vec4(fragColor.rgb,1)).rgb;
-		fragColor.a = 1.0f;
-		fragColor *= inColor;
+		fragColor.a = 1;
+		fragColor *= inColor * scenFadeTimerRate;
+
 
 		//アウトライン効果をミックスさせたものを書き出す
 		//fragColor.rgb = mix(fragColor.rgb,texture(colorSampler[2],inTexCoord).rgb,GetEdge(colorSampler[2],inTexCoord));
