@@ -27,7 +27,7 @@ namespace GLFWEW {
 	*/
 	void GetScrollInfo(GLFWwindow* window, double xPos, double yPos) {
 		
-		Window::Instance().UpdateMouseWheel(xPos, yPos);
+		Window::Instance().UpdateMouseWheel(static_cast<float>(xPos), static_cast<float>(yPos));
 	}
 
 	/**
