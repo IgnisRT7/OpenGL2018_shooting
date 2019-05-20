@@ -35,6 +35,8 @@ namespace Shader {
 
 		void SetBoolParameter(bool b, std::string name);
 
+		void SetFloatParameter(float f, std::string name);
+
 
 	private:
 		Program() = default;

@@ -160,7 +160,7 @@ namespace Shader {
 	/**
 	*	ベクトル型のパラメータを設定する
 	*
-	*	@param p	ベクトル
+	*	@param p	パラメータ
 	*	@param n	パラメータ名
 	*/
 	void Program::SetVectorParameter(glm::vec3 p, std::string name) {
@@ -173,7 +173,7 @@ namespace Shader {
 	/**
 	*	ブール型のパラメータを設定する
 	*
-	*	@param b	ブーリアン値
+	*	@param b	パラメータ
 	*	@param name	パラメータ名
 	*/
 	void Program::SetBoolParameter(bool b, std::string name) {
@@ -181,6 +181,19 @@ namespace Shader {
 		GLint bLocation = glGetUniformLocation(program, name.c_str());
 		if (bLocation > 0) {
 			glUniform1i(bLocation, b);
+		}
+	}
+
+	/**
+	*	float型パラメータを設定する
+	*
+	*	@param name パラメータ名
+	*/
+	void Program::SetFloatParameter(float f, std::string name){
+
+		GLint fLocation = glGetUniformLocation(program, name.c_str());
+		if (fLocation > 0) {
+			glUniform1f(fLocation, f);
 		}
 	}
 
