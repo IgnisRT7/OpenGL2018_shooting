@@ -86,6 +86,8 @@ namespace GameState {
 		camera->LookAt(glm::vec3(0, 20, 0), glm::vec3(0, 0, 10));
 		game.MainCamera(std::dynamic_pointer_cast<CameraComponent>(camera));
 
+		game.TimeScale(0.3f);
+
 		return true;
 	}
 
@@ -200,7 +202,6 @@ namespace GameState {
 			}
 
 			interval = 5;
-
 		}
 
 		if (sceneTimer == 0 && playerData->RemainingPlayer() < 0) {
@@ -210,6 +211,7 @@ namespace GameState {
 
 		if (sceneTimer <= 0) {
 			//スコア表示処理
+
 			char str[16];
 			snprintf(str, 16, "SCORE :%08.0f", game.UserVariable("score"));
 			game.FontScale(glm::vec2(3));
@@ -232,8 +234,9 @@ namespace GameState {
 			fps /= 60.0f;
 			fps = 1 / fps;
 
+			game.FontScale(glm::vec2(1));
 			snprintf(str, 16, "P :%02.0f",fps);
-			game.AddString(glm::vec2(-0.95f, 0.65f), str);
+			game.AddString(glm::vec2(-0.95f, -0.85f), str);
 
 		}
 		else {
