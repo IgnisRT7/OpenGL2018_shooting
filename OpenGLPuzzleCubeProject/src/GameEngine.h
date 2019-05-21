@@ -29,13 +29,10 @@
 */
 class GameEngine {
 public:
-	typedef std::function<void(double)> UpdateFuncType;	//ゲーム状態を更新する関数の型
 
 	static GameEngine& Instance();
 	bool Init(int w, int h, const char* title);
 	void Run();
-	void UpdateFunc(const UpdateFuncType& func,float t=0);
-	const UpdateFuncType& UpdateFunc() const;
 
 	bool LoadTextureFromFile(const char* filename);
 	bool LoadMeshFromFile(const char* filename);
@@ -139,9 +136,6 @@ private:
 	
 	bool isInitalized = false;
 
-	//TODO : 後にシーンクラスに移行予定
-	UpdateFuncType updateFunc;
-
 	glm::vec2 windowSize;
 
 	//最終出力用バッファ
@@ -190,7 +184,5 @@ private:
 
 	//TODO : 試作用メインカメラコンポーネント
 	COMPONENT_TYPEPTR(CameraComponent) mainCamera;
-
-	//SceneStack sceneStack;
 
 };

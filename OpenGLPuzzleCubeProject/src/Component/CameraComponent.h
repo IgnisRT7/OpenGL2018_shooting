@@ -43,6 +43,7 @@ public:
 	void ProjMatrixParam(float f, float a, float n, float fa) { far = f; aspect = a; near = n; far = fa; }
 	void LookAt(glm::vec3 pos, glm::vec3 at) { position = pos; direction = glm::normalize(at - pos); }
 
+
 protected:
 
 	glm::vec3 position = glm::vec3(0, 0, 0);		/// ÉJÉÅÉâç¿ïW

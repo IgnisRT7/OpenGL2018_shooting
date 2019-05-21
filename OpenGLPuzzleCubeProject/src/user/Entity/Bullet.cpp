@@ -9,7 +9,7 @@ namespace GameState {
 
 
 	/**
-	*	Ž©‹@‚Ì’e‚Ì‰Šú‰»ˆ—
+	*	’e‚Ì‰Šú‰»ˆ—
 	*/
 	void Bullet::Initialize() {
 
@@ -18,18 +18,25 @@ namespace GameState {
 
 		entity->Velocity(target ? glm::normalize(target->Position() - entity->Position()) * glm::length(velocity) : velocity);
 
-		glm::mat4 r = glm::lookAt(glm::vec3(0), -velocity, glm::vec3(0, 1, 0));
-		entity->Rotation(glm::quat_cast(r));
+	//	glm::mat4 r = glm::lookAt(glm::vec3(0), -velocity, glm::vec3(0, 1, 0));
+	//	entity->Rotation(glm::quat_cast(r));
 	}
 
 	/**
-	*	Ž©‹@‚Ì’e‚ÌXVˆ—
+	*	’e‚ÌXVˆ—
 	*
 	*	@param delta	Œo‰ßŽžŠÔ
 	*/
 	void Bullet::Update(float delta) {
 
+		//glm::angle
 
+		//entity->Rotation(glm::rotation(glm::vec3(0, 0, -1), glm::normalize(velocity)));
+
+		auto velocityRot = glm::angleAxis(10.0f, glm::normalize(velocity));
+		auto rot = glm::rotation(glm::vec3(0, 0, 1), glm::normalize(velocity));
+
+		entity->Rotation(rot);
 
 		//”ÍˆÍŠOˆ—
 		const glm::vec3 pos = entity->Position();

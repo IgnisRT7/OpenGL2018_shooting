@@ -329,27 +329,6 @@ void GameEngine::Run() {
 }
 
 /**
-*	状態更新関数を設定する
-*
-*	@param func 設定する更新関数
-*	@param timer シーン移行までのタイマー
-*/
-void GameEngine::UpdateFunc(const UpdateFuncType& func, float timer) {
-
-	updateFunc = func;
-	sceneFadeTimer = timer;
-}
-/**
-*	状態更新関数を取得する
-*
-*	@return 設定されている更新関数
-*/
-const GameEngine::UpdateFuncType& GameEngine::UpdateFunc() const {
-
-	return updateFunc;
-}
-
-/**
 *	テクスチャを読み込む
 *
 *	@param filename テクスチャファイル名
@@ -637,7 +616,6 @@ void GameEngine::ClearLevel() {
 */
 GameEngine::~GameEngine() {
 
-	updateFunc = nullptr;
 	Audio::Destroy();
 
 	if (vao) {
@@ -672,11 +650,6 @@ void GameEngine::Update(float delta) {
 
 	fontRenderer.MapBuffer();
 
-	//全体の更新処理
-	//if (updateFunc) {
-	//	updateFunc(ratedDelta);
-	//}
-
 	sceneStack.Update(ratedDelta);
 
 	glm::mat4 matProj;
@@ -688,8 +661,8 @@ void GameEngine::Update(float delta) {
 		mainCamera->Update(ratedDelta);
 
 		//TODO : 試作デバッグ用 メインカメラからビュー・射影変換行列の取得
-		matProj = std::dynamic_pointer_cast<CameraComponent>(mainCamera)->ProjctionMatrix();
-		matView[0] = std::dynamic_pointer_cast<CameraComponent>(mainCamera)->ViewMatrix();
+		matProj = mainCamera->ProjctionMatrix();
+		matView[0] = mainCamera->ViewMatrix();
 	}
 
 	//シャドウの設定
@@ -807,7 +780,7 @@ void GameEngine::RenderBloomEffect() const {
 	progHiLumExtract->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offscreen->GetTexture());
 	glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
 
-	///Path4: Bokasi
+	///抽出したデータをぼかす
 
 	const Shader::ProgramPtr& progShrink = shaderMap.find("Shrink")->second;
 	progShrink->UseProgram();
@@ -878,7 +851,7 @@ void GameEngine::Render() {
 		return;
 	}
 
-	//RenderShadow(); 
+	RenderShadow(); 
 
 	RenderStencil();
 

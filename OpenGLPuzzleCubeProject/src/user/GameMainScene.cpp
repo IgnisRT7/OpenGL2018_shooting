@@ -86,7 +86,7 @@ namespace GameState {
 		camera->LookAt(glm::vec3(0, 20, 0), glm::vec3(0, 0, 10));
 		game.MainCamera(std::dynamic_pointer_cast<CameraComponent>(camera));
 
-		game.TimeScale(0.3f);
+		game.TimeScale(1);
 
 		return true;
 	}
@@ -139,8 +139,6 @@ namespace GameState {
 				break;
 			}
 			case 2: {
-				game.ReplaceScene(std::make_shared<GameEnd>());
-				return;
 
 				stageTimer = 30;
 

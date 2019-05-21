@@ -85,19 +85,6 @@ namespace GameState {
 				vec = glm::normalize(vec) * moveSpeed;
 			}
 
-			/**
-			*	‰æ–Ê‹P“x‚ÌÝ’è
-			*
-			if (gamepad.buttonDown & GamePad::B) {
-
-				game.KeyValue(glm::min(1.0, game.KeyValue() + delta));
-			}
-			else if (gamepad.buttonDown & GamePad::X) {
-
-				game.KeyValue(glm::max(0.0, game.KeyValue() - delta));
-			}*/
-
-
 			entity->Velocity(vec);
 			glm::vec3 pos = entity->Position();
 			pos = glm::min(moveBox[1], glm::max(pos, moveBox[0]));
@@ -173,7 +160,7 @@ namespace GameState {
 		if (auto e = entity.CastTo<Toroid>()) {
 			//“G‚Éƒ_ƒ[ƒW‚ð—^‚¦‚é
 
-			e->Damage(1);
+			//e->Damage(1);
 			Damage(1);
 		}
 	}
