@@ -658,10 +658,12 @@ GameEngine::~GameEngine() {
 */
 void GameEngine::Update(float delta) {
 
+	float ratedDelta = delta * timeScale;
+
 	SceneStack& sceneStack = SceneStack::Instance();
 
 	if (isSceneFadeStart){
-		if ((sceneFadeTimer -= delta) < 0) {
+		if ((sceneFadeTimer -= ratedDelta) < 0) {
 
 			isSceneFadeStart = false;
 			sceneFadeTimer = 3.0f;
@@ -671,11 +673,11 @@ void GameEngine::Update(float delta) {
 	fontRenderer.MapBuffer();
 
 	//全体の更新処理
-	if (updateFunc) {
-		updateFunc(delta);
-	}
+	//if (updateFunc) {
+	//	updateFunc(ratedDelta);
+	//}
 
-	sceneStack.Update(delta);
+	sceneStack.Update(ratedDelta);
 
 	glm::mat4 matProj;
 	glm::mat4 matView[4];
@@ -683,7 +685,7 @@ void GameEngine::Update(float delta) {
 	if (mainCamera) {
 		//メインカメラからビュー・射影変換行列の情報を取得する
 
-		mainCamera->Update(delta);
+		mainCamera->Update(ratedDelta);
 
 		//TODO : 試作デバッグ用 メインカメラからビュー・射影変換行列の取得
 		matProj = std::dynamic_pointer_cast<CameraComponent>(mainCamera)->ProjctionMatrix();
@@ -699,7 +701,7 @@ void GameEngine::Update(float delta) {
 		shadowParameter.lightPos, shadowParameter.lightPos + shadowParameter.lightDir, shadowParameter.lightUp);
 
 	//エンティティバッファの更新
-	entityBuffer->Update(delta, matView, matProj, matDepthProj * matDepthView);
+	entityBuffer->Update(ratedDelta, matView, matProj, matDepthProj * matDepthView);
 
 	fontRenderer.UnmapBuffer();
 }

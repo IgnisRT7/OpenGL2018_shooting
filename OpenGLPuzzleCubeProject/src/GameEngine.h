@@ -109,6 +109,8 @@ public:
 		return entityBuffer->FindEntityData<T>();
 	}
 
+	void TimeScale(float t) { timeScale = t; }
+
 	void SceneFadeStart(bool param) {
 		isSceneFadeStart = param; 
 	}
@@ -180,6 +182,8 @@ private:
 	std::mt19937 rand;
 
 	std::unordered_map<std::string, double> userNumbers;
+
+	float timeScale = 1.0f;
 
 	float sceneFadeTimer = 3.0f;
 	bool isSceneFadeStart = false;
