@@ -12,4 +12,5 @@ namespace Audio {
 	void Destroy();
 	void Play(int playerId,int cueId);
 	void Stop(int playerId);
+	void StopAll();
 }

@@ -136,4 +136,11 @@ namespace Audio {
 		criAtomExPlayer_Stop(player[playerId]);
 	}
 
+	/**
+	*	âπê∫ÇëSí‚é~Ç∑ÇÈ
+	*/
+	void StopAll() {
+
+		criAtomExPlayer_StopAllPlayers();
+	}
 }

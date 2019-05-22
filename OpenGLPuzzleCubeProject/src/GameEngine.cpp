@@ -583,6 +583,14 @@ void GameEngine::StopAudio(int playerId) {
 }
 
 /**
+*	@copydoc Audio::StopAll
+*/
+void GameEngine::StopAllAudio() {
+
+	Audio::StopAll();
+}
+
+/**
 *	リソーススタックに新しいリソースレベルを作成する
 */
 void GameEngine::PushLevel() {

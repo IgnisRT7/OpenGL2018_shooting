@@ -80,6 +80,7 @@ public:
 	bool InitAudio(const char* acfPath, const char* acbPath, const char* awbPath, const char* dspBusName);
 	void PlayAudio(int playerId, int cueId);
 	void StopAudio(int playerId);
+	void StopAllAudio();
 
 	void CollisionHandler(int gid0, int gid1);
 	void ClearCollisionHandlerList();
