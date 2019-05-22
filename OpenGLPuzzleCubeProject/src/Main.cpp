@@ -3,8 +3,8 @@
 
 #include "Uniform.h"
 #include "GameState.h"
-#include "../Res/Audio/SampleSound_acf.h"
-#include "../Res/Audio/SampleCueSheet.h"
+#include "../Res/Audio/testProject_acf.h"
+#include "../Res/Audio/CueSheet_0.h"
 #include <random>
 
 #include "user/TitleScene.h"
@@ -17,8 +17,9 @@ int main() {
 		return 1;
 	}
 
-	if (!game.InitAudio("Res/Audio/SampleSound.acf", "Res/Audio/SampleCueSheet.acb",
-		nullptr, CRI_SAMPLESOUND_ACF_DSPSETTING_DSPBUSSETTING_0)) {
+	if (!game.InitAudio("Res/Audio/testProject.acf", "Res/Audio/CueSheet_0.acb",
+		"Res/Audio/CueSheet_0.awb", CRI_TESTPROJECT_DSPSETTING_DSPBUSSETTING_0)) {
+		
 		return 1;
 	}
 
