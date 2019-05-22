@@ -3,8 +3,8 @@
 */
 #include "GameMainScene.h"
 #include "../GameState.h"
-#include "../../Res/Audio/SampleSound_acf.h"
-#include "../../Res/Audio/SampleCueSheet.h"
+#include "../../Res/Audio/CueSheet_0.h"
+#include "../../Res/Audio/testProject_acf.h"
 #include "../GameEngine.h"
 
 #include "Entity/Enemy.h"
@@ -87,7 +87,7 @@ namespace GameState {
 		game.MainCamera(std::dynamic_pointer_cast<CameraComponent>(camera));
 
 		game.TimeScale(1);
-
+		
 		return true;
 	}
 
@@ -101,6 +101,7 @@ namespace GameState {
 		static const float stageTime = 30;
 
 		if (stageTimer < 0) {
+			game.StopAllAudio();
 
 			game.RemoveAllEntity();
 
@@ -120,6 +121,7 @@ namespace GameState {
 
 			switch (stageNo % 3) {
 			case 1: {
+				game.PlayAudio(0, CRI_CUESHEET_0_MAINSCENE);
 
 				stageTimer = 30;
 
@@ -139,6 +141,7 @@ namespace GameState {
 				break;
 			}
 			case 2: {
+				game.PlayAudio(0, CRI_CUESHEET_0_MAIN2SCENE);
 
 				stageTimer = 30;
 
@@ -160,6 +163,7 @@ namespace GameState {
 
 			}
 			case 0: {
+				game.PlayAudio(0, CRI_CUESHEET_0_BOSSSCENE);
 
 				stageTimer = 30;
 

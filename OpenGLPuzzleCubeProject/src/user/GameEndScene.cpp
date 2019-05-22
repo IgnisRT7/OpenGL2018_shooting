@@ -6,8 +6,8 @@
 #include "../GameState.h"
 #include "TitleScene.h"
 
-#include "../../Res/Audio/SampleSound_acf.h"
-#include "../../Res/Audio/SampleCueSheet.h"
+#include "../../Res/Audio/testProject_acf.h"
+#include "../../Res/Audio/CueSheet_0.h"
 
 namespace GameState{
 
@@ -63,7 +63,7 @@ namespace GameState{
 			}
 		}
 		else if (game.GetGamePad().buttonDown & GamePad::START) {
-			game.PlayAudio(1, CRI_SAMPLECUESHEET_START);
+			game.PlayAudio(1, CRI_CUESHEET_0_SELECT);
 			timer = 2;
 		}
 	}

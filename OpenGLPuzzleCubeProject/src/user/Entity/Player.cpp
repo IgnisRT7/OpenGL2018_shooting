@@ -11,8 +11,8 @@
 #include "Enemy.h"
 #include "Effect.h"
 
-#include "../../../Res/Audio/SampleSound_acf.h"
-#include "../../../Res/Audio/SampleCueSheet.h"
+#include "../../../Res/Audio/testProject_acf.h"
+#include "../../../Res/Audio/CueSheet_0.h"
 
 namespace GameState {
 
@@ -127,7 +127,7 @@ namespace GameState {
 			}
 
 			//”š”­‰¹
-			game.PlayAudio(1, CRI_SAMPLECUESHEET_BOMB);
+			//game.PlayAudio(1, CRI_CUESHEET_0_SHOT);
 
 			if (--remainingPlayer < 0) {
 
@@ -162,6 +162,7 @@ namespace GameState {
 
 			//e->Damage(1);
 			Damage(1);
+			GameEngine::Instance().PlayAudio(1, CRI_CUESHEET_0_EXPLOSIVE);
 		}
 	}
 
@@ -178,7 +179,7 @@ namespace GameState {
 
 		glm::vec3 leftPos = glm::vec3(pos.x - bulletInterval * (multiShotNum - 1) / 2, pos.y, pos.z);
 
-		game.PlayAudio(0, 0);
+		game.PlayAudio(1,CRI_CUESHEET_0_SHOT);
 		for (int i = 0; i < multiShotNum; ++i) {
 
 			if (Entity::Entity* p = game.AddEntity(EntityGroupId_PlayerShot, leftPos + glm::vec3(i*bulletInterval, 0, 0),

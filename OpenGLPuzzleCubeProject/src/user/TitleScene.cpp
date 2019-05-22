@@ -9,8 +9,10 @@
 #include "GameMainScene.h"
 #include "ModelLoadTestscene.h"
 
-#include "../../Res/Audio/SampleSound_acf.h"
-#include "../../Res/Audio/SampleCueSheet.h"
+//#include "../../Res/Audio/SampleSound_acf.h"
+//#include "../../Res/Audio/SampleCueSheet.h"
+#include "../../Res/Audio/testProject_acf.h"
+#include "../../Res/Audio/CueSheet_0.h"
 
 namespace GameState {
 
@@ -51,9 +53,10 @@ namespace GameState {
 		player = std::make_shared<PlayerForProduction>();
 		game.AddEntity(EntityGroupId_Others, glm::vec3(0, 0, 0), "Aircraft", "Res/Model/Player.dds", player, "NonLighting");
 
-		auto cam = std::make_shared<CameraDebugComponent>();
-		game.MainCamera()->LookAt(glm::vec3(0, 10, -30), glm::vec3(0, -1, 1));
-		game.MainCamera(std::static_pointer_cast<CameraComponent>(cam));
+		game.MainCamera(std::make_shared<CameraComponent>());
+		game.MainCamera()->LookAt(glm::vec3(0, 20, -40), glm::vec3(0, 0, -1));
+
+		game.PlayAudio(1, CRI_CUESHEET_0_TITLE1);
 	
 		return true;
 	}
@@ -77,34 +80,66 @@ namespace GameState {
 		static float tmpTimer = 0;
 		tmpTimer += delta;
 		auto f = (sinf(glm::radians((float)tmpTimer)) + 1) / 2;
-
-		game.FontColor(glm::vec4(1.0f, 0, 0, 0));
-		game.FontScale(glm::vec2(2));
-		game.AddString(glm::vec2(-0.3, -0.5), "Pressed Enter...");
-
 		
+		if (timer == 0) {
+
+			game.FontColor(glm::vec4(1.0f, 0, 0, 0));
+			game.FontScale(glm::vec2(2));
+			game.AddString(glm::vec2(-0.3, -0.7), "Pressed Enter...");
+
+			game.FontColor(glm::vec4(1));
+			game.FontScale(glm::vec2(3.0f));
+			game.AddString(glm::vec2(-0.3, -0.5), "<            >");
+		}
+
 		auto gamepad = game.GetGamePad();
-
-		//static std::shared_ptr<MainGame> gameMain;
-
+		///シーン移行に関する処理
 		if (timer > 0) {
 			timer -= delta;
 			if (timer <= 0) {
 
-				//gameMain = std::make_shared<MainGame>();
 				//タイトル画面からメインゲーム画面の更新処理へ移行
-				//game.UpdateFunc(*gameMain);
-				game.PushScene(std::make_shared<MainGame>());
+				auto maingame = std::make_shared<MainGame>();
+				maingame->SelectPlayerType(selectAirCraftType);
+
+				game.PushScene(maingame);
 
 			}
 		}
 		else if (game.GetGamePad().buttonDown & GamePad::START) {
-			game.PlayAudio(1, CRI_SAMPLECUESHEET_START);
+			game.PlayAudio(1, CRI_CUESHEET_0_SELECT2);
 			timer = 3;
 			player->MoveStart();
 			game.SceneFadeStart(true);
 
 		}
+
+		if (timer == 0) {
+
+			///機種の変更に関する処理
+			int select = 0;
+			select += gamepad.buttonDown & GamePad::DPAD_RIGHT ? 1 : 0;
+			select += gamepad.buttonDown & GamePad::DPAD_LEFT ? -1 : 0;
+
+			if (select != 0) {
+
+				glm::vec4 selectColor = glm::vec4(1);
+				selectAirCraftType = (selectAirCraftType + 1) % 3;
+				switch (selectAirCraftType) {
+				case 0:
+					selectColor = glm::vec4(1); break;
+				case 1:
+					selectColor = glm::vec4(1, 0, 0, 1); break;
+				case 2:
+					selectColor = glm::vec4(0, 0, 1, 1); break;
+				default:break;
+				}
+
+				player->Color(selectColor);
+				game.PlayAudio(1, CRI_CUESHEET_0_AIRCRAFTSELECT);
+			}
+		}
+
 	}
 
 	/**
@@ -112,6 +147,7 @@ namespace GameState {
 	*/
 	void Title::Finalize(){
 		GameEngine& game = GameEngine::Instance();
+		game.StopAllAudio();
 		game.RemoveAllEntity();
 		game.ClearCollisionHandlerList();
 		game.ClearLevel();
@@ -121,8 +157,16 @@ namespace GameState {
 	*	開始処理
 	*/
 	void Title::Play(){
-		Title::Initialize();
+		//Title::Initialize();
 		timer = 0;
+	}
+
+	/**
+	*	停止処理
+	*/
+	void Title::Stop(){
+
+		GameEngine::Instance().StopAllAudio();
 	}
 
 }

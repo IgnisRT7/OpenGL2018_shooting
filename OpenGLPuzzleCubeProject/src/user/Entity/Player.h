@@ -52,6 +52,7 @@ namespace GameState {
 	public:
 		void Initialize() override;
 		void Update(float delta) override {};
+		void Color(glm::vec4 c) { entity->Color(c); }
 
 		void MoveStart() { entity->Velocity(glm::vec3(0, 0, moveSpeed)); }
 

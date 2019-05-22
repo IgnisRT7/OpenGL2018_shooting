@@ -54,8 +54,7 @@ namespace GameState {
 	class EnemyBulletManager {
 	public:
 		
-		EnemyBulletManager(Entity::Entity& p, Entity::Entity* t = nullptr) :
-			parent(p),target(t),timer(shotInterval){}
+		EnemyBulletManager(Entity::Entity& p, Entity::Entity* t = nullptr);
 
 		void Update(float delta);
 

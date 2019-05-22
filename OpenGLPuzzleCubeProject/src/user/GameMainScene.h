@@ -38,8 +38,7 @@ namespace GameState {
 		void Stop() override {};
 		void Hide() override {};
 
-		//void operator()(float delta);
-		//void ResourceLoad();
+		void SelectPlayerType(int t) { playerType = t; }
 
 	private:
 
@@ -53,10 +52,11 @@ namespace GameState {
 		float sceneTimer=0;
 		int stageNo = 0;
 
+		int playerType = 0;
+
 		std::shared_ptr<Player> playerData;
 		float cameraChangeTimer = 3.0f;
 
-		std::string jirer;
 	};
 
 }

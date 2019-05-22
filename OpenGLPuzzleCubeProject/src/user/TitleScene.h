@@ -27,7 +27,7 @@ namespace GameState {
 		void Update(float delta) override;
 		void Finalize() override;
 		void Play() override;
-		void Stop() override {};
+		void Stop() override;
 		void Hide() override {}
 
 
@@ -37,6 +37,7 @@ namespace GameState {
 
 		bool initial = true;
 		float timer = 0;
+		int selectAirCraftType = 0;
 
 		std::shared_ptr<PlayerForProduction> player;
 	};

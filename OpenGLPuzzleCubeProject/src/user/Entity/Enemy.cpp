@@ -4,8 +4,8 @@
 #include "Enemy.h"
 #include "../../GameEngine.h"
 #include "../../GameState.h"
-#include "../../../Res/Audio/SampleSound_acf.h"
-#include "../../../Res/Audio/SampleCueSheet.h"
+#include "../../../Res/Audio/testProject_acf.h"
+#include "../../../Res/Audio/CueSheet_0.h"
 
 #include "Effect.h"
 #include "Item.h"
@@ -15,6 +15,10 @@
 
 namespace GameState {
 
+	EnemyBulletManager::EnemyBulletManager(Entity::Entity& p, Entity::Entity* t) :
+	parent(p), target(t), timer(shotInterval){
+		target = GameEngine::Instance().FindEntityData<Player>();
+	}
 
 	/**
 	*	敵の初期化処理
@@ -112,6 +116,7 @@ namespace GameState {
 			}
 
 			if (isItemDrop) {
+				//アイテムドロップ処理
 
 				int itemID = rand() % 2;
 
@@ -123,9 +128,6 @@ namespace GameState {
 				}
 			}
 
-			//爆発音
-			game.PlayAudio(1, CRI_SAMPLECUESHEET_BOMB);
-
 			entity->Destroy();
 		}
 	}
@@ -136,6 +138,9 @@ namespace GameState {
 	*	@param e	衝突してきたエンティティ
 	*/
 	void Toroid::CollisionEnter(Entity::Entity& e) {
+		e.EntityData()->Damage(1);
+
+		GameEngine::Instance().PlayAudio(1, CRI_CUESHEET_0_EXPLOSIVE);
 	}
 
 	/// 敵スポナーのクラス定義
@@ -184,12 +189,11 @@ namespace GameState {
 		timer -= delta;
 
 		if (timer < 0) {
-
-			Entity::Entity* player = game.FindEntityData<Player>();
+			//game.PlayAudio(1, CRI_CUESHEET_0_ENEMYSHOT);
 
 			if (Entity::Entity* p = game.AddEntity(EntityGroupId_EnemyShot, parent.Position(),
 				"NormalShot", "Res/Model/Player.dds", std::make_shared<Bullet>(
-					parent.Velocity(), player), "NonLighting")) {
+					parent.Velocity(), target), "NonLighting")) {
 
 				p->CastStencil(true);
 				p->StencilColor(glm::vec4(1, 0, 1, 1));
