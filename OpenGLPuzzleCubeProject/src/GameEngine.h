@@ -113,11 +113,23 @@ public:
 		isSceneFadeStart = param; 
 	}
 
-	void PushScene(ScenePtr s) { SceneStack::Instance().Push(s); }
+	void PushScene(ScenePtr s) {
+		meshBuffer->PushLevel();
+		SceneStack::Instance().Push(s); 
+		std::cout << "Push" << std::endl;
+	}
 
-	void PopScene() { SceneStack::Instance().Pop(); }
+	void PopScene() {
+		meshBuffer->PopLevel();
+		SceneStack::Instance().Pop();
+		std::cout << "Pop" << std::endl;
+	}
 
-	void ReplaceScene(ScenePtr s) { SceneStack::Instance().Replace(s); }
+	void ReplaceScene(ScenePtr s) {
+		meshBuffer->ClearLevel();
+		SceneStack::Instance().Replace(s); 
+		std::cout << "Replace" << std::endl;
+	}
 	
 private:
 

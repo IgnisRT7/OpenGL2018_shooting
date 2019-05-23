@@ -157,7 +157,6 @@ namespace GameState {
 	*	äJénèàóù
 	*/
 	void Title::Play(){
-		//Title::Initialize();
 		timer = 0;
 	}
 
@@ -166,7 +165,8 @@ namespace GameState {
 	*/
 	void Title::Stop(){
 
-		GameEngine::Instance().StopAllAudio();
+		GameEngine& game = GameEngine::Instance();
+		game.StopAllAudio();
 	}
 
 }

@@ -26,10 +26,6 @@ int main() {
 	game.LoadTextureFromFile("Res/Model/Dummy.Normal.bmp");
 	game.LoadFontFromFile("Res/Font.fnt");
 
-	game.PushLevel();
-
-	//TODO : タイトルシーンへ移行
-	//game.UpdateFunc(GameState::Title());
 	game.PushScene(std::make_shared<GameState::Title>());
 
 	game.Run();

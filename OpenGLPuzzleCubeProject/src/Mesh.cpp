@@ -18,7 +18,6 @@ namespace Mesh {
 		glm::vec2 texCoord;	///< テクスチャ座標
 		glm::vec3 normal;	///< 法線
 		glm::vec4 tangent;	///< 接ベクトル
-
 	};
 
 	/**

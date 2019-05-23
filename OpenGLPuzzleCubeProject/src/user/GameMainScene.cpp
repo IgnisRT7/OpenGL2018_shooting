@@ -10,6 +10,7 @@
 #include "Entity/Enemy.h"
 
 #include "GameEndScene.h"
+#include "TitleScene.h"
 
 namespace GameState {
 
@@ -60,11 +61,14 @@ namespace GameState {
 		game.LoadMeshFromFile("Res/Model/Blast.fbx");
 		game.LoadMeshFromFile("Res/Model/Toroid.fbx");
 		game.LoadMeshFromFile("Res/Model/ItemBox.fbx");
+		game.LoadMeshFromFile("Res/Model/sampleSphere.fbx");
 		game.LoadTextureFromFile("Res/Model/Player.dds");
 		game.LoadTextureFromFile("Res/Model/Toroid.dds");
 		game.LoadTextureFromFile("Res/Model/Toroid.Normal.bmp");
 		game.LoadTextureFromFile("Res/Model/ItemBoxSpeed.dds");
 		game.LoadTextureFromFile("Res/Model/ItemBoxBullet.dds");
+		game.LoadTextureFromFile("Res/Model/shere.dds");
+	
 
 		game.LoadMeshFromFile("Res/Model/Landscape.fbx");
 		game.LoadTextureFromFile("Res/Model/BG02.Diffuse.dds");
@@ -88,6 +92,8 @@ namespace GameState {
 
 		game.TimeScale(1);
 		
+		sceneTimer = 0;
+
 		return true;
 	}
 
@@ -97,6 +103,9 @@ namespace GameState {
 	void MainGame::Update(float delta) {
 
 		GameEngine& game = GameEngine::Instance();
+
+		game.PopScene();
+		return;
 
 		static const float stageTime = 30;
 
@@ -244,7 +253,8 @@ namespace GameState {
 		else {
 
 			if ((sceneTimer -= delta) <= 0) {
-				game.ReplaceScene(std::make_shared<GameEnd>());
+				//game.PushScene(std::make_shared<GameEnd>());
+				game.PopScene();
 			}
 		}
 	}

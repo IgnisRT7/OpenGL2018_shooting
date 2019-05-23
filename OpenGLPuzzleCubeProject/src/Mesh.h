@@ -73,6 +73,7 @@ namespace Mesh {
 		void PushLevel();
 		void PopLevel();
 		void ClearLevel();
+		int Size() { return levelStack.size(); }
 
 	private:
 
@@ -87,13 +88,17 @@ namespace Mesh {
 		GLuint ibo = 0;	///< モデルのインデックスデータを格納するIBO
 		GLuint vao = 0; ///< モデル用VAO
 		std::vector<Material> materialList;	///< マテリアルリスト
+
+		//tips :ココから下は上記vbo,ibo,materialListのどこに現在読み込むべき
+		//		データがあるかの情報を格納するデータ群です
+
 		struct Level {
-			GLintptr vboEnd = 0;///< 読み込み済み頂点データの終端
-			GLintptr iboEnd = 0;///< 読み込み済みインデックスデータ終端
-			size_t materialBaseOffset = 0;	///< マテリアルの各脳開始位置
+			GLintptr vboEnd = 0;			///< 読み込み済み頂点データの終端
+			GLintptr iboEnd = 0;			///< 読み込み済みインデックスデータ終端
+			size_t materialBaseOffset = 0;	///< マテリアルの各開始位置
 			std::unordered_map<std::string, MeshPtr> meshList;	///< メッシュリスト
 		};
-		std::vector <Level>	levelStack;	///< リソーススタック
+		std::vector <Level>	levelStack;				///< リソーススタック
 		static const size_t minimalStackSize = 1;	///< スタックサイズはこれより小さくならない
 
 	};

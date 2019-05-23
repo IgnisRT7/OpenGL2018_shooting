@@ -77,7 +77,6 @@ namespace GameState{
 
 		game.ClearCollisionHandlerList();
 		game.RemoveAllEntity();
-		game.ClearLevel();
 	}
 
 }

@@ -3,6 +3,7 @@
 */
 #include "Scene.h"
 #include <iostream>
+#include "src/GameEngine.h"
 
 /**
 *	コンストラクタ
@@ -76,6 +77,8 @@ SceneStack::SceneStack() {
 */
 void SceneStack::Push(ScenePtr scene) {
 
+	GameEngine& game = GameEngine::Instance();
+
 	if (!stack.empty()) {
 		Current().Stop();
 	}
@@ -90,7 +93,7 @@ void SceneStack::Push(ScenePtr scene) {
 *	シーンをポップする
 */
 void SceneStack::Pop() {
-
+	
 	if (stack.empty()) {
 		std::cout << "[ SceneStack::Pop] [警告] シーンスタックが空です" << std::endl;
 		return;

@@ -192,11 +192,12 @@ namespace GameState {
 			//game.PlayAudio(1, CRI_CUESHEET_0_ENEMYSHOT);
 
 			if (Entity::Entity* p = game.AddEntity(EntityGroupId_EnemyShot, parent.Position(),
-				"NormalShot", "Res/Model/Player.dds", std::make_shared<Bullet>(
-					parent.Velocity(), target), "NonLighting")) {
+				"Sphere", "Res/Model/sphere.dds", std::make_shared<Bullet>(
+					parent.Velocity(), target))) {
 
 				p->CastStencil(true);
 				p->StencilColor(glm::vec4(1, 0, 1, 1));
+				p->Scale(glm::vec3(5));
 				timer = shotInterval;
 
 			}

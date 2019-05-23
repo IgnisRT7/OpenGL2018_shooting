@@ -202,7 +202,6 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		return false;
 	}
 
-
 	//ブルームエフェクト用縮小バッファ作成
 	for (int i = 0, scale = 4; i < bloomBufferCount; ++i, scale *= 4) {
 		const int w = static_cast<int>(windowSize.x) / scale;
@@ -553,6 +552,7 @@ const TexturePtr& GameEngine::GetTexture(const char* filename) const {
 		}
 	}
 
+	//std::cerr << "GameEngine::GetTexture filename: "<<filename << " テクスチャが存在しませんでした。" << std::endl;
 	static const TexturePtr dummy;
 	return dummy;
 }
