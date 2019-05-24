@@ -94,7 +94,9 @@ void CameraDebugComponent::Update(float delta){
 			
 			position = this->position;
 			direction = forward;
+
+			CameraComponent::Update(delta);
+
 		}
-		CameraComponent::Update(delta);
 	}
 }
