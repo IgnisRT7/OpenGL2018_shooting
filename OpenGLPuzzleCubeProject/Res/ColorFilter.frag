@@ -120,7 +120,6 @@ float GetEdge(sampler2D texSampler,vec2 texCoord){
 	return result;
 }
 
-
 void main(){
 
 		vec4 ts;
@@ -135,7 +134,7 @@ void main(){
 		bloom += texture(colorSampler[1],inTexCoord + ts.zw).rgb;
 		bloom *= 1.0 / 4.0;
 
-
+		
 		fragColor.rgb = texture(colorSampler[0],inTexCoord).rgb;
 		fragColor.rgb += bloom;
 		fragColor.rgb *= postEffect.luminanceScale;
@@ -144,6 +143,7 @@ void main(){
 		fragColor.a = 1;
 		fragColor *= inColor * scenFadeTimerRate;
 
+	//	fragColor = vec4(1);
 
 		//アウトライン効果をミックスさせたものを書き出す
 		//fragColor.rgb = mix(fragColor.rgb,texture(colorSampler[2],inTexCoord).rgb,GetEdge(colorSampler[2],inTexCoord));

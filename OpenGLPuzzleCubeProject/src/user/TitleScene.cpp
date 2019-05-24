@@ -137,7 +137,6 @@ namespace GameState {
 	*/
 	void Title::Finalize(){
 
-		GameEngine::Instance().RemoveAllEntity();
 	}
 
 	/**
@@ -170,6 +169,7 @@ namespace GameState {
 
 		GameEngine& game = GameEngine::Instance();
 		game.StopAllAudio();
+		GameEngine::Instance().RemoveAllEntity();
 	}
 
 }

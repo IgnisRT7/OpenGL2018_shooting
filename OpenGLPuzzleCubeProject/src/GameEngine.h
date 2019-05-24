@@ -114,13 +114,15 @@ public:
 	}
 
 	void PushScene(ScenePtr s) {
-		meshBuffer->PushLevel();
+		
+		PushLevel();
 		SceneStack::Instance().Push(s); 
 		std::cout << "Push" << std::endl;
 	}
 
 	void PopScene() {
-		meshBuffer->PopLevel();
+	
+		PopLevel();
 		SceneStack::Instance().Pop();
 		std::cout << "Pop" << std::endl;
 	}
@@ -143,7 +145,7 @@ private:
 	void RenderShadow() const;
 	void RenderStencil() const;
 	void RenderBloomEffect() const;
-	void RenderOffscreen() const;
+	void RenderFrameBuffer() const;
 
 private:
 	
@@ -163,6 +165,7 @@ private:
 	float keyValue = 0.18f;
 
 	bool isDrawOutline = false;		///< アウトラインを描画するか否か
+	bool isEnableShadow = false;	///< シャドウマッピングを行うか
 
 	UniformBufferPtr uboLight;
 	UniformBufferPtr uboPostEffect;

@@ -34,8 +34,8 @@ namespace GameState {
 		bool Initialize() override;
 		void Update(float d) override;
 		void Finalize() override;
-		void Play() override { Initialize(); };
-		void Stop() override {};
+		void Play() override;
+		void Stop() override ;
 		void Hide() override {};
 
 		void SelectPlayerType(int t) { playerType = t; }

@@ -17,6 +17,7 @@ namespace GameState{
 	bool GameState::GameEnd::Initialize(){
 
 		GameEngine& game = GameEngine::Instance();
+		game.ClearLevel();
 
 		game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
 		game.LoadTextureFromFile("Res/Model/SpaceSphere.dds");
@@ -30,6 +31,9 @@ namespace GameState{
 	void GameEnd::Update(float delta){
 
 		GameEngine& game = GameEngine::Instance();
+
+		//game.PopScene();
+		return;
 
 		const float offset = timer == 0 ? 0 : (2.0f - timer) * (2.0f - timer) * 2.0f;
 		game.FontColor(glm::vec4(1, 0, 0, 1));
@@ -53,6 +57,7 @@ namespace GameState{
 			if (timer <= 0) {
 
 				game.PopScene();
+				return;
 			}
 		}
 		else if (game.GetGamePad().buttonDown & GamePad::START) {
@@ -68,8 +73,8 @@ namespace GameState{
 
 		GameEngine& game = GameEngine::Instance();
 
-		//game.ClearCollisionHandlerList();
-		game.RemoveAllEntity();
+		game.ClearCollisionHandlerList();
+		
 	}
 
 	/**
@@ -78,6 +83,9 @@ namespace GameState{
 	void GameEnd::Play(){
 
 		GameEngine& game = GameEngine::Instance();
+
+		game.RemoveAllEntity();
+
 		auto e = game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
 			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
 		game.KeyValue(0.01f);

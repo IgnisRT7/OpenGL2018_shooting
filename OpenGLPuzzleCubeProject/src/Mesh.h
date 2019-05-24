@@ -100,7 +100,6 @@ namespace Mesh {
 		};
 		std::vector <Level>	levelStack;				///< リソーススタック
 		static const size_t minimalStackSize = 1;	///< スタックサイズはこれより小さくならない
-
 	};
 
 

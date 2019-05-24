@@ -15,7 +15,6 @@ struct Vertex {
 	glm::vec3 position;	///< 座標
 	glm::vec4 color;	///< 色
 	glm::vec2 texCoord;	///< テクスチャ座標
-	glm::vec3 normal;
 };
 
 /// 頂点データ
@@ -692,6 +691,10 @@ void GameEngine::Update(float delta) {
 */
 void GameEngine::RenderShadow() const {
 
+	if (!isEnableShadow) {
+		return;
+	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, offDepth->GetFramebuffer());
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
@@ -823,9 +826,11 @@ void GameEngine::RenderBloomEffect() const {
 /**
 *	オフスクリーンバッファに描画する
 */
-void GameEngine::RenderOffscreen() const{
+void GameEngine::RenderFrameBuffer() const{
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//	glClearColor(1, 1, 1, 1);
+//	glClear(GL_COLOR_BUFFER_BIT);
 
 	glDisable(GL_BLEND);
 	glViewport(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
@@ -855,10 +860,6 @@ void GameEngine::RenderOffscreen() const{
 */
 void GameEngine::Render() {
 
-	if (!SceneStack::Instance().Current().IsActive()) {
-		return;
-	}
-
 	RenderShadow(); 
 
 	RenderStencil();
@@ -867,7 +868,7 @@ void GameEngine::Render() {
 
 	RenderBloomEffect();
 	
-	RenderOffscreen();
+	RenderFrameBuffer();
 
 	fontRenderer.Draw();
 

@@ -42,7 +42,7 @@ namespace GameState {
 		float shotInterval = 0;	/// 発射されるまでのクールタイム
 		int multiShotNum = 1;			/// 一度に発射できる弾数
 
-		int remainingPlayer = 3;		/// プレイヤー残機
+		int remainingPlayer = 0;		/// プレイヤー残機
 	};
 
 	/**
