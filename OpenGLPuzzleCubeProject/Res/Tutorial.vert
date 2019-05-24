@@ -22,7 +22,7 @@ layout(std140) uniform VertexData
   mat4 matModel;
   mat4 matNormal;
   vec4 color;
-//  mat4x3 _dummy;	
+  mat4x3 _dummy;	
 } vertexData;
 
 uniform int viewIndex;
