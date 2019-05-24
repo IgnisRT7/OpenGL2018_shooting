@@ -66,8 +66,6 @@ namespace GameState{
 
 		GameEngine& game = GameEngine::Instance();
 
-		//game.PopScene();
-		return;
 
 		const float offset = timer == 0 ? 0 : (2.0f - timer) * (2.0f - timer) * 2.0f;
 		game.FontColor(glm::vec4(1, 0, 0, 1));
