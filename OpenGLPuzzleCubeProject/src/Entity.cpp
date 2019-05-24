@@ -342,10 +342,7 @@ namespace Entity {
 					const LinkEntity& e = *static_cast<const LinkEntity*>(itr);
 					if (e.mesh && e.texture && e.program) {
 
-						//std::cout << "DrawEntity name: " << e.name << std::endl;
-
 						e.program->UseProgram();
-						//e.program->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, e.texture->Id());
 						for (size_t i = 0; i < sizeof(e.texture) / sizeof(e.texture[0]); ++i) {
 
 							if (e.texture[i]) {
