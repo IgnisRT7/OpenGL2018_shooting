@@ -81,6 +81,52 @@ namespace GameState {
 	}
 
 	/**
+	*	終了処理
+	*/
+	void MainGame::Finalize() {
+		GameEngine::Instance().ClearCollisionHandlerList();
+	}
+
+	/**
+	*	再生処理
+	*/
+	void MainGame::Play() {
+
+		GameEngine& game = GameEngine::Instance();
+
+		///衝突判定用ハンドラの定義
+		game.CollisionHandler(EntityGroupId_PlayerShot, EntityGroupId_Enemy);
+		game.CollisionHandler(EntityGroupId_EnemyShot, EntityGroupId_Player);
+		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Enemy);
+		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Item);
+
+		/// ライト・輝度の設定
+		game.AmbientLight(glm::vec4(0.05f, 0.1f, 0.2f, 1));
+		game.Light(0, { glm::vec4(1,100,1,1),glm::vec4(12000,12000,12000,1) });
+
+		playerData = std::make_shared<Player>();
+
+		game.MainCamera(std::make_shared<CameraComponent>());
+		game.MainCamera()->LookAt(glm::vec3(0, 20, 0), glm::vec3(0, 0, 10));
+
+		game.TimeScale(1);
+
+		sceneTimer = 0;
+	}
+
+	/**
+	*	停止処理
+	*/
+	void MainGame::Stop() {
+
+		GameEngine& game = GameEngine::Instance();
+
+		game.ClearCollisionHandlerList();
+		game.RemoveAllEntity();
+		game.StopAllAudio();
+	}
+
+	/**
 	*	メインゲーム画面の更新
 	*/
 	void MainGame::Update(float delta) {
@@ -240,48 +286,4 @@ namespace GameState {
 		}
 	}
 
-	/**
-	*	終了処理
-	*/
-	void MainGame::Finalize(){
-	}
-
-	/**
-	*	再生処理
-	*/
-	void MainGame::Play(){
-
-		GameEngine& game = GameEngine::Instance();
-
-		///衝突判定用ハンドラの定義
-		game.CollisionHandler(EntityGroupId_PlayerShot, EntityGroupId_Enemy);
-		game.CollisionHandler(EntityGroupId_EnemyShot, EntityGroupId_Player);
-		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Enemy);
-		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Item);
-
-		/// ライト・輝度の設定
-		game.AmbientLight(glm::vec4(0.05f, 0.1f, 0.2f, 1));
-		game.Light(0, { glm::vec4(1,100,1,1),glm::vec4(12000,12000,12000,1) });
-
-		playerData = std::make_shared<Player>();
-		auto camera = std::make_shared<CameraDebugComponent>();
-		camera->LookAt(glm::vec3(0, 20, 0), glm::vec3(0, 0, 10));
-		game.MainCamera(std::dynamic_pointer_cast<CameraComponent>(camera));
-
-		game.TimeScale(1);
-
-		sceneTimer = 0;
-	}
-	
-	/**
-	*	停止処理
-	*/
-	void MainGame::Stop(){
-
-		GameEngine& game = GameEngine::Instance();
-
-		game.ClearCollisionHandlerList();
-		game.RemoveAllEntity();
-		game.StopAllAudio();
-	}
 }

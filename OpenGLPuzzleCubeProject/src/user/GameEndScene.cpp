@@ -17,6 +17,7 @@ namespace GameState{
 	bool GameState::GameEnd::Initialize(){
 
 		GameEngine& game = GameEngine::Instance();
+		game.RemoveAllEntity();
 		game.ClearLevel();
 
 		game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
@@ -24,6 +25,39 @@ namespace GameState{
 
 		return true;
 	}
+
+	/**
+	*	終了処理
+	*/
+	void GameEnd::Finalize() {
+
+	}
+
+	/**
+	*	シーンの開始処理
+	*/
+	void GameEnd::Play() {
+
+		GameEngine& game = GameEngine::Instance();
+
+		//game.RemoveAllEntity();
+
+		auto e = game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
+			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
+		game.KeyValue(0.01f);
+
+		game.MainCamera(std::make_shared<CameraComponent>());
+		game.MainCamera()->LookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
+	}
+
+	/**
+	*	シーンの停止処理
+	*/
+	void GameEnd::Stop() {
+
+		GameEngine& game = GameEngine::Instance();
+	}
+
 
 	/**
 	*	更新処理
@@ -66,32 +100,6 @@ namespace GameState{
 		}
 	}
 
-	/**
-	*	終了処理
-	*/
-	void GameEnd::Finalize(){
 
-		GameEngine& game = GameEngine::Instance();
-
-		game.ClearCollisionHandlerList();
-		
-	}
-
-	/**
-	*	シーンの開始処理
-	*/
-	void GameEnd::Play(){
-
-		GameEngine& game = GameEngine::Instance();
-
-		game.RemoveAllEntity();
-
-		auto e = game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
-			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
-		game.KeyValue(0.01f);
-
-		game.MainCamera(std::make_shared<CameraComponent>());
-		game.MainCamera()->LookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
-	}
 
 }

@@ -38,6 +38,7 @@ namespace GameState {
 	bool Title::Initialize() {
 		
 		GameEngine& game = GameEngine::Instance();
+		game.RemoveAllEntity();
 		game.ClearLevel();
 
 		game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
@@ -50,12 +51,52 @@ namespace GameState {
 		return true;
 	}
 
+	/**
+	*	終了処理
+	*/
+	void Title::Finalize() {
+
+	}
+
+	/**
+	*	開始処理
+	*/
+	void Title::Play() {
+
+		GameEngine& game = GameEngine::Instance();
+
+		timer = 0;
+
+		game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
+			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
+
+		player = std::make_shared<PlayerForProduction>();
+		game.AddEntity(EntityGroupId_Others, glm::vec3(0, 0, 0), "Aircraft", "Res/Model/Player.dds", player, "NonLighting");
+
+		game.KeyValue(0.01f);
+
+		game.MainCamera(std::make_shared<CameraComponent>());
+		game.MainCamera()->LookAt(glm::vec3(0, 20, -40), glm::vec3(0, 0, -1));
+
+		game.PlayAudio(1, CRI_CUESHEET_0_TITLE1);
+	}
+
+	/**
+	*	停止処理
+	*/
+	void Title::Stop() {
+
+		GameEngine& game = GameEngine::Instance();
+		game.StopAllAudio();
+		GameEngine::Instance().RemoveAllEntity();
+	}
+
 	/*
 	*	タイトル画面の更新
 	*
 	*	@param delta 経過時間
 	*/
-	void Title::Update(float delta){
+	void Title::Update(float delta) {
 
 		GameEngine& game = GameEngine::Instance();
 
@@ -69,7 +110,7 @@ namespace GameState {
 		static float tmpTimer = 0;
 		tmpTimer += delta;
 		auto f = (sinf(glm::radians((float)tmpTimer)) + 1) / 2;
-		
+
 		if (timer == 0) {
 
 			game.FontColor(glm::vec4(1.0f, 0, 0, 0));
@@ -130,46 +171,6 @@ namespace GameState {
 			}
 		}
 
-	}
-
-	/**
-	*	終了処理
-	*/
-	void Title::Finalize(){
-
-	}
-
-	/**
-	*	開始処理
-	*/
-	void Title::Play(){
-
-		GameEngine& game = GameEngine::Instance();
-
-		timer = 0;
-
-		game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
-			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
-
-		player = std::make_shared<PlayerForProduction>();
-		game.AddEntity(EntityGroupId_Others, glm::vec3(0, 0, 0), "Aircraft", "Res/Model/Player.dds", player, "NonLighting");
-
-		game.KeyValue(0.01f);
-
-		game.MainCamera(std::make_shared<CameraComponent>());
-		game.MainCamera()->LookAt(glm::vec3(0, 20, -40), glm::vec3(0, 0, -1));
-
-		game.PlayAudio(1, CRI_CUESHEET_0_TITLE1);
-	}
-
-	/**
-	*	停止処理
-	*/
-	void Title::Stop(){
-
-		GameEngine& game = GameEngine::Instance();
-		game.StopAllAudio();
-		GameEngine::Instance().RemoveAllEntity();
 	}
 
 }
