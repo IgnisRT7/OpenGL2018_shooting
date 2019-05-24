@@ -18,7 +18,7 @@ namespace GameState{
 		void Update(float delta) override;
 		void Finalize() override;
 
-		void Play() override {}
+		void Play() override;
 		void Stop() override {}
 		void Hide() override {}
 		

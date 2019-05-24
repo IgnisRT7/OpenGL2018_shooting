@@ -8,6 +8,7 @@
 #include "../GameState.h"
 #include "GameMainScene.h"
 #include "ModelLoadTestscene.h"
+#include "GameEndScene.h"
 
 //#include "../../Res/Audio/SampleSound_acf.h"
 //#include "../../Res/Audio/SampleCueSheet.h"
@@ -37,27 +38,15 @@ namespace GameState {
 	bool Title::Initialize() {
 		
 		GameEngine& game = GameEngine::Instance();
+		game.ClearLevel();
 
-		game.RemoveAllEntity();
-		//game.ClearLevel();
 		game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
 		game.LoadTextureFromFile("Res/Model/SpaceSphere.dds");
 		game.LoadMeshFromFile("Res/Model/Player.fbx");
 		game.LoadTextureFromFile("Res/Model/Player.dds");
 
-		game.KeyValue(0.01f);
+		initialize = true;
 
-		game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
-			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
-		
-		player = std::make_shared<PlayerForProduction>();
-		game.AddEntity(EntityGroupId_Others, glm::vec3(0, 0, 0), "Aircraft", "Res/Model/Player.dds", player, "NonLighting");
-
-		game.MainCamera(std::make_shared<CameraComponent>());
-		game.MainCamera()->LookAt(glm::vec3(0, 20, -40), glm::vec3(0, 0, -1));
-
-		game.PlayAudio(1, CRI_CUESHEET_0_TITLE1);
-	
 		return true;
 	}
 
@@ -103,7 +92,8 @@ namespace GameState {
 				maingame->SelectPlayerType(selectAirCraftType);
 
 				game.PushScene(maingame);
-
+				//game.PushScene(std::make_shared<GameEnd>());
+				return;
 			}
 		}
 		else if (game.GetGamePad().buttonDown & GamePad::START) {
@@ -146,18 +136,31 @@ namespace GameState {
 	*	èIóπèàóù
 	*/
 	void Title::Finalize(){
-		GameEngine& game = GameEngine::Instance();
-		game.StopAllAudio();
-		game.RemoveAllEntity();
-		game.ClearCollisionHandlerList();
-		game.ClearLevel();
+
+		GameEngine::Instance().RemoveAllEntity();
 	}
 
 	/**
 	*	äJénèàóù
 	*/
 	void Title::Play(){
+
+		GameEngine& game = GameEngine::Instance();
+
 		timer = 0;
+
+		game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
+			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
+
+		player = std::make_shared<PlayerForProduction>();
+		game.AddEntity(EntityGroupId_Others, glm::vec3(0, 0, 0), "Aircraft", "Res/Model/Player.dds", player, "NonLighting");
+
+		game.KeyValue(0.01f);
+
+		game.MainCamera(std::make_shared<CameraComponent>());
+		game.MainCamera()->LookAt(glm::vec3(0, 20, -40), glm::vec3(0, 0, -1));
+
+		game.PlayAudio(1, CRI_CUESHEET_0_TITLE1);
 	}
 
 	/**

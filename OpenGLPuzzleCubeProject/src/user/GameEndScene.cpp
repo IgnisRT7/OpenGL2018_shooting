@@ -21,13 +21,6 @@ namespace GameState{
 		game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
 		game.LoadTextureFromFile("Res/Model/SpaceSphere.dds");
 
-		auto e = game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
-			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLightin44g");
-		game.KeyValue(0.01f);
-
-		game.MainCamera(std::make_shared<CameraComponent>());
-		game.MainCamera()->LookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
-
 		return true;
 	}
 
@@ -75,8 +68,22 @@ namespace GameState{
 
 		GameEngine& game = GameEngine::Instance();
 
-		game.ClearCollisionHandlerList();
+		//game.ClearCollisionHandlerList();
 		game.RemoveAllEntity();
+	}
+
+	/**
+	*	シーンの開始処理
+	*/
+	void GameEnd::Play(){
+
+		GameEngine& game = GameEngine::Instance();
+		auto e = game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
+			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
+		game.KeyValue(0.01f);
+
+		game.MainCamera(std::make_shared<CameraComponent>());
+		game.MainCamera()->LookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
 	}
 
 }

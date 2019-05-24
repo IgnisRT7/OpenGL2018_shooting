@@ -50,6 +50,9 @@ namespace GameState {
 
 		GameEngine& game = GameEngine::Instance();
 
+		game.RemoveAllEntity();
+		game.ClearLevel();
+
 		///衝突判定用ハンドラの定義
 		game.CollisionHandler(EntityGroupId_PlayerShot, EntityGroupId_Enemy);
 		game.CollisionHandler(EntityGroupId_EnemyShot, EntityGroupId_Player);
@@ -79,7 +82,7 @@ namespace GameState {
 		game.LoadTextureFromFile("Res/Model/City01.Normal.bmp");
 
 		game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
-		game.LoadTextureFromFile("Res/Model/SpaceSphere.bmp");
+		game.LoadTextureFromFile("Res/Model/SpaceSphere.dds");
 
 		/// ライト・輝度の設定
 		game.AmbientLight(glm::vec4(0.05f, 0.1f, 0.2f, 1));
@@ -103,9 +106,6 @@ namespace GameState {
 	void MainGame::Update(float delta) {
 
 		GameEngine& game = GameEngine::Instance();
-
-		game.PopScene();
-		return;
 
 		static const float stageTime = 30;
 
@@ -253,8 +253,8 @@ namespace GameState {
 		else {
 
 			if ((sceneTimer -= delta) <= 0) {
-				//game.PushScene(std::make_shared<GameEnd>());
-				game.PopScene();
+				game.PushScene(std::make_shared<GameEnd>());
+				//game.PopScene();
 			}
 		}
 	}
@@ -263,12 +263,7 @@ namespace GameState {
 	*	終了処理
 	*/
 	void MainGame::Finalize(){
-
-		GameEngine& game = GameEngine::Instance();
-
-		//TODO :ココで全てのエンティティを削除する場合、前シーンのリソースも削除されるため回避策を考えなければならない
-		game.ClearCollisionHandlerList();
-		game.RemoveAllEntity();
-	//	game.ClearLevel();
+		GameEngine::Instance().ClearCollisionHandlerList();
+		GameEngine::Instance().RemoveAllEntity();
 	}
 }

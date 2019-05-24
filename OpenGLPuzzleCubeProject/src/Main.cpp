@@ -11,7 +11,6 @@
 
 int main() {
 
-
 	GameEngine& game = GameEngine::Instance();
 	if (!game.Init(WINDOW_SIZE_W,WINDOW_SIZE_H, "OpenGL Tutorial")) {
 		return 1;
@@ -25,6 +24,7 @@ int main() {
 
 	game.LoadTextureFromFile("Res/Model/Dummy.Normal.bmp");
 	game.LoadFontFromFile("Res/Font.fnt");
+	game.PushLevel();
 
 	game.PushScene(std::make_shared<GameState::Title>());
 

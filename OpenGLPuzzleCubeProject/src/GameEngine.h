@@ -126,7 +126,7 @@ public:
 	}
 
 	void ReplaceScene(ScenePtr s) {
-		meshBuffer->ClearLevel();
+		//meshBuffer->ClearLevel();
 		SceneStack::Instance().Replace(s); 
 		std::cout << "Replace" << std::endl;
 	}

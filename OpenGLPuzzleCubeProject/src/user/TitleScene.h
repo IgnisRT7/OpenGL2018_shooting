@@ -35,7 +35,7 @@ namespace GameState {
 
 	private:
 
-		bool initial = true;
+		bool initialize = false;
 		float timer = 0;
 		int selectAirCraftType = 0;
 
