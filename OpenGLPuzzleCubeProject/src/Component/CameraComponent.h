@@ -25,11 +25,11 @@ private:
 class CameraComponent :public SceneComponent{
 public:
 
-	virtual glm::mat4& ViewMatrix() const;
-	virtual glm::mat4& ProjctionMatrix() const;
+	virtual const glm::mat4& ViewMatrix() const;
+	virtual const glm::mat4& ProjctionMatrix() const;
 
 	virtual void Initialize() {};
-	virtual void Update(float delta) {};
+	virtual void Update(float delta);
 
 	void Position(glm::vec3& p) { position = p; }		
 	void Direction(glm::vec3& d) { direction = d; }
@@ -55,6 +55,8 @@ protected:
 	float near = 0.1f;		/// ç≈ãﬂì_
 	float far = 1000.0f;	/// ç≈âìì_
 
+	glm::mat4 matView;
+	glm::mat4 matProj;
 };
 
 /**
