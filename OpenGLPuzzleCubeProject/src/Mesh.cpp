@@ -4,6 +4,7 @@
 #include "Mesh.h"
 #include <fbxsdk.h>
 #include <iostream>
+#include <algorithm>
 
 /**
 *	モデルデータ管理のための名前空間
@@ -628,6 +629,7 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 		if (index >= materialList.size()) {
 			//インデックスに対応するマテリアルが無いのでダミーを代用
 			static const Material dummy{ GL_UNSIGNED_BYTE,0,0,0,glm::vec4(1) };
+			std::cout << "MeshBuffer::GetMaterial() material index is out of range!" << std::endl;
 			return dummy;
 		}
 		return materialList[index];
@@ -654,8 +656,25 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 	*/
 	void Buffer::PopLevel() {
 
+		Buffer::Level& currentLevel = levelStack.back();
+
 		if (levelStack.size() > minimalStackSize) {
 			levelStack.pop_back();
+		}
+
+		//現在のレベルが管理しているマテリアルリストの範囲内を削除する
+		std::vector<int> removeList;
+		for (auto itr = currentLevel.meshList.begin(); itr != currentLevel.meshList.end(); itr++) {
+			for (int i = itr->second->beginMaterial; i < itr->second->endMaterial; i++) {
+				removeList.push_back(i);
+			}
+		}
+		std::sort(removeList.begin(), removeList.end(), [&](int a, int b) {return a > b; });
+
+		for (int i = 0; i < removeList.size(); i++) {
+
+			materialList.erase(materialList.begin() + removeList[i]);
+
 		}
 	}
 
@@ -673,6 +692,21 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 			const Level& prevLevel = levelStack[levelStack.size() - (minimalStackSize + 1)];
 			currentLevel.vboEnd = prevLevel.vboEnd;
 			currentLevel.iboEnd = prevLevel.iboEnd;
+		}
+
+		//現在のレベルが管理しているマテリアルリストの範囲内を削除する
+		std::vector<int> removeList;
+		for (auto itr = currentLevel.meshList.begin(); itr != currentLevel.meshList.end(); itr++) {
+			for (int i = itr->second->beginMaterial; i < itr->second->endMaterial;i++) {
+				removeList.push_back(i);
+			}
+		}
+		std::sort(removeList.begin(), removeList.end(), [&](int a, int b) {return a > b; });
+
+		for (int i = 0; i < removeList.size(); i++) {
+
+			materialList.erase(materialList.begin() + removeList[i]);
+			
 		}
 
 		currentLevel.meshList.clear();
