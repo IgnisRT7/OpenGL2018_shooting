@@ -197,7 +197,7 @@ namespace GameState {
 
 				p->CastStencil(true);
 				p->StencilColor(glm::vec4(1, 0, 1, 1));
-				p->Scale(glm::vec3(5));
+				p->Scale(glm::vec3(0.5f));
 				timer = shotInterval;
 
 			}
