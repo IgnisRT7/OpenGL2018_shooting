@@ -43,6 +43,7 @@ namespace GameState {
 
 		void SelectPlayerType(int t) { playerType = t; }
 		void DrawScreenInfo();
+		void StageLoad();
 
 	private:
 

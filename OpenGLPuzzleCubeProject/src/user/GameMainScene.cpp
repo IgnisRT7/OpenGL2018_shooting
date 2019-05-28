@@ -19,7 +19,7 @@ namespace GameState {
 	}
 
 	void Landscape::Update(float delta) {
-		entity->Position(entity->Position() + glm::vec3(0, 0, -10.0f * delta));
+		//entity->Position(entity->Position() + glm::vec3(0, 0, -10.0f * delta));
 	}
 
 	/// 背景(ステージ3用)
@@ -106,7 +106,7 @@ namespace GameState {
 
 		playerData = std::make_shared<Player>();
 
-		game.MainCamera(std::make_shared<CameraComponent>());
+		game.MainCamera(std::dynamic_pointer_cast<CameraComponent>(std::make_shared<CameraDebugComponent>()));
 		game.MainCamera()->LookAt(glm::vec3(0, 30, 0), glm::vec3(0, 0, 10));
 
 		///シャドウの設定
@@ -162,12 +162,87 @@ namespace GameState {
 	}
 
 	/**
+	*	ステージの読み込み処理
+	*/
+	void MainGame::StageLoad(){
+
+		GameEngine& game = GameEngine::Instance();
+		
+		game.StopAllAudio();
+		game.RemoveAllEntity();
+
+		++stageNo;
+
+		//auto playerEntity = game.AddEntity(EntityGroupId_Player, glm::vec3(0, 0, 0),
+		//	"Aircraft", "Res/Model/Player.dds", playerData);
+
+		//ステージごとのロード処理
+		switch (stageNo % 3) {
+		case 1: {
+			game.PlayAudio(0, CRI_CUESHEET_0_MAINSCENE);
+
+			stageTimer = 3;
+
+			game.KeyValue(0.16f);
+
+			//背景の更新処理
+			for (int z = 0; z < 5; ++z) {
+				const float offsetZ = static_cast<float>(z * 40 * 5);
+
+				for (int x = 0; x < 5; ++x) {
+					const float offsetX = static_cast<float>(x * 40 - 80) * 5.0f;
+					game.AddEntity(EntityGroupId_Background, glm::vec3(offsetX, -100.0, offsetZ),
+						"Landscape01", "Res/Model/BG02.Diffuse.dds", "Res/Model/BG02.Normal.bmp", std::make_shared<Landscape>());
+				}
+			}
+
+			break;
+		}
+		case 2: {
+			game.PlayAudio(0, CRI_CUESHEET_0_MAIN2SCENE);
+
+			stageTimer = 1200;
+
+			game.KeyValue(0.24f);
+
+			//背景の初期化処理
+			for (int z = 0; z < 5; ++z) {
+				const float offsetZ = static_cast<float>(z * 40);
+
+				for (int x = 0; x < 5ww; ++x) {
+					const float offsetX = static_cast<float>(x * 40 - 80);
+					game.AddEntity(EntityGroupId_Background, glm::vec3(offsetX, -10, offsetZ),
+						"City01", "Res/Model/City01.Diffuse.dds", "Res/Model/City01.Normal.bmp", std::make_shared<Landscape>());
+					game.AddEntity(EntityGroupId_Background, glm::vec3(offsetX, -10, offsetZ),
+						"City01.Shadow", "Res/Model/City01.Diffuse.dds", "Res/Model/City01.Normal.bmp", std::make_shared<Landscape>());
+				}
+			}
+			break;
+			
+		}
+		case 0: {
+			game.PlayAudio(0, CRI_CUESHEET_0_BOSSSCENE);
+
+			stageTimer = 30;
+
+			game.KeyValue(0.02f);
+
+			game.AddEntity(EntityGroupId_Background, glm::vec3(0),
+				"SpaceSphere", "Res/Model/SpaceSphere.bmp", std::make_shared<SpaceSphereMain>(), "NonLighting");
+
+			break;
+		}
+		}
+	}
+
+	/**
 	*	メインゲーム画面の更新
 	*/
 	void MainGame::Update(float delta) {
 
 		GameEngine& game = GameEngine::Instance();
 
+		//デバッグ用シャドウマッピング切り替え処理
 		GamePad gamepad = game.GetGamePad();
 		if (gamepad.buttonDown & GamePad::START) {
 			static bool shadowMapping = false;
@@ -178,68 +253,7 @@ namespace GameState {
 		static const float stageTime = 30;
 
 		if (stageTimer < 0) {
-			game.StopAllAudio();
-			game.RemoveAllEntity();
-
-			++stageNo;
-			auto playerEntity = game.AddEntity(EntityGroupId_Player, glm::vec3(0, 0, 0),
-				"Aircraft", "Res/Model/Player.dds", playerData);
-
-			switch (stageNo % 3) {
-			case 1: {
-				game.PlayAudio(0, CRI_CUESHEET_0_MAINSCENE);
-
-				stageTimer = 3;
-
-				game.KeyValue(0.16f);
-
-				//背景の更新処理
-				for (int z = 0; z < 5; ++z) {
-					const float offsetZ = static_cast<float>(z * 40 * 5);
-
-					for (int x = 0; x < 5; ++x) {
-						const float offsetX = static_cast<float>(x * 40 - 80) * 5.0f;
-						game.AddEntity(EntityGroupId_Background, glm::vec3(offsetX, -100.0, offsetZ),
-							"Landscape01", "Res/Model/BG02.Diffuse.dds", "Res/Model/BG02.Normal.bmp", std::make_shared<Landscape>());
-					}
-				}
-
-				break;
-			}
-			case 2: {
-				game.PlayAudio(0, CRI_CUESHEET_0_MAIN2SCENE);
-
-				stageTimer = 30;
-
-				game.KeyValue(0.24f);
-
-				//背景の初期化処理
-				for (int z = 0; z < 5; ++z) {
-					const float offsetZ = static_cast<float>(z * 40);
-
-					for (int x = 0; x < 5; ++x) {
-						const float offsetX = static_cast<float>(x * 40 - 80);
-						game.AddEntity(EntityGroupId_Background, glm::vec3(offsetX, -10, offsetZ),
-							"City01", "Res/Model/City01.Diffuse.dds", "Res/Model/City01.Normal.bmp", std::make_shared<Landscape>());
-						game.AddEntity(EntityGroupId_Background, glm::vec3(offsetX, -10, offsetX),
-							"City01.Shadow", "Res/Model/City01.Diffuse.dds", "Res/Model/City01.Normal.bmp", std::make_shared<Landscape>());
-					}
-				}
-				break;
-
-			}
-			case 0: {
-				game.PlayAudio(0, CRI_CUESHEET_0_BOSSSCENE);
-
-				stageTimer = 30;
-
-				game.KeyValue(0.02f);
-				game.AddEntity(EntityGroupId_Background, glm::vec3(0),
-					"SpaceSphere", "Res/Model/SpaceSphere.bmp", std::make_shared<SpaceSphereMain>(), "NonLighting");
-
-				break;
-			}
-			}
+			StageLoad();
 		}
 
 		stageTimer -= delta;
@@ -248,7 +262,7 @@ namespace GameState {
 		std::uniform_int_distribution<> distributerX(-12, 12);
 		std::uniform_int_distribution<> distributerZ(40, 44);
 
-		interval -= delta;
+		interval += delta;
 
 		//敵スポナーの出現処理
 		if (interval <= 0) {
@@ -269,6 +283,7 @@ namespace GameState {
 
 		DrawScreenInfo();
 
+		//シーン遷移処理
 		if (sceneTimer == 0 && playerData->RemainingPlayer() < 0) {
 
 			if (sceneTimer == 0) sceneTimer = 3;
@@ -276,7 +291,6 @@ namespace GameState {
 			return;
 
 		}
-
 		if (sceneTimer > 0 && (sceneTimer -= delta) <= 0) {
 			game.ReplaceScene(std::make_shared<GameEnd>());
 			//game.PopScene();
