@@ -312,6 +312,17 @@ void GameEngine::Run() {
 		const float delta = static_cast<float>(curTime - prevTime);
 		prevTime = curTime;
 
+		// fps の更新処理
+		fpsBuffer[++bufferCount % 60] = delta;
+
+		fps = 0;
+		for (int i = 0; i < 60; i++) {
+			fps += fpsBuffer[i];
+		}
+
+		fps /= 60.0f;
+		fps = 1 / fps;
+
 		window.UpdateGamePad();
 		Update(glm::min(0.25f, delta));
 		Render();
@@ -399,6 +410,8 @@ Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const c
 */
 Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, const char* normalName, Entity::EntityDataBasePtr eData, const char* shader) {
 
+//	std::cout << "AddEntiy : name = " << meshName << std::endl;
+	
 	decltype(shaderMap)::const_iterator itr = shaderMap.end();
 	if (shader) {
 		itr = shaderMap.find(shader);
@@ -684,6 +697,7 @@ void GameEngine::Update(float delta) {
 	entityBuffer->Update(ratedDelta, matView, matProj, matDepthProj * matDepthView);
 
 	fontRenderer.UnmapBuffer();
+
 }
 
 /**
@@ -692,7 +706,7 @@ void GameEngine::Update(float delta) {
 void GameEngine::RenderShadow() const {
 
 	if (!isEnableShadow) {
-		return;
+		//return;
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, offDepth->GetFramebuffer());
@@ -721,7 +735,7 @@ void GameEngine::RenderStencil() const {
 
 	if (!isDrawOutline) {
 		//ステンシルバッファは現状アウトラインのみなので描画しない場合は切っておく
-		return;
+	//	return;
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, offStencil->GetFramebuffer());
@@ -841,8 +855,6 @@ void GameEngine::RenderFrameBuffer() const{
 	progColorFilter->SetFloatParameter(isSceneFadeStart ? (sceneFadeTimer / 3) : 1, "scenFadeTimerRate");
 	progColorFilter->SetBoolParameter(isDrawOutline, "isDrawOutline");
 
-	glBindVertexArray(vao);
-
 	Uniform::PostEffectData postEffect;
 	postEffect.luminanceScale = luminanceScale;
 	postEffect.bloomThreshold = 1.0f / luminanceScale;
@@ -851,8 +863,8 @@ void GameEngine::RenderFrameBuffer() const{
 	progColorFilter->BindTexture(GL_TEXTURE1, GL_TEXTURE_2D, offBloom[0]->GetTexture());
 	progColorFilter->BindTexture(GL_TEXTURE2, GL_TEXTURE_2D, offStencil->GetTexture());
 
+	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
-
 }
 
 /**

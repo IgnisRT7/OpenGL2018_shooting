@@ -117,21 +117,22 @@ public:
 		
 		PushLevel();
 		SceneStack::Instance().Push(s); 
-		std::cout << "Push" << std::endl;
 	}
 
 	void PopScene() {
 	
 		PopLevel();
 		SceneStack::Instance().Pop();
-		std::cout << "Pop" << std::endl;
 	}
 
 	void ReplaceScene(ScenePtr s) {
 		//meshBuffer->ClearLevel();
 		SceneStack::Instance().Replace(s); 
-		std::cout << "Replace" << std::endl;
 	}
+
+	void EnableShadow(bool b) { isEnableShadow = b; }
+
+	float FPS() { return fps; }
 	
 private:
 
@@ -164,6 +165,10 @@ private:
 	float luminanceScale = 1.0f;
 	float keyValue = 0.18f;
 
+	int bufferCount = 0;
+	float fpsBuffer[60];
+	float fps;
+
 	bool isDrawOutline = false;		///< アウトラインを描画するか否か
 	bool isEnableShadow = false;	///< シャドウマッピングを行うか
 
@@ -177,6 +182,8 @@ private:
 	OffscreenBufferPtr offBloom[bloomBufferCount];	/// ブルームバッファ
 	OffscreenBufferPtr offDepth;					/// 深度バッファ
 	ShadowParameter shadowParameter;				
+
+	OffscreenBufferPtr offScreen2;
 
 	OffscreenBufferPtr offStencil;					/// ステンシルバッファ
 

@@ -8,6 +8,7 @@
 
 namespace GameState {
 
+
 	///”wŒi(ƒXƒ‰ƒCƒh)
 	class Landscape : public Entity::EntityDataBase {
 	public:
@@ -25,6 +26,8 @@ namespace GameState {
 		void Update(float delta) override;
 	};
 	
+
+
 	///ƒƒCƒ“ƒQ[ƒ€‰æ–Ê
 	class MainGame : public Scene{
 	public:
@@ -39,6 +42,7 @@ namespace GameState {
 		void Hide() override {};
 
 		void SelectPlayerType(int t) { playerType = t; }
+		void DrawScreenInfo();
 
 	private:
 

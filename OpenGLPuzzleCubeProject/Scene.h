@@ -68,8 +68,5 @@ private:
 	~SceneStack() = default;
 
 	std::vector<ScenePtr> stack;
-
-
-	std::vector<ScenePtr> buffer;
-
+	ScenePtr nextScne;
 };

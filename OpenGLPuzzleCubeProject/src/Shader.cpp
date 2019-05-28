@@ -108,6 +108,8 @@ namespace Shader {
 	*/
 	void Program::UseProgram() {
 
+		//std::cout << "UseProgram " << name << std::endl;
+
 		glUseProgram(program);
 		for (GLint i = 0; i < samperCount; ++i) {
 			glUniform1i(samplerLocation + i, i);

@@ -131,7 +131,8 @@ namespace GameState {
 
 			if (--remainingPlayer < 0) {
 
-				game.RemoveEntity(entity);
+				//game.RemoveEntity(entity);
+				entity->Color(glm::vec4(0, 0, 0, 0));
 				return;
 			}
 			
