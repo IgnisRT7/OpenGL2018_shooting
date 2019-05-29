@@ -19,7 +19,7 @@ namespace GameState {
 	}
 
 	void Landscape::Update(float delta) {
-		//entity->Position(entity->Position() + glm::vec3(0, 0, -10.0f * delta));
+		entity->Position(entity->Position() + glm::vec3(0, 0, -10.0f * delta));
 	}
 
 	/// 背景(ステージ3用)
@@ -173,8 +173,8 @@ namespace GameState {
 
 		++stageNo;
 
-		//auto playerEntity = game.AddEntity(EntityGroupId_Player, glm::vec3(0, 0, 0),
-		//	"Aircraft", "Res/Model/Player.dds", playerData);
+		auto playerEntity = game.AddEntity(EntityGroupId_Player, glm::vec3(0, 0, 0),
+			"Aircraft", "Res/Model/Player.dds", playerData);
 
 		//ステージごとのロード処理
 		switch (stageNo % 3) {
@@ -209,7 +209,7 @@ namespace GameState {
 			for (int z = 0; z < 5; ++z) {
 				const float offsetZ = static_cast<float>(z * 40);
 
-				for (int x = 0; x < 5ww; ++x) {
+				for (int x = 0; x < 5; ++x) {
 					const float offsetX = static_cast<float>(x * 40 - 80);
 					game.AddEntity(EntityGroupId_Background, glm::vec3(offsetX, -10, offsetZ),
 						"City01", "Res/Model/City01.Diffuse.dds", "Res/Model/City01.Normal.bmp", std::make_shared<Landscape>());
@@ -262,7 +262,7 @@ namespace GameState {
 		std::uniform_int_distribution<> distributerX(-12, 12);
 		std::uniform_int_distribution<> distributerZ(40, 44);
 
-		interval += delta;
+		interval -= delta;
 
 		//敵スポナーの出現処理
 		if (interval <= 0) {
@@ -287,13 +287,11 @@ namespace GameState {
 		if (sceneTimer == 0 && playerData->RemainingPlayer() < 0) {
 
 			if (sceneTimer == 0) sceneTimer = 3;
-			game.ReplaceScene(std::make_shared<GameEnd>());
 			return;
 
 		}
 		if (sceneTimer > 0 && (sceneTimer -= delta) <= 0) {
 			game.ReplaceScene(std::make_shared<GameEnd>());
-			//game.PopScene();
 			return;
 		}
 	}
