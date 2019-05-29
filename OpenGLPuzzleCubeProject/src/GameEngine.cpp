@@ -843,8 +843,6 @@ void GameEngine::RenderBloomEffect() const {
 void GameEngine::RenderFrameBuffer() const{
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//	glClearColor(1, 1, 1, 1);
-//	glClear(GL_COLOR_BUFFER_BIT);
 
 	glDisable(GL_BLEND);
 	glViewport(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
@@ -865,6 +863,7 @@ void GameEngine::RenderFrameBuffer() const{
 
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
+	glBindVertexArray(0);
 }
 
 /**
