@@ -663,18 +663,20 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 		}
 
 		//現在のレベルが管理しているマテリアルリストの範囲内を削除する
-		std::vector<int> removeList;
-		for (auto itr = currentLevel.meshList.begin(); itr != currentLevel.meshList.end(); itr++) {
-			for (int i = itr->second->beginMaterial; i < itr->second->endMaterial; i++) {
-				removeList.push_back(i);
+		if (!currentLevel.meshList.empty()) {
+			std::vector<int> removeList;
+			for (auto itr = currentLevel.meshList.begin(); itr != currentLevel.meshList.end(); itr++) {
+				for (int i = itr->second->beginMaterial; i < itr->second->endMaterial; i++) {
+					removeList.push_back(i);
+				}
 			}
-		}
-		std::sort(removeList.begin(), removeList.end(), [&](int a, int b) {return a > b; });
+			std::sort(removeList.begin(), removeList.end(), [&](int a, int b) {return a > b; });
 
-		for (int i = 0; i < removeList.size(); i++) {
+			for (int i = 0; i < removeList.size(); i++) {
 
-			materialList.erase(materialList.begin() + removeList[i]);
+				materialList.erase(materialList.begin() + removeList[i]);
 
+			}
 		}
 	}
 
