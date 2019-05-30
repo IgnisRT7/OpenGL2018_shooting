@@ -276,13 +276,13 @@ void GameEngine::Run() {
 	while (!window.ShouldClose()) {
 
 		const double curTime = glfwGetTime();
-		const float delta = static_cast<float>(curTime - prevTime);
+		deltaTime = static_cast<float>(curTime - prevTime);
 		prevTime = curTime;
 
 		UpdateFps();
 
 		window.UpdateGamePad();
-		Update(glm::min(0.25f, delta));
+		Update(glm::min(0.25f, deltaTime));
 		Render();
 		window.SwapBuffers();
 
