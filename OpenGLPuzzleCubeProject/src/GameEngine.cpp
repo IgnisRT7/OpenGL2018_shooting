@@ -627,8 +627,33 @@ void GameEngine::PopLevel() {
 */
 void GameEngine::ClearLevel() {
 
-	meshBuffer->ClearLevel();
 	textureStack.back().clear();
+	meshBuffer->ClearLevel();
+}
+
+/**
+*	シーンをプッシュします
+*/
+void GameEngine::PushScene(ScenePtr s){
+	
+	SceneStack::Instance().Push(s);
+}
+
+/**
+*	シーンをポップします
+*/
+void GameEngine::PopScene(){
+
+	SceneStack::Instance().Pop();
+}
+
+/**
+*	シーンを取り換えます
+*/
+void GameEngine::ReplaceScene(ScenePtr s){
+	
+	//meshBuffer->ClearLevel();
+	SceneStack::Instance().Replace(s);
 }
 
 /**

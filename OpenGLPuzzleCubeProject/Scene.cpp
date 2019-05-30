@@ -82,6 +82,11 @@ void SceneStack::Push(ScenePtr scene) {
 	if (!stack.empty()) {
 		Current().Stop();
 	}
+
+	//プッシュするだけなのでリソースは残しておく
+	game.RemoveAllEntity();
+	game.PushLevel();
+
 	stack.push_back(scene);
 	std::cout << "[ SceneStack::Push ] " << scene->Name() << "(シーン)が プッシュされました" << std::endl;
 	Current().Initialize();
@@ -93,6 +98,8 @@ void SceneStack::Push(ScenePtr scene) {
 *	シーンをポップする
 */
 void SceneStack::Pop() {
+
+	GameEngine& game = GameEngine::Instance();
 	
 	if (stack.empty()) {
 		std::cout << "[ SceneStack::Pop] [警告] シーンスタックが空です" << std::endl;
@@ -102,6 +109,10 @@ void SceneStack::Pop() {
 	//起動中のシーンの停止と終了処理
 	Current().Stop();
 	Current().Finalize();
+
+	game.RemoveAllEntity();
+	game.ClearCollisionHandlerList();
+	game.PopLevel();
 
 	const std::string sceneName = Current().Name();
 	stack.pop_back();
@@ -131,6 +142,12 @@ void SceneStack::Replace(ScenePtr scene) {
 		Current().Stop();
 		Current().Finalize();
 		stack.pop_back();
+
+		
+		GameEngine& game = GameEngine::Instance();
+		game.RemoveAllEntity();
+		game.ClearLevel();
+		
 	}
 
 	//シーンの追加と初期化と実行処理

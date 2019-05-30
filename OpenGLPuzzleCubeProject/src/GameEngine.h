@@ -113,22 +113,11 @@ public:
 		isSceneFadeStart = param; 
 	}
 
-	void PushScene(ScenePtr s) {
-		
-		PushLevel();
-		SceneStack::Instance().Push(s); 
-	}
+	void PushScene(ScenePtr s);
 
-	void PopScene() {
-	
-		PopLevel();
-		SceneStack::Instance().Pop();
-	}
+	void PopScene();
 
-	void ReplaceScene(ScenePtr s) {
-		//meshBuffer->ClearLevel();
-		SceneStack::Instance().Replace(s); 
-	}
+	void ReplaceScene(ScenePtr s);
 
 	void EnableShadow(bool b) { isEnableShadow = b; }
 
