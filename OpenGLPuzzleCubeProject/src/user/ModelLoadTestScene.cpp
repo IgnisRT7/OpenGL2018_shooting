@@ -10,9 +10,6 @@ ModelLoadTestScene::ModelLoadTestScene(){
 
 	GameEngine& game = GameEngine::Instance();
 
-	game.RemoveAllEntity();
-	game.ClearLevel();
-
 	/// ライト・輝度の設定
 	game.AmbientLight(glm::vec4(0.05f, 0.1f, 0.2f, 1));
 	game.Light(0, { glm::vec4(1,100,1,1),glm::vec4(12000,12000,12000,1) });
@@ -52,9 +49,3 @@ ModelLoadTestScene::ModelLoadTestScene(){
 
 }
 
-void ModelLoadTestScene::operator()(float delta) {
-
-
-
-
-}
