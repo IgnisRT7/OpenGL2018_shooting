@@ -10,14 +10,14 @@
 #include <iostream>
 #include "../DebugLog.h"
 
-///	頂点データ型
+///	最終出力用の頂点データ型
 struct Vertex {
 	glm::vec3 position;	///< 座標
 	glm::vec4 color;	///< 色
 	glm::vec2 texCoord;	///< テクスチャ座標
 };
 
-/// 頂点データ
+/// 最終出力用の頂点データ
 const Vertex vertices[] = {
 	{ { -0.5f, -0.3f, 0.5f },{ 1.0f, 1.0f, 1.0f, 1.0f },{ 0.0f, 0.0f } },
 { { 0.3f, -0.3f, 0.5f },{ 1.0f, 1.0f, 1.0f, 1.0f },{ 1.0f, 0.0f } },
@@ -37,6 +37,7 @@ const Vertex vertices[] = {
 { { -1.0f,  1.0f, 0.5f },{ 1.0f, 1.0f, 1.0f, 1.0f },{ 0.0f, 1.0f } },
 };
 
+///最終出力用のインデックスデータ
 const GLuint indices[] = {
 	0, 1, 2, 2, 3, 0,
 	4, 5, 6, 7, 8, 9,
@@ -70,43 +71,6 @@ static const RenderingPart renderingParts[] = {
 	MakeRenderingPart(12,0),
 	MakeRenderingPart(6,12),
 };
-
-/**
-*	Vertex Buffer Object	を作成する
-*
-*	@param size 頂点データのサイズ
-*	@param data 頂点データへのポインタ
-*
-*	@return 作成したVBO
-*/
-GLuint CreateVBO(GLsizeiptr size, const GLvoid* data) {
-
-	GLuint vbo = 0;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	return vbo;
-
-}
-
-/**
-*	Index Buffer Objectを作成する
-*
-*	@param size インデックスデータのサイズ
-*	@param data インデックスデータへのポインタ
-*
-*	@return 作成したIBO
-*/
-GLuint CreateIBO(GLsizeiptr size, const GLvoid* data) {
-
-	GLuint ibo = 0;
-	glGenBuffers(1, &ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	return ibo;
-}
 
 /**
 *	頂点アトリビュートを設定する
@@ -188,9 +152,13 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		return false;
 	}
 
-	vbo = CreateVBO(sizeof(vertices), vertices);
-	ibo = CreateIBO(sizeof(indices), indices);
-	vao = CreateVAO(vbo, ibo);
+	vbo.Init(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	ibo.Init(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	if (vbo.Id() == 0 || ibo.Id() == 0) {
+		return false;
+	}
+
+	vao = CreateVAO(vbo.Id(), ibo.Id());
 
 	uboLight = UniformBuffer::Create(sizeof(Uniform::LightData), 1, "LightData");
 	uboPostEffect = UniformBuffer::Create(sizeof(Uniform::PostEffectData), 2, "PostEffectData");
@@ -223,7 +191,6 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		return false;
 	}
 
-
 	//テクスチャサイズ取得
 	int offWidth, offHeight;
 	glBindTexture(GL_TEXTURE_2D, offBloom[bloomBufferCount - 1]->GetTexture());
@@ -238,7 +205,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	}
 
 
-	if (!vbo || !ibo || !vao || !uboLight || !uboPostEffect) {
+	if ( !vao || !uboLight || !uboPostEffect) {
 
 		std::cerr << "ERROR: GameEngineの初期化に失敗" << std::endl;
 		return false;
@@ -312,16 +279,7 @@ void GameEngine::Run() {
 		const float delta = static_cast<float>(curTime - prevTime);
 		prevTime = curTime;
 
-		// fps の更新処理
-		fpsBuffer[++bufferCount % 60] = delta;
-
-		fps = 0;
-		for (int i = 0; i < 60; i++) {
-			fps += fpsBuffer[i];
-		}
-
-		fps /= 60.0f;
-		fps = 1 / fps;
+		UpdateFps();
 
 		window.UpdateGamePad();
 		Update(glm::min(0.25f, delta));
@@ -671,13 +629,14 @@ GameEngine::~GameEngine() {
 	if (vao) {
 		glDeleteVertexArrays(1, &vao);
 	}
-	if (ibo) {
-		glDeleteVertexArrays(1, &ibo);
+	if (ibo.Id()) {
+		ibo.Destroy();
 	}
-	if (vbo) {
-		glDeleteVertexArrays(1, &vbo);
+	if (vbo.Id()) {
+		vbo.Destroy();
 	}
 }
+
 
 /**
 *	ゲームの状態を更新する
@@ -731,12 +690,29 @@ void GameEngine::Update(float delta) {
 }
 
 /**
+*	Fpsの更新処理
+*/
+void GameEngine::UpdateFps(){
+
+	// fps の更新処理
+	fpsBuffer[++bufferCount % 60] = deltaTime;
+
+	fps = 0;
+	for (int i = 0; i < 60; i++) {
+		fps += fpsBuffer[i];
+	}
+
+	fps /= 60.0f;
+	fps = 1 / fps;
+}
+
+/**
 *	デプスシャドウマップを描画する
 */
 void GameEngine::RenderShadow() const {
 
 	if (!isEnableShadow) {
-		//return;
+		return;
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, offDepth->GetFramebuffer());
@@ -765,7 +741,7 @@ void GameEngine::RenderStencil() const {
 
 	if (!isDrawOutline) {
 		//ステンシルバッファは現状アウトラインのみなので描画しない場合は切っておく
-	//	return;
+		return;
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, offStencil->GetFramebuffer());

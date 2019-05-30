@@ -117,7 +117,8 @@ public:
 	
 
 	void TimeScale(float t) { timeScale = t; }
-	float FPS() { return fps; }
+	float DeltaTime(float delta) const { return deltaTime; }
+	float FPS() const { return fps; }
 	void EnableShadow(bool b) { isEnableShadow = b; }
 	void ToggleDrawOutline() { isDrawOutline = !isDrawOutline; }
 	void SceneFadeStart(bool param) { isSceneFadeStart = param; }
@@ -130,6 +131,8 @@ private:
 	GameEngine& operator=(const GameEngine&) = delete;
 
 	void Update(float  delta);
+	void UpdateFps();
+
 	void Render();
 	void RenderEntity() const;
 	void RenderShadow() const;
@@ -148,8 +151,7 @@ private:
 	glm::vec2 windowSize;
 
 	//最終出力用バッファ
-	GLuint vbo = 0;
-	GLuint ibo = 0;
+	BufferObject vbo, ibo;
 	GLuint vao = 0;
 
 	//画面輝度を調整するためのPBO
@@ -158,6 +160,9 @@ private:
 	float luminanceScale = 1.0f;
 	float keyValue = 0.18f;
 
+	float deltaTime = 0;		///< 経過時間
+
+	//fpsカウント用変数
 	int bufferCount = 0;
 	float fpsBuffer[60];
 	float fps;
