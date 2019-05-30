@@ -69,6 +69,7 @@ namespace Mesh {
 		const MeshPtr& GetMesh(const char* name) const;
 		const Material& GetMaterial(size_t index) const;
 		void BindVAO() const;
+		void UnBindVAO() const;
 
 		void PushLevel();
 		void PopLevel();

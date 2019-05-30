@@ -643,6 +643,13 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 	}
 
 	/**
+	*	バッファの紐づけの解除
+	*/
+	void Buffer::UnBindVAO() const{
+		glBindVertexArray(0);
+	}
+
+	/**
 	*	スタックに新しいリソースレベルを作成する
 	*/
 	void Buffer::PushLevel() {
