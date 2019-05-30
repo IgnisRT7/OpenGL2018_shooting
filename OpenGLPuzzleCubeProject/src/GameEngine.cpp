@@ -372,6 +372,11 @@ bool GameEngine::LoadMeshFromFile(const char* filename) {
 	return meshBuffer->LoadMeshFromFile(filename);
 }
 
+bool GameEngine::LoadFontFromFile(const char * filename){
+
+	return fontRenderer.LoadFromFile(filename); 
+}
+
 /**
 *	エンティティを追加する
 *

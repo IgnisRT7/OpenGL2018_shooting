@@ -28,23 +28,47 @@
 *	ゲームエンジンクラス
 */
 class GameEngine {
+	friend class SceneStack;
 public:
 
 	static GameEngine& Instance();
 	bool Init(int w, int h, const char* title);
 	void Run();
 
+	//オーディオ関係のラッパー関数
+	bool InitAudio(const char* acfPath, const char* acbPath, const char* awbPath, const char* dspBusName);
+	void PlayAudio(int playerId, int cueId);
+	void StopAudio(int playerId);
+	void StopAllAudio();
+
+	//リソース読み込み
 	bool LoadTextureFromFile(const char* filename);
 	bool LoadMeshFromFile(const char* filename);
+	bool LoadFontFromFile(const char* filename);
 
+	//エンティティ追加処理
 	Entity::Entity* AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, Entity::EntityDataBasePtr eData, const char* shader = nullptr);
 	Entity::Entity* AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, const char* normalName, Entity::EntityDataBasePtr eData, const char* shader = nullptr);
+
+	//エンティティ削除処理
 	void RemoveEntity(Entity::Entity*);
 	void RemoveAllEntity();
-	void PushLevel();
-	void PopLevel();
-	void ClearLevel();
 
+	//エンティティ検索処理
+	template<typename T>
+	Entity::Entity* FindEntityData() { return entityBuffer->FindEntityData<T>(); }
+
+	//フォント関連の処理
+	bool AddString(const glm::vec2& pos, const char* str) {
+		return fontRenderer.AddString(pos, str);
+	}
+	void FontScale(const glm::vec2& scale) { fontRenderer.Scale(scale); }
+	void FontColor(const glm::vec4& color) { fontRenderer.Color(color); }
+
+	//シーン追加・削除処理
+	void PushScene(ScenePtr s);
+	void PopScene();
+	void ReplaceScene(ScenePtr s);
 
 	///影生成パラメータ
 	struct ShadowParameter {
@@ -55,73 +79,48 @@ public:
 		glm::f32 far;		///< 描画範囲のファー平面
 		glm::vec2 range;	///< 描画範囲の幅と高さ
 	};
-	void Shadow(const ShadowParameter& param) {
-		shadowParameter = param;
-	}
+
+	//シャドウパラメータの取得・設定処理
+	void Shadow(const ShadowParameter& param) { shadowParameter = param; }
 	const ShadowParameter& Shadow() const { return shadowParameter; }
 
+	//ライトパラメータの取得・設定処理
 	void Light(int index, const Uniform::PointLight& light);
 	const Uniform::PointLight& Light(int index) const;
+
+	//環境光の取得・設定処理
 	void AmbientLight(const glm::vec4& color);
 	const glm::vec4& AmbientLight() const;
+
+	//輝度の閾値の取得・設定処理
 	void KeyValue(float k) { keyValue = k; }
 	const float KeyValue() const { return keyValue; }
 
-	void GroupVisibility(int groupId, int index, bool isVisible) {
-		entityBuffer->GroupVisibility(groupId, index, isVisible);
-	}
-	bool GroupVisibility(int groupId, int index) const {
-		return entityBuffer->GroupVisibility(groupId,index);
-	}
+	//表示・非表示の処理 現在未使用
+	void GroupVisibility(int groupId, int index, bool isVisible) { entityBuffer->GroupVisibility(groupId, index, isVisible); }
+	bool GroupVisibility(int groupId, int index) const { return entityBuffer->GroupVisibility(groupId, index); }
 
-	std::mt19937& Rand();
-	const GamePad& GetGamePad() const;
-
-	bool InitAudio(const char* acfPath, const char* acbPath, const char* awbPath, const char* dspBusName);
-	void PlayAudio(int playerId, int cueId);
-	void StopAudio(int playerId);
-	void StopAllAudio();
-
+	//コリジョンの設定・削除処理
 	void CollisionHandler(int gid0, int gid1);
 	void ClearCollisionHandlerList();
 
+	std::mt19937& Rand();
+	const GamePad& GetGamePad() const;
 	const TexturePtr& GetTexture(const char* filename) const;
-	bool LoadFontFromFile(const char* filename) {
-		return fontRenderer.LoadFromFile(filename);
-	}
-	bool AddString(const glm::vec2& pos, const char* str) {
-		return fontRenderer.AddString(pos, str);
-	}
-	void FontScale(const glm::vec2& scale) { fontRenderer.Scale(scale); }
-	void FontColor(const glm::vec4& color) { fontRenderer.Color(color); }
 
+	//グローバルデータの取得設定処理
 	double& UserVariable(const char* name) { return userNumbers[name]; }
 
-	void ToggleDrawOutline() { isDrawOutline = !isDrawOutline; }
-
+	//メインカメラ設定処理
 	void MainCamera(COMPONENT_TYPEPTR(CameraComponent)& c) { mainCamera = c; }
 	const COMPONENT_TYPEPTR(CameraComponent)& MainCamera() const { return mainCamera; }
 	
-	template<typename T>
-	Entity::Entity* FindEntityData() {
-		return entityBuffer->FindEntityData<T>();
-	}
 
 	void TimeScale(float t) { timeScale = t; }
-
-	void SceneFadeStart(bool param) {
-		isSceneFadeStart = param; 
-	}
-
-	void PushScene(ScenePtr s);
-
-	void PopScene();
-
-	void ReplaceScene(ScenePtr s);
-
-	void EnableShadow(bool b) { isEnableShadow = b; }
-
 	float FPS() { return fps; }
+	void EnableShadow(bool b) { isEnableShadow = b; }
+	void ToggleDrawOutline() { isDrawOutline = !isDrawOutline; }
+	void SceneFadeStart(bool param) { isSceneFadeStart = param; }
 	
 private:
 
@@ -129,6 +128,7 @@ private:
 	~GameEngine();
 	GameEngine(const GameEngine&) = delete;
 	GameEngine& operator=(const GameEngine&) = delete;
+
 	void Update(float  delta);
 	void Render();
 	void RenderEntity() const;
@@ -136,6 +136,10 @@ private:
 	void RenderStencil() const;
 	void RenderBloomEffect() const;
 	void RenderFrameBuffer() const;
+
+	void PushLevel();
+	void PopLevel();
+	void ClearLevel();
 
 private:
 	
@@ -165,15 +169,13 @@ private:
 	UniformBufferPtr uboPostEffect;
 	std::unordered_map<std::string, Shader::ProgramPtr> shaderMap;
 
+	static const int bloomBufferCount = 4;
+	ShadowParameter shadowParameter;
+
 	//オフスクリーンバッファ群
-	OffscreenBufferPtr offscreen;					/// バックバッファ
-	static const int bloomBufferCount = 4;			
+	OffscreenBufferPtr offscreen;					/// バックバッファ	
 	OffscreenBufferPtr offBloom[bloomBufferCount];	/// ブルームバッファ
-	OffscreenBufferPtr offDepth;					/// 深度バッファ
-	ShadowParameter shadowParameter;				
-
-	OffscreenBufferPtr offScreen2;
-
+	OffscreenBufferPtr offDepth;					/// 深度バッファ				
 	OffscreenBufferPtr offStencil;					/// ステンシルバッファ
 
 	using TextureLevel = std::unordered_map<std::string, TexturePtr>;
