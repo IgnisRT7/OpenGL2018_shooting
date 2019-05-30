@@ -87,7 +87,7 @@ namespace GameState{
 				return;
 			}
 		}
-		else if (game.GetGamePad().buttonDown & GamePad::START) {
+		else if (game.GetGamePad().buttonDown & GamePad::START || timer == 0) {
 			game.PlayAudio(1, CRI_CUESHEET_0_SELECT);
 			timer = 2;
 		}
