@@ -50,9 +50,6 @@ namespace GameState {
 
 		GameEngine& game = GameEngine::Instance();
 
-		game.RemoveAllEntity();
-		game.ClearLevel();
-
 		//リソースのロード
 		game.LoadMeshFromFile("Res/Model/Player.fbx");
 		game.LoadMeshFromFile("Res/Model/Blast.fbx");
@@ -84,7 +81,6 @@ namespace GameState {
 	*	終了処理
 	*/
 	void MainGame::Finalize() {
-		GameEngine::Instance().ClearCollisionHandlerList();
 	}
 
 	/**
@@ -106,7 +102,7 @@ namespace GameState {
 
 		playerData = std::make_shared<Player>();
 
-		game.MainCamera(std::dynamic_pointer_cast<CameraComponent>(std::make_shared<CameraDebugComponent>()));
+		game.MainCamera(std::make_shared<CameraComponent>());
 		game.MainCamera()->LookAt(glm::vec3(0, 30, 0), glm::vec3(0, 0, 10));
 
 		///シャドウの設定
@@ -130,10 +126,6 @@ namespace GameState {
 	void MainGame::Stop() {
 
 		GameEngine& game = GameEngine::Instance();
-
-		game.ClearCollisionHandlerList();
-		game.RemoveAllEntity();
-		game.StopAllAudio();
 	}
 
 	/**

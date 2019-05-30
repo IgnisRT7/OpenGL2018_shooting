@@ -38,8 +38,6 @@ namespace GameState {
 	bool Title::Initialize() {
 		
 		GameEngine& game = GameEngine::Instance();
-		game.RemoveAllEntity();
-		game.ClearLevel();
 
 		game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
 		game.LoadTextureFromFile("Res/Model/SpaceSphere.dds");
@@ -86,9 +84,6 @@ namespace GameState {
 	*/
 	void Title::Stop() {
 
-		GameEngine& game = GameEngine::Instance();
-		game.StopAllAudio();
-		GameEngine::Instance().RemoveAllEntity();
 	}
 
 	/*

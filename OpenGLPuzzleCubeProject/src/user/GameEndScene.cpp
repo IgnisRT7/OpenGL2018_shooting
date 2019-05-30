@@ -17,8 +17,6 @@ namespace GameState{
 	bool GameState::GameEnd::Initialize(){
 
 		GameEngine& game = GameEngine::Instance();
-		game.RemoveAllEntity();
-		game.ClearLevel();
 
 		game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
 		game.LoadTextureFromFile("Res/Model/SpaceSphere.dds");
@@ -40,7 +38,6 @@ namespace GameState{
 
 		GameEngine& game = GameEngine::Instance();
 
-		//game.RemoveAllEntity();
 
 		auto e = game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
 			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
@@ -54,8 +51,6 @@ namespace GameState{
 	*	ÉVÅ[ÉìÇÃí‚é~èàóù
 	*/
 	void GameEnd::Stop() {
-
-		GameEngine& game = GameEngine::Instance();
 	}
 
 

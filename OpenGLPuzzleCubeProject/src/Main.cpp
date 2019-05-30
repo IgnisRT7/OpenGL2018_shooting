@@ -24,7 +24,6 @@ int main() {
 
 	game.LoadTextureFromFile("Res/Model/Dummy.Normal.bmp");
 	game.LoadFontFromFile("Res/Font.fnt");
-	game.PushLevel();
 
 	game.PushScene(std::make_shared<GameState::Title>());
 
