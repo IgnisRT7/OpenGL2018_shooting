@@ -1,18 +1,17 @@
 #include "GameEngine.h"
-#include "glm/gtc/matrix_transform.hpp"
-
-#include "Uniform.h"
-#include "GameState.h"
 #include "../Res/Audio/testProject_acf.h"
-#include "../Res/Audio/CueSheet_0.h"
-#include <random>
-
 #include "user/TitleScene.h"
+#include <Windows.h>
 
 int main() {
 
+	int cx, cy;
+	cx = GetSystemMetrics(SM_CXSCREEN);
+	cy = GetSystemMetrics(SM_CYSCREEN);
+
 	GameEngine& game = GameEngine::Instance();
-	if (!game.Init(WINDOW_SIZE_W,WINDOW_SIZE_H, "OpenGL Tutorial")) {
+	if (!game.Init(cx, cy, "OpenGL Tutorial")) {
+		
 		return 1;
 	}
 
@@ -22,6 +21,7 @@ int main() {
 		return 1;
 	}
 
+	//èâä˙ÉäÉ\Å[ÉXÇÃì«Ç›çûÇ›
 	game.LoadTextureFromFile("Res/Model/Dummy.Normal.bmp");
 	game.LoadFontFromFile("Res/Font.fnt");
 
