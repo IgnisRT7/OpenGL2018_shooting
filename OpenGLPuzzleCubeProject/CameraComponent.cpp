@@ -31,6 +31,7 @@ void CameraDebugComponent::Initialize(){
 	forward = direction;
 	right = glm::cross(direction, upLocal);
 	up = glm::cross(forward, right);
+	Update(0);
 }
 
 /**
