@@ -338,7 +338,7 @@ namespace Entity {
 					//見えないエンティティは描画しない
 					continue;
 				}
-				
+
 				for (const Link* itr = activeList[groupId].next; itr != &activeList[groupId]; itr = itr->next) {
 
 					const LinkEntity& e = *static_cast<const LinkEntity*>(itr);
@@ -359,6 +359,7 @@ namespace Entity {
 				}
 			}
 		}
+		meshBuffer->UnBindVAO();
 	}
 
 	/**
@@ -370,30 +371,30 @@ namespace Entity {
 	void Buffer::DrawDepth(const Mesh::BufferPtr& meshBuffer) const {
 
 		meshBuffer->BindVAO();
-		//for (int viewIndex = 0; viewIndex < Uniform::maxViewCount; ++viewIndex) {
-			for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
+		for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
 
-				//カメラから見えない設定の場合は表示させない
-				if (!(visibilityFlags[groupId] )){//& (1 << viewIndex))) {
-					continue;
-				}
+			//カメラから見えない設定の場合は表示させない
+			if (!visibilityFlags[groupId]) {
+				continue;
+			}
 
-				for (const Link* itr = activeList[groupId].next; itr != &activeList[groupId];
-					itr = itr->next) {
-					const LinkEntity& e = *static_cast<const LinkEntity*>(itr);
+			for (const Link* itr = activeList[groupId].next; itr != &activeList[groupId];
+				itr = itr->next) {
+				const LinkEntity& e = *static_cast<const LinkEntity*>(itr);
 
-					//データがあるとき かつ castShadowフラグが有効の時に実行
-					if (e.mesh && e.program && e.castShadow) {
-						for (size_t i = 0; i < sizeof(e.texture) / sizeof(e.texture[0]); ++i) {
-							e.program->BindTexture(GL_TEXTURE0 + i, GL_TEXTURE_2D,
-								e.texture[i]->Id());
-						}
-						ubo->BindBufferRange(e.uboOffset, ubSizePerEntity);
-						e.mesh->Draw(meshBuffer);
+				//データがあるとき かつ castShadowフラグが有効の時に実行
+				if (e.mesh && e.program && e.castShadow) {
+					for (size_t i = 0; i < sizeof(e.texture) / sizeof(e.texture[0]); ++i) {
+						e.program->BindTexture(GL_TEXTURE0 + i, GL_TEXTURE_2D,
+							e.texture[i]->Id());
 					}
+					ubo->BindBufferRange(e.uboOffset, ubSizePerEntity);
+					e.mesh->Draw(meshBuffer);
 				}
-			//}
+			}
+
 		}
+		meshBuffer->UnBindVAO();
 	}
 
 	/**
@@ -405,29 +406,29 @@ namespace Entity {
 	void Buffer::DrawStencil(const Mesh::BufferPtr& meshBuffer, const Shader::ProgramPtr& program)const {
 
 		meshBuffer->BindVAO();
-		for (int viewIndex = 0; viewIndex < Uniform::maxViewCount; ++viewIndex) {
-			for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
 
-				//カメラから見えない設定の場合は表示させない
-				if (!(visibilityFlags[groupId] & (1 << viewIndex))) {
-					continue;
-				}
+		for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
 
-				for (const Link* itr = activeList[groupId].next; itr != &activeList[groupId];
-					itr = itr->next) {
-					const LinkEntity& e = *static_cast<const LinkEntity*>(itr);
+			//カメラから見えない設定の場合は表示させない
+			if (!visibilityFlags[groupId]) {
+				continue;
+			}
 
-					//データがあるとき かつ castStencilフラグが有効の時に実行
-					if (e.mesh && e.texture && e.program && e.castStencil) {
+			for (const Link* itr = activeList[groupId].next; itr != &activeList[groupId];
+				itr = itr->next) {
+				const LinkEntity& e = *static_cast<const LinkEntity*>(itr);
 
-						ubo->BindBufferRange(e.uboOffset, ubSizePerEntity);
-						program->SetVectorParameter(e.StencilColor(), "stencilColor");
-						e.mesh->Draw(meshBuffer);
-					}
+				//データがあるとき かつ castStencilフラグが有効の時に実行
+				if (e.mesh && e.texture && e.program && e.castStencil) {
+
+					ubo->BindBufferRange(e.uboOffset, ubSizePerEntity);
+					program->SetVectorParameter(e.StencilColor(), "stencilColor");
+					e.mesh->Draw(meshBuffer);
 				}
 			}
-		}
 
+		}
+		meshBuffer->UnBindVAO();
 	}
 
 	/**
@@ -470,35 +471,12 @@ namespace Entity {
 		}
 		auto itr = std::find_if(collisionHandlerList.begin(), collisionHandlerList.end(),
 			[&](const CollisionHandlerInfo& e) {
-			return e.groupId[0] == gid0 && e.groupId[1] == gid1; });
-		if (itr == collisionHandlerList.end() ) {
+				return e.groupId[0] == gid0 && e.groupId[1] == gid1; });
+		if (itr == collisionHandlerList.end()) {
 			collisionHandlerList.push_back({ gid0,gid1 });
 		}
 
 	}
-
-	/**
-	*	衝突解決ハンドラを取得する
-	*
-	*	@param gid0	衝突対象のグループID
-	*	@param gid1 衝突対象のグループID
-	*
-	*	@return 衝突解決ハンドラ
-	*
-	const CollisionHandlerType& Buffer::CollisionHandler(int gid0, int gid1) const {
-
-		if (gid0 > gid1) {
-			std::swap(gid0, gid1);
-		}
-		auto itr = std::find_if(collisionHandlerList.begin(), collisionHandlerList.end(),
-			[&](const CollisionHandlerInfo& e) {
-			return e.groupId[0] == gid0 && e.groupId[1] == gid1; });
-		if (itr == collisionHandlerList.end()) {
-			static const CollisionHandlerType dummy;
-			return dummy;
-		}
-		return itr->handler;
-	}*/
 
 	/**
 	*	全ての衝突解決ハンドラを削除する
