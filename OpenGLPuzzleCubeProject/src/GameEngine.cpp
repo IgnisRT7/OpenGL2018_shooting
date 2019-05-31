@@ -711,11 +711,14 @@ void GameEngine::UpdateFps(){
 */
 void GameEngine::RenderShadow() const {
 
+	glBindFramebuffer(GL_FRAMEBUFFER, offDepth->GetFramebuffer());
+	glClearDepth(1);
+	glClear(GL_DEPTH_BUFFER_BIT);
+
 	if (!isEnableShadow) {
 		return;
 	}
 
-	glBindFramebuffer(GL_FRAMEBUFFER, offDepth->GetFramebuffer());
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_CULL_FACE);
@@ -724,8 +727,6 @@ void GameEngine::RenderShadow() const {
 	glDisable(GL_BLEND);
 	glViewport(0, 0, offDepth->Width(), offDepth->Height());
 	glScissor(0, 0, offDepth->Width(), offDepth->Height());
-	glClearDepth(1);
-	glClear(GL_DEPTH_BUFFER_BIT);
 
 	const Shader::ProgramPtr& progDepth = shaderMap.find("RenderDepth")->second;
 	progDepth->UseProgram();
@@ -739,18 +740,17 @@ void GameEngine::RenderShadow() const {
 */
 void GameEngine::RenderStencil() const {
 
+	glBindFramebuffer(GL_FRAMEBUFFER, offStencil->GetFramebuffer());
+	glClearColor(0, 0, 0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	if (!isDrawOutline) {
 		//ステンシルバッファは現状アウトラインのみなので描画しない場合は切っておく
 		return;
 	}
 
-	glBindFramebuffer(GL_FRAMEBUFFER, offStencil->GetFramebuffer());
-
 	glViewport(0, 0, offStencil->Width(), offStencil->Height());
 	glScissor(0, 0, offStencil->Width(), offStencil->Height());
-
-	glClearColor(0, 0, 0, 0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	const Shader::ProgramPtr& progStencil = shaderMap.find("RenderStencil")->second;
 
