@@ -84,6 +84,7 @@ void SceneStack::Push(ScenePtr scene) {
 	}
 
 	//プッシュするだけなのでリソースは残しておく
+	game.StopAllAudio();
 	game.RemoveAllEntity();
 	game.PushLevel();
 
@@ -109,7 +110,8 @@ void SceneStack::Pop() {
 	//起動中のシーンの停止と終了処理
 	Current().Stop();
 	Current().Finalize();
-
+	
+	game.StopAllAudio();
 	game.RemoveAllEntity();
 	game.ClearCollisionHandlerList();
 	game.PopLevel();
@@ -145,6 +147,7 @@ void SceneStack::Replace(ScenePtr scene) {
 
 		
 		GameEngine& game = GameEngine::Instance();
+		game.StopAllAudio();
 		game.RemoveAllEntity();
 		game.ClearLevel();
 		
