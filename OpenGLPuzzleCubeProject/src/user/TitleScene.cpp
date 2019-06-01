@@ -98,9 +98,9 @@ namespace GameState {
 		const float offset = timer == 0 ? 0 : (3.0f - timer) * (3.0f - timer) * 3.0f;
 		game.FontColor(glm::vec4(1, 1, 1, 1));
 		game.FontScale(glm::vec2(4));
-		game.AddString(glm::vec2(-0.5 + offset, 0.3), "STAR FIGHTER");
+		game.AddString(glm::vec2(offset, 0.15), "STAR FIGHTER", true);
 		game.FontScale(glm::vec2(1));
-		game.AddString(glm::vec2(-0.05f + offset, 0), "The ultimate in Manned-Fighter");
+		game.AddString(glm::vec2(offset, 0), "The ultimate in Manned-Fighter");
 
 		static float tmpTimer = 0;
 		tmpTimer += delta;
@@ -114,7 +114,7 @@ namespace GameState {
 
 			game.FontColor(glm::vec4(1));
 			game.FontScale(glm::vec2(3.0f));
-			game.AddString(glm::vec2(-0.3, -0.5), "<            >");
+			game.AddString(glm::vec2(0, -0.5), "<            >",true);
 		}
 
 		auto gamepad = game.GetGamePad();

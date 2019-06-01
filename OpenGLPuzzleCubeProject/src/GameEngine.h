@@ -59,8 +59,8 @@ public:
 	Entity::Entity* FindEntityData() { return entityBuffer->FindEntityData<T>(); }
 
 	//フォント関連の処理
-	bool AddString(const glm::vec2& pos, const char* str) {
-		return fontRenderer.AddString(pos, str);
+	bool AddString(const glm::vec2& pos, const char* str, bool isCenter = false) {
+		return fontRenderer.AddString(pos, str, isCenter);
 	}
 	void FontScale(const glm::vec2& scale) { fontRenderer.Scale(scale); }
 	void FontColor(const glm::vec4& color) { fontRenderer.Color(color); }
