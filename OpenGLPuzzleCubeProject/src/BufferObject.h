@@ -40,6 +40,7 @@ public:
 	void VertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, size_t offset);
 	void Bind() const;
 	void UnBind() const;
+	GLuint Id() const { return id; }
 
 private:
 
