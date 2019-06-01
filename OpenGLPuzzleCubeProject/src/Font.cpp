@@ -192,10 +192,21 @@ namespace Font {
 	*	@retval true	’Ç‰Á¬Œ÷
 	*	@retval false	’Ç‰ÁŽ¸”s
 	*/
-	bool Renderer::AddString(const glm::vec2& position, const char* str) {
+	bool Renderer::AddString(const glm::vec2& position, const char* str, bool isCenter) {
 
 		Vertex* p = pVBO + vboSize;
 		glm::vec2 pos = position;
+
+		//•¶Žš—ñ‚Ì’†SˆÊ’u‚ð“Á’è‚·‚é
+		float stringSizeX = 0;
+		glm::vec2 temp = position;
+		if (isCenter) {
+			for (const char* itr = str; *itr; ++itr) {
+
+				const FontInfo& font = fontList[*itr];
+				stringSizeX += font.xadvance * reciprocalScreenSize.x * scale.x;
+			}
+		}
 
 		for (const char* itr = str; *itr; ++itr) {
 
@@ -210,7 +221,8 @@ namespace Font {
 			if (font.id >= 0 && font.size.x && font.size.y) {
 
 				const glm::vec2 size = font.size * reciprocalScreenSize * scale;
-				const glm::vec2 offsetedPos = pos + font.offset * reciprocalScreenSize * scale;
+				glm::vec2 offsetedPos = pos + font.offset * reciprocalScreenSize * scale;
+				offsetedPos.x -= stringSizeX * 0.5f;
 				p[0].position = offsetedPos + glm::vec2(0, -size.y);
 				p[0].uv = font.uv[0];
 				p[0].color = color;

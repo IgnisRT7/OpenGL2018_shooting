@@ -59,7 +59,7 @@ namespace Font {
 		glm::vec4 Color() const;
 
 		void MapBuffer();
-		bool AddString(const glm::vec2& position, const char* str);
+		bool AddString(const glm::vec2& position, const char* str,bool isCenter = false);
 		void UnmapBuffer();
 		void Draw() const;
 
@@ -67,7 +67,8 @@ namespace Font {
 
 		BufferObject vbo;				
 		BufferObject ibo;				
-		VertexArrayObject vao;			
+		VertexArrayObject vao;		
+
 		GLsizei vboCapacity = 0;		///< VBOに格納可能な最大長点数
 		std::vector<FontInfo> fontList;	///< フォント位置情報のリスト
 		std::string texFilename;		///< フォントテクスチャファイル名
