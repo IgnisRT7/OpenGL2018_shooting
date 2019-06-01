@@ -712,11 +712,11 @@ void GameEngine::UpdateFps(){
 void GameEngine::RenderShadow() const {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, offDepth->GetFramebuffer());
-	glClearDepth(1);
+	glClearDepth(0);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	if (!isEnableShadow) {
-		return;
+		//return;
 	}
 
 	glEnable(GL_DEPTH_TEST);

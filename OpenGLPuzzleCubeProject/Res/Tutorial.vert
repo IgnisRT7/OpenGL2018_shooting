@@ -17,12 +17,12 @@ layout(location=6) out vec3 outDepthCoord;
 */
 layout(std140) uniform VertexData
 {
-  mat4 matMVP[4];
-  mat4 matDepthMVP;
-  mat4 matModel;
-  mat4 matNormal;
-  vec4 color;
-  mat4x3 _dummy;	
+	mat4 matMVP[4];
+	mat4 matDepthMVP;
+	mat4 matModel;
+	mat4 matNormal;
+	vec4 color;
+	mat4x3 dummy;
 } vertexData;
 
 uniform int viewIndex;

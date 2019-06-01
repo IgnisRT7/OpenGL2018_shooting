@@ -87,7 +87,7 @@ void main() {
   fragColor.rgb += specularColor * normFactor * shadow;
 
   //fragColor.rgb = lightColor;
-
+  fragColor.rgb = vec3(shadow);
 
   //fragColor.rgb = normalize(normal) * 0.5 + 0.5;
 
