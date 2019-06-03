@@ -109,7 +109,7 @@ namespace GameState {
 		GameEngine::ShadowParameter shadowParam;
 		shadowParam.lightPos = glm::vec3(20, 50, 50);
 		shadowParam.lightDir = glm::normalize(glm::vec3(-25, -50, 25));
-		shadowParam.lightUp = glm::vec3(0, 0, 1);
+		shadowParam.lightUp = glm::vec3(0, 1, 0);
 		shadowParam.near = 10;
 		shadowParam.far = 200;
 		shadowParam.range = glm::vec2(500, 500);
