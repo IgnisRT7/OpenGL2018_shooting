@@ -42,6 +42,10 @@ namespace GameState {
 
 	void Player::Update(float delta) {
 
+		if (remainingPlayer < 0) {
+			return;
+		}
+
 		timer += delta;
 
 		//点滅処理
@@ -131,7 +135,7 @@ namespace GameState {
 
 			if (--remainingPlayer < 0) {
 
-				//game.RemoveEntity(entity);
+				entity->CastShadow(false);  
 				entity->Color(glm::vec4(0, 0, 0, 0));
 				return;
 			}
@@ -146,24 +150,25 @@ namespace GameState {
 	*/
 	void Player::CollisionEnter(Entity::Entity& entity) {
 
-		if (auto i = entity.CastTo<Item>()) {
-			//アイテムの効果を受ける
+		if (remainingPlayer >= 0) {
 
-			if (i->ItemType() == 1) {
-				moveSpeed = glm::min(10.0f, moveSpeed + 2);
+			if (auto i = entity.CastTo<Item>()) {
+				//アイテムの効果を受ける
+
+				if (i->ItemType() == 1) {
+					moveSpeed = glm::min(10.0f, moveSpeed + 2);
+				}
+				else {
+
+					multiShotNum = glm::min(5, multiShotNum + 1);
+				}
 			}
-			else {
+			if (auto e = entity.CastTo<Toroid>()) {
+				//敵にダメージを与える
 
-				multiShotNum = glm::min(5, multiShotNum + 1);
-
+				e->Damage(1);
+				GameEngine::Instance().PlayAudio(1, CRI_CUESHEET_0_EXPLOSIVE);
 			}
-		}
-		if (auto e = entity.CastTo<Toroid>()) {
-			//敵にダメージを与える
-
-			//e->Damage(1);
-			Damage(1);
-			GameEngine::Instance().PlayAudio(1, CRI_CUESHEET_0_EXPLOSIVE);
 		}
 	}
 
