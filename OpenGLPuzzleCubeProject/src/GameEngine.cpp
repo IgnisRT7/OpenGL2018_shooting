@@ -712,7 +712,7 @@ void GameEngine::UpdateFps(){
 void GameEngine::RenderShadow() const {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, offDepth->GetFramebuffer());
-	glClearDepth(0);
+	glClearDepth(1);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	if (!isEnableShadow) {
@@ -865,7 +865,7 @@ void GameEngine::RenderFrameBuffer() const{
 	uboPostEffect->BUfferSubData(&postEffect);
 	progColorFilter->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offscreen->GetTexture());
 	progColorFilter->BindTexture(GL_TEXTURE1, GL_TEXTURE_2D, offBloom[0]->GetTexture());
-	progColorFilter->BindTexture(GL_TEXTURE2, GL_TEXTURE_2D, offStencil->GetTexture());
+	progColorFilter->BindTexture(GL_TEXTURE2, GL_TEXTURE_2D, offDepth->GetTexture());
 
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
