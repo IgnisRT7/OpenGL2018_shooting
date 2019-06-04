@@ -8,7 +8,7 @@
 #include "Audio.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
-#include "../DebugLog.h"
+#include "DebugLog.h"
 
 ///	最終出力用の頂点データ型
 struct Vertex {

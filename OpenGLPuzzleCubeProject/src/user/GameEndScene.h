@@ -4,7 +4,7 @@
 #pragma once
 
 #include "TitleScene.h"
-#include "../../Scene.h"
+#include "../Scene.h"
 
 namespace GameState{
 

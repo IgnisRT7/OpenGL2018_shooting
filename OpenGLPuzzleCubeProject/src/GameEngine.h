@@ -19,7 +19,7 @@
 #include "GamePad.h"
 #include "Font.h"
 
-#include "../Scene.h"
+#include "Scene.h"
 
 #define COMPONENT_TYPEPTR(type) std::shared_ptr<type>			///シーンコンポーネントの型用マクロ
 

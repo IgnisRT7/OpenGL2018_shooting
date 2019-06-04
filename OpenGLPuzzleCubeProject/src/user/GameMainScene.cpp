@@ -90,6 +90,8 @@ namespace GameState {
 
 		GameEngine& game = GameEngine::Instance();
 
+		game.UserVariable("score") = 0;
+
 		///衝突判定用ハンドラの定義
 		game.CollisionHandler(EntityGroupId_PlayerShot, EntityGroupId_Enemy);
 		game.CollisionHandler(EntityGroupId_EnemyShot, EntityGroupId_Player);
