@@ -116,6 +116,10 @@ namespace GameState {
 	*/
 	void Player::Damage(float p) {
 
+		if (remainingPlayer < 0) {
+			return;
+		}
+
 		if (damageTimer <= 0) {
 
 			GameEngine& game = GameEngine::Instance();

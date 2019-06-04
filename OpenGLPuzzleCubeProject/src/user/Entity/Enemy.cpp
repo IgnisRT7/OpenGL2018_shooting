@@ -140,7 +140,7 @@ namespace GameState {
 	void Toroid::CollisionEnter(Entity::Entity& e) {
 		e.EntityData()->Damage(1);
 
-		GameEngine::Instance().PlayAudio(1, CRI_CUESHEET_0_EXPLOSIVE);
+		//GameEngine::Instance().PlayAudio(1, CRI_CUESHEET_0_EXPLOSIVE);
 	}
 
 	/// 敵スポナーのクラス定義
