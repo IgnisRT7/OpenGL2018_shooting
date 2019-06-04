@@ -4,7 +4,7 @@
 #pragma once
 #include "../Entity.h"
 #include "../user/Entity/Player.h"
-#include "../../Scene.h"
+#include "../Scene.h"
 #include <memory>
 
 namespace GameState {
