@@ -45,6 +45,8 @@ namespace GameState{
 
 		game.MainCamera(std::make_shared<CameraComponent>());
 		game.MainCamera()->LookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
+
+		game.PlayAudio(0, CRI_CUESHEET_0_GAMEOVER);
 	}
 
 	/**
@@ -87,7 +89,7 @@ namespace GameState{
 				return;
 			}
 		}
-		else if (game.GetGamePad().buttonDown & GamePad::START || timer == 0) {
+		else if (game.GetGamePad().buttonDown & GamePad::START) {
 			game.PlayAudio(1, CRI_CUESHEET_0_SELECT);
 			timer = 2;
 		}
