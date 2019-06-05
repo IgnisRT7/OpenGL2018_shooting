@@ -36,16 +36,18 @@ namespace GameState {
 	};
 
 	/// 敵スポナー
-	class EnemyLaunchType : public Entity::EntityDataBase {
+	class EnemySpawner : public Entity::EntityDataBase {
 	public:
 
+		EnemySpawner() {}
+		EnemySpawner(int max, float interval, int type);
 		void Initialize() override {}
 
 		void Update(float delta) override;
 
 		float spawnInterval = 0.5;	/// スポーンする間隔
 		float spawnMax = 5;			/// スポーン数
-		float time;					/// 経過時間
+		float time = 0;					/// 経過時間
 		int launchIndex = -1;		/// 出撃している敵の数
 		int enemyType = -1;			/// 出撃する敵の種類
 	};

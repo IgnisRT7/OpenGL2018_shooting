@@ -91,6 +91,7 @@ namespace GameState {
 
 		//画面外判定処理
 		if (std::abs(pos.x) > 200.0f || std::abs(pos.z) > 200.0f) {
+			//std::cout << "Toroid is out of range!" << std::endl;
 			GameEngine::Instance().RemoveEntity(entity);
 			return;
 		}
@@ -146,11 +147,23 @@ namespace GameState {
 	/// 敵スポナーのクラス定義
 
 	/**
+	*	コンストラクタ
+	*
+	*	@param max	スポーン数
+	*	@param interval	出撃間隔
+	*	@param type	敵のタイプ
+	*/
+	EnemySpawner::EnemySpawner(int max, float interval, int type) :
+		spawnMax(max), spawnInterval(interval), enemyType(type) {
+
+	}
+
+	/**
 	*	敵スポナーの更新処理
 	*
 	*	@param delta	経過時間
 	*/
-	void EnemyLaunchType::Update(float delta) {
+	void EnemySpawner::Update(float delta) {
 
 		GameEngine& game = GameEngine::Instance();
 
