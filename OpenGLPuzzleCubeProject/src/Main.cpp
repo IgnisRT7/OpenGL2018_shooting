@@ -7,7 +7,7 @@ int main() {
 
 	int cx, cy;
 	cx = GetSystemMetrics(SM_CXSCREEN);
-	cy = GetSystemMetrics(SM_CYSCREEN) * 1.3f;
+	cy = GetSystemMetrics(SM_CYSCREEN) ;
 	float aspectRatio = 800.0f / 600.0f;
 
 	GameEngine& game = GameEngine::Instance();

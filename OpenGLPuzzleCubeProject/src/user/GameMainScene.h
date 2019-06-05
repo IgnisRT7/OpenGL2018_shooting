@@ -5,6 +5,7 @@
 #include "../Entity.h"
 #include "Entity/Player.h"
 #include "../Scene.h"
+#include "EnemyLaunchController.h"
 
 namespace GameState {
 
@@ -65,6 +66,7 @@ namespace GameState {
 		std::shared_ptr<Player> playerData;
 		float cameraChangeTimer = 3.0f;
 
+		EnemyLaunchControllerPtr launchController;
 	};
 
 }

@@ -375,6 +375,7 @@ Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const c
 
 //	std::cout << "AddEntiy : name = " << meshName << std::endl;
 	
+
 	decltype(shaderMap)::const_iterator itr = shaderMap.end();
 	if (shader) {
 		itr = shaderMap.find(shader);
@@ -388,12 +389,14 @@ Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const c
 
 	const Mesh::MeshPtr& mesh = meshBuffer->GetMesh(meshName);
 	TexturePtr tex[2];
-	tex[0] = GetTexture(texName);
-	if (normalName) {
-		tex[1] = GetTexture(normalName);
-	}
-	else {
-		tex[1] = GetTexture("Res/Model/Dummy.Normal.bmp");
+	if (meshName) {
+		tex[0] = GetTexture(texName);
+		if (normalName) {
+			tex[1] = GetTexture(normalName);
+		}
+		else {
+			tex[1] = GetTexture("Res/Model/Dummy.Normal.bmp");
+		}
 	}
 	return entityBuffer->AddEntity(groupId, pos, mesh, tex, itr->second, eData);
 }

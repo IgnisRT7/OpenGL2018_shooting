@@ -605,6 +605,11 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 	*/
 	const MeshPtr& Buffer::GetMesh(const char* name) const {
 
+		static const MeshPtr dummy;
+		if(!name){
+			return dummy;
+		}
+
 		for (const auto& e : levelStack) {
 			auto itr = e.meshList.find(name);
 			if (itr != e.meshList.end()) {
@@ -613,7 +618,6 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 		}
 
 		//ƒf[ƒ^‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½
-		static const MeshPtr dummy;
 		return dummy;
 	}
 

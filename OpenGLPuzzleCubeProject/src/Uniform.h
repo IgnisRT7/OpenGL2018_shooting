@@ -9,7 +9,7 @@ namespace Uniform {
 	static const int maxViewCount = 4;
 
 	/// 頂点データのパラメータ型	
-	struct VertexData {
+	struct alignas(256) VertexData {
 		glm::mat4 matMVP[maxViewCount];
 		glm::mat4 matDepthMVP;
 		glm::mat4 matModel;
@@ -31,7 +31,7 @@ namespace Uniform {
 	/**
 	*	ライティングパラメータ
 	*/
-	struct LightData {
+	struct alignas(256) LightData {
 		glm::vec4 eyePos[maxViewCount];
 		glm::vec4 ambientColor;	///< 環境光
 		PointLight light[maxLightCount];	///< ライトのリスト
@@ -40,7 +40,7 @@ namespace Uniform {
 	/**
 	*	ポストエフェクトデータ
 	*/
-	struct PostEffectData {
+	struct alignas(256) PostEffectData {
 
 		glm::mat4x4 matColor;	///< 色変換行列
 		float luminanceScale;	///< 輝度増減係数

@@ -110,7 +110,7 @@ namespace GameState {
 
 		playerData = std::make_shared<Player>();
 
-		game.MainCamera(std::make_shared<CameraComponent>());
+		game.MainCamera(std::dynamic_pointer_cast<CameraComponent>(std::make_shared<CameraDebugComponent>()));
 		game.MainCamera()->LookAt(glm::vec3(0, 30, 0), glm::vec3(0, 0, 10));
 
 		///シャドウの設定
@@ -195,6 +195,8 @@ namespace GameState {
 						"Landscape01", "Res/Model/BG02.Diffuse.dds", "Res/Model/BG02.Normal.bmp", std::make_shared<Landscape>());
 				}
 			}
+			launchController = std::make_shared<EnemyLaunchController>();
+			launchController->Init(stageNo);
 
 			break;
 		}
@@ -268,8 +270,12 @@ namespace GameState {
 
 		stageTimer -= delta;
 
+		if (launchController) {
+			launchController->Update(delta);
+		}
+
 		//スポーン座標範囲
-		std::uniform_int_distribution<> distributerX(-12, 12);
+		/*std::uniform_int_distribution<> distributerX(-12, 12);
 		std::uniform_int_distribution<> distributerZ(40, 44);
 
 		interval -= delta;
@@ -283,13 +289,13 @@ namespace GameState {
 			const glm::vec3 pos(distributerX(game.Rand()), 0, distributerZ(game.Rand()));
 
 			if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, pos,
-				"Res/Model/Toroid.fbx", "Res/Model/Player.dds", std::make_shared<EnemyLaunchType>())) {
+				"Res/Model/Toroid.fbx", "Res/Model/Player.dds", std::make_shared<EnemySpawner>())) {
 
 				p->Collision(collisionDataList[EntityGroupId_Others]);
 			}
 
 			interval = 5;
-		}
+		}*/
 
 		DrawScreenInfo();
 
