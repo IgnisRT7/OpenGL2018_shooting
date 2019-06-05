@@ -16,6 +16,9 @@ namespace GameState {
 		void Initialize() override;
 
 		void Update(float delta) override;
+	private:
+
+		float timer = 0;
 	};
 
 	///”wŒi‚ÌXV(‰ñ“])
