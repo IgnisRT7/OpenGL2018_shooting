@@ -181,7 +181,7 @@ namespace GameState {
 		case 1: {
 			game.PlayAudio(0, CRI_CUESHEET_0_MAINSCENE);
 
-			stageTimer = 3;
+			stageTimer = 300;
 
 			game.KeyValue(0.16f);
 
