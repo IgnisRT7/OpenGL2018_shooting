@@ -19,7 +19,13 @@ namespace GameState {
 	}
 
 	void Landscape::Update(float delta) {
+
+		timer += delta;
+
 		entity->Position(entity->Position() + glm::vec3(0, 0, -10.0f * delta));
+		//if (timer > 4) {
+		//	entity->Position(entity->Position() + glm::vec3(0, 0, 40.0f));
+		//}
 	}
 
 	/// 背景(ステージ3用)
@@ -40,7 +46,7 @@ namespace GameState {
 		entity->Rotation(rotSpace);
 	}
 
-
+	
 	///メインゲーム画面のクラス定義
 
 	/**
@@ -149,7 +155,7 @@ namespace GameState {
 			snprintf(str, 16, "P :%02.0f", glm::max(0.0, static_cast<double>(playerData->RemainingPlayer())));
 			game.AddString(glm::vec2(-0.95f, 0.8f), str);
 
-			game.FontScale(glm::vec2(1));
+			game.FontScale(glm::vec2(2));
 			snprintf(str, 16, "P :%02.0f", game.FPS());
 			game.AddString(glm::vec2(-0.95f, -0.85f), str);
 		}
