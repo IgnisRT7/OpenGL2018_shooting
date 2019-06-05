@@ -10,12 +10,18 @@
 
 EnemyLaunchType stage1EnemyLaunchList[] = {
 	/// count,interval,type,time,position
-	{ 5,	1,	1,	2,	{ -100, 0, 199 } },
-	{ 5,	1,	1,	2,	{ 100 , 0, 199 } },
-	{ 5,	1,	1,	5,	{ -100, 0, 199 } },
-	{ 5,	1,	1,	5,	{ 100 , 0, 199 } },
-	{ 5,	1,	1,	7,	{ -100, 0, 199 } },
-	{ 5,	1,	1,	7,	{ 100 , 0, 199 } },
+	{ 5,	1,	1,	2,	{ -10, 0, 40 } },
+	{ 5,	1,	1,	2,	{ 10 , 0, 40 } },
+	{ 3,	1,	2,	5,	{ -10, 0, 40 } },
+	{ 3,	1,	2,	5,	{ 10 , 0, 40 } },
+	{ 5,	1,	1,	7,	{ -10, 0, 40 } },
+	{ 5,	1,	1,	7,	{ 10 , 0, 40 } },
+	{ 1,	1,	1,	10,	{ 0	 , 0, 40}},
+
+};
+
+int stage1EnemyBulletList[]{
+	-1,-1,1,1,-1,-1,5,
 };
 
 /**
@@ -54,8 +60,11 @@ void EnemyLaunchController::Update(float deltaTime){
 		if (itr->launchStartTimer < timer) {
 			//oŒ‚‰Â”\‚Èó‘Ô‚É‚È‚Á‚½
 
+
 			auto e = std::make_shared<GameState::EnemySpawner>(
-				itr->launchCount,itr->launchInterval,itr->enemyType);
+				itr->launchCount,itr->launchInterval,itr->enemyType,stage1EnemyBulletList[seekIndex]);
+
+
 			GameEngine::Instance().AddEntity(
 				GameState::EntityGroupId_Others, itr->startPostion, nullptr, nullptr, e);
 			std::cout << "EnemySpawner is Launched index: " << seekIndex << " time: "<<timer << std::endl;

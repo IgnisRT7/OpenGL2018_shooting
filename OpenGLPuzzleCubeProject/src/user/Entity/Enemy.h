@@ -8,6 +8,7 @@
 namespace GameState {
 
 	class EnemyBulletManager;
+	using EnemyBulletManagerPtr = std::shared_ptr<EnemyBulletManager>;
 
 	/// “G
 	class Toroid : public Entity::EntityDataBase {
@@ -17,12 +18,11 @@ namespace GameState {
 			enemyType(typeID), isItemDrop(itemDrop) {}
 
 		void Initialize() override;
-
 		void Update(float delta) override;
-
 		void Damage(float) override;
-
 		void CollisionEnter(Entity::Entity& e) override;
+
+		void BulletManager(EnemyBulletManagerPtr b) { bulletManager = b; }
 
 	private:
 
@@ -40,16 +40,17 @@ namespace GameState {
 	public:
 
 		EnemySpawner() {}
-		EnemySpawner(int max, float interval, int type);
+		EnemySpawner(int max, float interval, int enemyType,int bulletType);
 		void Initialize() override {}
 
 		void Update(float delta) override;
 
-		float spawnInterval = 0.5;	/// ƒXƒ|[ƒ“‚·‚éŠÔŠu
-		float spawnMax = 5;			/// ƒXƒ|[ƒ“”
-		float time = 0;					/// Œo‰ßŠÔ
-		int launchIndex = -1;		/// oŒ‚‚µ‚Ä‚¢‚é“G‚Ì”
-		int enemyType = -1;			/// oŒ‚‚·‚é“G‚Ìí—Ş
+		float spawnInterval = 0.5;	///< ƒXƒ|[ƒ“‚·‚éŠÔŠu
+		float spawnMax = 5;			///< ƒXƒ|[ƒ“”
+		float time = 0;				///< Œo‰ßŠÔ
+		int launchIndex = -1;		///< oŒ‚‚µ‚Ä‚¢‚é“G‚Ì”
+		int enemyType = -1;			///< oŒ‚‚·‚é“G‚Ìí—Ş
+		int bulletType = -1;		///< ’e‚Ìí—Ş 
 	};
 
 	///“G‚Ì’e‚ÌŠÇ—ƒVƒXƒeƒ€
@@ -58,10 +59,9 @@ namespace GameState {
 		
 		EnemyBulletManager(Entity::Entity& p, Entity::Entity* t = nullptr);
 
-		void Update(float delta);
+		virtual void Update(float delta);
 
-
-	private:
+	protected:
 		float timer = 0;
 		float shotInterval = 2;		/// ’e‚Ì”­ËŠÔŠu
 		
@@ -69,6 +69,12 @@ namespace GameState {
 		Entity::Entity* target;		/// ’e‚Ì’Ç”ö‘ÎÛ
 	};
 
+	class EnemyFiveWayBullet : public EnemyBulletManager {
+	public:
+		EnemyFiveWayBullet(Entity::Entity& p, Entity::Entity* t = nullptr) :EnemyBulletManager(p, t) {}
+
+		void Update(float delta) override;
+	};
 
 
 }

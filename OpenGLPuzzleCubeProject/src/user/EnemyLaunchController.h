@@ -22,6 +22,12 @@ struct EnemyLaunchType {
 	}
 };
 
+struct EnemyBulletType {
+	
+	int index;	///< 発射する敵のインデック番号
+	int bulletType; ///< 弾のタイプ
+};
+
 /**
 *	1ステージ分の敵の出撃管理クラス
 */

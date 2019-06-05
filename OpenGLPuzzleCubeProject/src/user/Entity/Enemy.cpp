@@ -29,7 +29,6 @@ namespace GameState {
 		entity->StencilColor(glm::vec4(1, 0, 1, 1));
 
 		entity->Collision(collisionDataList[EntityGroupId_Enemy]);
-		bulletManager = std::make_shared<EnemyBulletManager>(*entity);
 
 		return;
 	}
@@ -151,10 +150,11 @@ namespace GameState {
 	*
 	*	@param max	スポーン数
 	*	@param interval	出撃間隔
-	*	@param type	敵のタイプ
+	*	@param eType	敵のタイプ
+	*	@param bType	弾のタイプ
 	*/
-	EnemySpawner::EnemySpawner(int max, float interval, int type) :
-		spawnMax(max), spawnInterval(interval), enemyType(type) {
+	EnemySpawner::EnemySpawner(int max, float interval, int eType,int bType) :
+		spawnMax(max), spawnInterval(interval), enemyType(eType),bulletType(bType) {
 
 	}
 
@@ -181,8 +181,23 @@ namespace GameState {
 
 			bool isItemDrop = spawnMax == (launchIndex + 2);	///最後に出撃する敵のみアイテムドロップする
 
+			auto& t = std::make_shared<Toroid>(0, isItemDrop);
 			Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, entity->Position(),
-				"Toroid", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", std::make_shared<Toroid>(0, isItemDrop));
+				"Toroid", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", t);
+
+			if (bulletType != -1) {
+
+				switch (bulletType) {
+				case 1:
+					t->BulletManager(std::make_shared<EnemyBulletManager>(*p, nullptr));
+					break;
+				case 5:
+					t->BulletManager(std::make_shared<EnemyFiveWayBullet>(*p, t));
+				default:
+					break;
+				}
+			}
+
 
 			p->Collision(collisionDataList[EntityGroupId_Enemy]);
 
@@ -208,6 +223,8 @@ namespace GameState {
 				"Sphere", "Res/Model/sphere.dds", std::make_shared<Bullet>(
 					parent.Velocity(), target))) {
 
+				
+
 				p->CastStencil(true);
 				p->StencilColor(glm::vec4(1, 0, 1, 1));
 				p->Scale(glm::vec3(0.5f));
@@ -215,6 +232,44 @@ namespace GameState {
 
 			}
 		}
+	}
+
+	/**
+	*	更新処理
+	*/
+	void EnemyFiveWayBullet::Update(float delta){
+
+		GameEngine& game = GameEngine::Instance();
+
+		timer -= delta;
+
+		if (timer < 0) {
+			//game.PlayAudio(1, CRI_CUESHEET_0_ENEMYSHOT);
+
+			glm::vec3 centerDir = target ? target->Position() - parent.Position() : glm::vec3(0, 0, -1);
+			centerDir = glm::normalize(centerDir);
+
+			const float radInterval = 10.f;
+
+			for(int i =0; i < 5;i++){
+
+				glm::quat rot = glm::angleAxis(radInterval * (i -2), glm::vec3(0, 1, 0));
+				glm::vec3 vel = rot * centerDir;
+				vel *= 10;
+
+				if (Entity::Entity* p = game.AddEntity(EntityGroupId_EnemyShot, parent.Position(),
+					"Sphere", "Res/Model/sphere.dds", std::make_shared<Bullet>(
+						vel, nullptr))) {
+
+					p->CastStencil(true);
+					p->StencilColor(glm::vec4(1, 0, 1, 1));
+					p->Color(glm::vec4(1, 0, 0, 1));
+					p->Scale(glm::vec3(0.5f));
+					timer = shotInterval;
+				}
+			}
+		}
+
 	}
 
 }
