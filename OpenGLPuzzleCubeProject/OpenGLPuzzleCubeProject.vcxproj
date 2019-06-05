@@ -166,12 +166,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DebugLog.h" />
-    <ClInclude Include="DebugLog.cpp" />
-    <ClInclude Include="Scene.h" />
     <ClInclude Include="src\Audio.h" />
     <ClInclude Include="src\BufferObject.h" />
     <ClInclude Include="src\Component\CameraComponent.h" />
+    <ClInclude Include="src\DebugLog.h" />
     <ClInclude Include="src\Entity.h" />
     <ClInclude Include="src\Font.h" />
     <ClInclude Include="src\GameEngine.h" />
@@ -180,6 +178,7 @@
     <ClInclude Include="src\GLFWEW.h" />
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\OffscreenBuffer.h" />
+    <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\Uniform.h" />
@@ -193,12 +192,13 @@
     <ClInclude Include="src\user\GameMainScene.h" />
     <ClInclude Include="src\user\ModelLoadTestscene.h" />
     <ClInclude Include="src\user\TitleScene.h" />
+    <ClInclude Include="StageLoader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CameraComponent.cpp" />
-    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="src\Audio.cpp" />
     <ClCompile Include="src\BufferObject.cpp" />
+    <ClCompile Include="src\Component\CameraComponent.cpp" />
+    <ClCompile Include="src\DebugLog.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\Font.cpp" />
     <ClCompile Include="src\GameEngine.cpp" />
@@ -206,6 +206,7 @@
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\OffscreenBuffer.cpp" />
+    <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\UniformBuffer.cpp" />
@@ -217,6 +218,7 @@
     <ClCompile Include="src\user\GameEndScene.cpp" />
     <ClCompile Include="src\user\GameMainScene.cpp" />
     <ClCompile Include="src\user\ModelLoadTestScene.cpp" />
+    <ClCompile Include="src\user\StageLoader.cpp" />
     <ClCompile Include="src\user\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>

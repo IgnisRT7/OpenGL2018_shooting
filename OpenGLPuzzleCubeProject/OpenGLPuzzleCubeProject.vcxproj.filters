@@ -80,15 +80,6 @@
     <ClInclude Include="src\user\Entity\Effect.h">
       <Filter>src\User\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="DebugLog.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugLog.cpp">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="src\Component\CameraComponent.h">
       <Filter>src\Engine\Component</Filter>
     </ClInclude>
@@ -106,6 +97,15 @@
     </ClInclude>
     <ClInclude Include="src\GameState.h">
       <Filter>src\User</Filter>
+    </ClInclude>
+    <ClInclude Include="StageLoader.h">
+      <Filter>src\User</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DebugLog.h">
+      <Filter>src\Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -157,12 +157,6 @@
     <ClCompile Include="src\user\Entity\Effect.cpp">
       <Filter>src\User\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>src\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="CameraComponent.cpp">
-      <Filter>src\Engine\Component</Filter>
-    </ClCompile>
     <ClCompile Include="src\user\GameEndScene.cpp">
       <Filter>src\User\Scene</Filter>
     </ClCompile>
@@ -177,6 +171,18 @@
     </ClCompile>
     <ClCompile Include="src\Main.cpp">
       <Filter>src\User</Filter>
+    </ClCompile>
+    <ClCompile Include="src\user\StageLoader.cpp">
+      <Filter>src\User</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene.cpp">
+      <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DebugLog.cpp">
+      <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Component\CameraComponent.cpp">
+      <Filter>src\Engine\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

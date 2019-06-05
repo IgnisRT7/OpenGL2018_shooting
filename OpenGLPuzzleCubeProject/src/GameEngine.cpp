@@ -716,7 +716,7 @@ void GameEngine::RenderShadow() const {
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	if (!isEnableShadow) {
-		//return;
+		return;
 	}
 
 	glEnable(GL_DEPTH_TEST);

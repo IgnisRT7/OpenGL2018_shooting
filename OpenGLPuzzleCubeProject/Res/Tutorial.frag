@@ -54,9 +54,7 @@ float ShadowRatio(float bias){
 	return shadow * (1.0 / 4.0) * 0.5 + 0.5;
 }
 
-
 void main() {
-
 
   vec3 normal = texture(colorSampler[1], inTexCoord).xyz * 2 - 1;
   normal = inTBN * normal;
