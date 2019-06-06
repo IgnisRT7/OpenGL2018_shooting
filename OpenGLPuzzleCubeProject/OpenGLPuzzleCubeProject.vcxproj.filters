@@ -110,6 +110,9 @@
     <ClInclude Include="src\user\EnemyLaunchController.h">
       <Filter>src\User</Filter>
     </ClInclude>
+    <ClInclude Include="src\user\BulletManager.h">
+      <Filter>src\User</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Audio.cpp">
@@ -188,6 +191,9 @@
       <Filter>src\Engine\Component</Filter>
     </ClCompile>
     <ClCompile Include="src\user\EnemyLaunchController.cpp">
+      <Filter>src\User</Filter>
+    </ClCompile>
+    <ClCompile Include="src\user\BulletManager.cpp">
       <Filter>src\User</Filter>
     </ClCompile>
   </ItemGroup>
