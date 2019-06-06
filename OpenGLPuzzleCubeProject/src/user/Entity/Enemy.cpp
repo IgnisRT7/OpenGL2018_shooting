@@ -15,10 +15,7 @@
 
 namespace GameState {
 
-	EnemyBulletManager::EnemyBulletManager(Entity::Entity& p, Entity::Entity* t) :
-	parent(p), target(t), timer(shotInterval){
-		target = GameEngine::Instance().FindEntityData<Player>();
-	}
+
 
 	/**
 	*	敵の初期化処理
@@ -143,6 +140,16 @@ namespace GameState {
 		//GameEngine::Instance().PlayAudio(1, CRI_CUESHEET_0_EXPLOSIVE);
 	}
 
+	/**
+	*	ターゲットの設定
+	*/
+	void Toroid::Target(Entity::Entity * t) {
+
+		if (bulletManager) {
+			//bulletManager->
+		}
+	}
+
 	/// 敵スポナーのクラス定義
 
 	/**
@@ -153,8 +160,16 @@ namespace GameState {
 	*	@param eType	敵のタイプ
 	*	@param bType	弾のタイプ
 	*/
-	EnemySpawner::EnemySpawner(int max, float interval, int eType,int bType) :
-		spawnMax(max), spawnInterval(interval), enemyType(eType),bulletType(bType) {
+	EnemySpawner::EnemySpawner(int max, float interval, int eType, int bType) :
+
+		spawnMax(max), spawnInterval(interval), enemyType(eType), bulletType(bType) {
+
+	}
+
+	/**
+	*	初期化処理
+	*/
+	void EnemySpawner::Initialize() {
 
 	}
 
@@ -169,107 +184,48 @@ namespace GameState {
 
 		time += delta;
 
+		//敵の出撃処理
+		if (launchIndex < static_cast<int>(time / spawnInterval)) {
+			SpawnEnemy();
+			launchIndex++;
+		}
+
 		if (time >= spawnMax * spawnInterval) {
 			//スポーン終了
 
 			entity->Destroy();
 			return;
 		}
-
-		//敵の出撃処理
-		if (launchIndex < static_cast<int>(time / spawnInterval)) {
-
-			bool isItemDrop = spawnMax == (launchIndex + 2);	///最後に出撃する敵のみアイテムドロップする
-
-			auto& t = std::make_shared<Toroid>(0, isItemDrop);
-			Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, entity->Position(),
-				"Toroid", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", t);
-
-			if (bulletType != -1) {
-
-				switch (bulletType) {
-				case 1:
-					t->BulletManager(std::make_shared<EnemyBulletManager>(*p, nullptr));
-					break;
-				case 5:
-					t->BulletManager(std::make_shared<EnemyFiveWayBullet>(*p, t));
-				default:
-					break;
-				}
-			}
-
-
-			p->Collision(collisionDataList[EntityGroupId_Enemy]);
-
-			launchIndex++;
-		}
 	}
 
 	/**
-	*	更新処理
-	*
-	*	@param delta	経過時間
+	*	スポーン処理
 	*/
-	void EnemyBulletManager::Update(float delta) {
+	void EnemySpawner::SpawnEnemy() {
 
 		GameEngine& game = GameEngine::Instance();
 
-		timer -= delta;
+		bool isItemDrop = spawnMax == (launchIndex + 2);	///最後に出撃する敵のみアイテムドロップする
 
-		if (timer < 0) {
-			//game.PlayAudio(1, CRI_CUESHEET_0_ENEMYSHOT);
 
-			if (Entity::Entity* p = game.AddEntity(EntityGroupId_EnemyShot, parent.Position(),
-				"Sphere", "Res/Model/sphere.dds", std::make_shared<Bullet>(
-					parent.Velocity(), target))) {
+		//敵本体の作成
+		auto& t = std::make_shared<Toroid>(0, isItemDrop);
 
-				
+		Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, entity->Position(),
+			"Toroid", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", t);
 
-				p->CastStencil(true);
-				p->StencilColor(glm::vec4(1, 0, 1, 1));
-				p->Scale(glm::vec3(0.5f));
-				timer = shotInterval;
+		//弾管理の作成
+		if (bulletType != -1) {
 
+			switch (bulletType) {
+			case 1:
+				t->BulletManager(std::make_shared<BulletManager>(*p, nullptr));
+				break;
+			case 5:
+				t->BulletManager(std::make_shared<FiveWayShot>(*p, nullptr));
+			default:
+				break;
 			}
 		}
 	}
-
-	/**
-	*	更新処理
-	*/
-	void EnemyFiveWayBullet::Update(float delta){
-
-		GameEngine& game = GameEngine::Instance();
-
-		timer -= delta;
-
-		if (timer < 0) {
-			//game.PlayAudio(1, CRI_CUESHEET_0_ENEMYSHOT);
-
-			glm::vec3 centerDir = target ? target->Position() - parent.Position() : glm::vec3(0, 0, -1);
-			centerDir = glm::normalize(centerDir);
-
-			const float radInterval = 10.f;
-
-			for(int i =0; i < 5;i++){
-
-				glm::quat rot = glm::angleAxis(radInterval * (i -2), glm::vec3(0, 1, 0));
-				glm::vec3 vel = rot * centerDir;
-				vel *= 10;
-
-				if (Entity::Entity* p = game.AddEntity(EntityGroupId_EnemyShot, parent.Position(),
-					"Sphere", "Res/Model/sphere.dds", std::make_shared<Bullet>(
-						vel, nullptr))) {
-
-					p->CastStencil(true);
-					p->StencilColor(glm::vec4(1, 0, 1, 1));
-					p->Color(glm::vec4(1, 0, 0, 1));
-					p->Scale(glm::vec3(0.5f));
-					timer = shotInterval;
-				}
-			}
-		}
-
-	}
-
 }

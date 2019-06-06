@@ -4,11 +4,9 @@
 #pragma once
 
 #include "../../Entity.h"
+#include "../BulletManager.h"
 
 namespace GameState {
-
-	class EnemyBulletManager;
-	using EnemyBulletManagerPtr = std::shared_ptr<EnemyBulletManager>;
 
 	/// “G
 	class Toroid : public Entity::EntityDataBase {
@@ -23,6 +21,7 @@ namespace GameState {
 		void CollisionEnter(Entity::Entity& e) override;
 
 		void BulletManager(EnemyBulletManagerPtr b) { bulletManager = b; }
+		void Target(Entity::Entity* t);
 
 	private:
 
@@ -32,7 +31,7 @@ namespace GameState {
 
 		bool isItemDrop = false;
 
-		std::shared_ptr<EnemyBulletManager> bulletManager;	/// ’e‚ÌŠÇ—ƒNƒ‰ƒX
+		EnemyBulletManagerPtr bulletManager;	/// ’e‚ÌŠÇ—ƒNƒ‰ƒX
 	};
 
 	/// “GƒXƒ|ƒi[
@@ -41,9 +40,12 @@ namespace GameState {
 
 		EnemySpawner() {}
 		EnemySpawner(int max, float interval, int enemyType,int bulletType);
-		void Initialize() override {}
-
+		void Initialize() override;
 		void Update(float delta) override;
+
+		void SpawnEnemy();
+
+	private:
 
 		float spawnInterval = 0.5;	///< ƒXƒ|[ƒ“‚·‚éŠÔŠu
 		float spawnMax = 5;			///< ƒXƒ|[ƒ“”
@@ -53,28 +55,8 @@ namespace GameState {
 		int bulletType = -1;		///< ’e‚Ìí—Ş 
 	};
 
-	///“G‚Ì’e‚ÌŠÇ—ƒVƒXƒeƒ€
-	class EnemyBulletManager {
-	public:
-		
-		EnemyBulletManager(Entity::Entity& p, Entity::Entity* t = nullptr);
 
-		virtual void Update(float delta);
 
-	protected:
-		float timer = 0;
-		float shotInterval = 2;		/// ’e‚Ì”­ËŠÔŠu
-		
-		Entity::Entity& parent;		/// ’e‚Ì”­ËŒ³
-		Entity::Entity* target;		/// ’e‚Ì’Ç”ö‘ÎÛ
-	};
-
-	class EnemyFiveWayBullet : public EnemyBulletManager {
-	public:
-		EnemyFiveWayBullet(Entity::Entity& p, Entity::Entity* t = nullptr) :EnemyBulletManager(p, t) {}
-
-		void Update(float delta) override;
-	};
 
 
 }
