@@ -32,6 +32,7 @@ namespace GameState {
 		bool isItemDrop = false;
 
 		EnemyBulletManagerPtr bulletManager;	/// 弾の管理クラス
+		Entity::Entity* playerEntity;
 	};
 
 	/// 敵スポナー
@@ -53,6 +54,8 @@ namespace GameState {
 		int launchIndex = -1;		///< 出撃している敵の数
 		int enemyType = -1;			///< 出撃する敵の種類
 		int bulletType = -1;		///< 弾の種類 
+
+		Entity::Entity* playerEntity;
 	};
 
 

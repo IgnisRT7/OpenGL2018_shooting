@@ -43,6 +43,22 @@ namespace GameState {
 	}
 
 	/**
+	*	ˆÚ“®•ûŒü‚ÌÄŒvŽZˆ—
+	*/
+	void BulletManager::CalcVelocity(){
+
+		initBulletSpeed = 20;
+		glm::vec3 dir = glm::vec3(0, 0, -1);
+
+		if (target) {
+			dir = target->Position() - parent.Position();
+			dir = glm::normalize(dir);
+		}
+
+		dir *= initBulletSpeed;
+	}
+
+	/**
 	*	XVˆ—
 	*/
 	void FiveWayShot::Update(float delta) {
@@ -57,7 +73,7 @@ namespace GameState {
 			glm::vec3 centerDir = target ? target->Position() - parent.Position() : glm::vec3(0, 0, -1);
 			centerDir = glm::normalize(centerDir);
 
-			const float radInterval = 10.f;
+			const float radInterval = glm::radians(10.f);
 
 			for (int i = 0; i < 5; i++) {
 

@@ -13,11 +13,14 @@ namespace GameState {
 		BulletManager(Entity::Entity& p, Entity::Entity* t = nullptr);
 
 		virtual void Update(float delta);
+		virtual void CalcVelocity();
+		void Target(Entity::Entity* t) { target = t; CalcVelocity(); }
 
 
 	protected:
 		float timer = 0;
 		float shotInterval = 2;		/// ’e‚Ì”­ËŠÔŠu
+		float initBulletSpeed = 1;
 
 		Entity::Entity& parent;		/// ’e‚Ì”­ËŒ³
 		Entity::Entity* target;		/// ’e‚Ì’Ç”ö‘ÎÛ

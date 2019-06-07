@@ -145,8 +145,10 @@ namespace GameState {
 	*/
 	void Toroid::Target(Entity::Entity * t) {
 
+		playerEntity = t;
+
 		if (bulletManager) {
-			//bulletManager->
+ 			bulletManager->Target(t);
 		}
 	}
 
@@ -161,16 +163,14 @@ namespace GameState {
 	*	@param bType	’e‚Ìƒ^ƒCƒv
 	*/
 	EnemySpawner::EnemySpawner(int max, float interval, int eType, int bType) :
-
 		spawnMax(max), spawnInterval(interval), enemyType(eType), bulletType(bType) {
-
 	}
 
 	/**
 	*	‰Šú‰»ˆ—
 	*/
 	void EnemySpawner::Initialize() {
-
+		playerEntity = GameEngine::Instance().FindEntityData<Player>();
 	}
 
 	/**
@@ -227,5 +227,7 @@ namespace GameState {
 				break;
 			}
 		}
+		t->Target(playerEntity);
+
 	}
 }
