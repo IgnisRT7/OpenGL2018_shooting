@@ -437,6 +437,7 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 					const glm::vec3 tangent = ToVec3(matR.MultT(GetElement(
 						tangentMappingMode, isTangentDirectRef, tangentIndexList,
 						tangentList, cpIndex, polygonVertex, FbxVector4(1, 0, 0, 1))));
+					v.tangent = glm::vec4(glm::normalize(tangent), 1);
 
 					//仮の従法線ベクトル計算
 					const glm::vec3 binormalTmp = glm::normalize(glm::cross(v.normal, tangent));
@@ -609,7 +610,7 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 		if(!name){
 			return dummy;
 		}
-
+		
 		for (const auto& e : levelStack) {
 			auto itr = e.meshList.find(name);
 			if (itr != e.meshList.end()) {
