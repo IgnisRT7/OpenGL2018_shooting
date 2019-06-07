@@ -112,6 +112,11 @@ namespace Entity {
 			return {};
 		}
 
+		//データのサイズをドライバが要求するオフセット・アライメントに合わせる
+		GLint offsetAlignment = 0;
+		glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &offsetAlignment);
+		ubSizePerEntity = ((ubSizePerEntity + offsetAlignment - 1) / offsetAlignment)*offsetAlignment;
+
 		p->ubo = UniformBuffer::Create(maxEntityCount * ubSizePerEntity, bindingPoint, ubName);
 		p->buffer.reset(new LinkEntity[maxEntityCount]);
 		if (!p->ubo || !p->buffer) {
