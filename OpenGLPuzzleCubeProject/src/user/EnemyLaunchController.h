@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include "../Entity.h"
 
+///敵の出撃タイプデータ
 struct EnemyLaunchType {
 
 	int launchCount;		///< 出撃数
@@ -21,6 +22,9 @@ struct EnemyLaunchType {
 		return launchStartTimer < cmp.launchStartTimer;
 	}
 };
+
+///敵の移動タイプデータ
+using EnemyMoveType_Straight = std::vector<glm::vec3>;	
 
 struct EnemyBulletType {
 	
