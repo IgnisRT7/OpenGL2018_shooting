@@ -11,7 +11,7 @@
 #include "Item.h"
 #include "Bullet.h"
 #include "Player.h"
-
+#include <memory>
 
 namespace GameState {
 
@@ -39,16 +39,25 @@ namespace GameState {
 
 		timer += delta;
 
-		if (bulletManager)bulletManager->Update(delta);
+		//弾管理システムの更新
+		if (bulletManager) {
+			bulletManager->Update(delta);
+		}
 
-		float rot = glm::angle(entity->Rotation());
-		const glm::vec3 pos = entity->Position();
+		//移動管理システムの更新
+		if (moveController) {
+			moveController->Update(*entity, delta);
+		}
+
+		// 移動処理
+		/*
+
+
 
 		GameEngine& game = GameEngine::Instance();
 
 		auto e = game.FindEntityData<Player>();
 
-		// 移動処理
 		switch (enemyType) {
 		case 0:	/// デフォルトの処理まっすぐ進む
 
@@ -73,12 +82,19 @@ namespace GameState {
 			break;
 
 		case 3:
+			break;
+
+		case 10:
+
+
+			break;
 
 		default:
 			break;
-		}
+		}*/
 
 		// 円盤を回転させる.
+		float rot = glm::angle(entity->Rotation());
 		rot += glm::radians(180.0f) * delta;
 		if (rot > glm::pi<float>() * 2.0f) {
 			rot -= glm::pi<float>() * 2.0f;
@@ -86,6 +102,7 @@ namespace GameState {
 		entity->Rotation(glm::angleAxis(rot, glm::vec3(0, 1, 0)));
 
 		//画面外判定処理
+		const glm::vec3 pos = entity->Position();
 		if (std::abs(pos.x) > 200.0f || std::abs(pos.z) > 200.0f) {
 			//std::cout << "Toroid is out of range!" << std::endl;
 			GameEngine::Instance().RemoveEntity(entity);
@@ -207,9 +224,19 @@ namespace GameState {
 
 		bool isItemDrop = spawnMax == (launchIndex + 2);	///最後に出撃する敵のみアイテムドロップする
 
-
 		//敵本体の作成
 		auto& t = std::make_shared<Toroid>(0, isItemDrop);
+
+		//TODO: 移動制御クラスの試用運転
+		static bool makeMoveComponent = false;
+		if (!makeMoveComponent) {
+			makeMoveComponent = true;
+
+			auto seq = std::make_shared<MoveControllSequencer>();
+			seq->Add(std::make_shared<MoveStraight>(3, glm::vec3(0, 0, -30)));
+			seq->Add(std::make_shared<MoveStraight>(5, glm::vec3(-30, 0, 0)));
+			t->MoveController(std::make_shared<MoveController>(seq));
+		}
 
 		Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, entity->Position(),
 			"Toroid", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", t);
@@ -217,12 +244,12 @@ namespace GameState {
 		//弾管理の作成
 		if (bulletType != -1) {
 
-			switch (bulletType) {
+ 			switch (bulletType) {
 			case 1:
-				t->BulletManager(std::make_shared<BulletManager>(*p, nullptr));
+				t->BulletManager(std::make_shared<BulletManager>(*p,EntityGroupId_EnemyShot, playerEntity));
 				break;
 			case 5:
-				t->BulletManager(std::make_shared<FiveWayShot>(*p, nullptr));
+				t->BulletManager(std::make_shared<CircleShot>(*p, EntityGroupId_EnemyShot));
 			default:
 				break;
 			}

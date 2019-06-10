@@ -5,6 +5,7 @@
 
 #include "../../Entity.h"
 #include "../BulletManager.h"
+#include "../EnemyMoveController.h"
 
 namespace GameState {
 
@@ -20,7 +21,8 @@ namespace GameState {
 		void Damage(float) override;
 		void CollisionEnter(Entity::Entity& e) override;
 
-		void BulletManager(EnemyBulletManagerPtr b) { bulletManager = b; }
+		void MoveController(MoveControllerPtr m) { moveController = m; }
+		void BulletManager(BulletManagerPtr b) { bulletManager = b; }
 		void Target(Entity::Entity* t);
 
 	private:
@@ -31,8 +33,23 @@ namespace GameState {
 
 		bool isItemDrop = false;
 
-		EnemyBulletManagerPtr bulletManager;	/// 弾の管理クラス
+		BulletManagerPtr bulletManager;		///< 弾の管理クラス
+		MoveControllerPtr moveController;	///< 移動管理クラス
+		
 		Entity::Entity* playerEntity;
+	};
+
+	class BossEnemy : public Entity::EntityDataBase {
+	public:
+
+		void Initialize() override;
+		void Update(float delta) override;
+		void Damage(float) override;
+		void CollisionEnter(Entity::Entity& e) override;
+
+	private:
+
+		std::vector<BulletManagerPtr> bulletsManager;
 	};
 
 	/// 敵スポナー
