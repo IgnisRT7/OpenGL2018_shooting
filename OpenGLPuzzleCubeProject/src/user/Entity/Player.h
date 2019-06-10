@@ -4,6 +4,7 @@
 #pragma once
 
 #include "../../Entity.h"
+#include "../BulletManager.h"
 
 namespace GameState {
 
@@ -14,15 +15,11 @@ namespace GameState {
 	public:
 
 		void Initialize() override;
-
 		void Update(float delta) override;
-
 		void CollisionEnter(Entity::Entity& entity) override;
-
 		void Damage(float p) override;
 
 		void StartMove(float delta);
-
 		void ShotBullet();
 
 		int RemainingPlayer()const { return remainingPlayer; }
@@ -39,7 +36,9 @@ namespace GameState {
 		glm::vec3 moveBox[2] =
 		{ {-25, -120, -1},{25, 100, 80} };		/// プレイヤーの可動域
 
-		float shotInterval = 0;	/// 発射されるまでのクールタイム
+		BulletManagerPtr bulletManager;	
+
+		float shotInterval = 0;			/// 発射されるまでのクールタイム
 		int multiShotNum = 1;			/// 一度に発射できる弾数
 
 		int remainingPlayer = 0;		/// プレイヤー残機

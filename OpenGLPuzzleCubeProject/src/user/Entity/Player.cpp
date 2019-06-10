@@ -33,11 +33,10 @@ namespace GameState {
 		entity->Collision(collisionDataList[EntityGroupId_Player]);
 		entity->Position(glm::vec3(0, 0, -8));
 		entity->Velocity(glm::vec3(0, 0, 15));
-		entity->CastStencil(true);
 		entity->CastShadow(true);
-		entity->StencilColor(glm::vec4(0, 1, 0, 1));
 		startMovValue = 100;
 		isStartingMove = true;
+		bulletManager = std::make_shared<PlayerShot_TypeNormal>(*entity);
 	}
 
 	void Player::Update(float delta) {
@@ -97,8 +96,12 @@ namespace GameState {
 
 			entity->Rotation(glm::quat(glm::vec3(0, 0, rotZ)));
 
+			if (bulletManager) {
+				bulletManager->Update(delta);
+			}
+
 			//’e‚Ì”­Ëˆ—
-			if (gamepad.buttons & GamePad::A) {
+			/*if (gamepad.buttons & GamePad::A) {
 				if ((shotInterval -= delta) <= 0) {
 
 					ShotBullet();
@@ -107,7 +110,7 @@ namespace GameState {
 			}
 			else {
 				shotInterval = 0;
-			}
+			}*/
 		}
 	}
 
