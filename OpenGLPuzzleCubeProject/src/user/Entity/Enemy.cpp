@@ -6,6 +6,7 @@
 #include "../../GameState.h"
 #include "../../../Res/Audio/testProject_acf.h"
 #include "../../../Res/Audio/CueSheet_0.h"
+#include "../EnemyLaunchController.h"
 
 #include "Effect.h"
 #include "Item.h"
@@ -24,6 +25,7 @@ namespace GameState {
 		entity->CastShadow(true);
 		entity->CastStencil(true);	//TODO : ステンシルマスクのテスト用
 		entity->StencilColor(glm::vec4(1, 0, 1, 1));
+		entity->Scale(glm::vec3(1.5f));
 
 		entity->Collision(collisionDataList[EntityGroupId_Enemy]);
 
@@ -49,50 +51,6 @@ namespace GameState {
 			moveController->Update(*entity, delta);
 		}
 
-		// 移動処理
-		/*
-
-
-
-		GameEngine& game = GameEngine::Instance();
-
-		auto e = game.FindEntityData<Player>();
-
-		switch (enemyType) {
-		case 0:	/// デフォルトの処理まっすぐ進む
-
-			entity->Velocity(glm::vec3(0, 0, -10));
-
-
-			break;
-
-		case 1:	/// 蛇行して下方向へ
-		{
-			float velX = glm::cos(timer * 2) * 10 - entity->Velocity().x;
-			glm::vec3 vel = glm::vec3(velX, 0, -5);
-			entity->Velocity(vel);
-
-			break;
-		}
-		case 2: ///プレイヤーキャラへ軽追尾
-
-
-
-
-			break;
-
-		case 3:
-			break;
-
-		case 10:
-
-
-			break;
-
-		default:
-			break;
-		}*/
-
 		// 円盤を回転させる.
 		float rot = glm::angle(entity->Rotation());
 		rot += glm::radians(180.0f) * delta;
@@ -103,11 +61,13 @@ namespace GameState {
 
 		//画面外判定処理
 		const glm::vec3 pos = entity->Position();
-		if (std::abs(pos.x) > 200.0f || std::abs(pos.z) > 200.0f) {
-			//std::cout << "Toroid is out of range!" << std::endl;
+		if (std::abs(pos.x) > screenHalfW * 1.2 || std::abs(pos.z) > screenHalfH * 1.2) {
+
+			std::cout << "enemy of outrange" << std::endl;
 			GameEngine::Instance().RemoveEntity(entity);
 			return;
 		}
+		//std::cout << "pos: " << entity->Position().x << "," << entity->Position().y << "," << entity->Position().z << std::endl;
 	}
 
 	/**
@@ -177,10 +137,11 @@ namespace GameState {
 	*	@param max	スポーン数
 	*	@param interval	出撃間隔
 	*	@param eType	敵のタイプ
+	*	@param mType	移動タイプ
 	*	@param bType	弾のタイプ
 	*/
-	EnemySpawner::EnemySpawner(int max, float interval, int eType, int bType) :
-		spawnMax(max), spawnInterval(interval), enemyType(eType), bulletType(bType) {
+	EnemySpawner::EnemySpawner(int max, float interval, int eType,int mType, int bType) :
+		spawnMax(max), spawnInterval(interval), enemyType(eType),moveType(mType), bulletType(bType) {
 	}
 
 	/**
@@ -222,23 +183,19 @@ namespace GameState {
 
 		GameEngine& game = GameEngine::Instance();
 
-		bool isItemDrop = spawnMax == (launchIndex + 2);	///最後に出撃する敵のみアイテムドロップする
+		bool isItemDrop = spawnMax == (launchIndex + 1);	///最後に出撃する敵のみアイテムドロップする
 
 		//敵本体の作成
 		auto& t = std::make_shared<Toroid>(0, isItemDrop);
+		
+		t->MoveController(MakeMoveControllerByMoveType(moveType,entity->Position().x < 0));
 
-		//TODO: 移動制御クラスの試用運転
-		static bool makeMoveComponent = false;
-		if (!makeMoveComponent) {
-			makeMoveComponent = true;
-
-			auto seq = std::make_shared<MoveControllSequencer>();
-			seq->Add(std::make_shared<MoveStraight>(3, glm::vec3(0, 0, -30)));
-			seq->Add(std::make_shared<MoveStraight>(5, glm::vec3(-30, 0, 0)));
-			t->MoveController(std::make_shared<MoveController>(seq));
+		glm::vec3 pos = entity->Position();
+		if (moveType == 2) {
+			pos.z -= launchIndex * 5.f;
 		}
 
-		Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, entity->Position(),
+		Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, pos,
 			"Toroid", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", t);
 
 		//弾管理の作成

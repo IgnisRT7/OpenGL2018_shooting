@@ -23,6 +23,7 @@ struct GamePad {
 		Y = 0x0100,
 		L = 0x0200,
 		R = 0x0400,
+		ESCAPE = 0x1000,
 
 		MOUSE_LEFT_BUTTON = 0x01,
 		MOUSE_RIGHT_BUTTON = 0x02,

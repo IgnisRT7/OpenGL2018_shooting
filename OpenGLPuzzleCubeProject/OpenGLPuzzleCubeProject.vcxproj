@@ -166,6 +166,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="LandScape.h" />
     <ClInclude Include="src\Audio.h" />
     <ClInclude Include="src\BufferObject.h" />
     <ClInclude Include="src\Component\CameraComponent.h" />
@@ -185,6 +186,7 @@
     <ClInclude Include="src\UniformBuffer.h" />
     <ClInclude Include="src\user\BulletManager.h" />
     <ClInclude Include="src\user\EnemyLaunchController.h" />
+    <ClInclude Include="src\user\EnemyMoveController.h" />
     <ClInclude Include="src\user\Entity\Bullet.h" />
     <ClInclude Include="src\user\Entity\Effect.h" />
     <ClInclude Include="src\user\Entity\Enemy.h" />
@@ -197,6 +199,7 @@
     <ClInclude Include="StageLoader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LandScape.cpp" />
     <ClCompile Include="src\Audio.cpp" />
     <ClCompile Include="src\BufferObject.cpp" />
     <ClCompile Include="src\Component\CameraComponent.cpp" />
@@ -214,6 +217,7 @@
     <ClCompile Include="src\UniformBuffer.cpp" />
     <ClCompile Include="src\user\BulletManager.cpp" />
     <ClCompile Include="src\user\EnemyLaunchController.cpp" />
+    <ClCompile Include="src\user\EnemyMoveController.cpp" />
     <ClCompile Include="src\user\Entity\Bullet.cpp" />
     <ClCompile Include="src\user\Entity\Effect.cpp" />
     <ClCompile Include="src\user\Entity\Enemy.cpp" />

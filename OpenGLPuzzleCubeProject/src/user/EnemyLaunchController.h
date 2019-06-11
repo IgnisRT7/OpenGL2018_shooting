@@ -5,13 +5,16 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "../Entity.h"
+#include "EnemyMoveController.h"
 
 ///敵の出撃タイプデータ
 struct EnemyLaunchType {
 
 	int launchCount;		///< 出撃数
 	float launchInterval;	///< 出撃間隔
-	int enemyType;			///< 敵の種類
+	int type;				///< 敵の種類
+	int moveType;			///< 敵の挙動
+	int bulletType;			///< 弾の種類
 	float launchStartTimer;	///< ステージ開始後に出撃する時間
 	glm::vec3 startPostion;	///< 初期地点
 
@@ -23,14 +26,7 @@ struct EnemyLaunchType {
 	}
 };
 
-///敵の移動タイプデータ
-using EnemyMoveType_Straight = std::vector<glm::vec3>;	
-
-struct EnemyBulletType {
-	
-	int index;	///< 発射する敵のインデック番号
-	int bulletType; ///< 弾のタイプ
-};
+MoveControllerPtr MakeMoveControllerByMoveType(int type, bool inverse = false);
 
 /**
 *	1ステージ分の敵の出撃管理クラス

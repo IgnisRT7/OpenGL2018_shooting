@@ -8,21 +8,63 @@
 #include "../GameEngine.h"
 #include "../GameState.h"
 
+using namespace GameState;
+
+//TODO: 最終的にファイルからの入力で行う
+//ステージ1の敵リスト
 EnemyLaunchType stage1EnemyLaunchList[] = {
-	/// count,interval,type,time,position
-	{ 5,	1,	1,	2,	{ -10, 0, 40 } },
-	{ 5,	1,	1,	2,	{ 10 , 0, 40 } },
-	{ 3,	1,	2,	5,	{ -10, 0, 40 } },
-	{ 3,	1,	2,	5,	{ 10 , 0, 40 } },
-	{ 5,	1,	1,	7,	{ -10, 0, 40 } },
-	{ 5,	1,	1,	7,	{ 10 , 0, 40 } },
-	{ 1,	1,	1,	10,	{ 0	 , 0, 40}},
 
+	/// count,interval,type,Mtype,Btype,time,position
+	{ 5,	1,	1,	1,	-1,	5,	{screenHalfW * 0.7,0,screenHalfH}},
+	{ 5,	1,	1,	1,	-1,	15, {-screenHalfW * 0.7,0,screenHalfH}},
+	{ 5,	1,	1,	2,	1,	25, {screenHalfW,0,screenHalfH*0.8}},
+	{ 5,	1,	1,	2,	-1,	35, {-screenHalfW,0,screenHalfH*0.8}},
+	{ 1,	1,	1,	1,	5 ,	45, {screenHalfW * 0.7,0,screenHalfH}},
+	{ 1,	1,	1,	1,	5 ,	45, {-screenHalfW * 0.7,0,screenHalfH}},
+	{ 3,	1,	1,	3,	-1,	55, {screenHalfW,0,screenHalfH*0.8}},
+	{ 3,	1,	1,	3,	-1,	63, {-screenHalfW,0,screenHalfH*0.8}},
 };
 
-int stage1EnemyBulletList[]{
-	-1,-1,1,1,-1,-1,5,
+//ステージ2の敵リスト
+EnemyLaunchType stage2EnemyLaunchList[] = {
+/// count,interval,type,Mtype,Btype,time,position
+	{ 5,	1,	1,	1,	-1,	5,	{screenHalfW * 0.7,0,screenHalfH}},
+	{ 5,	1,	1,	1,	-1,	15, {-screenHalfW * 0.7,0,screenHalfH}},
+	{ 5,	1,	1,	2,	1,	25, {screenHalfW,0,screenHalfH*0.8}},
+	{ 5,	1,	1,	2,	-1,	35, {-screenHalfW,0,screenHalfH*0.8}},
+	{ 1,	1,	1,	1,	5 ,	45, {screenHalfW * 0.7,0,screenHalfH}},
+	{ 1,	1,	1,	1,	5 ,	45, {-screenHalfW * 0.7,0,screenHalfH}},
+	{ 3,	1,	1,	3,	-1,	55, {screenHalfW,0,screenHalfH*0.8}},
+	{ 3,	1,	1,	3,	-1,	63, {-screenHalfW,0,screenHalfH*0.8}},
 };
+
+
+MoveControllerPtr MakeMoveControllerByMoveType(int type, bool inverse) {
+
+	auto seq = std::make_shared<MovePartSequencer>();
+
+	switch (type) {
+	case 1:		//up→down to left from center
+		seq->Add(std::make_shared<MoveStraight>(2.f, glm::vec3(0, 0, -20.f)));
+		seq->Add(std::make_shared<MoveStraight>(10.f, glm::vec3(inverse? 100 : -100, 0, 0)));
+		break;
+	case 2:		// left→right 
+	case 3:		// left→right (stair)
+		seq->Add(std::make_shared<MoveStraight>(6.f,glm::vec3(screenSizeW * 1.2f * (inverse ? 1 : -1), 0, 0)));
+		break;
+	case 4:
+		seq->Add(std::make_shared<MoveStraight>(4.f,glm::vec3(screenHalfW * (inverse ? 1 : -1),0,0)));
+		seq->Add(std::make_shared<MoveStraight>(2.f,glm::vec3(0, 0, 0)));
+		seq->Add(std::make_shared<MoveStraight>(4.f,glm::vec3(screenHalfW * (inverse ? -1.2 : 1.2), 0, 0)));
+		break;
+		
+	default:
+		break;
+	}
+
+
+	return  std::make_shared<MoveController>(seq);
+}
 
 /**
 *	初期化処理
@@ -30,12 +72,37 @@ int stage1EnemyBulletList[]{
 *	@param stageNum	ロードするステージの番号
 */
 void EnemyLaunchController::Init(int stageNum){
+	
+	auto LaunchEnemyList = {
+		stage1EnemyLaunchList,
+		stage2EnemyLaunchList};
 
-	for (auto& launch : stage1EnemyLaunchList) {
+	switch (stageNum){
+	case 0:
+		for (auto& launchData : stage1EnemyLaunchList) {
 
-		launchList.push_back(launch);
+			launchList.push_back(launchData);
+		}
+		break;
+	case 1:
+		for (auto& launchData : stage2EnemyLaunchList) {
+
+			launchList.push_back(launchData);
+		}
+		break;
+	case 2:
+		for (auto& launchData : stage1EnemyLaunchList) {
+
+			launchList.push_back(launchData);
+		}
+		break;
+	default:
+		break;
 	}
+
 	std::sort(launchList.begin(), launchList.end());
+	
+	//launchList.push_back(stage1EnemyLaunchList[0]);
 }
 
 /**
@@ -44,6 +111,10 @@ void EnemyLaunchController::Init(int stageNum){
 *	@param deltaTime	経過時間
 */
 void EnemyLaunchController::Update(float deltaTime){
+
+	if (isFinished) {
+		return;
+	}
 
 	timer += deltaTime;
 
@@ -62,7 +133,7 @@ void EnemyLaunchController::Update(float deltaTime){
 
 
 			auto e = std::make_shared<GameState::EnemySpawner>(
-				itr->launchCount,itr->launchInterval,itr->enemyType,stage1EnemyBulletList[seekIndex]);
+				itr->launchCount,itr->launchInterval,itr->type,itr->moveType,itr->bulletType);
 
 
 			GameEngine::Instance().AddEntity(

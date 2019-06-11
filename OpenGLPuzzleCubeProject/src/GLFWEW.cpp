@@ -107,6 +107,7 @@ namespace GLFWEW {
 			{ GLFW_KEY_D, GamePad::DPAD_RIGHT },
 			{ GLFW_KEY_ENTER,GamePad::START},
 			{ GLFW_KEY_SPACE,GamePad::A},
+			{GLFW_KEY_ESCAPE,GamePad::ESCAPE},
 			});
 
 		const GLubyte* renderer = glGetString(GL_RENDERER);

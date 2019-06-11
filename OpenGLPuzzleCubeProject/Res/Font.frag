@@ -9,13 +9,14 @@ const float smoothing = 1.0 / 8.0;
 void main()
 {
 
+
 	//テクスチャの色
 	vec4 texColor = texture(colorSampler,inTexCoord);
 	
 	float distance = texColor.r;
 	float alpha = smoothstep(0.5 - smoothing, 0.5 + smoothing, distance);
 
-	fragColor = vec4(vec3(inColor.rgb * texColor.rgb), 1 - alpha);
+	fragColor = vec4(vec3(inColor.rgb * texColor.rgb), (1 - alpha) * inColor.a);
 
    //fragColor = texture(colorSampler,inTexCoord) * vec4 ;
 }

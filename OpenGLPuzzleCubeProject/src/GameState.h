@@ -2,10 +2,11 @@
 *	@file GameState.h
 */
 #pragma once
-#include "Entity.h"
+
 
 #define WINDOW_SIZE_W	800
 #define WINDOW_SIZE_H	600
+
 
 namespace GameState {
 
@@ -23,14 +24,18 @@ namespace GameState {
 
 	///è’ìÀå`èÛÉäÉXÉg
 	static const Entity::CollisionData collisionDataList[] = {
-		{ glm::vec3( 0, 0, 0), glm::vec3(0, 0, 0) },
+		{ glm::vec3(0, 0, 0), glm::vec3(0, 0, 0) },
+		{ glm::vec3(-0.5f,-0.5f,-0.5f), glm::vec3(0.5f, 0.5f,0.5f) },
 		{ glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.0f,1.0f,1.0f) },
-		{ glm::vec3(-0.5f,-0.5f,-1.0f), glm::vec3(0.5f,0.5f,1.0f) },
-		{ glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.0f,1.0f,1.0f) },
+		{ glm::vec3(-2.0f,-2.0f,-2.0f), glm::vec3(2.0f,2.0f,2.0f) },
 		{ glm::vec3(-0.25f,-0.25f,-0.25f), glm::vec3(0.25f,0.25f,0.25f) },
 		{ glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.0f,1.0f,1.0f) },
 	};
 
-	//glm::vec2 ScreenRange = glm::vec2();
-
+	static const float screenSizeW = 60.f;
+	static const float screenSizeH = 60.f;
+	static const float screenHalfW = screenSizeW * 0.5f;
+	static const float screenHalfH = screenSizeH * 0.5f;
+	
 }
+

@@ -12,11 +12,12 @@ namespace GameState {
 	*	’e‚Ì‰Šú‰»ˆ—
 	*/
 	void Bullet::Initialize() {
-		\
+		
 		entity->CastShadow(false);
-		entity->Collision(GameState::collisionDataList[EntityGroupId_EnemyShot]);
+		entity->CastStencil(true);
+		entity->StencilColor(glm::vec4(1, 0, 1, 1));
 
-		entity->Velocity(target ? glm::normalize(target->Position() - entity->Position()) * glm::length(velocity) : velocity);
+		entity->Collision(GameState::collisionDataList[EntityGroupId_EnemyShot]);
 	}
 
 	/**
@@ -38,16 +39,9 @@ namespace GameState {
 		auto rot = glm::angleAxis(glm::degrees(sintheta), axis);
 		entity->Rotation(rot);
 
-		//entity->Rotation(glm::rotation(glm::vec3(0, 0, -1), glm::normalize(velocity)));
-
-		//auto rotByForward = glm::angleAxis(10.0f, glm::normalize(velocity));
-		//auto rot = glm::quat(glm::normalize(entity->Velocity()), glm::vec3(1, 0, 0));
-
-		//entity->Rotation(rot);
-
 		//”ÍˆÍŠOˆ—
 		const glm::vec3 pos = entity->Position();
-		if (std::abs(pos.x) > 40 || pos.z < -4 || pos.z > 40) {
+		if (std::abs(pos.x) > screenHalfW || std::abs(pos.z) > screenHalfH) {
 			entity->Destroy();
 			return;
 		}

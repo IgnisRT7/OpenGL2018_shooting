@@ -57,7 +57,7 @@ namespace GameState {
 	public:
 
 		EnemySpawner() {}
-		EnemySpawner(int max, float interval, int enemyType,int bulletType);
+		EnemySpawner(int max, float interval, int enemyType, int moveType, int bulletType);
 		void Initialize() override;
 		void Update(float delta) override;
 
@@ -68,8 +68,9 @@ namespace GameState {
 		float spawnInterval = 0.5;	///< ƒXƒ|[ƒ“‚·‚éŠÔŠu
 		float spawnMax = 5;			///< ƒXƒ|[ƒ“”
 		float time = 0;				///< Œo‰ßŽžŠÔ
-		int launchIndex = -1;		///< oŒ‚‚µ‚Ä‚¢‚é“G‚Ì”
+		int launchIndex = 0;		///< oŒ‚‚µ‚Ä‚¢‚é“G‚Ì”
 		int enemyType = -1;			///< oŒ‚‚·‚é“G‚ÌŽí—Þ
+		int moveType = -1;
 		int bulletType = -1;		///< ’e‚ÌŽí—Þ 
 
 		Entity::Entity* playerEntity;

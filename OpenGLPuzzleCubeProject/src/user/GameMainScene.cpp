@@ -16,6 +16,7 @@ namespace GameState {
 
 	/// 背景
 	void Landscape::Initialize() {
+		entity->CastShadow(false);
 	}
 
 	void Landscape::Update(float delta) {
@@ -23,9 +24,6 @@ namespace GameState {
 		timer += delta;
 
 		entity->Position(entity->Position() + glm::vec3(0, 0, -10.0f * delta));
-		//if (timer > 4) {
-		//	entity->Position(entity->Position() + glm::vec3(0, 0, 40.0f));
-		//}
 	}
 
 	/// 背景(ステージ3用)
@@ -34,6 +32,7 @@ namespace GameState {
 	*	背景の初期化処理
 	*/
 	void SpaceSphereMain::Initialize() {
+		entity->CastShadow(false);
 	}
 
 	/**
@@ -57,28 +56,42 @@ namespace GameState {
 		GameEngine& game = GameEngine::Instance();
 
 		//リソースのロード
-		game.LoadMeshFromFile("Res/Model/Player.fbx");
-		game.LoadMeshFromFile("Res/Model/Blast.fbx");
-		game.LoadMeshFromFile("Res/Model/Toroid.fbx");
-		game.LoadMeshFromFile("Res/Model/ItemBox.fbx");
-		game.LoadMeshFromFile("Res/Model/sampleSphere.fbx");
-		game.LoadTextureFromFile("Res/Model/Player.dds");
-		game.LoadTextureFromFile("Res/Model/Toroid.dds");
-		game.LoadTextureFromFile("Res/Model/Toroid.Normal.bmp");
-		game.LoadTextureFromFile("Res/Model/ItemBoxSpeed.dds");
-		game.LoadTextureFromFile("Res/Model/ItemBoxBullet.dds");
-		game.LoadTextureFromFile("Res/Model/sphere.dds");
+		const char* meshPassList[] = {
+			"Res/Model/Player.fbx",
+			"Res/Model/Blast.fbx",
+			"Res/Model/Toroid.fbx",
+			"Res/Model/ItemBox.fbx",
+			"Res/Model/sampleSphere.fbx",
+			"Res/Model/Landscape.fbx",
+			"Res/Model/City01.fbx",
+			"Res/Model/SpaceSphere.fbx",
+		};
 
-		game.LoadMeshFromFile("Res/Model/Landscape.fbx");
-		game.LoadTextureFromFile("Res/Model/BG02.Diffuse.dds");
-		game.LoadTextureFromFile("Res/Model/BG02.Normal.bmp");
+		for (const char* meshPass : meshPassList) {
+			if (!game.LoadMeshFromFile(meshPass)) {
+				std::cout << "file: " << meshPass << "の読み込みに失敗" << std::endl;
+			}
+		}
 
-		game.LoadMeshFromFile("Res/Model/City01.fbx");
-		game.LoadTextureFromFile("Res/Model/City01.Diffuse.dds");
-		game.LoadTextureFromFile("Res/Model/City01.Normal.bmp");
+		const char* texturePassList[] = {
+			"Res/Model/Player.dds",
+			"Res/Model/Toroid.dds",
+			"Res/Model/Toroid.Normal.bmp",
+			"Res/Model/ItemBoxSpeed.dds",
+			"Res/Model/ItemBoxBullet.dds",
+			"Res/Model/sphere.dds",
+			"Res/Model/BG02.Diffuse.dds",
+			"Res/Model/BG02.Normal.bmp",
+			"Res/Model/City01.Diffuse.dds",
+			"Res/Model/City01.Normal.bmp",
+			"Res/Model/SpaceSphere.dds",
+		};
+		for (const char* texturePass : texturePassList) {
+			if (!game.LoadTextureFromFile(texturePass)) {
+				std::cout << "file: " << texturePass << "の読み込みに失敗" << std::endl;
+			}
+		}
 
-		game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
-		game.LoadTextureFromFile("Res/Model/SpaceSphere.dds");
 
 		return true;
 	}
@@ -98,6 +111,9 @@ namespace GameState {
 
 		game.UserVariable("score") = 0;
 
+		stageName.size = glm::vec2(3);
+		stageName.color = glm::vec4(1,1,0,1);
+
 		///衝突判定用ハンドラの定義
 		game.CollisionHandler(EntityGroupId_PlayerShot, EntityGroupId_Enemy);
 		game.CollisionHandler(EntityGroupId_EnemyShot, EntityGroupId_Player);
@@ -110,13 +126,14 @@ namespace GameState {
 
 		playerData = std::make_shared<Player>();
 
-		game.MainCamera(std::dynamic_pointer_cast<CameraComponent>(std::make_shared<CameraDebugComponent>()));
-		game.MainCamera()->LookAt(glm::vec3(0, 30, 0), glm::vec3(0, 0, 10));
+		//game.MainCamera(std::make_shared<CameraDebugComponent>());
+		game.MainCamera(std::make_shared<CameraComponent>());
+		game.MainCamera()->LookAt(glm::vec3(0, 50, -1), glm::vec3(0, 0, 0));
 
 		///シャドウの設定
 		GameEngine::ShadowParameter shadowParam;
 		shadowParam.lightPos = glm::vec3(20, 50, 50);
-		shadowParam.lightDir = glm::normalize(glm::vec3(-25, -50, 25));
+		shadowParam.lightDir = glm::normalize(glm::vec3(-25, -150, 25));
 		shadowParam.lightUp = glm::vec3(0, 1, 0);
 		shadowParam.near = 10;
 		shadowParam.far = 200;
@@ -124,6 +141,8 @@ namespace GameState {
 		game.Shadow(shadowParam);
 
 		game.TimeScale(1);
+
+		StageLoad();
 
 		sceneTimer = 0;
 	}
@@ -133,7 +152,6 @@ namespace GameState {
 	*/
 	void MainGame::Stop() {
 
-		GameEngine& game = GameEngine::Instance();
 	}
 
 	/**
@@ -159,6 +177,10 @@ namespace GameState {
 			snprintf(str, 16, "P :%02.0f", game.FPS());
 			game.AddString(glm::vec2(-0.95f, -0.85f), str);
 		}
+
+		game.FontScale(stageName.size);
+		game.FontColor(stageName.color);
+		game.AddString(glm::vec3(0),stageName.str.c_str(),true);
 	}
 
 	/**
@@ -167,24 +189,37 @@ namespace GameState {
 	void MainGame::StageLoad(){
 
 		GameEngine& game = GameEngine::Instance();
+		auto& p = playerData;
 		
 		game.StopAllAudio();
 		game.RemoveAllEntity();
-
-		++stageNo;
+		
+		launchController = std::make_shared<EnemyLaunchController>();
+		launchController->Init(stageNo);
 
 		auto playerEntity = game.AddEntity(EntityGroupId_Player, glm::vec3(0, 0, 0),
-			"Aircraft", "Res/Model/Player.dds", playerData);
+			"Aircraft", "Res/Model/Player.dds", p);
+
+		++stageNo;
+		stageTimer = 0;
+		stageNameFadeTimer = 5.f;
+
+		if (stageNo > 3) {
+			game.ReplaceScene(std::make_shared<GameEnd>());
+
+			return;
+		}
 
 		//ステージごとのロード処理
-		switch (stageNo % 3) {
+		switch (stageNo) {
 		case 1: {
 			game.PlayAudio(0, CRI_CUESHEET_0_MAINSCENE);
 
-			stageTimer = 300;
-
 			game.KeyValue(0.16f);
 
+			stageName.pos = glm::vec2(-1,0);
+			stageName.str = "STAGE1 : The beginning of the forest";
+				
 			//背景の更新処理
 			for (int z = 0; z < 5; ++z) {
 				const float offsetZ = static_cast<float>(z * 40 * 5);
@@ -195,17 +230,15 @@ namespace GameState {
 						"Landscape01", "Res/Model/BG02.Diffuse.dds", "Res/Model/BG02.Normal.bmp", std::make_shared<Landscape>());
 				}
 			}
-			launchController = std::make_shared<EnemyLaunchController>();
-			launchController->Init(stageNo);
-
 			break;
 		}
 		case 2: {
 			game.PlayAudio(0, CRI_CUESHEET_0_MAIN2SCENE);
 
-			stageTimer = 1200;
-
 			game.KeyValue(0.24f);
+
+			stageName.pos = glm::vec2(-1,0);
+			stageName.str = "STAGE2 : The town that got stuck";
 
 			///シャドウの設定
 			GameEngine::ShadowParameter shadowParam;
@@ -232,12 +265,13 @@ namespace GameState {
 			break;
 			
 		}
-		case 0: {
+		case 3: {
 			game.PlayAudio(0, CRI_CUESHEET_0_BOSSSCENE);
 
-			stageTimer = 30;
-
 			game.KeyValue(0.02f);
+
+			stageName.pos = glm::vec2(-1,0);
+			stageName.str = "STAGE2 : To SPACE";
 
 			game.AddEntity(EntityGroupId_Background, glm::vec3(0),
 				"SpaceSphere", "Res/Model/SpaceSphere.bmp", std::make_shared<SpaceSphereMain>(), "NonLighting");
@@ -262,49 +296,35 @@ namespace GameState {
 			game.EnableShadow(shadowMapping);
 		}
 
-		static const float stageTime = 30;
+		//ステージ遷移処理
+		if (playerData->RemainingPlayer() >= 0 && stageTimer > 0 && (stageTimer -= delta) < 0) {
 
-		if (stageTimer < 0) {
 			StageLoad();
 		}
 
-		stageTimer -= delta;
-
+		//敵出撃管理の更新処理
 		if (launchController) {
 			launchController->Update(delta);
+
+			if (stageTimer == 0 && launchController->IsFinish()) {
+				stageTimer = 5.f;
+			}
 		}
 
-		//スポーン座標範囲
-		/*std::uniform_int_distribution<> distributerX(-12, 12);
-		std::uniform_int_distribution<> distributerZ(40, 44);
-
-		interval -= delta;
-
-		//敵スポナーの出現処理
-		if (interval <= 0) {
-
-			const std::uniform_real_distribution<> rndInterval(0.5f, 1);
-			const std::uniform_int_distribution<> rndAddingCount(1, 5);
-
-			const glm::vec3 pos(distributerX(game.Rand()), 0, distributerZ(game.Rand()));
-
-			if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, pos,
-				"Res/Model/Toroid.fbx", "Res/Model/Player.dds", std::make_shared<EnemySpawner>())) {
-
-				p->Collision(collisionDataList[EntityGroupId_Others]);
-			}
-
-			interval = 5;
-		}*/
+		//
+		if (stageNameFadeTimer) {
+			static const float fadeTime = 3.f - 1.f;
+			stageNameFadeTimer -= delta;
+			stageName.color = glm::vec4(glm::vec3(stageName.color), stageNameFadeTimer / fadeTime);
+		}
 
 		DrawScreenInfo();
 
-		//シーン遷移処理
+		//ゲームオーバー時シーン遷移処理
 		if (sceneTimer == 0 && playerData->RemainingPlayer() < 0) {
 
 			if (sceneTimer == 0) sceneTimer = 3;
 			return;
-
 		}
 		if (sceneTimer > 0 && (sceneTimer -= delta) <= 0) {
 			game.ReplaceScene(std::make_shared<GameEnd>());

@@ -51,20 +51,23 @@ namespace GameState {
 
 	private:
 
-		int resourceCount = 0;
-		float nextLoadTimer = 0;
-		bool isResourceLoaded = false;
-
-		double stageTimer = -1;
-		double interval = 0;
+		float stageTimer = -1;
 
 		float sceneTimer=0;
-		int stageNo = 0;
 
+		int stageNo = 0;
 		int playerType = 0;
 
+		struct FontDrawInfo {
+			glm::vec2 pos;
+			glm::vec2 size;
+			glm::vec4 color;
+			std::string str;
+		}stageName;
+		float stageNameFadeTimer = 0;
+
 		std::shared_ptr<Player> playerData;
-		float cameraChangeTimer = 3.0f;
+
 
 		EnemyLaunchControllerPtr launchController;
 	};

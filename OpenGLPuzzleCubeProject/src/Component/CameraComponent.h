@@ -65,6 +65,10 @@ protected:
 class CameraDebugComponent : public CameraComponent {
 public:
 
+	CameraDebugComponent() = default;
+	CameraDebugComponent(const CameraDebugComponent&) = delete;
+	void operator=(const CameraDebugComponent&) = delete;
+
 private:
 
 	void Initialize() override;

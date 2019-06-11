@@ -5,6 +5,7 @@
 
 #include "../../Entity.h"
 #include "../BulletManager.h"
+#include "../../GameState.h"
 
 namespace GameState {
 
@@ -20,7 +21,6 @@ namespace GameState {
 		void Damage(float p) override;
 
 		void StartMove(float delta);
-		void ShotBullet();
 
 		int RemainingPlayer()const { return remainingPlayer; }
 
@@ -28,18 +28,21 @@ namespace GameState {
 
 		bool isStartingMove = true;		/// スタート直後の移動処理
 		float startMovValue = 20;		/// スタート直後の移動量
-		float moveSpeed = 5.0f;
+		float moveSpeed = 15.0f;
+		float moveMultiply = 1.0f;
 
 		float timer = 0;
 		float damageTimer;				/// 無敵時間
+		float shotInterval = 0;			/// 発射されるまでのクールタイム
 
-		glm::vec3 moveBox[2] =
-		{ {-25, -120, -1},{25, 100, 80} };		/// プレイヤーの可動域
+		const glm::vec3 moveBox[2] =
+		{	glm::vec3(-screenHalfW, -120, -screenHalfH) * 0.8f,
+			glm::vec3(screenHalfW, 100, screenHalfH) * 0.8f };		/// プレイヤーの可動域
 
 		BulletManagerPtr bulletManager;	
 
-		float shotInterval = 0;			/// 発射されるまでのクールタイム
-		int multiShotNum = 1;			/// 一度に発射できる弾数
+
+
 
 		int remainingPlayer = 0;		/// プレイヤー残機
 	};

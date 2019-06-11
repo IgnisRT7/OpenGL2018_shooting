@@ -26,8 +26,6 @@ public:
 
 
 protected:
-
-	//MovePart* parallelExec;	///< 同時進行させる
 	
 	float duration;		///< 経過時間
 };
@@ -59,7 +57,7 @@ private:
 using MoveControllerPtr = std::shared_ptr<MoveController>;
 
 /**
-*	まっすぐに進む
+*	まっすぐに進む動作クラス
 */
 class MoveStraight : public MovePart {
 public:
@@ -81,13 +79,16 @@ private:
 	float ratio;		///< 現在の進行状態 1になると完了
 };
 
-class MoveControllSequencer : public MovePart{
+/**
+*	MovePartをシーケンス実行するクラス
+*/
+class MovePartSequencer : public MovePart{
 public:
 
-	MoveControllSequencer() = default;
-	MoveControllSequencer(const MoveControllSequencer&) = delete;
-	MoveControllSequencer& operator=(const MoveControllSequencer&) = delete;
-	virtual ~MoveControllSequencer() = default;
+	MovePartSequencer() = default;
+	MovePartSequencer(const MovePartSequencer&) = delete;
+	MovePartSequencer& operator=(const MovePartSequencer&) = delete;
+	virtual ~MovePartSequencer() = default;
 
 	virtual void Initialize(Entity::Entity& p) override;
 	virtual void Update(Entity::Entity& p, float d) override;

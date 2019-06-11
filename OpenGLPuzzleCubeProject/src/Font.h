@@ -22,7 +22,7 @@ namespace Font {
 		float xadvance = 0;	///< カーソルを進める距離
 	};
 
-	class StringData {
+/*	class StringData {
 	public:
 
 		void AddString() {
@@ -37,7 +37,7 @@ namespace Font {
 		std::string string;
 		glm::vec2 size;
 		glm::vec4 color;
-	};
+	};*/
 
 	/**
 	*	ビットマップフォント描画クラス

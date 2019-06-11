@@ -11,7 +11,7 @@ namespace GameState {
 	class Bullet : public Entity::EntityDataBase {
 	public:
 		
-		Bullet(glm::vec3 v = glm::vec3(0, 0, 1), Entity::Entity* t = nullptr) :velocity(v), target(t) {}
+		Bullet(glm::vec3 v = glm::vec3(0, 0, 1)) :velocity(v) {}
 
 		void Initialize() override;
 
@@ -22,7 +22,7 @@ namespace GameState {
 	private:
 
 		glm::vec3 velocity;
-		Entity::Entity* target;
+		//Entity::Entity* target;
 	};
 
 

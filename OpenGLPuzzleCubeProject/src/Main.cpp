@@ -3,7 +3,21 @@
 #include "user/TitleScene.h"
 #include <Windows.h>
 
+#include <memory>
+
+class classAtemp {
+	
+};
+class classChild :public classAtemp {
+};
+
+using classAPtr = std::shared_ptr<classAtemp>;
+
 int main() {
+
+	classAPtr parent;
+
+	parent = std::make_shared<classChild>();
 
 	int cx, cy;
 	cx = GetSystemMetrics(SM_CXSCREEN);
@@ -11,7 +25,7 @@ int main() {
 	float aspectRatio = 800.0f / 600.0f;
 
 	GameEngine& game = GameEngine::Instance();
-	if (!game.Init(cy * aspectRatio, cy, "OpenGL Tutorial")) {
+	if (!game.Init(static_cast<int>(cy * aspectRatio), cy, "OpenGL Tutorial")) {
 		
 		return 1;
 	}

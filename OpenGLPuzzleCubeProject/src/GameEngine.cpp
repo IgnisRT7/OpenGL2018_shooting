@@ -282,7 +282,9 @@ void GameEngine::Run() {
 		UpdateFps();
 
 		window.UpdateGamePad();
-		Update(glm::min(0.25f, deltaTime));
+		if (!Update(glm::min(0.25f, deltaTime))) {
+			break;
+		}
 		Render();
 		window.SwapBuffers();
 
@@ -646,7 +648,11 @@ GameEngine::~GameEngine() {
 *
 *	@param delta	前回の更新からの経過時間(秒)
 */
-void GameEngine::Update(float delta) {
+bool GameEngine::Update(float delta) {
+
+	if (GetGamePad().buttonDown & GamePad::ESCAPE) {
+		return false;
+	}
 
 	float ratedDelta = delta * timeScale;
 
@@ -690,6 +696,7 @@ void GameEngine::Update(float delta) {
 
 	fontRenderer.UnmapBuffer();
 
+	return true;
 }
 
 /**

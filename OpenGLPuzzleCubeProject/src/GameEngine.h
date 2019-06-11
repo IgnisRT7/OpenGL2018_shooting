@@ -112,8 +112,8 @@ public:
 	double& UserVariable(const char* name) { return userNumbers[name]; }
 
 	//メインカメラ設定処理
-	void MainCamera(COMPONENT_TYPEPTR(CameraComponent)& c) { mainCamera = c; }
-	const COMPONENT_TYPEPTR(CameraComponent)& MainCamera() const { return mainCamera; }
+	void MainCamera(const std::shared_ptr<CameraComponent>& c) { mainCamera = c; }
+	const std::shared_ptr<CameraComponent>& MainCamera() const { return mainCamera; }
 	
 
 	void TimeScale(float t) { timeScale = t; }
@@ -130,7 +130,7 @@ private:
 	GameEngine(const GameEngine&) = delete;
 	GameEngine& operator=(const GameEngine&) = delete;
 
-	void Update(float  delta);
+	bool Update(float  delta);
 	void UpdateFps();
 
 	void Render();
@@ -202,6 +202,6 @@ private:
 	bool isSceneFadeStart = false;
 
 	//TODO : 試作用メインカメラコンポーネント
-	COMPONENT_TYPEPTR(CameraComponent) mainCamera;
+	std::shared_ptr<CameraComponent> mainCamera;
 
 };

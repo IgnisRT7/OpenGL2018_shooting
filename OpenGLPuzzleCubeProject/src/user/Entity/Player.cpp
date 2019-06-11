@@ -4,7 +4,6 @@
 
 #include "Player.h"
 #include "../../GameEngine.h"
-#include "../../GameState.h"
 
 #include "Bullet.h"
 #include "Item.h"
@@ -21,7 +20,7 @@ namespace GameState {
 	*/
 	void Player::StartMove(float delta) {
 
-		if (entity->Position().z >= 0) {
+		if (entity->Position().z >= -screenHalfH * 0.5f) {
 
 			isStartingMove = false;
 			entity->Velocity(glm::vec3(0, 0, 0));
@@ -31,8 +30,9 @@ namespace GameState {
 	void Player::Initialize() {
 
 		entity->Collision(collisionDataList[EntityGroupId_Player]);
-		entity->Position(glm::vec3(0, 0, -8));
+		entity->Position(glm::vec3(0, 0, -screenHalfH));
 		entity->Velocity(glm::vec3(0, 0, 15));
+		entity->Scale(glm::vec3(1.5f));
 		entity->CastShadow(true);
 		startMovValue = 100;
 		isStartingMove = true;
@@ -85,7 +85,7 @@ namespace GameState {
 				vec.z = -1;
 			}
 			if (vec.x || vec.z) {
-				vec = glm::normalize(vec) * moveSpeed;
+				vec = glm::normalize(vec) * moveSpeed * moveMultiply;
 			}
 
 			entity->Velocity(vec);
@@ -99,18 +99,6 @@ namespace GameState {
 			if (bulletManager) {
 				bulletManager->Update(delta);
 			}
-
-			//íeÇÃî≠éÀèàóù
-			/*if (gamepad.buttons & GamePad::A) {
-				if ((shotInterval -= delta) <= 0) {
-
-					ShotBullet();
-					shotInterval = 0.1f - std::abs(shotInterval);
-				}
-			}
-			else {
-				shotInterval = 0;
-			}*/
 		}
 	}
 
@@ -163,11 +151,11 @@ namespace GameState {
 				//ÉAÉCÉeÉÄÇÃå¯â ÇéÛÇØÇÈ
 
 				if (i->ItemType() == 1) {
-					moveSpeed = glm::min(10.0f, moveSpeed + 2);
+					moveMultiply = glm::min(1.5f, moveMultiply + 0.1f);
 				}
 				else {
 
-					multiShotNum = glm::min(5, multiShotNum + 1);
+					std::dynamic_pointer_cast<PlayerShot_TypeNormal>(bulletManager)->LevelUp();
 				}
 			}
 			if (auto e = entity.CastTo<Toroid>()) {
@@ -179,32 +167,6 @@ namespace GameState {
 		}
 	}
 
-	/**
-	*	íeÇÃî≠éÀèàóù
-	*/
-	void Player::ShotBullet() {
-
-		GameEngine& game = GameEngine::Instance();
-
-		glm::vec3 pos = entity->Position();
-		float bulletInterval = 1.0f;
-		int bulletHalfIntrval = multiShotNum % 2 == 0 ? (int)(bulletInterval / 2) : 0;
-
-		glm::vec3 leftPos = glm::vec3(pos.x - bulletInterval * (multiShotNum - 1) / 2, pos.y, pos.z);
-
-		game.PlayAudio(1,CRI_CUESHEET_0_SHOT);
-		for (int i = 0; i < multiShotNum; ++i) {
-
-			if (Entity::Entity* p = game.AddEntity(EntityGroupId_PlayerShot, leftPos + glm::vec3(i*bulletInterval, 0, 0),
-				"NormalShot", "Res/Model/Player.dds", std::make_shared<Bullet>(glm::vec3(0, 0, 200)), "NonLighting")) {
-
-				p->Collision(collisionDataList[EntityGroupId_PlayerShot]);
-				p->CastStencil(true);
-				p->StencilColor(glm::vec4(0, 1, 0, 1));
-			}
-			pos.x += 0.25f;
-		}
-	}
 
 
 	/**

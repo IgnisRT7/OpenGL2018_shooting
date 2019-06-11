@@ -8,9 +8,9 @@ MovePart::MovePart(float d) {
 }
 
 /**
-*	制御するトウィーニングオブジェクトを設定する
+*	コンストラクタ
 *
-*	@param p	トウィーニングオブジェクトへのポインタ
+*	@param p	操作する動作パーツ
 */
 MoveController::MoveController(const MovePartPtr& p):
 part(p),elapsedTime(0.f){
@@ -96,7 +96,7 @@ void MoveStraight::Update(Entity::Entity& entity, float elapsedTime) {
 *
 *	@param entity	制御対象のエンティティ
 */
-void MoveControllSequencer::Initialize(Entity::Entity& entity) {
+void MovePartSequencer::Initialize(Entity::Entity& entity) {
 
 	MovePart::Initialize(entity);
 	execIndex = -1;
@@ -110,7 +110,7 @@ void MoveControllSequencer::Initialize(Entity::Entity& entity) {
 *	@param entity		制御対象のエンティティ
 *	@param elapsedTime	経過時間
 */
-void MoveControllSequencer::Update(Entity::Entity& entity, float elapsedTime){
+void MovePartSequencer::Update(Entity::Entity& entity, float elapsedTime){
 
 	if (execIndex < 0 || execIndex >= movList.size()) {
 		//実行対象が存在しない
@@ -134,7 +134,7 @@ void MoveControllSequencer::Update(Entity::Entity& entity, float elapsedTime){
 *
 *	@param p	追加する動作パーツ
 */
-void MoveControllSequencer::Add(const MovePartPtr p){
+void MovePartSequencer::Add(const MovePartPtr p){
 
 	movList.push_back(p);
 	duration += p->Duration();
@@ -148,7 +148,7 @@ void MoveControllSequencer::Add(const MovePartPtr p){
 *	@retval true	次に動作させるパーツが存在し設定した
 *	@retval false	次に動作させるパーツが存在しない(last index)
 */
-bool MoveControllSequencer::NextMove(Entity::Entity& entity) {
+bool MovePartSequencer::NextMove(Entity::Entity& entity) {
 
 	if (execIndex >= static_cast<int>(movList.size()) - 1) {
 		return false;
