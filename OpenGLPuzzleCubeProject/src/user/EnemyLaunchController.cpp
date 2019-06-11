@@ -18,7 +18,7 @@ EnemyLaunchType stage1EnemyLaunchList[] = {
 	{ 5,	1,	1,	1,	-1,	5,	{screenHalfW * 0.7,0,screenHalfH}},
 	{ 5,	1,	1,	1,	-1,	15, {-screenHalfW * 0.7,0,screenHalfH}},
 	{ 5,	1,	1,	2,	1,	25, {screenHalfW,0,screenHalfH*0.8}},
-	{ 5,	1,	1,	2,	-1,	35, {-screenHalfW,0,screenHalfH*0.8}},
+	{ 5,	1,	1,	2,	1,	35, {-screenHalfW,0,screenHalfH*0.8}},
 	{ 1,	1,	1,	1,	5 ,	45, {screenHalfW * 0.7,0,screenHalfH}},
 	{ 1,	1,	1,	1,	5 ,	45, {-screenHalfW * 0.7,0,screenHalfH}},
 	{ 3,	1,	1,	3,	-1,	55, {screenHalfW,0,screenHalfH*0.8}},
@@ -28,14 +28,14 @@ EnemyLaunchType stage1EnemyLaunchList[] = {
 //ステージ2の敵リスト
 EnemyLaunchType stage2EnemyLaunchList[] = {
 /// count,interval,type,Mtype,Btype,time,position
-	{ 5,	1,	1,	1,	-1,	5,	{screenHalfW * 0.7,0,screenHalfH}},
-	{ 5,	1,	1,	1,	-1,	15, {-screenHalfW * 0.7,0,screenHalfH}},
-	{ 5,	1,	1,	2,	1,	25, {screenHalfW,0,screenHalfH*0.8}},
-	{ 5,	1,	1,	2,	-1,	35, {-screenHalfW,0,screenHalfH*0.8}},
-	{ 1,	1,	1,	1,	5 ,	45, {screenHalfW * 0.7,0,screenHalfH}},
-	{ 1,	1,	1,	1,	5 ,	45, {-screenHalfW * 0.7,0,screenHalfH}},
-	{ 3,	1,	1,	3,	-1,	55, {screenHalfW,0,screenHalfH*0.8}},
-	{ 3,	1,	1,	3,	-1,	63, {-screenHalfW,0,screenHalfH*0.8}},
+	{ 5,	1,	1,	6,	1,	5,	{screenHalfW * 0.7,0,screenHalfH}},
+	{ 5,	1,	1,	6,	1,	15, {-screenHalfW * 0.7,0,screenHalfH}},
+	{ 2,	3,	5,	2,	5,	25, {screenHalfW * 0.7,0,screenHalfH}},
+	{ 2,	3,	5,	2,	5,	25, {-screenHalfW * 0.7,0,screenHalfH}},
+//	{ 1,	1,	1,	1,	5 ,	40, {screenHalfW * 0.7,0,screenHalfH}},
+//	{ 1,	1,	1,	1,	5 ,	45, {-screenHalfW * 0.7,0,screenHalfH}},
+//	{ 3,	1,	1,	3,	-1,	55, {screenHalfW,0,screenHalfH*0.8}},
+//	{ 3,	1,	1,	3,	-1,	63, {-screenHalfW,0,screenHalfH*0.8}},
 };
 
 
