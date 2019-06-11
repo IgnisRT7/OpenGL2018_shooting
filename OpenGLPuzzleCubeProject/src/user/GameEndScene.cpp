@@ -66,18 +66,18 @@ namespace GameState{
 
 		const float offset = timer == 0 ? 0 : (2.0f - timer) * (2.0f - timer) * 2.0f;
 		game.FontColor(glm::vec4(1, 0, 0, 1));
-		game.FontScale(glm::vec2(5));
-		game.AddString(glm::vec2(-0.5, 0.3), "GAME OVER...");
+		game.FontScale(glm::vec2(7));
+		game.AddString(glm::vec2(0, 0.4),isClear ? "GAME CLEAR!!": "GAME OVER...",true);
 
 		char str[16];
 		snprintf(str, 16, "SCORE : %08.0f", game.UserVariable("score"));
-		game.FontColor(glm::vec4(0, 0, 0, 1));
-		game.FontScale(glm::vec2(5));
-		game.AddString(glm::vec2(-0.4, -0.2), str,true);
+		game.FontColor(glm::vec4(1));
+		game.FontScale(glm::vec2(4.5));
+		game.AddString(glm::vec2(0, 0.05), str,true);
 
 		game.FontColor(glm::vec4(1, 1, 1, 1));
 		game.FontScale(glm::vec2(2));
-		game.AddString(glm::vec2(-0.4, -0.5), "Pressed enter to title...",true);
+		game.AddString(glm::vec2(0, -0.5), "Pressed enter to title...",true);
 
 		auto gamepad = game.GetGamePad();
 

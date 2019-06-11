@@ -12,7 +12,7 @@ namespace GameState{
 	class GameEnd : public Scene{
 	public:
 
-		GameEnd() : Scene("GameEnd") {}
+		GameEnd(bool clear = false) :isClear(clear),Scene("GameEnd") {}
 
 		bool Initialize() override;
 		void Update(float delta) override;
@@ -27,6 +27,7 @@ namespace GameState{
 	private:
 
 		float timer = 0;
+		bool isClear;
 
 		TitleSpaceSphere spaceSphere;
 	};
