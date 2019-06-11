@@ -108,9 +108,9 @@ namespace GameState {
 
 		if (timer == 0) {
 
-			game.FontColor(glm::vec4(1.0f, 0, 0, 0));
+			game.FontColor(glm::vec4(1.0f, 0, 0, 1));
 			game.FontScale(glm::vec2(2));
-			game.AddString(glm::vec2(-0.3, -0.7), "Pressed Enter...");
+			game.AddString(glm::vec2(0, -0.7), "Pressed Enter...",true);
 
 			game.FontColor(glm::vec4(1));
 			game.FontScale(glm::vec2(3.0f));
