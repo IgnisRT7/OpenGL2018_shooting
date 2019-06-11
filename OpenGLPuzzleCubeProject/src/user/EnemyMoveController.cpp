@@ -92,6 +92,44 @@ void MoveStraight::Update(Entity::Entity& entity, float elapsedTime) {
 }
 
 /**
+*	コンストラクタ
+*
+*	@param d	動作時間
+*	@param a	移動角度
+*	@param r	半径
+*/
+MoveCircle::MoveCircle(float d, float a, float r):
+angle(a),range(r),MovePart(d){
+
+}
+
+/**
+*	初期化処理
+*
+*	@param entity	制御するエンティティ
+*/
+void MoveCircle::Initialize(Entity::Entity& entity){
+
+	MovePart::Initialize(entity);
+	center = entity.Position();
+}
+
+/**
+*	更新処理
+*
+*	@param entity	制御するエンティティ
+*	@param elapsedTime	経過時間
+*/
+void MoveCircle::Update(Entity::Entity& entity, float elapsedTime){
+
+	const float ratio = glm::clamp(elapsedTime / duration, 0.f, 1.f);
+
+	glm::vec3 forward = glm::vec3(-range, 0, 0);
+	glm::quat rot = glm::angleAxis(angle * ratio, glm::vec3(0, 1, 0));
+	entity.Position(center + rot * forward);
+}
+
+/**
 *	初期化処理
 *
 *	@param entity	制御対象のエンティティ
@@ -162,3 +200,5 @@ bool MovePartSequencer::NextMove(Entity::Entity& entity) {
 
 	return true;
 }
+
+

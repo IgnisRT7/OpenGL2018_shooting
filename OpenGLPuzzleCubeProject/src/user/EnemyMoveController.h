@@ -79,6 +79,24 @@ private:
 	float ratio;		///< 現在の進行状態 1になると完了
 };
 
+class MoveCircle : public MovePart {
+
+	MoveCircle() = default;
+	MoveCircle(float d,float a, float r);
+	MoveCircle(const MoveCircle&) = delete;
+	MoveCircle& operator=(const MoveCircle&) = delete;
+	virtual ~MoveCircle();
+
+	virtual void Initialize(Entity::Entity& p)override;
+	void Update(Entity::Entity& e, float d)override;
+
+private:
+
+	float angle;
+	float range;
+	glm::vec3 center;
+};
+
 /**
 *	MovePartをシーケンス実行するクラス
 */
