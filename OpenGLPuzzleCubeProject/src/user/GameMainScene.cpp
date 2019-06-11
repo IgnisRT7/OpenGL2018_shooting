@@ -167,14 +167,14 @@ namespace GameState {
 			char str[16];
 			snprintf(str, 16, "SCORE :%08.0f", game.UserVariable("score"));
 			game.FontScale(glm::vec2(3));
-			game.FontColor(glm::vec4(1, 0, 0, 1));
+			game.FontColor(glm::vec4(1, 1, 1, 1));
 			game.AddString(glm::vec2(-0.95f, 0.95f), str);
 
 			snprintf(str, 16, "P :%02.0f", glm::max(0.0, static_cast<double>(playerData->RemainingPlayer())));
 			game.AddString(glm::vec2(-0.95f, 0.8f), str);
 
 			game.FontScale(glm::vec2(2));
-			snprintf(str, 16, "P :%02.0f", game.FPS());
+			snprintf(str, 16, "%02.0f fps", game.FPS());
 			game.AddString(glm::vec2(-0.95f, -0.85f), str);
 		}
 
@@ -203,12 +203,6 @@ namespace GameState {
 		++stageNo;
 		stageTimer = 0;
 		stageNameFadeTimer = 5.f;
-
-		if (stageNo > 3) {
-			game.ReplaceScene(std::make_shared<GameEnd>());
-
-			return;
-		}
 
 		//ステージごとのロード処理
 		switch (stageNo) {
@@ -271,10 +265,9 @@ namespace GameState {
 			game.KeyValue(0.02f);
 
 			stageName.pos = glm::vec2(-1,0);
-			stageName.str = "STAGE2 : To SPACE";
-
-			game.AddEntity(EntityGroupId_Background, glm::vec3(0),
-				"SpaceSphere", "Res/Model/SpaceSphere.bmp", std::make_shared<SpaceSphereMain>(), "NonLighting");
+			stageName.str = "STAGE3 : To SPACE";
+			game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
+				"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<SpaceSphereMain>(), "NonLighting");
 
 			break;
 		}
@@ -298,6 +291,12 @@ namespace GameState {
 
 		//ステージ遷移処理
 		if (playerData->RemainingPlayer() >= 0 && stageTimer > 0 && (stageTimer -= delta) < 0) {
+
+			if (stageNo > 2) {
+				game.ReplaceScene(std::make_shared<GameEnd>(true));
+
+				return;
+			}
 
 			StageLoad();
 		}
