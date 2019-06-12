@@ -14,8 +14,8 @@ namespace GameState {
 	class Landscape : public Entity::EntityDataBase {
 	public:
 
-		Landscape() = default;
-		Landscape(bool l);
+		//Landscape() = default;
+		Landscape(bool l = false);
 
 		void Initialize() override;
 
