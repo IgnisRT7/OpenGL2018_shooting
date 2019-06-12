@@ -18,6 +18,7 @@ namespace GameState {
 		parent(p), target(t), timer(0),groupId(groupId) {
 
 		initBulletSpeed = 10.f;
+		timer = shotInterval* 0.2f;
 	}
 
 	/**
