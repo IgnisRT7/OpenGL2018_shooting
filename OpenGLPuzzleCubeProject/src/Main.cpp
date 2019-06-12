@@ -5,19 +5,8 @@
 
 #include <memory>
 
-class classAtemp {
-	
-};
-class classChild :public classAtemp {
-};
-
-using classAPtr = std::shared_ptr<classAtemp>;
 
 int main() {
-
-	classAPtr parent;
-
-	parent = std::make_shared<classChild>();
 
 	int cx, cy;
 	cx = GetSystemMetrics(SM_CXSCREEN);

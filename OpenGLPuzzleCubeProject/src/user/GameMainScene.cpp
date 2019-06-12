@@ -14,16 +14,32 @@
 
 namespace GameState {
 
+	/**
+	*	コンストラクタ
+	*
+	*	@param i	ループするかどうかのフラグ
+	*/
+	Landscape::Landscape(bool l) :
+		isLoop(l){
+	}
+
 	/// 背景
 	void Landscape::Initialize() {
 		entity->CastShadow(false);
+		start = entity->Position();
 	}
 
 	void Landscape::Update(float delta) {
 
 		timer += delta;
+		glm::vec3 newPos = entity->Position() + glm::vec3(0, 0, -10.0f * delta);
 
-		entity->Position(entity->Position() + glm::vec3(0, 0, -10.0f * delta));
+		entity->Position(newPos);
+
+
+		if (newPos.z < -80 && isLoop) {
+			entity->Position(glm::vec3(glm::vec2(newPos), newPos.z + 200.0f));
+		}
 	}
 
 	/// 背景(ステージ3用)
@@ -111,8 +127,8 @@ namespace GameState {
 
 		game.UserVariable("score") = 0;
 
-		stageName.size = glm::vec2(3);
-		stageName.color = glm::vec4(1,1,0,1);
+		stageName.size = glm::vec2(4);
+		stageName.color = glm::vec4(0,0,1,1);
 
 		///衝突判定用ハンドラの定義
 		game.CollisionHandler(EntityGroupId_PlayerShot, EntityGroupId_Enemy);
@@ -178,9 +194,13 @@ namespace GameState {
 			game.AddString(glm::vec2(-0.95f, -0.85f), str);
 		}
 
+		char str[16];
+		snprintf(str, 16, "STAGE : %d", stageNo);
+
 		game.FontScale(stageName.size);
 		game.FontColor(stageName.color);
 		game.AddString(glm::vec3(0),stageName.str.c_str(),true);
+		game.AddString(glm::vec2(0.f, 0.15f), str,true);
 	}
 
 	/**
@@ -189,18 +209,18 @@ namespace GameState {
 	void MainGame::StageLoad(){
 
 		GameEngine& game = GameEngine::Instance();
-		auto& p = playerData;
 		
 		game.StopAllAudio();
 		game.RemoveAllEntity();
+
+		++stageNo;
 		
 		launchController = std::make_shared<EnemyLaunchController>();
 		launchController->Init(stageNo);
 
 		auto playerEntity = game.AddEntity(EntityGroupId_Player, glm::vec3(0, 0, 0),
-			"Aircraft", "Res/Model/Player.dds", p);
+			"Aircraft", "Res/Model/Player.dds", playerData);
 
-		++stageNo;
 		stageTimer = 0;
 		stageNameFadeTimer = 5.f;
 
@@ -212,7 +232,8 @@ namespace GameState {
 			game.KeyValue(0.16f);
 
 			stageName.pos = glm::vec2(-1,0);
-			stageName.str = "STAGE1 : The beginning of the forest";
+			stageName.color = glm::vec4(1, 0, 0, 1);
+			stageName.str = "The beginning of the forest";
 				
 			//背景の更新処理
 			for (int z = 0; z < 5; ++z) {
@@ -232,7 +253,7 @@ namespace GameState {
 			game.KeyValue(0.24f);
 
 			stageName.pos = glm::vec2(-1,0);
-			stageName.str = "STAGE2 : The town that got stuck";
+			stageName.str = "The town that got stuck";
 
 			///シャドウの設定
 			GameEngine::ShadowParameter shadowParam;
@@ -251,9 +272,9 @@ namespace GameState {
 				for (int x = 0; x < 5; ++x) {
 					const float offsetX = static_cast<float>(x * 40 - 80);
 					game.AddEntity(EntityGroupId_Background, glm::vec3(offsetX, -10, offsetZ),
-						"City01", "Res/Model/City01.Diffuse.dds", "Res/Model/City01.Normal.bmp", std::make_shared<Landscape>());
+						"City01", "Res/Model/City01.Diffuse.dds", "Res/Model/City01.Normal.bmp", std::make_shared<Landscape>(true));
 					game.AddEntity(EntityGroupId_Background, glm::vec3(offsetX, -10, offsetZ),
-						"City01.Shadow", "Res/Model/City01.Diffuse.dds", "Res/Model/City01.Normal.bmp", std::make_shared<Landscape>());
+						"City01.Shadow", "Res/Model/City01.Diffuse.dds", "Res/Model/City01.Normal.bmp", std::make_shared<Landscape>(true));
 				}
 			}
 			break;
@@ -265,7 +286,7 @@ namespace GameState {
 			game.KeyValue(0.02f);
 
 			stageName.pos = glm::vec2(-1,0);
-			stageName.str = "STAGE3 : To SPACE";
+			stageName.str = "To SPACE";
 			game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
 				"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<SpaceSphereMain>(), "NonLighting");
 
@@ -306,7 +327,8 @@ namespace GameState {
 			launchController->Update(delta);
 
 			if (stageTimer == 0 && launchController->IsFinish()) {
-				stageTimer = 5.f;
+
+				stageTimer = 10.f;
 			}
 		}
 

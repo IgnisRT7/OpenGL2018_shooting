@@ -14,12 +14,17 @@ namespace GameState {
 	class Landscape : public Entity::EntityDataBase {
 	public:
 
+		Landscape() = default;
+		Landscape(bool l);
+
 		void Initialize() override;
 
 		void Update(float delta) override;
 	private:
 
 		float timer = 0;
+		glm::vec3 start;
+		bool isLoop = false;
 	};
 
 	///”wŒi‚ÌXV(‰ñ“])

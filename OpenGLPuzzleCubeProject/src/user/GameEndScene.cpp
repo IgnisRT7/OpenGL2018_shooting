@@ -90,7 +90,7 @@ namespace GameState{
 			}
 		}
 		else if (game.GetGamePad().buttonDown & GamePad::START) {
-			game.PlayAudio(1, CRI_CUESHEET_0_SELECT);
+			//game.PlayAudio(1, CRI_CUESHEET_0_SELECT);
 			timer = 2;
 		}
 	}

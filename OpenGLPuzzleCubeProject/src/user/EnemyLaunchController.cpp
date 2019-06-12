@@ -28,12 +28,12 @@ EnemyLaunchType stage1EnemyLaunchList[] = {
 //ステージ2の敵リスト
 EnemyLaunchType stage2EnemyLaunchList[] = {
 /// count,interval,type,Mtype,Btype,time,position
-	{ 5,	1,	1,	6,	1,	5,	{screenHalfW * 0.7,0,screenHalfH}},
-	{ 5,	1,	1,	6,	1,	15, {-screenHalfW * 0.7,0,screenHalfH}},
-	{ 2,	3,	5,	2,	5,	25, {screenHalfW * 0.7,0,screenHalfH}},
-	{ 2,	3,	5,	2,	5,	25, {-screenHalfW * 0.7,0,screenHalfH}},
-//	{ 1,	1,	1,	1,	5 ,	40, {screenHalfW * 0.7,0,screenHalfH}},
-//	{ 1,	1,	1,	1,	5 ,	45, {-screenHalfW * 0.7,0,screenHalfH}},
+	{ 5,	1,	1,	6,	1,	5,	{screenHalfW,0,screenHalfH}},
+	{ 5,	1,	1,	6,	1,	15, {-screenHalfW,0,screenHalfH}},
+	{ 2,	3,	1,	5,	5,	23, {screenHalfW * 0.7,0,screenHalfH}},
+	{ 2,	3,	1,	5,	5,	23, {-screenHalfW * 0.7,0,screenHalfH}},
+	{ 3,	1,	1,	4,	1 ,	30, {screenHalfW,0,screenHalfH*0.7f}},
+	{ 3,	1,	1,	4,	1 ,	30, {-screenHalfW,0,screenHalfH*0.7f}},
 //	{ 3,	1,	1,	3,	-1,	55, {screenHalfW,0,screenHalfH*0.8}},
 //	{ 3,	1,	1,	3,	-1,	63, {-screenHalfW,0,screenHalfH*0.8}},
 };
@@ -48,7 +48,7 @@ MoveControllerPtr MakeMoveControllerByMoveType(int type, bool inverse) {
 		seq->Add(std::make_shared<MoveStraight>(2.f, glm::vec3(0, 0, -20.f)));
 		seq->Add(std::make_shared<MoveStraight>(10.f, glm::vec3(inverse? 100 : -100, 0, 0)));
 		break;
-	case 2:		// left→right 
+	case 2:		// left→right  * 
 	case 3:		// left→right (stair)
 		seq->Add(std::make_shared<MoveStraight>(6.f,glm::vec3(screenSizeW * 1.2f * (inverse ? 1 : -1), 0, 0)));
 		break;
@@ -57,6 +57,13 @@ MoveControllerPtr MakeMoveControllerByMoveType(int type, bool inverse) {
 		seq->Add(std::make_shared<MoveStraight>(2.f,glm::vec3(0, 0, 0)));
 		seq->Add(std::make_shared<MoveStraight>(4.f,glm::vec3(screenHalfW * (inverse ? -1.2 : 1.2), 0, 0)));
 		break;
+	case 5:
+		seq->Add(std::make_shared<MoveStraight>(4.f, glm::vec3(0, 0, -screenHalfH* 0.3f)));
+		seq->Add(std::make_shared<MoveStraight>(2.f, glm::vec3(0, 0, 0)));
+		seq->Add(std::make_shared<MoveStraight>(4.f, glm::vec3(0, 0, -screenHalfH *2)));
+		break;
+	case 6:		//circle
+		seq->Add(std::make_shared<MoveCircle>(120, 60 * (inverse ? -1 : 1), glm::pi<float>() * 0.5 * (inverse ? -1 : 1) , 20));
 		
 	default:
 		break;
@@ -67,7 +74,7 @@ MoveControllerPtr MakeMoveControllerByMoveType(int type, bool inverse) {
 }
 
 /**
-*	初期化処理
+*	初期化処理l
 *
 *	@param stageNum	ロードするステージの番号
 */
@@ -78,19 +85,19 @@ void EnemyLaunchController::Init(int stageNum){
 		stage2EnemyLaunchList};
 
 	switch (stageNum){
-	case 0:
+	case 1:
 		for (auto& launchData : stage1EnemyLaunchList) {
 
 			launchList.push_back(launchData);
 		}
 		break;
-	case 1:
+	case 2:
 		for (auto& launchData : stage2EnemyLaunchList) {
 
 			launchList.push_back(launchData);
 		}
 		break;
-	case 2:
+	case 3:
 		for (auto& launchData : stage1EnemyLaunchList) {
 
 			launchList.push_back(launchData);

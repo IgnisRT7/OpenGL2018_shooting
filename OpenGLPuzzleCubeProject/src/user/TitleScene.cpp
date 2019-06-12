@@ -97,10 +97,10 @@ namespace GameState {
 
 		const float offset = timer == 0 ? 0 : (3.0f - timer) * (3.0f - timer) * 3.0f;
 		game.FontColor(glm::vec4(1, 1, 1, 1));
-		game.FontScale(glm::vec2(4));
-		game.AddString(glm::vec2(offset, 0.15), "STAR FIGHTER", true);
-		game.FontScale(glm::vec2(1));
-		game.AddString(glm::vec2(offset, 0), "The ultimate in Manned-Fighter");
+		game.FontScale(glm::vec2(7));
+		game.AddString(glm::vec2(offset, 0.25), "STAR FIGHTER", true);
+		game.FontScale(glm::vec2(2));
+		game.AddString(glm::vec2(offset - 0.15, 0), "The ultimate in Manned-Fighter");
 
 		static float tmpTimer = 0;
 		tmpTimer += delta;

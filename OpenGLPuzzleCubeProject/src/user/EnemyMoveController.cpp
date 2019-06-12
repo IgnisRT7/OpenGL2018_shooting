@@ -98,8 +98,10 @@ void MoveStraight::Update(Entity::Entity& entity, float elapsedTime) {
 *	@param a	ˆÚ“®Šp“x
 *	@param r	”¼Œa
 */
-MoveCircle::MoveCircle(float d, float a, float r):
-angle(a),range(r),MovePart(d){
+MoveCircle::MoveCircle(float d, float a,float o, float r):
+angle(a),offsetAngle(o),range(r),MovePart(d){
+
+	a *= o / glm::abs(o);
 
 }
 
@@ -111,7 +113,7 @@ angle(a),range(r),MovePart(d){
 void MoveCircle::Initialize(Entity::Entity& entity){
 
 	MovePart::Initialize(entity);
-	center = entity.Position();
+	center = entity.Position(); 
 }
 
 /**
@@ -124,9 +126,9 @@ void MoveCircle::Update(Entity::Entity& entity, float elapsedTime){
 
 	const float ratio = glm::clamp(elapsedTime / duration, 0.f, 1.f);
 
-	glm::vec3 forward = glm::vec3(-range, 0, 0);
-	glm::quat rot = glm::angleAxis(angle * ratio, glm::vec3(0, 1, 0));
-	entity.Position(center + rot * forward);
+	const glm::vec3 forward = glm::vec3(0, 0, 1);
+	glm::quat rot = glm::angleAxis(offsetAngle + angle * ratio, glm::vec3(0, -1, 0));
+	entity.Position(center + rot * (forward*range));
 }
 
 /**

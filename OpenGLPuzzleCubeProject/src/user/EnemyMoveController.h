@@ -79,13 +79,17 @@ private:
 	float ratio;		///< Œ»Ý‚Ìisó‘Ô 1‚É‚È‚é‚ÆŠ®—¹
 };
 
+/**
+*	‰~‚ð•`‚¢‚ÄˆÚ“®‚·‚éƒNƒ‰ƒX
+*/
 class MoveCircle : public MovePart {
+public:
 
 	MoveCircle() = default;
-	MoveCircle(float d,float a, float r);
+	MoveCircle(float d,float a,float o, float r);
 	MoveCircle(const MoveCircle&) = delete;
 	MoveCircle& operator=(const MoveCircle&) = delete;
-	virtual ~MoveCircle();
+	virtual ~MoveCircle() = default;
 
 	virtual void Initialize(Entity::Entity& p)override;
 	void Update(Entity::Entity& e, float d)override;
@@ -93,6 +97,7 @@ class MoveCircle : public MovePart {
 private:
 
 	float angle;
+	float offsetAngle;
 	float range;
 	glm::vec3 center;
 };
