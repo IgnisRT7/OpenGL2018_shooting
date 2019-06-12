@@ -15,6 +15,10 @@ namespace GameState {
 	class Player : public Entity::EntityDataBase {
 	public:
 
+		Player() = default;
+		Player(const Player&) = delete;
+		void operator=(const Player&) = delete;
+
 		void Initialize() override;
 		void Update(float delta) override;
 		void CollisionEnter(Entity::Entity& entity) override;
@@ -41,10 +45,7 @@ namespace GameState {
 
 		BulletManagerPtr bulletManager;	
 
-
-
-
-		int remainingPlayer = 0;		/// プレイヤー残機
+		int remainingPlayer = 3;		/// プレイヤー残機
 	};
 
 	/**
