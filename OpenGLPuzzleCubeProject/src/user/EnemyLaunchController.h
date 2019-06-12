@@ -40,6 +40,7 @@ public:
 	void operator=(const EnemyLaunchController&) = delete;
 
 	void Init(int stageNum);
+	void Load(const std::string& filename);
 
 	void Update(float deltaTime);
 	void Launch();

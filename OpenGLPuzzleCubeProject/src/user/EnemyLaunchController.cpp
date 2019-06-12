@@ -3,41 +3,16 @@
 */
 
 #include "EnemyLaunchController.h"
-#include <algorithm>
 #include "Entity/Enemy.h"
 #include "../GameEngine.h"
 #include "../GameState.h"
 
+#include <algorithm>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
 using namespace GameState;
-
-//TODO: 最終的にファイルからの入力で行う
-//ステージ1の敵リスト
-EnemyLaunchType stage1EnemyLaunchList[] = {
-
-	/// count,interval,type,Mtype,Btype,time,position
-	{ 5,	1,	1,	1,	-1,	5,	{screenHalfW * 0.7,0,screenHalfH}},
-	{ 5,	1,	1,	1,	-1,	15, {-screenHalfW * 0.7,0,screenHalfH}},
-	{ 5,	1,	1,	2,	1,	25, {screenHalfW,0,screenHalfH*0.8}},
-	{ 5,	1,	1,	2,	1,	35, {-screenHalfW,0,screenHalfH*0.8}},
-	{ 1,	1,	1,	1,	5 ,	45, {screenHalfW * 0.7,0,screenHalfH}},
-	{ 1,	1,	1,	1,	5 ,	45, {-screenHalfW * 0.7,0,screenHalfH}},
-	{ 3,	1,	1,	3,	-1,	55, {screenHalfW,0,screenHalfH*0.8}},
-	{ 3,	1,	1,	3,	-1,	63, {-screenHalfW,0,screenHalfH*0.8}},
-};
-
-//ステージ2の敵リスト
-EnemyLaunchType stage2EnemyLaunchList[] = {
-/// count,interval,type,Mtype,Btype,time,position
-	{ 5,	1,	1,	6,	1,	5,	{screenHalfW,0,screenHalfH}},
-	{ 5,	1,	1,	6,	1,	15, {-screenHalfW,0,screenHalfH}},
-	{ 2,	3,	1,	5,	5,	23, {screenHalfW * 0.7,0,screenHalfH}},
-	{ 2,	3,	1,	5,	5,	23, {-screenHalfW * 0.7,0,screenHalfH}},
-	{ 3,	1,	1,	4,	1 ,	30, {screenHalfW,0,screenHalfH*0.7f}},
-	{ 3,	1,	1,	4,	1 ,	30, {-screenHalfW,0,screenHalfH*0.7f}},
-//	{ 3,	1,	1,	3,	-1,	55, {screenHalfW,0,screenHalfH*0.8}},
-//	{ 3,	1,	1,	3,	-1,	63, {-screenHalfW,0,screenHalfH*0.8}},
-};
-
 
 MoveControllerPtr MakeMoveControllerByMoveType(int type, bool inverse) {
 
@@ -69,7 +44,6 @@ MoveControllerPtr MakeMoveControllerByMoveType(int type, bool inverse) {
 		break;
 	}
 
-
 	return  std::make_shared<MoveController>(seq);
 }
 
@@ -80,36 +54,51 @@ MoveControllerPtr MakeMoveControllerByMoveType(int type, bool inverse) {
 */
 void EnemyLaunchController::Init(int stageNum){
 	
-	auto LaunchEnemyList = {
-		stage1EnemyLaunchList,
-		stage2EnemyLaunchList};
+	std::string filename = "Res/StageData/Stage";
+	filename += std::to_string(stageNum);
+	filename += ".txt";
 
-	switch (stageNum){
-	case 1:
-		for (auto& launchData : stage1EnemyLaunchList) {
-
-			launchList.push_back(launchData);
-		}
-		break;
-	case 2:
-		for (auto& launchData : stage2EnemyLaunchList) {
-
-			launchList.push_back(launchData);
-		}
-		break;
-	case 3:
-		for (auto& launchData : stage1EnemyLaunchList) {
-
-			launchList.push_back(launchData);
-		}
-		break;
-	default:
-		break;
-	}
+	Load(filename);
 
 	std::sort(launchList.begin(), launchList.end());
-	
-	//launchList.push_back(stage1EnemyLaunchList[0]);
+
+}
+
+/**
+*	ステージデータの読み込み処理
+*/
+void EnemyLaunchController::Load(const std::string& filename) {
+
+	launchList.resize(0);
+
+	std::ifstream ifs(filename);
+	std::string buf((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
+	int i = 0;
+
+	std::istringstream bufstream(buf);
+	std::string lineStr;
+
+	//ステージデータ取り出し
+	while (std::getline(bufstream, lineStr, '\n')) {
+
+		std::vector<float> buftmp;
+		std::istringstream lineStream(lineStr);
+		std::string valueStr;
+		while (std::getline(lineStream, valueStr, ',')) {
+			buftmp.push_back(std::atoi(valueStr.c_str()));
+		}
+
+		EnemyLaunchType launchData;
+		launchData.launchCount = static_cast<int>(buftmp[0]);
+		launchData.launchInterval = buftmp[1];
+		launchData.type = buftmp[2];
+		launchData.moveType = static_cast<int>(buftmp[3]);
+		launchData.bulletType = static_cast<int>(buftmp[4]);
+		launchData.launchStartTimer = buftmp[5];
+		launchData.startPostion = glm::vec3(buftmp[6], buftmp[7], buftmp[8]);
+
+		launchList.push_back(launchData);
+	}
 }
 
 /**
@@ -126,7 +115,7 @@ void EnemyLaunchController::Update(float deltaTime){
 	timer += deltaTime;
 
 	//現在の参照位置の出撃データを取得する
-	auto& itr = (launchList.begin() + seekIndex);
+	auto itr = (launchList.begin() + seekIndex);
 
 	while (true) {
 
