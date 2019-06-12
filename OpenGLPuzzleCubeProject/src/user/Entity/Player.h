@@ -24,12 +24,14 @@ namespace GameState {
 		void CollisionEnter(Entity::Entity& entity) override;
 		void Damage(float p) override;
 
+		void StartMoveSet();
 		void StartMove(float delta);
 
 		int RemainingPlayer()const { return remainingPlayer; }
 
 	private:
 
+		bool initialized = false;
 		bool isStartingMove = true;		/// スタート直後の移動処理
 		float startMovValue = 20;		/// スタート直後の移動量
 		float moveSpeed = 15.0f;

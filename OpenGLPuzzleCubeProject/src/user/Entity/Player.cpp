@@ -27,16 +27,27 @@ namespace GameState {
 		}
 	}
 
-	void Player::Initialize() {
+	void Player::StartMoveSet(){
 
-		entity->Collision(collisionDataList[EntityGroupId_Player]);
+		startMovValue = 100;
 		entity->Position(glm::vec3(0, 0, -screenHalfH));
 		entity->Velocity(glm::vec3(0, 0, 15));
-		entity->Scale(glm::vec3(1.5f));
-		entity->CastShadow(true);
-		startMovValue = 100;
 		isStartingMove = true;
-		bulletManager = std::make_shared<PlayerShot_TypeNormal>(*entity);
+	}
+
+	void Player::Initialize() {
+
+		if (!initialized) {
+			initialized = true;
+			entity->Collision(collisionDataList[EntityGroupId_Player]);
+			bulletManager = std::make_shared<PlayerShot_TypeNormal>(*entity);
+		}
+
+
+//		std::dynamic_pointer_cast<PlayerShot_TypeNormal>(bulletManager)->LevelUp();
+		entity->Scale(glm::vec3(1.5f));
+
+		entity->CastShadow(true);
 	}
 
 	void Player::Update(float delta) {
@@ -135,7 +146,7 @@ namespace GameState {
 				return;
 			}
 			
-			Initialize();
+			StartMoveSet();
 			damageTimer = 4.0f;
 		}
 	}
