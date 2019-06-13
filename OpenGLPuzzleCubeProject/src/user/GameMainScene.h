@@ -53,6 +53,7 @@ namespace GameState {
 		void SelectPlayerType(int t) { playerType = t; }
 		void DrawScreenInfo();
 		void StageLoad();
+		void StageClear(float nextStageTimer) { stageTimer = nextStageTimer; }
 
 	private:
 

@@ -76,6 +76,7 @@ namespace GameState {
 			"Res/Model/Player.fbx",
 			"Res/Model/Blast.fbx",
 			"Res/Model/Toroid.fbx",
+			"Res/Model/MotherShip.fbx",
 			"Res/Model/ItemBox.fbx",
 			"Res/Model/sampleSphere.fbx",
 			"Res/Model/Landscape.fbx",
@@ -213,7 +214,7 @@ namespace GameState {
 		game.StopAllAudio();
 		game.RemoveAllEntity();
 
-		++stageNo;
+		++stageNo; 
 		
 		launchController = std::make_shared<EnemyLaunchController>();
 		launchController->Init(stageNo);
@@ -313,9 +314,9 @@ namespace GameState {
 		}
 
 		//ステージ遷移処理
-		if (playerData->RemainingPlayer() >= 0 && stageTimer > 0 && (stageTimer -= delta) < 0) {
+		if (stageTimer > 0 && (stageTimer -= delta) < 0) {
 
-			if (stageNo > 2) {
+			if (stageNo == 3) {
 				game.ReplaceScene(std::make_shared<GameEnd>(true));
 
 				return;
@@ -328,9 +329,9 @@ namespace GameState {
 		if (launchController) {
 			launchController->Update(delta);
 
-			if (stageTimer == 0 && launchController->IsFinish()) {
+			if (stageTimer == 0 && launchController->IsFinish() && stageNo != 3) {
 
-				stageTimer = 10.f;
+				StageClear(10);
 			}
 		}
 
