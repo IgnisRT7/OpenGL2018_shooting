@@ -26,6 +26,7 @@ namespace GameState {
 
 		void StartMoveSet();
 		void StartMove(float delta);
+		void ShotBullet();
 
 		int RemainingPlayer()const { return remainingPlayer; }
 
@@ -41,11 +42,11 @@ namespace GameState {
 		float damageTimer;				/// 無敵時間
 		float shotInterval = 0;			/// 発射されるまでのクールタイム
 
+		int multiShotNum = 1;
+
 		const glm::vec3 moveBox[2] =
 		{	glm::vec3(-screenHalfW, -120, -screenHalfH) * 0.8f,
 			glm::vec3(screenHalfW, 100, screenHalfH) * 0.8f };		/// プレイヤーの可動域
-
-		BulletManagerPtr bulletManager;	
 
 		int remainingPlayer = 3;		/// プレイヤー残機
 	};

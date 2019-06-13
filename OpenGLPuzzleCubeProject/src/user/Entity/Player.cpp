@@ -16,6 +16,17 @@
 namespace GameState {
 
 	/**
+	*	ステージ開始時の演出用設定処理
+	*/
+	void Player::StartMoveSet(){
+
+		startMovValue = 100;
+		entity->Position(glm::vec3(0, 0, -screenHalfH));
+		entity->Velocity(glm::vec3(0, 0, 15));
+		isStartingMove = true;
+	}
+
+	/**
 	*	ステージ開始後に行われる処理
 	*/
 	void Player::StartMove(float delta) {
@@ -27,29 +38,53 @@ namespace GameState {
 		}
 	}
 
-	void Player::StartMoveSet(){
+	/**
+	*	弾の発射処理
+	*/
+	void Player::ShotBullet() {
 
-		startMovValue = 100;
-		entity->Position(glm::vec3(0, 0, -screenHalfH));
-		entity->Velocity(glm::vec3(0, 0, 15));
-		isStartingMove = true;
+		GameEngine& game = GameEngine::Instance();
+
+		glm::vec3 pos = entity->Position();
+		float bulletInterval = 1.0f;
+		int bulletHalfIntrval = multiShotNum % 2 == 0 ? (int)(bulletInterval / 2) : 0;
+
+		glm::vec3 leftPos = glm::vec3(pos.x - bulletInterval * (multiShotNum - 1) / 2, pos.y, pos.z);
+
+		for (int i = 0; i < multiShotNum; ++i) {
+
+			if (Entity::Entity* p = game.AddEntity(EntityGroupId_PlayerShot, leftPos + glm::vec3(i*bulletInterval, 0, 0),
+				"NormalShot", "Res/Model/Player.dds", std::make_shared<Bullet>(), "NonLighting")) {
+
+				p->Collision(collisionDataList[EntityGroupId_PlayerShot]);
+				p->Velocity(glm::vec3(0, 0, 200));
+				p->Scale(glm::vec3(1.5f));
+			}
+			pos.x += 0.25f;
+		}
+
+		game.PlayAudio(0, CRI_CUESHEET_0_SHOT);
 	}
 
+	/**
+	*	初期化処理
+	*/
 	void Player::Initialize() {
 
 		if (!initialized) {
 			initialized = true;
 			entity->Collision(collisionDataList[EntityGroupId_Player]);
-			bulletManager = std::make_shared<PlayerShot_TypeNormal>(*entity);
 		}
 
-
-//		std::dynamic_pointer_cast<PlayerShot_TypeNormal>(bulletManager)->LevelUp();
 		entity->Scale(glm::vec3(1.5f));
-
 		entity->CastShadow(true);
 	}
 
+	/**
+	*	更新処理
+	*
+	*	@param delta	経過時間
+	*/
 	void Player::Update(float delta) {
 
 		if (remainingPlayer < 0) {
@@ -98,8 +133,9 @@ namespace GameState {
 			if (vec.x || vec.z) {
 				vec = glm::normalize(vec) * moveSpeed * moveMultiply;
 			}
-
 			entity->Velocity(vec);
+
+			//移動制限処理
 			glm::vec3 pos = entity->Position();
 			pos = glm::min(moveBox[1], glm::max(pos, moveBox[0]));
 			entity->Position(pos);
@@ -107,9 +143,19 @@ namespace GameState {
 
 			entity->Rotation(glm::quat(glm::vec3(0, 0, rotZ)));
 
-			if (bulletManager) {
-				bulletManager->Update(delta);
+			//弾の発射処理
+			if (gamepad.buttons & GamePad::A) {
+				if ((shotInterval -= delta) <= 0) {
+
+					ShotBullet();
+					shotInterval = 0.1f - std::abs(shotInterval);
+				}
 			}
+			else {
+				shotInterval = 0;
+			}
+
+
 		}
 	}
 
@@ -166,7 +212,7 @@ namespace GameState {
 				}
 				else {
 
-					std::dynamic_pointer_cast<PlayerShot_TypeNormal>(bulletManager)->LevelUp();
+					multiShotNum = glm::min(multiShotNum + 1, 5); 
 				}
 			}
 			if (auto e = entity.CastTo<Toroid>()) {
