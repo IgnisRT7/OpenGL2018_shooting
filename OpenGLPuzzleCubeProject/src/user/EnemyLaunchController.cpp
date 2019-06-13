@@ -19,6 +19,10 @@ MoveControllerPtr MakeMoveControllerByMoveType(int type, bool inverse) {
 	auto seq = std::make_shared<MovePartSequencer>();
 
 	switch (type) {
+	case -1:
+		seq->Add(std::make_shared<MoveStraight>(3,glm::vec3(0, 0, -30.f)));
+		break;
+
 	case 1:		//up¨down to left from center
 		seq->Add(std::make_shared<MoveStraight>(2.f, glm::vec3(0, 0, -20.f)));
 		seq->Add(std::make_shared<MoveStraight>(10.f, glm::vec3(inverse? 100 : -100, 0, 0)));
