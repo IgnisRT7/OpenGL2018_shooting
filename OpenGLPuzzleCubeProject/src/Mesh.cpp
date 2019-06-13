@@ -391,8 +391,8 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 				v.position = ToVec3(matTRS.MultT(fbxControlPoints[cpIndex]));
 
 				//í∏ì_ÉJÉâÅ[
-				v.color = glm::vec4(01);
-				if (hasColor) {
+				v.color = glm::vec4(1);
+				if (hasColor || !colorList) {
 					switch (colorMappingMode) {
 					case FbxLayerElement::eByControlPoint:
 						v.color = ToVec4((*colorList)[isColorDirectRef ? cpIndex : (*colorIndexList)[polygonVertex]]);
