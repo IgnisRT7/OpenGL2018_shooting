@@ -23,8 +23,10 @@ namespace GameState {
 
 		void MoveController(MoveControllerPtr m) { moveController = m; }
 		void BulletManager(BulletManagerPtr b) { bulletManager = b; }
+		BulletManagerPtr BulletManager() const { return bulletManager; }
 		void DestroyByScreenOut(bool v) { isDestroyByScreenOut = v; }
 		void Target(Entity::Entity* t);
+		void BulletColor(glm::vec4 c) { bulletColor = c; }
 		Entity::Entity* Entity() { return entity; }
 
 	private:
@@ -35,6 +37,7 @@ namespace GameState {
 
 		bool isItemDrop = false;
 		bool isDestroyByScreenOut = true;
+		glm::vec4 bulletColor = glm::vec4(1);
 
 		BulletManagerPtr bulletManager;		///< 弾の管理クラス
 		MoveControllerPtr moveController;	///< 移動管理クラス
@@ -59,6 +62,7 @@ namespace GameState {
 
 		float timer = 0;	/// 
 		int hp = 500;		/// 体力
+		const int maxHp = 500.0f;
 
 		MoveControllerPtr moveController;
 		std::vector<std::shared_ptr<Toroid> > turrets;

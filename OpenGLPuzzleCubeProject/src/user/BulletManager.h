@@ -18,12 +18,18 @@ namespace GameState {
 		virtual void CalcVelocity();
 		void Target(Entity::Entity* t) { target = t; CalcVelocity(); }
 		void GroupId(int i) { groupId = i; }
+		void ShotInterval(float i) { shotInterval = i; }
+		float ShotInterval() const { return shotInterval; }
+		void BulletSpeed(float s) { initBulletSpeed = s; }
+		float BulletSpeed() const { return initBulletSpeed; }
+		void Color(glm::vec4 c) { color = c; }
 
 	protected:
 		float timer;
 		float shotInterval = 2;		/// ’e‚Ì”­ËŠÔŠu
 		float initBulletSpeed = 1;
 		int groupId = -1;
+		glm::vec4 color = glm::vec4(1);
 
 		Entity::Entity& parent;		/// ’e‚Ì”­ËŒ³
 		Entity::Entity* target;		/// ’e‚Ì’Ç”ö‘ÎÛ

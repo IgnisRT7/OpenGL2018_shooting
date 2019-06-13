@@ -45,6 +45,7 @@ namespace GameState {
 				p->CastStencil(true);
 				p->StencilColor(glm::vec4(1, 0, 1, 1));
 				p->Scale(glm::vec3(0.5f));
+				p->Color(color);
 				timer = shotInterval;
 
 			}
@@ -108,7 +109,7 @@ namespace GameState {
 					"Sphere", "Res/Model/sphere.dds", std::make_shared<Bullet>())) {
 
 					p->Velocity(vel);
-					p->Color(glm::vec4(1, 1, 1, 1));
+					p->Color(color);
 					p->Scale(glm::vec3(0.5f));
 					timer = shotInterval;
 				}
@@ -153,6 +154,7 @@ namespace GameState {
 
 			p->Velocity(newVel * initBulletSpeed);
 			p->Scale(glm::vec3(0.5));
+			p->Color(color);
 
 			//game.PlayAudio()
 			shotAngle += angleInterval;

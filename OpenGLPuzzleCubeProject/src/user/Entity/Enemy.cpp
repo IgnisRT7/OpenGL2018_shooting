@@ -44,6 +44,7 @@ namespace GameState {
 
 		//弾管理システムの更新
 		if (bulletManager) {
+			bulletManager->Color(bulletColor);
 			bulletManager->Update(delta);
 		}
 
@@ -127,7 +128,7 @@ namespace GameState {
 		playerEntity = t;
 
 		if (bulletManager) {
- 			bulletManager->Target(t);
+			bulletManager->Target(t);
 		}
 	}
 
@@ -138,7 +139,7 @@ namespace GameState {
 
 		GameEngine& game = GameEngine::Instance();
 
-		entity->Scale(glm::vec3(10));
+		entity->Scale(glm::vec3(11));
 		entity->Collision({ { -15,-20,-10},{15,20,10} });
 
 		for (int i = 0; i < 8; i++) {
@@ -147,10 +148,10 @@ namespace GameState {
 			t->DestroyByScreenOut(false);
 
 			if (auto p = game.AddEntity(EntityGroupId_Others, glm::vec3(-60),
-				"Toroid", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", t, "NonLighting")) {
+				"", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", t)) {
 
 				turrets.push_back(t);
-				
+
 				//タレット用弾作成
 				BulletManagerPtr b;
 				if ((i % 2) == 0) {
@@ -161,6 +162,7 @@ namespace GameState {
 				}
 
 				t->BulletManager(b);
+				b->Color(glm::vec4(0, 0.2, 1, 1));
 			}
 		}
 
@@ -172,7 +174,7 @@ namespace GameState {
 	*
 	*	@param delta	経過時間
 	*/
-	void BossEnemy::Update(float delta){
+	void BossEnemy::Update(float delta) {
 
 		timer += delta;
 
@@ -198,7 +200,7 @@ namespace GameState {
 	*
 	*	@param p	ダメージ量
 	*/
-	void BossEnemy::Damage(float p){
+	void BossEnemy::Damage(float p) {
 
 		if (--hp <= 0) {
 
@@ -207,6 +209,7 @@ namespace GameState {
 			//爆発エフェクト
 			if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, entity->Position(), "Blast", "Res/Model/Toroid.dds", std::make_shared<Blast>())) {
 				const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
+				p->Scale(glm::vec3(10.0f));
 				p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
 				p->Color(glm::vec4(1.0f, 0.75f, 0.5f, 1.0f));
 				game.UserVariable("score") += 100;
@@ -221,33 +224,56 @@ namespace GameState {
 
 			entity->Destroy();
 		}
+		else {
+
+			if (static_cast<float>(hp) / maxHp > 0.5) {
+				for (auto turret : turrets) {
+
+					turret->BulletManager()->BulletSpeed(20.0);
+					turret->BulletManager()->ShotInterval(2.0f);
+					turret->BulletManager()->Color(glm::vec4(0, 0.2, 1, 1));
+				}
+			}
+			else if(static_cast<float>(hp) / maxHp > 0.3){
+				for (auto turret : turrets) {
+
+					turret->BulletManager()->BulletSpeed(15.0);
+					turret->BulletManager()->ShotInterval(1.0f);
+					turret->BulletManager()->Color(glm::vec4(1, 1, 0, 1));
+				}
+			}
+
+		}
 	}
 
-	void BossEnemy::CollisionEnter(Entity::Entity &e){
+	void BossEnemy::CollisionEnter(Entity::Entity &e) {
 
 		e.EntityData()->Damage(1);
 	}
 
 	/**
-	*	タレットの位置情報更新処理
+	*	タレットの更新処理
 	*/
 	void BossEnemy::UpdateTurret() {
 
 		glm::quat baseRot = entity->Rotation();
 		glm::vec3 centerPos = entity->Position();
-		glm::vec3 forward = glm::vec3(-1, 0, 0) ;
+		glm::vec3 forward = glm::vec3(-1, 0, 0);
 
 		for (int i = 0; i < 8; i++) {
 
 			const float perRad = glm::pi<float>() * 2.0f * (1.0f / 8.0f);
 			float rot = glm::pi<float>() * 2.0f * 0.125 * i;
-			glm::quat tmp = glm::angleAxis(rot, glm::vec3(0, 1, 0));
+			float offset = 0.15f;
+			glm::quat tmp = glm::angleAxis(rot + offset, glm::vec3(0, 1, 0));
 
 			tmp = tmp * baseRot;
 
-			glm::vec3 vec = tmp * (forward * 15.0f);
+			glm::vec3 vec = tmp * (forward * 17.0f);
 
-			turrets[i]->Entity()->Position(centerPos + vec);
+			glm::vec3 offsetPos = glm::vec3(0, 5, 0);
+
+			turrets[i]->Entity()->Position(centerPos + vec + offsetPos);
 		}
 	}
 
@@ -256,7 +282,7 @@ namespace GameState {
 	*
 	*	@param t	ターゲットのエンティティ
 	*/
-	void BossEnemy::Target(Entity::Entity* t){
+	void BossEnemy::Target(Entity::Entity* t) {
 
 		playerEntity = t;
 		for (auto turret : turrets) {
@@ -277,8 +303,8 @@ namespace GameState {
 	*	@param mType	移動タイプ
 	*	@param bType	弾のタイプ
 	*/
-	EnemySpawner::EnemySpawner(int max, float interval, int eType,int mType, int bType) :
-		spawnMax(max), spawnInterval(interval), enemyType(eType),moveType(mType), bulletType(bType) {
+	EnemySpawner::EnemySpawner(int max, float interval, int eType, int mType, int bType) :
+		spawnMax(max), spawnInterval(interval), enemyType(eType), moveType(mType), bulletType(bType) {
 	}
 
 	/**
@@ -330,7 +356,7 @@ namespace GameState {
 			b->Target(playerEntity);
 
 			Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, entity->Position(),
-				"MotherShip", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", b, "NonLighting");
+				"MotherShip", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", b);
 
 		}
 		else {
