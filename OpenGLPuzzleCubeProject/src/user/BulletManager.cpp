@@ -161,55 +161,5 @@ namespace GameState {
 
 	}
 
-	/**
-	*	コンストラクタ
-	*
-	*	@param parent	親クラスのエンティティ
-	*/
-	PlayerShot_TypeNormal::PlayerShot_TypeNormal(Entity::Entity & parent):
-		BulletManager(parent,EntityGroupId_PlayerShot){
-
-		initBulletSpeed = 90.f;
-		shotInterval = 0.2f;
-		shotButton = GamePad::A;
-		
-	}
-
-	/**
-	*	更新処理
-	*
-	*	@param delta	経過時間
-	*/
-	void PlayerShot_TypeNormal::Update(float delta){
-
-		GameEngine& game = GameEngine::Instance();
-		const GamePad& gamepad = game.GetGamePad();
-
-		if (timer > 0)timer -= delta;
-
-		if ((gamepad.buttons & shotButton) && (timer <= 0)) {
-			//弾の発射処理
-
-			static const float bulletInterval = 1;
- 			glm::vec3 parPos = parent.Position();
-
-			glm::vec3 leftPos = glm::vec3(parPos.x - bulletInterval * (bulletLevel - 1) / 2, parPos.y, parPos.z);
-
-			game.PlayAudio(1, CRI_CUESHEET_0_SHOT);
-			for (int i = 0; i < bulletLevel; ++i) {
-
-				if (Entity::Entity* p = game.AddEntity(groupId, leftPos + glm::vec3(i*bulletInterval, 0, 0),
-					"NormalShot", "Res/Model/Player.dds", std::make_shared<Bullet>(glm::vec3(0, 0, 200)), "NonLighting")) {
-
-					p->Velocity(glm::vec3(0, 0, 1) * initBulletSpeed);
-					p->Scale(glm::vec3(2.f));
-				}
-				parPos.x += 0.25f;
-			}
-
-			timer = shotInterval;
-		}
-	}
-
 
 }

@@ -59,20 +59,4 @@ namespace GameState {
 
 	};
 
-	///プレイヤー用 入力ありの制御
-	class PlayerShot_TypeNormal : public BulletManager {
-	public:
-		
-		PlayerShot_TypeNormal(Entity::Entity& parent);
-
-		void Update(float delta) override;
-		void LevelUp() { bulletLevel++; }
-		void FireButton(uint32_t b) { shotButton = b; }
-		virtual ~PlayerShot_TypeNormal() { std::cout << "playershot lost"; }
-
-	private:
-
-		uint32_t shotButton ;
-		int bulletLevel = 1;	///< 弾の強化状態
-	};
 }
