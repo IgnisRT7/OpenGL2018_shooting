@@ -189,6 +189,7 @@ namespace GameState {
 
 				entity->CastShadow(false);  
 				entity->Color(glm::vec4(0, 0, 0, 0));
+				entity->Position(glm::vec3(500));
 				return;
 			}
 			
