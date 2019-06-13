@@ -23,7 +23,9 @@ namespace GameState {
 
 		void MoveController(MoveControllerPtr m) { moveController = m; }
 		void BulletManager(BulletManagerPtr b) { bulletManager = b; }
+		void DestroyByScreenOut(bool v) { isDestroyByScreenOut = v; }
 		void Target(Entity::Entity* t);
+		Entity::Entity* Entity() { return entity; }
 
 	private:
 
@@ -32,13 +34,15 @@ namespace GameState {
 		int hp = 2;			/// 体力
 
 		bool isItemDrop = false;
+		bool isDestroyByScreenOut = true;
 
 		BulletManagerPtr bulletManager;		///< 弾の管理クラス
 		MoveControllerPtr moveController;	///< 移動管理クラス
 		
 		Entity::Entity* playerEntity;
 	};
-
+	
+	//ボス用敵
 	class BossEnemy : public Entity::EntityDataBase {
 	public:
 
@@ -47,9 +51,19 @@ namespace GameState {
 		void Damage(float) override;
 		void CollisionEnter(Entity::Entity& e) override;
 
+		void UpdateTurret();
+		void MoveController(MoveControllerPtr m) { moveController = m; }
+		void Target(Entity::Entity* t);
+
 	private:
 
-		std::vector<BulletManagerPtr> bulletsManager;
+		float timer = 0;	/// 
+		int hp = 500;		/// 体力
+
+		MoveControllerPtr moveController;
+		std::vector<std::shared_ptr<Toroid> > turrets;
+
+		Entity::Entity* playerEntity;
 	};
 
 	/// 敵スポナー
