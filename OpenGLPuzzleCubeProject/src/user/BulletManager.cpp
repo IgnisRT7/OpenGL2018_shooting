@@ -105,10 +105,10 @@ namespace GameState {
 
 				//エンティティの追加処理
 				if (Entity::Entity* p = game.AddEntity(groupId, parent.Position(),
-					"Sphere", "Res/Model/sphere.dds", std::make_shared<Bullet>(
-						vel))) {
+					"Sphere", "Res/Model/sphere.dds", std::make_shared<Bullet>())) {
 
-					p->Color(glm::vec4(1, 0, 0, 1));
+					p->Velocity(vel);
+					p->Color(glm::vec4(1, 1, 1, 1));
 					p->Scale(glm::vec3(0.5f));
 					timer = shotInterval;
 				}
