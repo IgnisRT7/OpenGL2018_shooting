@@ -214,7 +214,7 @@ namespace GameState {
 		game.StopAllAudio();
 		game.RemoveAllEntity();
 
-		++stageNo; 
+		++stageNo;
 		
 		launchController = std::make_shared<EnemyLaunchController>();
 		launchController->Init(stageNo);
@@ -284,9 +284,20 @@ namespace GameState {
 			
 		}
 		case 3: {
+			game.MainCamera()->LookAt(glm::vec3(0, 50, -10), glm::vec3(0, 0, 0));
 			game.PlayAudio(0, CRI_CUESHEET_0_BOSSSCENE);
 
 			game.KeyValue(0.02f);
+
+			///ÉVÉÉÉhÉEÇÃê›íË
+			GameEngine::ShadowParameter shadowParam;
+			shadowParam.lightPos = glm::vec3(0, 100, -50);
+			shadowParam.lightDir = glm::normalize(glm::vec3(0,0, 25));
+			shadowParam.lightUp = glm::vec3(0, 1, 0);
+			shadowParam.near = 10;
+			shadowParam.far = 200;
+			shadowParam.range = glm::vec2(500, 500);
+			game.Shadow(shadowParam);
 
 			stageName.pos = glm::vec2(-1,0);
 			stageName.str = "To SPACE";
