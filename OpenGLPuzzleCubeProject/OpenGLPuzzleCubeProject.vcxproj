@@ -184,7 +184,7 @@
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\Uniform.h" />
     <ClInclude Include="src\UniformBuffer.h" />
-    <ClInclude Include="src\user\BulletManager.h" />
+    <ClInclude Include="src\user\BulletGenerator.h" />
     <ClInclude Include="src\user\EnemyLaunchController.h" />
     <ClInclude Include="src\user\EnemyMoveController.h" />
     <ClInclude Include="src\user\Entity\Bullet.h" />
@@ -215,7 +215,7 @@
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\UniformBuffer.cpp" />
-    <ClCompile Include="src\user\BulletManager.cpp" />
+    <ClCompile Include="src\user\BulletGenerator.cpp" />
     <ClCompile Include="src\user\EnemyLaunchController.cpp" />
     <ClCompile Include="src\user\EnemyMoveController.cpp" />
     <ClCompile Include="src\user\Entity\Bullet.cpp" />

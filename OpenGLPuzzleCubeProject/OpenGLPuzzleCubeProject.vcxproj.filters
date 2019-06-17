@@ -110,13 +110,13 @@
     <ClInclude Include="src\user\EnemyLaunchController.h">
       <Filter>src\User</Filter>
     </ClInclude>
-    <ClInclude Include="src\user\BulletManager.h">
-      <Filter>src\User</Filter>
-    </ClInclude>
     <ClInclude Include="LandScape.h">
       <Filter>src\User</Filter>
     </ClInclude>
     <ClInclude Include="src\user\EnemyMoveController.h">
+      <Filter>src\User</Filter>
+    </ClInclude>
+    <ClInclude Include="src\user\BulletGenerator.h">
       <Filter>src\User</Filter>
     </ClInclude>
   </ItemGroup>
@@ -199,13 +199,13 @@
     <ClCompile Include="src\user\EnemyLaunchController.cpp">
       <Filter>src\User</Filter>
     </ClCompile>
-    <ClCompile Include="src\user\BulletManager.cpp">
-      <Filter>src\User</Filter>
-    </ClCompile>
     <ClCompile Include="LandScape.cpp">
       <Filter>src\User\Entity</Filter>
     </ClCompile>
     <ClCompile Include="src\user\EnemyMoveController.cpp">
+      <Filter>src\User</Filter>
+    </ClCompile>
+    <ClCompile Include="src\user\BulletGenerator.cpp">
       <Filter>src\User</Filter>
     </ClCompile>
   </ItemGroup>
