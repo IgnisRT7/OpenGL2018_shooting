@@ -3,16 +3,17 @@
 */
 #pragma once
 #include <GL/glew.h>
-#include "Mesh.h"
-#include "Texture.h"
-#include "Shader.h"
-#include "UniformBuffer.h"
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <memory>
 #include <functional>
 #include <iostream>
 #include <string>
+
+#include "Mesh.h"
+#include "Texture.h"
+#include "Shader.h"
+#include "UniformBuffer.h"
 #include "Component/CameraComponent.h"
 
 
@@ -254,17 +255,21 @@ namespace Entity {
 
 		//初期化処理
 		virtual void Initialize() = 0;
-
 		//更新処理
 		virtual void Update(float d) = 0;
-
 		//ダメージ処理
 		virtual void Damage(float p) {}
-
 		//衝突判定処理
 		virtual void CollisionEnter(Entity& e) {}
 
-		void _Entity(Entity& e) { entity = &e; }
+		void SetEntity(Entity& e) { entity = &e; }
+
+	public:
+		//パラメータ設定系
+		
+		void Color(glm::vec4& c) { entity->Color(c); }
+		void Velocity(glm::vec3& v) { entity->Velocity(v); }
+		void Position(glm::vec3& p) { entity->Position(p); }
 
 	protected:
 
