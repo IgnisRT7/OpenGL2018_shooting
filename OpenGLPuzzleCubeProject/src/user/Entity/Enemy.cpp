@@ -43,9 +43,9 @@ namespace GameState {
 		timer += delta;
 
 		//弾管理システムの更新
-		if (bulletManager) {
-			bulletManager->Color(bulletColor);
-			bulletManager->Update(delta);
+		if (bulletGenerator) {
+			bulletGenerator->Color(bulletColor);
+			bulletGenerator->Update(delta);
 		}
 
 		//移動管理システムの更新
@@ -127,8 +127,8 @@ namespace GameState {
 
 		playerEntity = t;
 
-		if (bulletManager) {
-			bulletManager->Target(t);
+		if (bulletGenerator) {
+			bulletGenerator->Target(t);
 		}
 	}
 
@@ -153,15 +153,15 @@ namespace GameState {
 				turrets.push_back(t);
 
 				//タレット用弾作成
-				BulletManagerPtr b;
+				BulletGeneratorPtr b;
 				if ((i % 2) == 0) {
 					b = std::make_shared<MultiWayShot>(*p, EntityGroupId_EnemyShot, nullptr, 15, 3);
 				}
 				else {
-					b = std::make_shared<BulletManager>(*p, EntityGroupId_EnemyShot, playerEntity);
+					b = std::make_shared<NormalShot>(*p, EntityGroupId_EnemyShot, playerEntity);
 				}
 
-				t->BulletManager(b);
+				t->BulletGenerator(b);
 				b->Color(glm::vec4(0, 0.2, 1, 1));
 			}
 		}
@@ -229,17 +229,17 @@ namespace GameState {
 			if (static_cast<float>(hp) / maxHp > 0.5) {
 				for (auto turret : turrets) {
 
-					turret->BulletManager()->BulletSpeed(20.0);
-					turret->BulletManager()->ShotInterval(2.0f);
-					turret->BulletManager()->Color(glm::vec4(0, 0.2, 1, 1));
+					turret->BulletGenerator()->BulletSpeed(20.0);
+					turret->BulletGenerator()->ShotInterval(2.0f);
+					turret->BulletGenerator()->Color(glm::vec4(0, 0.2, 1, 1));
 				}
 			}
 			else if(static_cast<float>(hp) / maxHp > 0.3){
 				for (auto turret : turrets) {
 
-					turret->BulletManager()->BulletSpeed(15.0);
-					turret->BulletManager()->ShotInterval(1.0f);
-					turret->BulletManager()->Color(glm::vec4(1, 1, 0, 1));
+					turret->BulletGenerator()->BulletSpeed(15.0);
+					turret->BulletGenerator()->ShotInterval(1.0f);
+					turret->BulletGenerator()->Color(glm::vec4(1, 1, 0, 1));
 				}
 			}
 
@@ -263,7 +263,7 @@ namespace GameState {
 		for (int i = 0; i < 8; i++) {
 
 			const float perRad = glm::pi<float>() * 2.0f * (1.0f / 8.0f);
-			float rot = glm::pi<float>() * 2.0f * 0.125 * i;
+			float rot = glm::pi<float>() * 2.0f * 0.125f * i;
 			float offset = 0.15f;
 			glm::quat tmp = glm::angleAxis(rot + offset, glm::vec3(0, 1, 0));
 
@@ -379,10 +379,10 @@ namespace GameState {
 
 				switch (bulletType) {
 				case 1:
-					t->BulletManager(std::make_shared<BulletManager>(*p, EntityGroupId_EnemyShot, playerEntity));
+					t->BulletGenerator(std::make_shared<NormalShot>(*p, EntityGroupId_EnemyShot, playerEntity));
 					break;
 				case 5:
-					t->BulletManager(std::make_shared<CircleShot>(*p, EntityGroupId_EnemyShot));
+					t->BulletGenerator(std::make_shared<CircleShot>(*p, EntityGroupId_EnemyShot));
 				default:
 					break;
 				}

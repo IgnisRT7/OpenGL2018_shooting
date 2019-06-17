@@ -4,7 +4,7 @@
 #pragma once
 
 #include "../../Entity.h"
-#include "../BulletManager.h"
+#include "../BulletGenerator.h"
 #include "../EnemyMoveController.h"
 
 namespace GameState {
@@ -22,8 +22,8 @@ namespace GameState {
 		void CollisionEnter(Entity::Entity& e) override;
 
 		void MoveController(MoveControllerPtr m) { moveController = m; }
-		void BulletManager(BulletManagerPtr b) { bulletManager = b; }
-		BulletManagerPtr BulletManager() const { return bulletManager; }
+		void BulletGenerator(BulletGeneratorPtr b) { bulletGenerator = b; }
+		BulletGeneratorPtr BulletGenerator() const { return bulletGenerator; }
 		void DestroyByScreenOut(bool v) { isDestroyByScreenOut = v; }
 		void Target(Entity::Entity* t);
 		void BulletColor(glm::vec4 c) { bulletColor = c; }
@@ -39,7 +39,7 @@ namespace GameState {
 		bool isDestroyByScreenOut = true;
 		glm::vec4 bulletColor = glm::vec4(1);
 
-		BulletManagerPtr bulletManager;		///< 弾の管理クラス
+		BulletGeneratorPtr bulletGenerator;	///< 弾の生成管理クラス
 		MoveControllerPtr moveController;	///< 移動管理クラス
 		
 		Entity::Entity* playerEntity;
@@ -62,7 +62,7 @@ namespace GameState {
 
 		float timer = 0;	/// 
 		int hp = 500;		/// 体力
-		const int maxHp = 500.0f;
+		const int maxHp = 500;
 
 		MoveControllerPtr moveController;
 		std::vector<std::shared_ptr<Toroid> > turrets;
