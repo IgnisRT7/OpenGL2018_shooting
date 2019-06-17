@@ -95,7 +95,7 @@ void EnemyLaunchController::Load(const std::string& filename) {
 		EnemyLaunchType launchData;
 		launchData.launchCount = static_cast<int>(buftmp[0]);
 		launchData.launchInterval = buftmp[1];
-		launchData.type = buftmp[2];
+		launchData.type = static_cast<int>(buftmp[2]);
 		launchData.moveType = static_cast<int>(buftmp[3]);
 		launchData.bulletType = static_cast<int>(buftmp[4]);
 		launchData.launchStartTimer = buftmp[5];
