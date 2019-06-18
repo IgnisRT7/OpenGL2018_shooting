@@ -143,6 +143,8 @@ GameEngine& GameEngine::Instance() {
 bool GameEngine::Init(int w, int h, const char* title) {
 
 	windowSize = glm::vec2(w, h);
+	viewportRect[0] = glm::vec2(0, 0);
+	viewportRect[1] = windowSize;
 
 	if (isInitalized) {
 		return true;
@@ -279,6 +281,15 @@ void GameEngine::Run() {
 		deltaTime = static_cast<float>(curTime - prevTime);
 		prevTime = curTime;
 
+		int w, h;
+		if (window.GetWindowSize(w, h)) {
+			//ウインドウサイズが変更された
+
+			windowSize = glm::vec2(w,h);
+			viewportRect[1].y = h;
+			viewportRect[1].x = h * 800.0f / 600.0f;
+		}
+
 		UpdateFps();
 
 		window.UpdateGamePad();
@@ -295,6 +306,12 @@ void GameEngine::Run() {
 			pboIndexForWriting ^= 1;
 		}
 	}
+}
+
+void GameEngine::ResizeBuffer(int w, int h){
+
+
+
 }
 
 /**
@@ -781,7 +798,7 @@ void GameEngine::RenderEntity() const {
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glViewport(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
+	glViewport(0, 0, offscreen->Width(), offscreen->Height());
 	glScissor(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
 
 	glClearColor(0.1f, 0.3f, 0.5f, 1.0f);
@@ -861,7 +878,8 @@ void GameEngine::RenderFrameBuffer() const{
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glDisable(GL_BLEND);
-	glViewport(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y));
+	glViewport(static_cast<int>(viewportRect[0].x), static_cast<int>(viewportRect[0].y),
+		static_cast<int>(viewportRect[1].x), static_cast<int>(viewportRect[1].y));
 
 	const Shader::ProgramPtr& progColorFilter = shaderMap.find("ColorFilter")->second;
 	progColorFilter->UseProgram();
