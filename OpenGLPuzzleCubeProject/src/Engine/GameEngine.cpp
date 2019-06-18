@@ -285,9 +285,15 @@ void GameEngine::Run() {
 		if (window.GetWindowSize(w, h)) {
 			//ウインドウサイズが変更された
 
-			windowSize = glm::vec2(w,h);
-			viewportRect[1].y = h;
-			viewportRect[1].x = h * 800.0f / 600.0f;
+			const float gameAspect = 800.0f / 600.0f; /// 4:3
+
+			float theoreticalWidth = h * gameAspect;	/// ウインドウサイズの高さを1としたときの横幅のサイズ(理論値)
+
+			viewportRect[1].y = (theoreticalWidth > w) ? w * (1 / gameAspect) : h;
+			viewportRect[1].x = viewportRect[1].y * gameAspect;
+
+			viewportRect[0].x = (w - viewportRect[1].x) * 0.5f;
+			viewportRect[0].y = (h - viewportRect[1].y) * 0.5f;
 		}
 
 		UpdateFps();
