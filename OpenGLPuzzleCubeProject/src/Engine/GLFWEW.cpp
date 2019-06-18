@@ -354,6 +354,8 @@ namespace GLFWEW {
 		glfwGetWindowSize(window,&w, &h);
 
 		if (w != windowSizeX || h != windowSizeY) {
+			windowSizeX = w;
+			windowSizeY = h;
 			return true;
 		}
 
