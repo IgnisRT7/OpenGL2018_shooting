@@ -22,6 +22,8 @@ public:
 	GLuint Width() const { return tex->Width(); }
 	GLuint Height() const { return tex->Height(); }
 
+	void Resize(int w, int h);
+
 private:
 
 	OffscreenBuffer() = default;

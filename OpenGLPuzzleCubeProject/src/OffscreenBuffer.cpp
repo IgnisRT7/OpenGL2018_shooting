@@ -68,6 +68,16 @@ OffscreenBufferPtr OffscreenBuffer::Create(int w, int h, GLenum iformat) {
 }
 
 /**
+*	サイズ変更処理
+*
+*	@param w	横方向の変更後のサイズ
+*	@param h	縦方向の変更後のサイズ
+*/
+void OffscreenBuffer::Resize(int w, int h){
+
+}
+
+/**
 *	デストラクタ
 */
 OffscreenBuffer::~OffscreenBuffer() {
