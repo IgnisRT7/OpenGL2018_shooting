@@ -34,6 +34,7 @@ public:
 	static GameEngine& Instance();
 	bool Init(int w, int h, const char* title);
 	void Run();
+	void ResizeBuffer(int w, int h);
 
 	//オーディオ関係のラッパー関数
 	bool InitAudio(const char* acfPath, const char* acbPath, const char* awbPath, const char* dspBusName);
@@ -149,6 +150,7 @@ private:
 	bool isInitalized = false;
 
 	glm::vec2 windowSize;
+	glm::vec2 viewportRect[2];
 
 	//最終出力用バッファ
 	BufferObject vbo, ibo;
