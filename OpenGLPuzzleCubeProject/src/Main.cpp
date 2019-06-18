@@ -1,4 +1,4 @@
-#include "GameEngine.h"
+#include "Engine/GameEngine.h"
 #include "../Res/Audio/testProject_acf.h"
 #include "user/TitleScene.h"
 #include <Windows.h>
@@ -8,19 +8,22 @@
 
 int main() {
 
-	int cx, cy;
-	cx = GetSystemMetrics(SM_CXSCREEN);
+	int cy;
 	cy = GetSystemMetrics(SM_CYSCREEN) ;
 	float aspectRatio = 800.0f / 600.0f;
 
 	GameEngine& game = GameEngine::Instance();
-	if (!game.Init(static_cast<int>(cy * aspectRatio), cy, "OpenGL Tutorial")) {
+	if (!game.Init(static_cast<int>(cy * aspectRatio), cy, "STAR FIGHTER")) {
 		
 		return 1;
 	}
 
-	if (!game.InitAudio("Res/Audio/testProject.acf", "Res/Audio/CueSheet_0.acb",
-		"Res/Audio/CueSheet_0.awb", CRI_TESTPROJECT_DSPSETTING_DSPBUSSETTING_0)) {
+	const char* audioAcfFile = "Res/Audio/testProject.acf";
+	const char* audioAcbFile = "Res/Audio/CueSheet_0.acb";
+	const char* audioAwbFile = "Res/Audio/CueSheet_0.awb";
+
+	if (!game.InitAudio(audioAcfFile,audioAcbFile ,
+		audioAwbFile, CRI_TESTPROJECT_DSPSETTING_DSPBUSSETTING_0)) {
 		
 		return 1;
 	}
