@@ -4,7 +4,6 @@
 #pragma once
 
 #include "../../Entity.h"
-#include "../BulletManager.h"
 #include "../../GameState.h"
 
 namespace GameState {

@@ -53,11 +53,13 @@ namespace GameState {
 
 		for (int i = 0; i < multiShotNum; ++i) {
 
-			if (Entity::Entity* p = game.AddEntity(EntityGroupId_PlayerShot, leftPos + glm::vec3(i*bulletInterval, 0, 0),
-				"NormalShot", "Res/Model/Player.dds", std::make_shared<Bullet>(), "NonLighting")) {
+			auto b = std::make_shared<Bullet>();
 
+			if (Entity::Entity* p = game.AddEntity(EntityGroupId_PlayerShot, leftPos + glm::vec3(i * bulletInterval, 0, 0),
+				"NormalShot", "Res/Model/Player.dds", b, "NonLighting")) {
+
+				b->Velocity(glm::vec3(0, 0, 100));
 				p->Collision(collisionDataList[EntityGroupId_PlayerShot]);
-				p->Velocity(glm::vec3(0, 0, 200));
 				p->Scale(glm::vec3(1.5f));
 			}
 			pos.x += 0.25f;
