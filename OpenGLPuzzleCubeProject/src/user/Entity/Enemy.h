@@ -1,9 +1,9 @@
 /**
-*	@file Entity.h
+*	@file Enemy.h
 */
 #pragma once
 
-#include "../../Entity.h"
+#include "../../Engine/Entity.h"
 #include "../BulletGenerator.h"
 #include "../EnemyMoveController.h"
 

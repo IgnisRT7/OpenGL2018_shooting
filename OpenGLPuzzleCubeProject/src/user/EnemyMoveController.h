@@ -3,7 +3,7 @@
 */
 
 #pragma once
-#include "../Entity.h"
+#include "../Engine/Entity.h"
 
 /**
 *	移動制御のパーツクラス

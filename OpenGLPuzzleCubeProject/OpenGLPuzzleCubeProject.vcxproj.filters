@@ -26,45 +26,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Audio.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BufferObject.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Entity.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Font.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\GameEngine.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\GamePad.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\GLFWEW.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Mesh.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\OffscreenBuffer.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Shader.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Texture.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Uniform.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\UniformBuffer.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="src\user\Entity\Player.h">
       <Filter>src\User\Entity</Filter>
     </ClInclude>
@@ -101,12 +62,6 @@
     <ClInclude Include="StageLoader.h">
       <Filter>src\User</Filter>
     </ClInclude>
-    <ClInclude Include="src\Scene.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\DebugLog.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="src\user\EnemyLaunchController.h">
       <Filter>src\User</Filter>
     </ClInclude>
@@ -119,41 +74,56 @@
     <ClInclude Include="src\user\BulletGenerator.h">
       <Filter>src\User</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Audio.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Billboard.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\BufferObject.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\DebugLog.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Entity.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Font.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\GamePad.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\GameEngine.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\GLFWEW.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Mesh.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\OffscreenBuffer.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Scene.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Shader.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Texture.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Uniform.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\UniformBuffer.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Audio.cpp">
-      <Filter>src\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BufferObject.cpp">
-      <Filter>src\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Entity.cpp">
-      <Filter>src\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Font.cpp">
-      <Filter>src\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GameEngine.cpp">
-      <Filter>src\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GLFWEW.cpp">
-      <Filter>src\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Mesh.cpp">
-      <Filter>src\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\OffscreenBuffer.cpp">
-      <Filter>src\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Shader.cpp">
-      <Filter>src\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Texture.cpp">
-      <Filter>src\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\UniformBuffer.cpp">
-      <Filter>src\Engine</Filter>
-    </ClCompile>
     <ClCompile Include="src\user\Entity\Player.cpp">
       <Filter>src\User\Entity</Filter>
     </ClCompile>
@@ -187,12 +157,6 @@
     <ClCompile Include="src\user\StageLoader.cpp">
       <Filter>src\User</Filter>
     </ClCompile>
-    <ClCompile Include="src\Scene.cpp">
-      <Filter>src\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\DebugLog.cpp">
-      <Filter>src\Engine</Filter>
-    </ClCompile>
     <ClCompile Include="src\Component\CameraComponent.cpp">
       <Filter>src\Engine\Component</Filter>
     </ClCompile>
@@ -207,6 +171,51 @@
     </ClCompile>
     <ClCompile Include="src\user\BulletGenerator.cpp">
       <Filter>src\User</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Audio.cpp">
+      <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Billbord.cpp">
+      <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\BufferObject.cpp">
+      <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\DebugLog.cpp">
+      <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\DebugLogger.cpp">
+      <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Entity.cpp">
+      <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Font.cpp">
+      <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\GameEngine.cpp">
+      <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\GLFWEW.cpp">
+      <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Mesh.cpp">
+      <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\OffscreenBuffer.cpp">
+      <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Scene.cpp">
+      <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Shader.cpp">
+      <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Texture.cpp">
+      <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\UniformBuffer.cpp">
+      <Filter>src\Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

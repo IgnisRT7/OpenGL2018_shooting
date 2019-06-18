@@ -2,7 +2,7 @@
 *	@file ModelLoadTestScene.cpp
 */
 #include "ModelLoadTestscene.h"
-#include "../GameEngine.h"
+#include "../Engine/GameEngine.h"
 #include "../GameState.h"
 #include <glm/common.hpp>
 

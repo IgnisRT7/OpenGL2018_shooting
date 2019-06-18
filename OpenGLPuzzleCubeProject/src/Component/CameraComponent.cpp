@@ -3,7 +3,7 @@
 */
 
 #include "CameraComponent.h"
-#include "../GameEngine.h"
+#include "../Engine/GameEngine.h"
 
 
 const glm::mat4& CameraComponent::ViewMatrix() const{

@@ -2,9 +2,9 @@
 *	@file GameMainScene.h
 */
 #pragma once
-#include "../Entity.h"
+#include "../Engine/Entity.h"
 #include "Entity/Player.h"
-#include "../Scene.h"
+#include "../Engine/Scene.h"
 #include "EnemyLaunchController.h"
 
 namespace GameState {

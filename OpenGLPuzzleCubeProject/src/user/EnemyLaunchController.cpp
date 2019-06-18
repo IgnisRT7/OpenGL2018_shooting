@@ -4,7 +4,7 @@
 
 #include "EnemyLaunchController.h"
 #include "Entity/Enemy.h"
-#include "../GameEngine.h"
+#include "../Engine/GameEngine.h"
 #include "../GameState.h"
 
 #include <algorithm>

@@ -14,7 +14,7 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "UniformBuffer.h"
-#include "Component/CameraComponent.h"
+#include "../Component/CameraComponent.h"
 
 
 namespace Entity {

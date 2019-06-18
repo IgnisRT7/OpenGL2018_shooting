@@ -2,7 +2,7 @@
 *	@file BulletGenerator.cpp
 */
 #include "BulletGenerator.h"
-#include "../GameEngine.h"
+#include "../Engine/GameEngine.h"
 #include "../GameState.h"
 #include "Entity/Bullet.h"
 

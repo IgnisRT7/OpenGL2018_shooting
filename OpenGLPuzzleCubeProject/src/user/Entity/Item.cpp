@@ -3,7 +3,7 @@
 */
 
 #include "Item.h"
-#include "../../GameEngine.h"
+#include "../../Engine/GameEngine.h"
 
 namespace GameState {
 

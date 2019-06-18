@@ -5,7 +5,7 @@
 
 #include <vector>
 #include <glm/glm.hpp>
-#include "../Entity.h"
+#include "../Engine/Entity.h"
 #include "EnemyMoveController.h"
 
 ///敵の出撃タイプデータ

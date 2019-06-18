@@ -2,9 +2,9 @@
 *	@file TitleScene.cpp
 */
 
-#include "../entity.h"
+#include "../Engine/entity.h"
 #include "TitleScene.h"
-#include "../GameEngine.h"
+#include "../Engine/GameEngine.h"
 #include "../GameState.h"
 #include "GameMainScene.h"
 #include "ModelLoadTestscene.h"

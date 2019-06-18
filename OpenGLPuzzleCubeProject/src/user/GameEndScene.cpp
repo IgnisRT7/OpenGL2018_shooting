@@ -2,7 +2,7 @@
 *	@file GameEndScene.cpp
 */
 #include "GameEndScene.h"
-#include "../GameEngine.h"
+#include "../Engine/GameEngine.h"
 #include "../GameState.h"
 #include "TitleScene.h"
 
