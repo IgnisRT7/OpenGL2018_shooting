@@ -42,15 +42,12 @@ namespace GameState {
 
 		auto b = std::make_shared<Bullet>();
 
-		b->Velocity(direction * initBulletSpeed);
-		b->Color(color);
-
 		//エンティティの追加処理
 		if (Entity::Entity* p = GameEngine::Instance().AddEntity(groupId, parent.Position(),
-			"Sphere", "Res/Model/sphere.dds", std::make_shared<Bullet>())) {
+			"Sphere", "Res/Model/sphere.dds", b)) {
 
-			direction = glm::normalize(direction);
-
+			b->Velocity(direction * initBulletSpeed);
+			b->Color(color);
 			p->Scale(glm::vec3(0.5f));
 			timer = shotInterval;
 		}
@@ -66,6 +63,42 @@ namespace GameState {
 		if (target) {
 			direction = target->Position() - parent.Position();
 			direction = glm::normalize(direction);
+		}
+	}
+
+	/**
+*	コンストラクタ
+*
+*	@param p	親元のエンティティ
+*	@param t	ターゲットのエンティティ
+*	@param id	弾のグループID
+*/
+	NormalShot::NormalShot(Entity::Entity& p, int id, Entity::Entity* t) :
+		BulletGenerator(p, id, t) {
+
+		initBulletSpeed = 10.0f;
+
+	}
+
+	/**
+	*	更新処理
+	*
+	*	@param delta	経過時間
+	*/
+	void NormalShot::Update(float delta) {
+
+		GameEngine& game = GameEngine::Instance();
+
+		timer -= delta;
+
+		if (timer < 0) {
+
+			if (target) {
+				CalcVelocity();
+			}
+			//game.PlayAudio(1, CRI_CUESHEET_0_ENEMYSHOT);
+
+			ShotBullet();
 		}
 	}
 
@@ -96,19 +129,32 @@ namespace GameState {
 		if (timer < 0) {
 			//game.PlayAudio(1, CRI_CUESHEET_0_ENEMYSHOT);
 
-			glm::vec3 centerDir = target ? target->Position() - parent.Position() : glm::vec3(0, 0, -1);
-			centerDir = glm::normalize(centerDir);
+			if (target) {
+				CalcVelocity();
+			}
+
+			glm::vec3 centerDir = direction;
 			
 			for (int i = 0; i < maxBulletNum; i++) {
 
+				int settingIndex = (i - (int)(maxBulletNum / 2));
+
 				//弾の角度・速度設定処理
-				glm::quat rot = glm::angleAxis(glm::radians(angleInterval * (i - (int)(maxBulletNum / 2))), glm::vec3(0, 1, 0));
+				glm::quat rot = glm::angleAxis(glm::radians(angleInterval * settingIndex), glm::vec3(0, 1, 0));
 				direction = rot * centerDir;
 
 				ShotBullet();
 			}
 		}
 
+	}
+
+	/**
+	*	発射角を設定します
+	*/
+	void MultiWayShot::CenterDirectiton(glm::vec3 v){
+
+		direction =v;
 	}
 
 	/**
@@ -133,6 +179,10 @@ namespace GameState {
 		if ( timer > shotInterval) {
 			///弾の発射処理
 
+			if (target) {
+				CalcVelocity();
+			}
+
 			GameEngine& game = GameEngine::Instance();
 
 			std::shared_ptr<Bullet> b = std::make_shared<Bullet>();
@@ -142,64 +192,21 @@ namespace GameState {
 			if (shotAngle > glm::pi<float>() * 2.0f) {
 				shotAngle -= glm::pi<float>() * 2.0f;
 			}
+			std::cout << "shot angle:" << shotAngle << std::endl;
 			glm::quat rot = glm::angleAxis(shotAngle, glm::vec3(0,1,0));
-			glm::vec3 newVel = rot * glm::vec3(0, 0, 1);
+			glm::vec3 newVel = rot * glm::vec3(1, 0, 0);
 
-			p->Velocity(newVel * initBulletSpeed);
+			b->Velocity(newVel * initBulletSpeed);
 			p->Scale(glm::vec3(0.5));
 			p->Color(color);
 
 			//game.PlayAudio()
-			shotAngle += angleInterval;
+			shotAngle += glm::radians(angleInterval);
 			timer = 0;
 		}
 
 	}
 
-	/**
-	*	コンストラクタ
-	*
-	*	@param p	親元のエンティティ
-	*	@param t	ターゲットのエンティティ
-	*	@param id	弾のグループID
-	*/
-	NormalShot::NormalShot(Entity::Entity& p,int id, Entity::Entity* t) :
-	BulletGenerator(p,id,t){
 
-	}
-
-	void NormalShot::Update(float delta){
-
-		GameEngine& game = GameEngine::Instance();
-
-		timer -= delta;
-
-		if (timer < 0) {
-
-			if (target) {
-				CalcVelocity();
-			}
-
-
-			//game.PlayAudio(1, CRI_CUESHEET_0_ENEMYSHOT);
-
-			ShotBullet();
-
-			/*glm::vec3 targetVel = target ? target->Position() - parent.Position() : glm::vec3(0, 0, -1);
-			targetVel = glm::normalize(targetVel) * initBulletSpeed;
-
-			if (Entity::Entity* p = game.AddEntity(groupId, parent.Position(),
-				"Sphere", "Res/Model/sphere.dds", std::make_shared<Bullet>())) {
-
-				p->Velocity(targetVel);
-				p->CastStencil(true);
-				p->StencilColor(glm::vec4(1, 0, 1, 1));
-				p->Scale(glm::vec3(0.5f));
-				p->Color(color);
-				timer = shotInterval;
-
-			}*/
-		}
-	}
 
 }

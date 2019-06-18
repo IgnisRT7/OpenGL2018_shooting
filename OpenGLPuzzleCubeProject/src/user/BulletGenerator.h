@@ -61,10 +61,13 @@ namespace GameState {
 
 		void Update(float delta) override;
 
+		void CenterDirectiton(glm::vec3 v);
+
 	private:
 
 		float angleInterval;		///< ’e‚Æ’e‚ÌŠÔŠu()
 		int maxBulletNum;
+		bool isUseParentRotation;	///< e‚Ì‰ñ“]‚É‰e‹¿‚ðŽó‚¯‚é‚©
 	};
 
 	///‰ñ“]‚µ‚È‚ª‚ç˜A‘±‚Å’e‚ð”­ŽË‚·‚é
