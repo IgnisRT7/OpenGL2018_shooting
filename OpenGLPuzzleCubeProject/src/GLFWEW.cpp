@@ -115,6 +115,9 @@ namespace GLFWEW {
 		const GLubyte* version = glGetString(GL_VERSION);
 		std::cout << "Version: " << version << std::endl;
 
+		windowSizeX = w;
+		windowSizeY = h;
+
 		return true;
 	}
 
@@ -335,6 +338,26 @@ namespace GLFWEW {
 			keyMap[keyValue.glfwCode] = keyValue.keyCode;
 		}
 		
+	}
+
+	/**
+	*	ウインドウサイズを取得します
+	*
+	*	@param w	ウインドウの横サイズの格納場所
+	*	@param h	ウインドウの縦サイズの格納場所
+	*
+	*	return true	ウインドウサイズが変更された
+	*	retrun false変更されていない
+	*/
+	bool Window::GetWindowSize(int& w, int& h){
+
+		glfwGetWindowSize(window,&w, &h);
+
+		if (w != windowSizeX || h != windowSizeY) {
+			return true;
+		}
+
+		return false;
 	}
 
 } //namespace GLFWEW

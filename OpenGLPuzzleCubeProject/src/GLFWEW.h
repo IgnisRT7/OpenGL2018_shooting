@@ -34,6 +34,9 @@ namespace GLFWEW {
 		void ClearWheel() { gamepad.mouseWheelY = 0; }
 		void SetKeyMap(std::vector<stKeyMap>& k);
 
+		GLFWwindow& GetWindow()const { return *window; }
+		bool GetWindowSize(int& w, int& h);
+
 	private:
 
 		Window();
@@ -45,6 +48,9 @@ namespace GLFWEW {
 		bool isInitialized;
 		GLFWwindow* window;
 		GamePad gamepad;
+
+		int windowSizeX;
+		int windowSizeY;
 
 		std::map<int, uint32_t> keyMap;
 
