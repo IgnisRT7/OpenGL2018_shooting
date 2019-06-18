@@ -16,6 +16,9 @@ namespace GameState {
 		void Update(float delta) override;	
 		void CollisionEnter(Entity::Entity& e) override;
 
+		glm::vec3 Velocity() const { return velocity; }
+		void Velocity(glm::vec3& v) { velocity = v; }
+
 	private:
 
 		glm::vec3 velocity;
