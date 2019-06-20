@@ -20,21 +20,44 @@ namespace GameState {
 	*/
 	void Player::StartMoveSet(){
 
-		startMovValue = 100;
+		if (isAutoMove) {
+			return;
+		}
+
+//		startMovValue = 100;
 		entity->Position(glm::vec3(0, 0, -screenHalfH));
-		entity->Velocity(glm::vec3(0, 0, 15));
-		isStartingMove = true;
+//		entity->Velocity(glm::vec3(0, 0, 15));
+
+		goalLocation = glm::vec3(0, 0, -screenHalfH * 0.5);
+		entity->Velocity(goalLocation - entity->Position());
+		isAutoMove = true;
+	}
+
+	/**
+	*	ステージクリア時の演出用設定処理
+	*/
+	void Player::EndMoveSet(){
+
+		if (isAutoMove) {
+			return;
+		}
+
+		goalLocation = glm::vec3(0, 0, screenHalfH + 5);
+		glm::vec3 vel = goalLocation - entity->Position();
+
+		entity->Velocity(vel);
+		isAutoMove = true;
 	}
 
 	/**
 	*	ステージ開始後に行われる処理
 	*/
-	void Player::StartMove(float delta) {
+	void Player::AutoMove(float delta) {
 
-		if (entity->Position().z >= -screenHalfH * 0.5f) {
+		if (glm::length(goalLocation - entity->Position()) < 3.0f) {
 
-			isStartingMove = false;
-			entity->Velocity(glm::vec3(0, 0, 0));
+			isAutoMove = false;
+			entity->Velocity(glm::vec3(0));
 		}
 	}
 
@@ -105,9 +128,8 @@ namespace GameState {
 			entity->Color(glm::vec4(1, 1, 1, colorAlpha));
 		}
 
-
-		if (isStartingMove) {
-			StartMove(delta);
+		if (isAutoMove) {
+			AutoMove(delta);
 		}
 		else {
 

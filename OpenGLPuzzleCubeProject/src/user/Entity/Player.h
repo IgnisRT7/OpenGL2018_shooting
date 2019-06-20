@@ -24,30 +24,34 @@ namespace GameState {
 		void Damage(float p) override;
 
 		void StartMoveSet();
-		void StartMove(float delta);
+		void EndMoveSet();
+		void AutoMove(float delta);
 		void ShotBullet();
 
 		int RemainingPlayer()const { return remainingPlayer; }
 
 	private:
 
-		bool initialized = false;
-		bool isStartingMove = true;		/// スタート直後の移動処理
-		float startMovValue = 20;		/// スタート直後の移動量
-		float moveSpeed = 15.0f;
-		float moveMultiply = 1.0f;
+		bool initialized = false;		
+		bool isAutoMove = false;		///< Velocity値による自動操作モード
+		bool isStartingMove = true;		///< スタート直後の移動処理
+		float startMovValue = 20;		///< スタート直後の移動量
+		float moveSpeed = 15.0f;		///< ベースとなるスピード
+		float moveMultiply = 1.0f;		///< 加算する速度
 
 		float timer = 0;
-		float damageTimer;				/// 無敵時間
-		float shotInterval = 0;			/// 発射されるまでのクールタイム
+		float damageTimer;				///< 無敵時間
+		float shotInterval = 0;			///< 発射されるまでのクールタイム
 
 		int multiShotNum = 1;
 
-		const glm::vec3 moveBox[2] =
-		{	glm::vec3(-screenHalfW, -120, -screenHalfH) * 0.8f,
-			glm::vec3(screenHalfW, 100, screenHalfH) * 0.8f };		/// プレイヤーの可動域
+		glm::vec3 goalLocation;			///< isAutoMoveがtrueの時のゴール地点
 
-		int remainingPlayer = 3;		/// プレイヤー残機
+		const glm::vec3 moveBox[2] =	///< プレイヤーの移動可能な領域
+		{	glm::vec3(-screenHalfW, -120, -screenHalfH) * 0.8f,
+			glm::vec3(screenHalfW, 100, screenHalfH) * 0.8f };		
+
+		int remainingPlayer = 3;		///< プレイヤー残機
 	};
 
 	/**
