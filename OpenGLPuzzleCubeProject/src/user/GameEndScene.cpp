@@ -47,6 +47,10 @@ namespace GameState{
 		game.MainCamera()->LookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
 
 		game.PlayAudio(0, CRI_CUESHEET_0_GAMEOVER);
+
+		scoreStr = "SCORE : ";
+		double s = game.UserVariable("score");
+		scoreStr+= std::to_string(static_cast<int>(s));
 	}
 
 	/**
@@ -69,11 +73,10 @@ namespace GameState{
 		game.FontScale(glm::vec2(7));
 		game.AddString(glm::vec2(0, 0.4),isClear ? "GAME CLEAR!!": "GAME OVER...",true);
 
-		char str[16];
-		snprintf(str, 16, "SCORE : %08.0f", game.UserVariable("score"));
+
 		game.FontColor(glm::vec4(1));
 		game.FontScale(glm::vec2(4.5));
-		game.AddString(glm::vec2(0, 0.05), str,true);
+		game.AddString(glm::vec2(0, 0.05), scoreStr.c_str(),true);
 
 		game.FontColor(glm::vec4(1, 1, 1, 1));
 		game.FontScale(glm::vec2(2));

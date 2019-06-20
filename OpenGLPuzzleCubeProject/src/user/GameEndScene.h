@@ -28,6 +28,7 @@ namespace GameState{
 
 		float timer = 0;
 		bool isClear;
+		std::string scoreStr;
 
 		TitleSpaceSphere spaceSphere;
 	};
