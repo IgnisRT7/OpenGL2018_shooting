@@ -5,8 +5,9 @@
 
 #include <memory>
 
+#pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
 
-int main() {
+int main(){
 
 	int cy;
 	cy = GetSystemMetrics(SM_CYSCREEN) ;
