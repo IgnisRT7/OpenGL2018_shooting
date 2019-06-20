@@ -274,6 +274,7 @@ namespace GameState {
 			glm::vec3 offsetPos = glm::vec3(0, 5, 0);
 
 			turrets[i]->Entity()->Position(centerPos + vec + offsetPos);
+			turrets[i]->BulletGenerator()->Rotation(tmp);
 		}
 	}
 
