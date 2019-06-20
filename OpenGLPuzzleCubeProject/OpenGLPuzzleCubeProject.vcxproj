@@ -135,7 +135,7 @@
       <AdditionalIncludeDirectories>$(ADX2LE_ROOT)\include;$(FBXSDK_ROOT)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -157,7 +157,7 @@
       <AdditionalIncludeDirectories>$(ADX2LE_ROOT)\include;$(FBXSDK_ROOT)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -254,6 +254,7 @@
     <None Include="Res\Tutorial.vert" />
     <None Include="Res\ViewDepth.frag" />
     <None Include="Res\ViewDepth.vert" />
+    <None Include="src\ColorFilter3x3.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

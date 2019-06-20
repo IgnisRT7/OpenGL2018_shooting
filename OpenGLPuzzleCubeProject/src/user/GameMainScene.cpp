@@ -214,7 +214,7 @@ namespace GameState {
 		game.StopAllAudio();
 		game.RemoveAllEntity();
 
-		++stageNo;
+		++stageNo; 
 		
 		launchController = std::make_shared<EnemyLaunchController>();
 		launchController->Init(stageNo);

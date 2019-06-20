@@ -24,6 +24,7 @@ namespace GameState {
 		void BulletSpeed(float s) { initBulletSpeed = s; }
 		float BulletSpeed() const { return initBulletSpeed; }
 		void Color(glm::vec4 c) { color = c; }
+		void Rotation(glm::quat r) { direction = r * glm::vec3(-1, 0, 0); }
 
 	protected:
 
@@ -33,6 +34,7 @@ namespace GameState {
 		int groupId = -1;				///< ’e‚ÌID
 		glm::vec4 color = glm::vec4(1);	///< ”­ŽË‚·‚é’e‚ÌF
 		glm::vec3 direction;			///< ’e‚ð”­ŽË‚³‚¹‚éŒü‚«
+		glm::quat rotation;				///< ’e‚ð”­ŽË‚³‚¹‚éŠp“x
 
 		Entity::Entity& parent;		/// ’e‚Ì”­ŽËŒ³
 		Entity::Entity* target;		/// ’e‚Ì’Ç”ö‘ÎÛ

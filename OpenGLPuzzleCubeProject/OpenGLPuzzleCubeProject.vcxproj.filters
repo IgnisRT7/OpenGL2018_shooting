@@ -26,9 +26,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\user\Entity\Player.h">
-      <Filter>src\User\Entity</Filter>
-    </ClInclude>
     <ClInclude Include="src\user\Entity\Bullet.h">
       <Filter>src\User\Entity</Filter>
     </ClInclude>
@@ -121,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="src\Engine\UniformBuffer.h">
       <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\user\Entity\Player.h">
+      <Filter>src\User\Entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -278,6 +278,9 @@
       <Filter>リソース ファイル</Filter>
     </None>
     <None Include="Res\RenderStencil.vert">
+      <Filter>リソース ファイル</Filter>
+    </None>
+    <None Include="src\ColorFilter3x3.frag">
       <Filter>リソース ファイル</Filter>
     </None>
   </ItemGroup>
