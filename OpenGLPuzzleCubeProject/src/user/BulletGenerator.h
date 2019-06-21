@@ -32,7 +32,7 @@ namespace GameState {
 		float shotInterval = 2;			///< ’e‚Ì”­ŽËŠÔŠu
 		float initBulletSpeed = 1;		///< ’e‚Ì‘¬“x
 		int groupId = -1;				///< ’e‚ÌID
-		glm::vec4 color = glm::vec4(1);	///< ”­ŽË‚·‚é’e‚ÌF
+		glm::vec4 color = glm::vec4(0.3, 0.3, 1, 1);	///< ”­ŽË‚·‚é’e‚ÌF
 		glm::vec3 direction;			///< ’e‚ð”­ŽË‚³‚¹‚éŒü‚«
 		glm::quat rotation;				///< ’e‚ð”­ŽË‚³‚¹‚éŠp“x
 
@@ -64,6 +64,7 @@ namespace GameState {
 		void Update(float delta) override;
 
 		void CenterDirectiton(glm::vec3 v);
+		void MaxBulletNum(int m) { maxBulletNum = m; }
 
 	private:
 

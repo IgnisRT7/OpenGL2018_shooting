@@ -48,6 +48,7 @@ namespace GameState {
 
 			b->Velocity(direction * initBulletSpeed);
 			b->Color(color);
+			
 			p->Scale(glm::vec3(0.5f));
 			timer = shotInterval;
 		}

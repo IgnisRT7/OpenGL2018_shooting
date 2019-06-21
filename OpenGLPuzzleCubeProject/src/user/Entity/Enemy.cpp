@@ -44,7 +44,7 @@ namespace GameState {
 
 		//弾管理システムの更新
 		if (bulletGenerator) {
-			bulletGenerator->Color(bulletColor);
+			//bulletGenerator->Color(bulletColor);
 			bulletGenerator->Update(delta);
 		}
 
@@ -231,7 +231,7 @@ namespace GameState {
 
 					turret->BulletGenerator()->BulletSpeed(20.0);
 					turret->BulletGenerator()->ShotInterval(2.0f);
-					turret->BulletGenerator()->Color(glm::vec4(0, 0.2, 1, 1));
+ 					turret->BulletGenerator()->Color(glm::vec4(0, 0.2, 1, 1));
 				}
 			}
 			else if(static_cast<float>(hp) / maxHp > 0.3){
@@ -240,6 +240,22 @@ namespace GameState {
 					turret->BulletGenerator()->BulletSpeed(15.0);
 					turret->BulletGenerator()->ShotInterval(1.0f);
 					turret->BulletGenerator()->Color(glm::vec4(1, 1, 0, 1));
+				}
+			}
+			else {
+				for (auto turret : turrets) {
+					std::shared_ptr<MultiWayShot> b = std::dynamic_pointer_cast<MultiWayShot>(turret->BulletGenerator());
+
+					turret->BulletGenerator()->BulletSpeed(15.0);
+					
+					if (b) {
+						b->MaxBulletNum(5);
+						b->ShotInterval(0.5f);
+					}
+					else {
+						turret->BulletGenerator()->ShotInterval(0.7);
+					}
+					turret->BulletGenerator()->Color(glm::vec4(1, 0, 0, 1));
 				}
 			}
 
