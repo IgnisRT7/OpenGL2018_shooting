@@ -228,8 +228,11 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	shaderMap.reserve(sizeof(shaderNameList) / sizeof(shaderNameList[0]));
 	for (auto& e : shaderNameList) {
 
+		auto fe = std::string(FILEPASS_SHADER);
+		auto rwe = std::string(e[1]);
+		auto rer = fe + rwe;
 		std::string vPass = (std::string(FILEPASS_SHADER) + std::string(e[1]));
-		std::string fPass = (std::string(FILEPASS_SHADER) + std::string(e[2]));
+		auto fPass = (std::string(FILEPASS_SHADER) + std::string(e[2]));
 
 		Shader::ProgramPtr program = Shader::Program::Create(vPass.c_str(), fPass.c_str());
 		if (!program) {

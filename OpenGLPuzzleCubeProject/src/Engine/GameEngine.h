@@ -23,6 +23,7 @@
 
 #define COMPONENT_TYPEPTR(type) std::shared_ptr<type>			///シーンコンポーネントの型用マクロ
 
+#define FILEPASS_SHADER "Res/Shader/"
 
 /**
 *	ゲームエンジンクラス
