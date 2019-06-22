@@ -65,7 +65,9 @@ namespace Font {
 		vao.VertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), offsetof(Vertex, color));
 		vao.UnBind();
 
-		progFont = Shader::Program::Create("Res/Font.vert", "Res/Font.frag");
+		std::string vPass = (std::string(FILEPASS_SHADER) + "Font.vert");
+		std::string fPass = (std::string(FILEPASS_SHADER) + "Font.frag");
+		progFont = Shader::Program::Create(vPass.c_str(),fPass.c_str());
 		if (!progFont) {
 			return false;
 		}
