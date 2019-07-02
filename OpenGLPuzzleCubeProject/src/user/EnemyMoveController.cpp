@@ -152,7 +152,7 @@ void MovePartSequencer::Initialize(Entity::Entity& entity) {
 */
 void MovePartSequencer::Update(Entity::Entity& entity, float elapsedTime){
 
-	if (execIndex < 0 || execIndex >= movList.size()) {
+	if (execIndex < 0 || static_cast<size_t>(execIndex) >= movList.size()) {
 		//é¿çsëŒè€Ç™ë∂ç›ÇµÇ»Ç¢
 		return;
 	}
