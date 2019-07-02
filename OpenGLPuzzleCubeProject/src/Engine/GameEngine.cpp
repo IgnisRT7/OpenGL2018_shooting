@@ -286,7 +286,7 @@ void GameEngine::Run() {
 		prevTime = curTime;
 
 		int w, h;
-		if (window.GetWindowSize(w, h)) {
+		if (window.GetWindowSize(&w, &h)) {
 			//ウインドウサイズが変更された
 
 			const float gameAspect = 800.0f / 600.0f; /// 4:3
@@ -316,12 +316,6 @@ void GameEngine::Run() {
 			pboIndexForWriting ^= 1;
 		}
 	}
-}
-
-void GameEngine::ResizeBuffer(int w, int h){
-
-
-
 }
 
 /**

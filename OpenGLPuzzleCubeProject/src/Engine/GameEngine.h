@@ -35,7 +35,6 @@ public:
 	static GameEngine& Instance();
 	bool Init(int w, int h, const char* title);
 	void Run();
-	void ResizeBuffer(int w, int h);
 
 	//オーディオ関係のラッパー関数
 	bool InitAudio(const char* acfPath, const char* acbPath, const char* awbPath, const char* dspBusName);
