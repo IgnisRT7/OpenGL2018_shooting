@@ -15,13 +15,18 @@ public:
 	BufferObject(const BufferObject&) = delete;
 	BufferObject& operator=(const BufferObject&) = delete;
 
-	void Init(GLenum target, GLsizeiptr size, const GLvoid* data = nullptr, GLenum usage = GL_STATIC_DRAW);
+	bool Init(GLenum target, GLsizeiptr size, const GLvoid* data = nullptr, GLenum usage = GL_STATIC_DRAW);
 	void Destroy();
+	bool BufferSubData(GLintptr offset, GLsizeiptr size, const GLvoid* data);
+
 	GLuint Id() const { return id; }
+	size_t Size() const { return size; }
 
 private:
 
 	GLuint id = 0;
+	GLsizeiptr size = 0;
+	GLenum target = 0;
 };
 
 /**
@@ -35,7 +40,7 @@ public:
 	VertexArrayObject(const VertexArrayObject&) = delete;
 	VertexArrayObject& operator=(const VertexArrayObject&) = delete;
 
-	void Init(GLuint vbo, GLuint ibo);
+	bool Init(GLuint vbo, GLuint ibo);
 	void Destroy();
 	void VertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, size_t offset);
 	void Bind() const;

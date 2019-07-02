@@ -2,6 +2,7 @@
 *	@file BufferObject.cpp
 */
 #include "BufferObject.h"
+#include <iostream>
 
 /**
 *	バッファオブジェクトを作成する
@@ -11,13 +12,18 @@
 *	@param data		頂点データへのポインタ
 *	@param usage	バッファオブジェクトのアクセスタイプ
 */
-void BufferObject::Init(GLenum target, GLsizeiptr size, const GLvoid* data, GLenum usage) {
+bool BufferObject::Init(GLenum target, GLsizeiptr size, const GLvoid* data, GLenum usage) {
 
 	Destroy();
 	glGenBuffers(1, &id);
 	glBindBuffer(target, id);
 	glBufferData(target, size, data, usage);
 	glBindBuffer(target, 0);
+
+	this->target = target;
+	this->size = size;
+
+	return glGetError() == GL_NO_ERROR;
 }
 
 /**
@@ -32,12 +38,45 @@ void BufferObject::Destroy() {
 }
 
 /**
+*	バッファにデータを転送する
+*
+*	@param offset	転送開始位置(バイト単位)
+*	@param size		転送するバイト数
+*	@param data		転送するデータへのポインタ
+*
+*	@retval true	転送成功
+*	@retval false	転送失敗
+*/
+bool BufferObject::BufferSubData(GLintptr offset, GLsizeiptr size, const GLvoid* data) {
+
+	if (offset + size > this->size) {
+		std::cerr << "[警告]" << __func__ << ": 転送先領域がバッファサイズを超えています\n";
+		std::cerr << "buffer_size:" << this->size << " offset:" << offset << "size:" << size;
+		if (offset >= this->size) {
+			return false;
+		}
+		//可能な範囲だけ転送を行う
+		size = this->size - offset;
+	}
+
+	glBindBuffer(target, id);
+	glBufferSubData(target, offset, size, data);
+	glBindBuffer(target, 0);
+	const GLenum error = glGetError();
+	if (error != GL_NO_ERROR) {
+		std::cerr << "[エラー] " << __func__ << ": データの転送に失敗\n";
+	}
+
+	return error == GL_NO_ERROR;
+}
+
+/**
 *	VAOを作成する
 *
 *	@param vbo	頂点バッファオブジェクトのID
 *	@param ibo	インデックスバッファオブジェクトのID
 */
-void VertexArrayObject::Init(GLuint vbo, GLuint ibo) {
+bool VertexArrayObject::Init(GLuint vbo, GLuint ibo) {
 
 	Destroy();
 	glGenVertexArrays(1, &id);
@@ -45,6 +84,8 @@ void VertexArrayObject::Init(GLuint vbo, GLuint ibo) {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBindVertexArray(0);
+
+	return glGetError() == GL_NO_ERROR;
 }
 
 /**
