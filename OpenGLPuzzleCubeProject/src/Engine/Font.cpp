@@ -291,7 +291,7 @@ namespace Font {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		progFont->UseProgram();
-		progFont->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D,GameEngine::Instance().GetTexture(texFilename.c_str())->Id());
+		progFont->BindTexture(GL_TEXTURE0,GameEngine::Instance().GetTexture(texFilename.c_str())->Id());
 		glDrawElements(GL_TRIANGLES, (vboSize / 4) * 6, GL_UNSIGNED_SHORT, 0);
 		vao.UnBind();
 	}
