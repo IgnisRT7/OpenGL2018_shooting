@@ -91,8 +91,6 @@ namespace Entity {
 		/// 状態更新関数型.
 		using UpdateFuncType = std::function<void(Entity&, double)>;
 
-		void UpdateFunc(const UpdateFuncType& func) { updateFunc = func; }
-		const UpdateFuncType& UpdateFunc() const { return updateFunc; }
 		void Collision(const CollisionData& c) { colLocal = c; UpdateCollisionData(); }
 		const CollisionData& Collision() const { return colLocal; }
 		void UpdateCollisionData() {
@@ -116,6 +114,8 @@ namespace Entity {
 		void StencilColor(glm::vec4 v) { stencilColor = v; }
 		glm::vec4 StencilColor() const { return stencilColor; }
 
+//		void Mesh()
+
 	private:
 		Entity() = default;
 		~Entity() = default;
@@ -134,7 +134,6 @@ namespace Entity {
 		glm::vec3 velocity;			///< 速度.
 		glm::vec4 color = glm::vec4(1, 1, 1, 1);///< 色
 		std::string name;
-		UpdateFuncType updateFunc;	///< 状態更新関数.
 		Mesh::MeshPtr mesh;			///< エンティティを描画するときに使われるメッシュデータ.
 		TexturePtr texture[2];			///< エンティティを描画するときに使われるテクスチャ.
 		Shader::ProgramPtr program; ///< エンティティを描画するときに使われるシェーダ.
@@ -274,5 +273,6 @@ namespace Entity {
 	protected:
 
 		Entity* entity;
+		
 	};
 }

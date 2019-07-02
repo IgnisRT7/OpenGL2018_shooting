@@ -223,7 +223,6 @@ namespace Entity {
 			e.reset();
 		}
 		p->program.reset();
-		p->updateFunc = nullptr;
 		p->isActive = false;
 	}
 
@@ -354,7 +353,7 @@ namespace Entity {
 						for (size_t i = 0; i < sizeof(e.texture) / sizeof(e.texture[0]); ++i) {
 
 							if (e.texture[i]) {
-								e.program->BindTexture(GL_TEXTURE0 + i, GL_TEXTURE_2D, e.texture[i]->Id());
+								e.program->BindTexture(GL_TEXTURE0 + i, e.texture[i]->Id());
 							}
 						}
 						//e.program->SetViewIndex(viewIndex);
@@ -390,8 +389,7 @@ namespace Entity {
 				//データがあるとき かつ castShadowフラグが有効の時に実行
 				if (e.mesh && e.program && e.castShadow) {
 					for (size_t i = 0; i < sizeof(e.texture) / sizeof(e.texture[0]); ++i) {
-						e.program->BindTexture(GL_TEXTURE0 + i, GL_TEXTURE_2D,
-							e.texture[i]->Id());
+						e.program->BindTexture(GL_TEXTURE0 + i,e.texture[i]->Id());
 					}
 					ubo->BindBufferRange(e.uboOffset, ubSizePerEntity);
 					e.mesh->Draw(meshBuffer);
