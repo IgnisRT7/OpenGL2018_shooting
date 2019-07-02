@@ -35,7 +35,7 @@ namespace GLFWEW {
 		void SetKeyMap(std::vector<stKeyMap>& k);
 
 		GLFWwindow& GetWindow()const { return *window; }
-		bool GetWindowSize(int& w, int& h);
+		bool GetWindowSize(int* w, int* h);
 
 	private:
 

@@ -105,9 +105,10 @@ namespace GLFWEW {
 			{ GLFW_KEY_A, GamePad::DPAD_LEFT },
 			{ GLFW_KEY_S, GamePad::DPAD_DOWN },
 			{ GLFW_KEY_D, GamePad::DPAD_RIGHT },
-			{ GLFW_KEY_ENTER,GamePad::START},
-			{ GLFW_KEY_SPACE,GamePad::A},
-			{GLFW_KEY_ESCAPE,GamePad::ESCAPE},
+			{ GLFW_KEY_ENTER, GamePad::START },
+			{ GLFW_KEY_SPACE,GamePad::A },
+			{ GLFW_KEY_R, GamePad::R },
+			{ GLFW_KEY_ESCAPE,GamePad::ESCAPE },
 			});
 
 		const GLubyte* renderer = glGetString(GL_RENDERER);
@@ -349,13 +350,13 @@ namespace GLFWEW {
 	*	return true	ウインドウサイズが変更された
 	*	retrun false変更されていない
 	*/
-	bool Window::GetWindowSize(int& w, int& h){
+	bool Window::GetWindowSize(int* w, int* h){
 
-		glfwGetWindowSize(window,&w, &h);
+		glfwGetWindowSize(window,w, h);
 
-		if (w != windowSizeX || h != windowSizeY) {
-			windowSizeX = w;
-			windowSizeY = h;
+		if (*w != windowSizeX || *h != windowSizeY) {
+			windowSizeX = *w;
+			windowSizeY = *h;
 			return true;
 		}
 
