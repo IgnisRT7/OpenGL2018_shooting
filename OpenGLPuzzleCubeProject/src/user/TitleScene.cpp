@@ -8,7 +8,7 @@
 #include "../GameState.h"
 #include "GameMainScene.h"
 #include "ModelLoadTestscene.h"
-#include "GameEndScene.h"
+
 
 //#include "../../Res/Audio/SampleSound_acf.h"
 //#include "../../Res/Audio/SampleCueSheet.h"
@@ -137,7 +137,9 @@ namespace GameState {
 			timer = 3;
 			player->MoveStart();
 			game.SceneFadeStart(true);
-
+		}
+		else if (game.GetGamePad().buttonDown & GamePad::R) {
+			game.PushScene(std::make_shared<ModelLoadTestScene>());
 		}
 
 		if (timer == 0) {
