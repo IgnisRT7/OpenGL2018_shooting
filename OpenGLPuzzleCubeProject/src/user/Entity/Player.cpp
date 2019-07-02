@@ -78,7 +78,7 @@ namespace GameState {
 
 			auto b = std::make_shared<Bullet>();
 
-			if (Entity::Entity* p = game.AddEntity(EntityGroupId_PlayerShot, leftPos + glm::vec3(i * bulletInterval, 0, 0),
+			if (Entity::Entity* p = game.AddEntity(EntityGroupId_PlayerShot, leftPos + glm::vec3(i * bulletInterval, 0, + 1.0f),
 				"NormalShot", "Res/Model/Player.dds", b, "NonLighting")) {
 
 				b->Velocity(glm::vec3(0, 0, 100));
@@ -103,6 +103,7 @@ namespace GameState {
 
 		entity->Scale(glm::vec3(1.5f));
 		entity->CastShadow(true);
+
 	}
 
 	/**
