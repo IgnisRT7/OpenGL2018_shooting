@@ -11,7 +11,7 @@ namespace GameState {
 	class Item : public Entity::EntityDataBase {
 	public:
 
-		Item::Item(int type = 0) : itemType(type) {}
+		Item(int type = 0) : itemType(type) {}
 
 		void Initialize() override;
 
