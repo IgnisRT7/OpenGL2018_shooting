@@ -17,8 +17,6 @@
 
 namespace GameState {
 
-
-
 	/**
 	*	敵の初期化処理
 	*/
@@ -142,12 +140,13 @@ namespace GameState {
 		entity->Scale(glm::vec3(11));
 		entity->Collision({ { -15,-20,-10},{15,20,10} });
 
+		//タレット用エンティティの生成処理
 		for (int i = 0; i < 8; i++) {
 
 			auto t = std::make_shared<Toroid>();
 			t->DestroyByScreenOut(false);
 
-			if (auto p = game.AddEntity(EntityGroupId_Others, glm::vec3(-60),
+			if (auto p = game.AddEntity(EntityGroupId_Others, glm::vec3(-60,0,0),
 				"", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", t)) {
 
 				turrets.push_back(t);
@@ -166,6 +165,7 @@ namespace GameState {
 			}
 		}
 
+		hp = maxHp;
 
 	}
 
@@ -226,7 +226,7 @@ namespace GameState {
 		}
 		else {
 
-			if (static_cast<float>(hp) / maxHp > 0.5) {
+			if ((static_cast<float>(hp) / maxHp) > 0.6) {
 				for (auto turret : turrets) {
 
 					turret->BulletGenerator()->BulletSpeed(20.0);
@@ -249,11 +249,12 @@ namespace GameState {
 					turret->BulletGenerator()->BulletSpeed(15.0);
 					
 					if (b) {
-						b->MaxBulletNum(5);
+						b->MaxBulletNum(15);
 						b->ShotInterval(0.5f);
+						b->AngleInterval(10);
 					}
 					else {
-						turret->BulletGenerator()->ShotInterval(0.7);
+						turret->BulletGenerator()->ShotInterval(0.7f);
 					}
 					turret->BulletGenerator()->Color(glm::vec4(1, 0, 0, 1));
 				}
@@ -287,7 +288,7 @@ namespace GameState {
 
 			glm::vec3 vec = tmp * (forward * 17.0f);
 
-			glm::vec3 offsetPos = glm::vec3(0, 5, 0);
+			glm::vec3 offsetPos = glm::vec3(0, 0, 0);
 
 			turrets[i]->Entity()->Position(centerPos + vec + offsetPos);
 			turrets[i]->BulletGenerator()->Rotation(tmp);
@@ -398,8 +399,13 @@ namespace GameState {
 				case 1:
 					t->BulletGenerator(std::make_shared<NormalShot>(*p, EntityGroupId_EnemyShot, playerEntity));
 					break;
+				case 2:
+					t->BulletGenerator(std::make_shared<MultiWayShot>(*p, EntityGroupId_EnemyShot, nullptr));
+					t->BulletGenerator()->Color(glm::vec4(0.3f, 1.0f, 0.5f, 1.0f));
+					break;
 				case 5:
 					t->BulletGenerator(std::make_shared<CircleShot>(*p, EntityGroupId_EnemyShot));
+					t->BulletGenerator()->Color(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
 				default:
 					break;
 				}

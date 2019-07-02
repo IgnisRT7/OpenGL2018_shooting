@@ -61,8 +61,8 @@ namespace GameState {
 	private:
 
 		float timer = 0;	/// 
-		int hp = 500;		/// 体力
-		const int maxHp = 500;
+		int hp = 0;		/// 体力
+		const int maxHp = 1500;
 
 		MoveControllerPtr moveController;
 		std::vector<std::shared_ptr<Toroid> > turrets;
@@ -84,8 +84,8 @@ namespace GameState {
 	private:
 
 		float spawnInterval = 0.5;	///< スポーンする間隔
-		float spawnMax = 5;			///< スポーン数
 		float time = 0;				///< 経過時間
+		int spawnMax = 5;			///< スポーン数
 		int launchIndex = 0;		///< 出撃している敵の数
 		int enemyType = -1;			///< 出撃する敵の種類
 		int moveType = -1;
