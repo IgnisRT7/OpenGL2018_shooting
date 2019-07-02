@@ -15,12 +15,6 @@ namespace GameState {
 		
 		entity->CastShadow(false);
 		entity->Collision(GameState::collisionDataList[EntityGroupId_EnemyShot]);
-
-		//テスト用ステンシルバッファ描画処理
-		//entity->CastStencil(true);
-		//entity->StencilColor(glm::vec4(1, 0, 1, 1));
-
-
 	}
 
 	/**
@@ -31,7 +25,8 @@ namespace GameState {
 	void Bullet::Update(float delta) {
 
 		//弾の向きの調整処理
-		glm::vec3 normalizeVel = glm::length(entity->Velocity()) > 0.05f ? glm::normalize(entity->Velocity()) : glm::vec3(0,0,1);
+
+		glm::vec3 normalizeVel = glm::length(entity->Velocity()) > 0.05f ? glm::normalize(entity->Velocity()) : glm::vec3(0,0,-1);
 		glm::vec3 forward = glm::vec3(0, 0, 1);
 		float costheta = glm::dot(normalizeVel, forward);
 		float sintheta = acosf(costheta);
