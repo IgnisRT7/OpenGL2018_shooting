@@ -2,13 +2,24 @@
 *	@file ModelLoadTestScene.h
 */
 #pragma once
+#include "../Engine/Scene.h"
 
-struct ModelLoadTestScene {
+struct ModelLoadTestScene : Scene{
 public:
 
-	ModelLoadTestScene();
-	void operator()(float delta);
+	ModelLoadTestScene() :Scene("ModelLoadTest") {}
+	~ModelLoadTestScene() = default;
+	ModelLoadTestScene(const ModelLoadTestScene&) = delete;
+	ModelLoadTestScene& operator=(const ModelLoadTestScene&) = delete;
 
+
+	bool Initialize() override;
+	void Update(float d) override;
+	void Finalize() override;
+
+	void Play() override;
+	void Stop() override;
+	void Hide() override;
 
 private:
 
