@@ -65,6 +65,7 @@ namespace GameState {
 
 		void CenterDirectiton(glm::vec3 v);
 		void MaxBulletNum(int m) { maxBulletNum = m; }
+		void AngleInterval(float r) { angleInterval = r; }
 
 	private:
 
