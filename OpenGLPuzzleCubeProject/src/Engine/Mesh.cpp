@@ -5,6 +5,7 @@
 #include <fbxsdk.h>
 #include <iostream>
 #include <algorithm>
+#include <fbxsdk/utils/fbxgeometryconverter.h>
 
 /**
 *	モデルデータ管理のための名前空間
@@ -192,11 +193,13 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 	*	FBXデータを中間データに変換するクラス
 	*/
 	struct FbxLoader {
-		bool GetMotionList(void);
+//		bool GetMotionList(void);
 		bool Load(const char* filename);
 		bool Convert(FbxNode* node);
 		bool LoadMesh(FbxNode* node);
 		std::vector<TemporaryMesh> meshList;
+		std::unique_ptr<FbxManager, Deleter<FbxManager> > fbxManager;
+		FbxScene* fbxScene;
 	};
 
 	/**
@@ -209,13 +212,13 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 	*/
 	bool FbxLoader::Load(const char* filename) {
 		
-		std::unique_ptr<FbxManager, Deleter<FbxManager> > fbxManager(FbxManager::Create());
+		 fbxManager = std::unique_ptr<FbxManager, Deleter<FbxManager> >(FbxManager::Create());
 		if (!fbxManager) {
 			std::cerr << "ERROR: " << filename << "の読み込みに失敗(FbxManager)の作成に失敗" << std::endl;
 			return false;
 		}
 
-		FbxScene* fbxScene = FbxScene::Create(fbxManager.get(), "");
+		fbxScene = FbxScene::Create(fbxManager.get(), "");
 		if (!fbxScene) {
 			std::cerr << "ERROR:" << filename << "の読み込みに失敗(FbxSceneの作成に失敗)" << std::endl;
 			return false;
@@ -285,21 +288,65 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 		mesh.name = fbxNode->GetName();
 		if (!fbxMesh->IsTriangleMesh()) {
 			std::cerr << "Warning! :" << mesh.name << "には三角形以外のメンが含まれています" << std::endl;
+
+			//TODO: ４頂点ポリゴンの三角化
+			FbxGeometryConverter fbxGeometoryConverter(fbxManager.get());
+			fbxGeometoryConverter.Triangulate(fbxScene,true);
+			//fbxGeometoryConverter.SplitMeshesPerMaterial(fbxScene, true);
+
 		}
 
 		//マテリアル情報を読み取る
 		const int materialCount = fbxNode->GetMaterialCount();
 		mesh.materialList.reserve(materialCount);
 		for (int i = 0; i < materialCount; ++i) {
-
+				
 			TemporaryMaterial material;
 			if (FbxSurfaceMaterial* fbxMaterial = fbxNode->GetMaterial(i)) {
-				//マテリアルの色情報を読み取る
-				const FbxClassId classId = fbxMaterial->GetClassId();
-				if (classId == FbxSurfaceLambert::ClassId || classId == FbxSurfacePhong::ClassId) {
-					const FbxSurfaceLambert* pLambert = static_cast<const FbxSurfaceLambert*>(fbxMaterial);
-					material.color = glm::vec4(ToVec3(pLambert->Diffuse.Get()), static_cast<float>(1.0f - pLambert->TransparencyFactor));
+
+				FbxProperty fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
+
+				int layerCount = fbxProperty.GetSrcObjectCount<FbxLayeredTexture>();
+				if (layerCount == 0) {
+					//通常テクスチャ
+
+					int textureCount = fbxProperty.GetSrcObjectCount<FbxTexture>();
+					//テクスチャ情報取得処理
+					for (int i = 0; i < textureCount; i++) {
+
+						FbxFileTexture* texture = fbxProperty.GetSrcObject<FbxFileTexture>();
+						if (texture) {
+
+
+							int d = 0;
+						}
+
+					}
+
 				}
+
+	
+/*				//テクスチャ情報の読み込み
+				FbxProperty fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
+
+				int layerdTextureCount = fbxProperty.GetSrcObjectCount<FbxLayeredTexture>();
+				if (layerdTextureCount > 0) {
+					//レイヤードテクスチャ読み込み処理
+				}
+
+				int fileTextureCount = fbxProperty.GetSrcObjectCount<FbxFileTexture>();
+				if (fileTextureCount > 0) {
+					//通常のテクスチャ取得
+					
+					for (int j = 0; j < fileTextureCount; j++) {
+
+						FbxFileTexture* texture = fbxProperty.GetSrcObject<FbxFileTexture>();
+						if (texture) {
+							std::cout << "モデルに含まれるテクスチャを発見しました。name : " << texture->GetFileName() << std::endl;
+						}
+					}
+				}*/
+
 			}
 			mesh.materialList.push_back(material);
 		}
@@ -360,8 +407,6 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 			binormalList = &fbxBinormalList->GetDirectArray();
 
 		}
-
-
 
 		//頂点がどのマテリアルに属するかを示すマテリアルインデックスリストを取得する
 		const FbxLayerElementArrayTemplate<int>* materialIndexList = nullptr;
