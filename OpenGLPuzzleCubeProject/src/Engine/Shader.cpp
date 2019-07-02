@@ -53,8 +53,10 @@ namespace Shader {
 			}
 		}
 
-		p->viewIndexLocation = glGetUniformLocation(p->program, "viewIndex");
-		p->depthSamplerLocation = glGetUniformLocation(p->program, "depthSampler");
+		//各ロケーションの取得
+		p->viewIndexLocation = glGetUniformLocation(p->program, locationNameList.viewIndexSampler);
+		p->depthSamplerLocation = glGetUniformLocation(p->program, locationNameList.depthSampler);
+		p->viewProjMatrixLocation = glGetUniformLocation(p->program, locationNameList.matVPSampler);
 
 		auto result = glGetError();
 
@@ -124,10 +126,10 @@ namespace Shader {
 	*	テクスチャをテクスチャ・イメージユニットに割り当てる
 	*
 	*	@param unit		割当先のテクスチャ・イメージ・ユニット番号(GL_TExTURE0～)
-	*	@param type		割り当てるテクスチャの種類(GL_TEXTURE_1D,GLTEXTURE_2D,etc)
 	*	@param texure	割り当てるテクスチャオブジェクト
+	*	@param type		割り当てるテクスチャの種類(GL_TEXTURE_1D,GLTEXTURE_2D,etc)
 	*/
-	void Program::BindTexture(GLenum unit, GLenum type, GLuint texture) {
+	void Program::BindTexture(GLenum unit, GLuint texture, GLenum type) {
 
 		if (unit >= GL_TEXTURE0 && unit < static_cast<GLenum>(GL_TEXTURE0 + samperCount)) {
 
@@ -196,6 +198,20 @@ namespace Shader {
 		GLint fLocation = glGetUniformLocation(program, name.c_str());
 		if (fLocation > 0) {
 			glUniform1f(fLocation, f);
+		}
+	}
+
+	/**
+	*	4x4f ビュー射影変換行列を設定する
+	*
+	*	@param matVP	設定する変換行列
+	*/
+	void Program::SetMatViewProjection(glm::mat4& matVP){
+
+		this->matVP = matVP;
+
+		if (viewProjMatrixLocation) {
+			glUniformMatrix4fv(viewProjMatrixLocation, 1, GL_FALSE, &matVP[0][0]);
 		}
 	}
 
