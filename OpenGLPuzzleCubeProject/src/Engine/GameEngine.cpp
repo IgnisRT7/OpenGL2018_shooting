@@ -845,7 +845,7 @@ void GameEngine::RenderBloomEffect() const {
 	const Shader::ProgramPtr& progHiLumExtract = shaderMap.find("HiLumExtract")->second;
 	progHiLumExtract->UseProgram();
 
-	progHiLumExtract->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offscreen->GetTexture());
+	progHiLumExtract->BindTexture(GL_TEXTURE0, offscreen->GetTexture());
 	glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
 
 	///抽出したデータをぼかす
@@ -857,7 +857,7 @@ void GameEngine::RenderBloomEffect() const {
 
 		glBindFramebuffer(GL_FRAMEBUFFER, offBloom[i]->GetFramebuffer());
 		glViewport(0, 0, offBloom[i]->Width(), offBloom[i]->Height());
-		progShrink->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offBloom[i - 1]->GetTexture());
+		progShrink->BindTexture(GL_TEXTURE0, offBloom[i - 1]->GetTexture());
 		glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
 
 	}
@@ -874,7 +874,7 @@ void GameEngine::RenderBloomEffect() const {
 
 		glBindFramebuffer(GL_FRAMEBUFFER, offBloom[i - 1]->GetFramebuffer());
 		glViewport(0, 0, offBloom[i - 1]->Width(), offBloom[i - 1]->Height());
-		progBlur3x3->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offBloom[i]->GetTexture());
+		progBlur3x3->BindTexture(GL_TEXTURE0, offBloom[i]->GetTexture());
 		glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
 	}
 
@@ -901,9 +901,9 @@ void GameEngine::RenderFrameBuffer() const{
 	postEffect.luminanceScale = luminanceScale;
 	postEffect.bloomThreshold = 1.0f / luminanceScale;
 	uboPostEffect->BUfferSubData(&postEffect);
-	progColorFilter->BindTexture(GL_TEXTURE0, GL_TEXTURE_2D, offscreen->GetTexture());
-	progColorFilter->BindTexture(GL_TEXTURE1, GL_TEXTURE_2D, offBloom[0]->GetTexture());
-	progColorFilter->BindTexture(GL_TEXTURE2, GL_TEXTURE_2D, offDepth->GetTexture());
+	progColorFilter->BindTexture(GL_TEXTURE0, offscreen->GetTexture());
+	progColorFilter->BindTexture(GL_TEXTURE1, offBloom[0]->GetTexture());
+	progColorFilter->BindTexture(GL_TEXTURE2, offDepth->GetTexture());
 
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
