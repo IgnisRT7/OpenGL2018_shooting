@@ -89,7 +89,7 @@ void EnemyLaunchController::Load(const std::string& filename) {
 		std::istringstream lineStream(lineStr);
 		std::string valueStr;
 		while (std::getline(lineStream, valueStr, ',')) {
-			buftmp.push_back(std::atoi(valueStr.c_str()));
+			buftmp.push_back(static_cast<float>(std::atof(valueStr.c_str())));
 		}
 
 		EnemyLaunchType launchData;
@@ -123,7 +123,7 @@ void EnemyLaunchController::Update(float deltaTime){
 
 	while (true) {
 
-		if (seekIndex >= launchList.size()) {
+		if (static_cast<size_t>(seekIndex) >= launchList.size()) {
 			isFinished = true;
 			break;
 		}
