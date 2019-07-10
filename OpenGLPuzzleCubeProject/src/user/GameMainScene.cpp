@@ -17,18 +17,25 @@ namespace GameState {
 	/**
 	*	コンストラクタ
 	*
-	*	@param i	ループするかどうかのフラグ
+	*	@param l	ループするかどうかのフラグ
 	*/
 	Landscape::Landscape(bool l) :
 		isLoop(l){
 	}
 
-	/// 背景
+	/**
+	*	初期化処理
+	*/
 	void Landscape::Initialize() {
 		entity->CastShadow(false);
 		start = entity->Position();
 	}
 
+	/**
+	*	更新処理
+	*
+	*	@param delta	経過時間
+	*/
 	void Landscape::Update(float delta) {
 
 		timer += delta;
@@ -41,8 +48,6 @@ namespace GameState {
 			entity->Position(glm::vec3(glm::vec2(newPos), newPos.z + 200.0f));
 		}
 	}
-
-	/// 背景(ステージ3用)
 
 	/**
 	*	背景の初期化処理
@@ -71,9 +76,10 @@ namespace GameState {
 
 		GameEngine& game = GameEngine::Instance();
 
-		//リソースのロード
+		//モデルデータのロード
 		const char* meshPassList[] = {
 			"Res/Model/Player.fbx",
+			"Res/Model/Player2.fbx",
 			"Res/Model/Blast.fbx",
 			"Res/Model/Toroid.fbx",
 			"Res/Model/MotherShip.fbx",
@@ -81,7 +87,7 @@ namespace GameState {
 			"Res/Model/sampleSphere.fbx",
 			"Res/Model/Landscape.fbx",
 			"Res/Model/City01.fbx",
-			"Res/Model/SpaceSphere.fbx",
+			"Res/Model/SpaceSphereWithTexture.fbx",
 		};
 
 		for (const char* meshPass : meshPassList) {
@@ -90,6 +96,7 @@ namespace GameState {
 			}
 		}
 
+		//テクスチャデータのロード
 		const char* texturePassList[] = {
 			"Res/Model/Player.dds",
 			"Res/Model/Toroid.dds",
@@ -162,6 +169,9 @@ namespace GameState {
 		StageLoad();
 
 		sceneTimer = 0;
+
+		game.EnableShadow(true);
+		
 	}
 
 	/**
@@ -214,13 +224,13 @@ namespace GameState {
 		game.StopAllAudio();
 		game.RemoveAllEntity();
 
-		++stageNo; 
+		++stageNo; stageNo = 3;
 		
 		launchController = std::make_shared<EnemyLaunchController>();
 		launchController->Init(stageNo);
 
 		auto playerEntity = game.AddEntity(EntityGroupId_Player, glm::vec3(0, 0, 0),
-			"Aircraft", "Res/Model/Player.dds", playerData);
+			"AirCraftType2", "Res/Model/Player.dds", playerData);
 
 		playerData->StartMoveSet();
 
@@ -315,14 +325,6 @@ namespace GameState {
 	void MainGame::Update(float delta) {
 
 		GameEngine& game = GameEngine::Instance();
-
-		//デバッグ用シャドウマッピング切り替え処理
-		GamePad gamepad = game.GetGamePad();
-		if (gamepad.buttonDown & GamePad::START) {
-			static bool shadowMapping = false;
-			shadowMapping = !shadowMapping;
-			game.EnableShadow(shadowMapping);
-		}
 
 		//ステージ遷移処理
 		if (stageTimer > 0 && (stageTimer -= delta) < 0) {
