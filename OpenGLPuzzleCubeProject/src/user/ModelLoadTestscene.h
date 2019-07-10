@@ -7,7 +7,7 @@
 struct ModelLoadTestScene : Scene{
 public:
 
-	ModelLoadTestScene() :Scene("ModelLoadTest") {}
+	ModelLoadTestScene();
 	~ModelLoadTestScene() = default;
 	ModelLoadTestScene(const ModelLoadTestScene&) = delete;
 	ModelLoadTestScene& operator=(const ModelLoadTestScene&) = delete;

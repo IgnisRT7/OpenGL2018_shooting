@@ -6,7 +6,37 @@
 #include "../GameState.h"
 #include <glm/common.hpp>
 
-ModelLoadTestScene::ModelLoadTestScene(){
+ModelLoadTestScene::ModelLoadTestScene() :Scene("ModelLoadTest") {
+
+}
+
+/**
+*	初期化処理
+*
+*	@retval true	初期化成功
+*	@retval false	初期化失敗
+*/
+bool ModelLoadTestScene::Initialize(){
+
+	GameEngine& game = GameEngine::Instance();
+	game.LoadMeshFromFile("Res/Model/Landscape.fbx");
+	game.LoadMeshFromFile("Res/Model/sampleField.fbx");
+	game.LoadTextureFromFile("Res/Model/BG02.Diffuse.dds");
+	game.LoadTextureFromFile("Res/Model/BG02.Normal.bmp");
+
+	return false;
+}
+
+/**
+*	終了処理
+*/
+void ModelLoadTestScene::Finalize(){
+}
+
+/**
+*	開始処理
+*/
+void ModelLoadTestScene::Play(){
 
 	GameEngine& game = GameEngine::Instance();
 
@@ -25,11 +55,8 @@ ModelLoadTestScene::ModelLoadTestScene(){
 	shadowParam.range = glm::vec2(300, 300);
 	game.Shadow(shadowParam);
 
-	game.LoadMeshFromFile("Res/Model/Landscape.fbx");
-	game.LoadTextureFromFile("Res/Model/BG02.Diffuse.dds");
-	game.LoadTextureFromFile("Res/Model/BG02.Normal.bmp");
 
-	//背景の更新処理
+	///背景の更新処理
 	for (int z = 0; z < 5; ++z) {
 		const float offsetZ = static_cast<float>(z * 40 * 5);
 
@@ -40,12 +67,30 @@ ModelLoadTestScene::ModelLoadTestScene(){
 		}
 	}
 
+	///カメラの設定
 	game.MainCamera(std::static_pointer_cast<CameraComponent>(std::make_shared<CameraDebugComponent>()));
-	
 
-	game.LoadMeshFromFile("Res/Model/sampleField.fbx");
-	
-	auto p = game.AddEntity(GameState::EntityGroupId_Player, glm::vec3(0,10,0), "Cube", "Res/Model/BG02.Diffuse.dds",nullptr);
+
+	auto p = game.AddEntity(GameState::EntityGroupId_Player, glm::vec3(0, 0, 0), "Cube", "Res/Model/BG02.Diffuse.dds", nullptr);
 
 }
 
+/**
+*	停止処理
+*/
+void ModelLoadTestScene::Stop(){
+}
+
+/**
+*	非表示処理
+*/
+void ModelLoadTestScene::Hide(){
+}
+
+/**
+*	更新処理
+*
+*	@param delta	経過時間
+*/
+void ModelLoadTestScene::Update(float delta){
+}
