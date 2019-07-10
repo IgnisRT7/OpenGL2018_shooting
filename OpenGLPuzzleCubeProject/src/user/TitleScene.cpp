@@ -71,10 +71,13 @@ namespace GameState {
 		player = std::make_shared<PlayerForProduction>();
 		game.AddEntity(EntityGroupId_Others, glm::vec3(0, 0, 0), "Aircraft", "Res/Model/Player.dds", player, "NonLighting");
 
+		sampleSprite = std::make_shared<Sprite>(Texture::LoadFromFile("Res/Model/Player.dds"));
+
 		game.KeyValue(0.01f);
 
 		game.MainCamera(std::make_shared<CameraComponent>());
 		game.MainCamera()->LookAt(glm::vec3(0, 20, -40), glm::vec3(0, 0, -1));
+
 
 		game.PlayAudio(1, CRI_CUESHEET_0_TITLE1);
 	}
@@ -101,6 +104,8 @@ namespace GameState {
 		game.AddString(glm::vec2(offset, 0.25), "STAR FIGHTER", true);
 		game.FontScale(glm::vec2(2));
 		game.AddString(glm::vec2(offset - 0.15, 0), "The ultimate in Manned-Fighter");
+
+		game.AddSprite(*sampleSprite);
 
 		static float tmpTimer = 0;
 		tmpTimer += delta;
@@ -152,7 +157,7 @@ namespace GameState {
 			if (select != 0) {
 
 				glm::vec4 selectColor = glm::vec4(1);
-				selectAirCraftType = (selectAirCraftType + 1) % 3;
+				selectAirCraftType = (select + 1) % 3;
 				switch (selectAirCraftType) {
 				case 0:
 					selectColor = glm::vec4(1); break;

@@ -6,6 +6,7 @@
 #include "../user/Entity/Player.h"
 #include "../Engine/Scene.h"
 #include <memory>
+#include "../Engine/Sprite.h"
 
 namespace GameState {
 
@@ -34,10 +35,11 @@ namespace GameState {
 		//void operator()(float delta) ;
 
 	private:
-
+		
 		bool initialize = false;
 		float timer = 0;
 		int selectAirCraftType = 0;
+		SpritePtr sampleSprite;
 
 		std::shared_ptr<PlayerForProduction> player;
 	};
