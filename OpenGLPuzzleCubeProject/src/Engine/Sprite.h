@@ -66,6 +66,8 @@ private:
 
 };
 
+using SpritePtr = std::shared_ptr<Sprite>;
+
 /**
 *	スプライト描画クラス
 */

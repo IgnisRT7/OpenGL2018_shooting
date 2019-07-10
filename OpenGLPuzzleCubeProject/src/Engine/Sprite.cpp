@@ -85,6 +85,19 @@ void SpriteRenderer::BeginUpdate() {
 */
 void SpriteRenderer::EndUpdate() {
 
+	bool debugMode = false;
+	if (debugMode) {
+		std::cout << "SpriteRenderer::" << __func__ << std::endl;
+		std::cout << "↓↓↓vertexList↓↓↓" << std::endl;
+
+		for (auto v : vertices) {
+
+			std::cout << "   " << "pos:" << v.position.x << ',' << v.position.y <<
+				"texCoord:" << v.texCoord.x << ',' << v.texCoord.y << std::endl;
+
+		}
+	}
+
 	vbo.BufferSubData(0, vertices.size() * sizeof(Vertex), vertices.data());
 	vertices.clear();
 	vertices.shrink_to_fit();
@@ -107,7 +120,7 @@ bool SpriteRenderer::AddVertices(const Sprite& sprite) {
 	const glm::vec2 textureSize(texture->Width(), texture->Height());
 	const glm::vec2 reciprocalSize(glm::vec2(1) / textureSize);
 
-	//矩形を0.0 ～ 1.0の範囲に変換
+	//矩形を0.0 ～ 1.0の範囲に変換 (テクスチャ座標系にする)
 	Rect rect = sprite.Rectangle();
 	rect.origin *= reciprocalSize;
 	rect.size *= reciprocalSize;
@@ -174,7 +187,6 @@ void SpriteRenderer::Draw(const glm::vec2& screenSize)const {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	vao.Bind();
 	program->UseProgram();
 	
 	//平行投影、原点は画面の中心
@@ -184,6 +196,8 @@ void SpriteRenderer::Draw(const glm::vec2& screenSize)const {
 	const glm::mat4x4 matView = glm::lookAt(glm::vec3(0, 0, 100), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 	program->SetMatViewProjection(matProj * matView);
 
+	vao.Bind();
+
 	for (const Primitive& primitive : primitives) {
 
 		program->BindTexture(GL_TEXTURE0, primitive.texture->Id());
@@ -192,6 +206,11 @@ void SpriteRenderer::Draw(const glm::vec2& screenSize)const {
 	}
 
 	vao.UnBind();
+
+
+
+
+
 }
 
 /**
