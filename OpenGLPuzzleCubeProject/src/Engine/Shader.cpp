@@ -210,7 +210,7 @@ namespace Shader {
 
 		this->matVP = matVP;
 
-		if (viewProjMatrixLocation) {
+		if (viewProjMatrixLocation>=0) {
 			glUniformMatrix4fv(viewProjMatrixLocation, 1, GL_FALSE, &matVP[0][0]);
 		}
 	}
