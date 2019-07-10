@@ -259,6 +259,10 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		return false;
 	}
 
+	//スプライトレンダラのバッファ作成
+	spriteRenderer.Init(1000, "Res/Shader/Sprite.vert", "Res/Shader/Sprite.frag");
+
+
 	//TODO : 試作用カメラコンポーネント作成
 	mainCamera = std::make_shared<CameraComponent>();
 	mainCamera->Aspect(windowSize.x / windowSize.y);
@@ -303,9 +307,15 @@ void GameEngine::Run() {
 		UpdateFps();
 
 		window.UpdateGamePad();
+
+		spriteRenderer.BeginUpdate();
+
 		if (!Update(glm::min(0.25f, deltaTime))) {
 			break;
 		}
+
+		spriteRenderer.EndUpdate();
+
 		Render();
 		window.SwapBuffers();
 
@@ -422,6 +432,16 @@ Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const c
 		}
 	}
 	return entityBuffer->AddEntity(groupId, pos, mesh, tex, itr->second, eData);
+}
+
+/**
+*	スプライトの追加処理
+*
+*	@param s	追加するスプライト
+*/
+void GameEngine::AddSprite(Sprite &s){
+
+	spriteRenderer.AddVertices(s);
 }
 
 /**
@@ -920,6 +940,7 @@ void GameEngine::Render() {
 	RenderFrameBuffer();
 
 	fontRenderer.Draw();
+	spriteRenderer.Draw(this->windowSize);
 
 	{
 		// オフスクリーンバッファの大きさを取得.

@@ -18,6 +18,7 @@
 #include "Uniform.h"
 #include "GamePad.h"
 #include "Font.h"
+#include "Sprite.h"
 
 #include "Scene.h"
 
@@ -50,6 +51,9 @@ public:
 	//エンティティ追加処理
 	Entity::Entity* AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, Entity::EntityDataBasePtr eData, const char* shader = nullptr);
 	Entity::Entity* AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, const char* normalName, Entity::EntityDataBasePtr eData, const char* shader = nullptr);
+
+	//スプライト関連
+	void AddSprite(Sprite& s);
 
 	//エンティティ削除処理
 	void RemoveEntity(Entity::Entity*);
@@ -184,6 +188,9 @@ private:
 	OffscreenBufferPtr offBloom[bloomBufferCount];	/// ブルームバッファ
 	OffscreenBufferPtr offDepth;					/// 深度バッファ				
 	OffscreenBufferPtr offStencil;					/// ステンシルバッファ
+
+	//2D表示用スプライトレンダラ
+	SpriteRenderer spriteRenderer;
 
 	using TextureLevel = std::unordered_map<std::string, TexturePtr>;
 	static const size_t minimalStackSize = 1;
