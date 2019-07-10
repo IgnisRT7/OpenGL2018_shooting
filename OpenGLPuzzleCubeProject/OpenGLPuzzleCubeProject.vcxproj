@@ -25,6 +25,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>OpenGLPuzzleCubeProject</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <ProjectName>StarFighterProject</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -73,20 +74,20 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Ignisrt7\source\repos\IgnisRT7\OpenGLPuzzleCubeProject_test\packages\GLMathematics.0.9.5.4\build\native\include;C:\Users\Ignis\Documents\IgnisRT7\OpenGLPuzzleCubeProject_test\packages\GLMathematics.0.9.5.4\build\native\include;$(IncludePath);C:\Users\Ignisrt7\source\repos\IgnisRT7\OpenGLPuzzleCubeProject_test\packages\GLMathematics.0.9.5.4\build\native\include</IncludePath>
+    <IncludePath>..\packages\GLMathematics.0.9.5.4\build\native\include;..\packages\GLMathematics.0.9.5.4\build\native\include;$(IncludePath);..\packages\GLMathematics.0.9.5.4\build\native\include</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Ignis\Documents\IgnisRT7\OpenGLPuzzleCubeProject_test\packages\GLMathematics.0.9.5.4\build\native\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\packages\GLMathematics.0.9.5.4\build\native\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\Ignis\Documents\IgnisRT7\OpenGLPuzzleCubeProject_test\packages\GLMathematics.0.9.5.4\build\native\include;$(IncludePath);C:\Users\Ignisrt7\source\repos\IgnisRT7\OpenGLPuzzleCubeProject_test\packages\GLMathematics.0.9.5.4\build\native\include</IncludePath>
+    <IncludePath>..\packages\GLMathematics.0.9.5.4\build\native\include;$(IncludePath);C:\Users\Ignisrt7\source\repos\IgnisRT7\OpenGLPuzzleCubeProject\packages\GLMathematics.0.9.5.4\build\native\include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\Ignis\Documents\IgnisRT7\OpenGLPuzzleCubeProject_test\packages\GLMathematics.0.9.5.4\build\native\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\packages\GLMathematics.0.9.5.4\build\native\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -166,7 +167,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="LandScape.h" />
     <ClInclude Include="src\Component\CameraComponent.h" />
     <ClInclude Include="src\Engine\Audio.h" />
     <ClInclude Include="src\Engine\Billboard.h" />
@@ -181,6 +181,7 @@
     <ClInclude Include="src\Engine\OffscreenBuffer.h" />
     <ClInclude Include="src\Engine\Scene.h" />
     <ClInclude Include="src\Engine\Shader.h" />
+    <ClInclude Include="src\Engine\Sprite.h" />
     <ClInclude Include="src\Engine\Texture.h" />
     <ClInclude Include="src\Engine\Uniform.h" />
     <ClInclude Include="src\Engine\UniformBuffer.h" />
@@ -200,13 +201,11 @@
     <ClInclude Include="StageLoader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LandScape.cpp" />
     <ClCompile Include="src\Component\CameraComponent.cpp" />
     <ClCompile Include="src\Engine\Audio.cpp" />
     <ClCompile Include="src\Engine\Billbord.cpp" />
     <ClCompile Include="src\Engine\BufferObject.cpp" />
     <ClCompile Include="src\Engine\DebugLog.cpp" />
-    <ClCompile Include="src\Engine\DebugLogger.cpp" />
     <ClCompile Include="src\Engine\Entity.cpp" />
     <ClCompile Include="src\Engine\Font.cpp" />
     <ClCompile Include="src\Engine\GameEngine.cpp" />
@@ -215,6 +214,7 @@
     <ClCompile Include="src\Engine\OffscreenBuffer.cpp" />
     <ClCompile Include="src\Engine\Scene.cpp" />
     <ClCompile Include="src\Engine\Shader.cpp" />
+    <ClCompile Include="src\Engine\Sprite.cpp" />
     <ClCompile Include="src\Engine\Texture.cpp" />
     <ClCompile Include="src\Engine\UniformBuffer.cpp" />
     <ClCompile Include="src\Main.cpp" />
@@ -234,27 +234,27 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Res\Blur3x3.frag" />
-    <None Include="Res\ColorFilter.frag" />
-    <None Include="Res\ColorFilter.vert" />
-    <None Include="Res\Font.frag" />
-    <None Include="Res\Font.vert" />
-    <None Include="Res\HiLumExtract.frag" />
-    <None Include="Res\NonLighting.frag" />
-    <None Include="Res\NonLighting.vert" />
-    <None Include="Res\posterization.frag" />
-    <None Include="Res\posterization.vert" />
-    <None Include="Res\RenderDepth.frag" />
-    <None Include="Res\RenderDepth.vert" />
-    <None Include="Res\RenderStencil.frag" />
-    <None Include="Res\RenderStencil.vert" />
-    <None Include="Res\Shrink.frag" />
-    <None Include="Res\TexCoord.vert" />
-    <None Include="Res\Tutorial.frag" />
-    <None Include="Res\Tutorial.vert" />
-    <None Include="Res\ViewDepth.frag" />
-    <None Include="Res\ViewDepth.vert" />
-    <None Include="src\ColorFilter3x3.frag" />
+    <None Include="Res\Shader\Blur3x3.frag" />
+    <None Include="Res\Shader\ColorFilter.frag" />
+    <None Include="Res\Shader\ColorFilter.vert" />
+    <None Include="Res\Shader\ColorFilter3x3.frag" />
+    <None Include="Res\Shader\Font.frag" />
+    <None Include="Res\Shader\Font.vert" />
+    <None Include="Res\Shader\HiLumExtract.frag" />
+    <None Include="Res\Shader\NonLighting.frag" />
+    <None Include="Res\Shader\NonLighting.vert" />
+    <None Include="Res\Shader\posterization.frag" />
+    <None Include="Res\Shader\posterization.vert" />
+    <None Include="Res\Shader\RenderDepth.frag" />
+    <None Include="Res\Shader\RenderDepth.vert" />
+    <None Include="Res\Shader\RenderStencil.frag" />
+    <None Include="Res\Shader\RenderStencil.vert" />
+    <None Include="Res\Shader\Shrink.frag" />
+    <None Include="Res\Shader\Sprite.frag" />
+    <None Include="Res\Shader\Sprite.vert" />
+    <None Include="Res\Shader\TexCoord.vert" />
+    <None Include="Res\Shader\Tutorial.frag" />
+    <None Include="Res\Shader\Tutorial.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
