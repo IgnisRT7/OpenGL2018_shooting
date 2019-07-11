@@ -105,7 +105,7 @@ namespace GameState {
 		game.FontScale(glm::vec2(2));
 		game.AddString(glm::vec2(offset - 0.15, 0), "The ultimate in Manned-Fighter");
 
-		game.AddSprite(*sampleSprite);
+		//game.AddSprite(*sampleSprite);
 
 		static float tmpTimer = 0;
 		tmpTimer += delta;

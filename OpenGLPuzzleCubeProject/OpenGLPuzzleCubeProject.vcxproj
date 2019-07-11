@@ -240,6 +240,8 @@
     <None Include="Res\Shader\ColorFilter3x3.frag" />
     <None Include="Res\Shader\Font.frag" />
     <None Include="Res\Shader\Font.vert" />
+    <None Include="Res\Shader\HealthGauge.frag" />
+    <None Include="Res\Shader\HealthGauge.vert" />
     <None Include="Res\Shader\HiLumExtract.frag" />
     <None Include="Res\Shader\NonLighting.frag" />
     <None Include="Res\Shader\NonLighting.vert" />
