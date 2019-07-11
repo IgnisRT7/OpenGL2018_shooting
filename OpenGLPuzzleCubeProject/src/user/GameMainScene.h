@@ -6,6 +6,7 @@
 #include "Entity/Player.h"
 #include "../Engine/Scene.h"
 #include "EnemyLaunchController.h"
+#include "../Engine/Sprite.h"
 
 namespace GameState {
 
@@ -73,7 +74,7 @@ namespace GameState {
 		float stageNameFadeTimer = 0;
 
 		std::shared_ptr<Player> playerData;
-
+		std::shared_ptr<Sprite> hpguage;
 
 		EnemyLaunchControllerPtr launchController;
 	};

@@ -116,6 +116,8 @@ namespace GameState {
 			}
 		}
 
+		hpguage = std::make_shared<Sprite>(Texture::LoadFromFile("Res/Model/Player.dds"));
+		hpguage->Program(Shader::Program::Create("Res/Shader/HealthGauge.vert", "Res/Shader/HealthGauge.frag"));
 
 		return true;
 	}
@@ -224,7 +226,7 @@ namespace GameState {
 		game.StopAllAudio();
 		game.RemoveAllEntity();
 
-		++stageNo; stageNo = 3;
+		++stageNo;
 		
 		launchController = std::make_shared<EnemyLaunchController>();
 		launchController->Init(stageNo);
@@ -338,25 +340,6 @@ namespace GameState {
 			StageLoad();
 		}
 
-		//敵出撃管理の更新処理
-		if (launchController) {
-			launchController->Update(delta);
-
-			if (stageTimer == 0 && launchController->IsFinish() && stageNo != 3) {
-
-				StageClear(10);
-			}
-		}
-
-		//
-		if (stageNameFadeTimer) {
-			static const float fadeTime = 3.f - 1.f;
-			stageNameFadeTimer -= delta;
-			stageName.color = glm::vec4(glm::vec3(stageName.color), stageNameFadeTimer / fadeTime);
-		}
-
-		DrawScreenInfo();
-
 		//ゲームオーバー時シーン遷移処理
 		if (sceneTimer == 0 && playerData->RemainingPlayer() < 0) {
 
@@ -367,5 +350,28 @@ namespace GameState {
 			game.ReplaceScene(std::make_shared<GameEnd>());
 			return;
 		}
+
+		game.AddSprite(*hpguage);
+
+		//敵出撃管理の更新処理
+		if (launchController) {
+			launchController->Update(delta);
+
+			if (stageTimer == 0 && launchController->IsFinish() && stageNo != 3) {
+
+				StageClear(10);
+			}
+		}
+
+		//ステージ名の表示更新
+		if (stageNameFadeTimer) {
+			static const float fadeTime = 3.f - 1.f;
+			stageNameFadeTimer -= delta;
+			stageName.color = glm::vec4(glm::vec3(stageName.color), stageNameFadeTimer / fadeTime);
+		}
+
+		DrawScreenInfo();
+
+
 	}
 }
