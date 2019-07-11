@@ -157,7 +157,7 @@ bool SpriteRenderer::AddVertices(const Sprite& sprite) {
 	if (primitives.empty()) {
 		//最初のプリミティブを作成する
 
-		primitives.push_back({ 6,0,texture });
+		primitives.push_back({ 6,0,texture,sprite.Program() });
 	}
 	else {
 		//同じテクスチャを使っているならインデックス数を四角形一つ分(インデックス6個)増やす
@@ -186,31 +186,30 @@ void SpriteRenderer::Draw(const glm::vec2& screenSize)const {
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	program->UseProgram();
 	
 	//平行投影、原点は画面の中心
 	const glm::vec2 halfScreenSize = screenSize * 0.5f;
 	const glm::mat4x4 matProj = glm::ortho(
 		-halfScreenSize.x, halfScreenSize.x, -halfScreenSize.y, halfScreenSize.y, 1.0f, 1000.0f);
 	const glm::mat4x4 matView = glm::lookAt(glm::vec3(0, 0, 100), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-	program->SetMatViewProjection(matProj * matView);
+	glm::mat4x4 matVP = matProj * matView;
 
 	vao.Bind();
-
+	
+	Shader::ProgramPtr activeProgram;
 	for (const Primitive& primitive : primitives) {
 
-		program->BindTexture(GL_TEXTURE0, primitive.texture->Id());
+		activeProgram = primitive.program != nullptr ? primitive.program : this->program;
+
+		activeProgram->UseProgram();
+		activeProgram->SetMatViewProjection(matVP);
+
+		activeProgram->BindTexture(GL_TEXTURE0, primitive.texture->Id());
 		glDrawElements(GL_TRIANGLES, primitive.count, GL_UNSIGNED_SHORT, reinterpret_cast<const GLvoid*>(primitive.offset));
-		program->BindTexture(GL_TEXTURE0, 0);
+		activeProgram->BindTexture(GL_TEXTURE0, 0);
 	}
 
 	vao.UnBind();
-
-
-
-
-
 }
 
 /**

@@ -54,6 +54,9 @@ public:
 	void Texture(const TexturePtr& tex);
 	const TexturePtr Texture() const { return texture; }
 
+	//使用するシェーダの設定
+	void Program(const Shader::ProgramPtr p) { program = p; }
+	Shader::ProgramPtr Program() const { return program; }
 
 private:
 
@@ -63,7 +66,7 @@ private:
 	glm::vec4 color = glm::vec4(1);
 	Rect rect = { glm::vec2(0,0),glm::vec2(1,1) };
 	TexturePtr texture;
-
+	Shader::ProgramPtr program;	
 };
 
 using SpritePtr = std::shared_ptr<Sprite>;
@@ -105,6 +108,7 @@ private:
 		size_t count;	///< 頂点数
 		size_t offset;	///< データ先頭からのオフセット
 		TexturePtr texture;
+		Shader::ProgramPtr program;	///< プリミティブを描画するシェーダ
 	};
 	std::vector<Primitive> primitives;
 };
