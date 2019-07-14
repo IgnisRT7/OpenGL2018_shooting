@@ -11,12 +11,15 @@
 ///敵の出撃タイプデータ
 struct EnemyLaunchType {
 
+	float launchStartTimer;	///< ステージ開始後に出撃する時間
 	int launchCount;		///< 出撃数
 	float launchInterval;	///< 出撃間隔
-	int type;				///< 敵の種類
+
+	int enemyType;			///< 敵の種類
 	int moveType;			///< 敵の挙動
 	int bulletType;			///< 弾の種類
-	float launchStartTimer;	///< ステージ開始後に出撃する時間
+	int health;				///< 体力
+
 	glm::vec3 startPostion;	///< 初期地点
 
 	bool operator>(const EnemyLaunchType& cmp) const {

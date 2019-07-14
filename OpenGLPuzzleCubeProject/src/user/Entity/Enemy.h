@@ -13,8 +13,8 @@ namespace GameState {
 	class Toroid : public Entity::EntityDataBase {
 	public:
 
-		Toroid(int typeID = 0, bool itemDrop = false) :
-			enemyType(typeID), isItemDrop(itemDrop) {}
+		Toroid(int typeID = 0,int health = 2, bool itemDrop = false) :
+			enemyType(typeID), isItemDrop(itemDrop),hp(health) {}
 
 		void Initialize() override;
 		void Update(float delta) override;
@@ -75,7 +75,7 @@ namespace GameState {
 	public:
 
 		EnemySpawner() {}
-		EnemySpawner(int max, float interval, int enemyType, int moveType, int bulletType);
+		EnemySpawner(int max, float interval, int enemyType, int moveType, int bulletType, int health);
 		void Initialize() override;
 		void Update(float delta) override;
 
@@ -90,6 +90,7 @@ namespace GameState {
 		int enemyType = -1;			///< oŒ‚‚·‚é“G‚ÌŽí—Þ
 		int moveType = -1;
 		int bulletType = -1;		///< ’e‚ÌŽí—Þ 
+		int health = 1;				///< ‘Ì—Í
 
 		Entity::Entity* playerEntity;
 	};

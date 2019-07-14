@@ -60,7 +60,7 @@ void EnemyLaunchController::Init(int stageNum){
 	
 	std::string filename = "Res/StageData/Stage";
 	filename += std::to_string(stageNum);
-	filename += ".txt";
+	filename += ".csv";
 
 	Load(filename);
 
@@ -70,10 +70,12 @@ void EnemyLaunchController::Init(int stageNum){
 
 /**
 *	ステージデータの読み込み処理
+*
+*	@param filename ステージのファイル名
 */
 void EnemyLaunchController::Load(const std::string& filename) {
 
-	launchList.resize(0);
+	launchList.clear();
 
 	std::ifstream ifs(filename);
 	std::string buf((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
@@ -84,22 +86,27 @@ void EnemyLaunchController::Load(const std::string& filename) {
 
 	//ステージデータ取り出し
 	while (std::getline(bufstream, lineStr, '\n')) {
+		//1行分(1出撃分)のデータ取り出し
 
 		std::vector<float> buftmp;
 		std::istringstream lineStream(lineStr);
 		std::string valueStr;
 		while (std::getline(lineStream, valueStr, ',')) {
+			//数値データを入れていく
+
 			buftmp.push_back(static_cast<float>(std::atof(valueStr.c_str())));
 		}
 
 		EnemyLaunchType launchData;
-		launchData.launchCount = static_cast<int>(buftmp[0]);
-		launchData.launchInterval = buftmp[1];
-		launchData.type = static_cast<int>(buftmp[2]);
-		launchData.moveType = static_cast<int>(buftmp[3]);
-		launchData.bulletType = static_cast<int>(buftmp[4]);
-		launchData.launchStartTimer = buftmp[5];
-		launchData.startPostion = glm::vec3(buftmp[6], buftmp[7], buftmp[8]);
+		launchData.launchStartTimer = buftmp[0];
+		launchData.launchCount = static_cast<int>(buftmp[1]);
+		launchData.launchInterval = buftmp[2];
+		launchData.enemyType = static_cast<int>(buftmp[3]);
+		launchData.moveType = static_cast<int>(buftmp[4]);
+		launchData.bulletType = static_cast<int>(buftmp[5]);
+		launchData.health = static_cast<int>(buftmp[6]);
+		
+		launchData.startPostion = glm::vec3(buftmp[7], buftmp[8], buftmp[9]);
 
 		launchList.push_back(launchData);
 	}
@@ -131,9 +138,8 @@ void EnemyLaunchController::Update(float deltaTime){
 		if (itr->launchStartTimer < timer) {
 			//出撃可能な状態になった
 
-
 			auto e = std::make_shared<GameState::EnemySpawner>(
-				itr->launchCount,itr->launchInterval,itr->type,itr->moveType,itr->bulletType);
+				itr->launchCount,itr->launchInterval,itr->enemyType,itr->moveType,itr->bulletType,itr->health);
 
 
 			GameEngine::Instance().AddEntity(

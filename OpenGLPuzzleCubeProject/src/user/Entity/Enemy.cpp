@@ -321,8 +321,9 @@ namespace GameState {
 	*	@param mType	移動タイプ
 	*	@param bType	弾のタイプ
 	*/
-	EnemySpawner::EnemySpawner(int max, float interval, int eType, int mType, int bType) :
-		spawnMax(max), spawnInterval(interval), enemyType(eType), moveType(mType), bulletType(bType) {
+	EnemySpawner::EnemySpawner(int max, float interval, int eType, int mType, int bType, int health) :
+		spawnMax(max), spawnInterval(interval), enemyType(eType),
+		moveType(mType), bulletType(bType),health(health) {
 	}
 
 	/**
@@ -380,19 +381,21 @@ namespace GameState {
 		else {
 
 			//敵本体の作成
-			auto& t = std::make_shared<Toroid>(0, isItemDrop);
+			auto& t = std::make_shared<Toroid>(0, health, isItemDrop);
 
+			//移動タイプに基づいて移動データを設定する
 			t->MoveController(MakeMoveControllerByMoveType(moveType, entity->Position().x < 0));
 
+			//スポナーの位置からスポーン地点の設定
 			glm::vec3 pos = entity->Position();
 			if (moveType == 2) {
-				pos.z -= launchIndex * 5.f;
+				pos.z -= launchIndex * 5.0f;
 			}
 
 			Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, pos,
 				"Toroid", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", t);
 
-			//弾管理の作成
+			//弾のタイプに基づいて弾生成機を作成
 			if (bulletType != -1) {
 
 				switch (bulletType) {
