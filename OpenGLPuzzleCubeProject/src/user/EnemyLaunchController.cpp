@@ -141,13 +141,11 @@ void EnemyLaunchController::Update(float deltaTime){
 			auto e = std::make_shared<GameState::EnemySpawner>(
 				itr->launchCount,itr->launchInterval,itr->enemyType,itr->moveType,itr->bulletType,itr->health);
 
-
 			GameEngine::Instance().AddEntity(
 				GameState::EntityGroupId_Others, itr->startPostion, nullptr, nullptr, e);
-			std::cout << "EnemySpawner is Launched index: " << seekIndex << " time: "<<timer << std::endl;
+			//std::cout << "EnemySpawner is Launched index: " << seekIndex << " time: "<<timer << std::endl;
 
-
-			//次の出撃データを確認する
+			//次の出撃データへ
 			itr++;
 			seekIndex++;
 		}

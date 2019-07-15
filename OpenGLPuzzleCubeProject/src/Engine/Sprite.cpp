@@ -219,3 +219,21 @@ void SpriteRenderer::Clear() {
 
 	primitives.clear();
 }
+
+/**
+*	HPゲージの初期化処理
+*
+*	@param tex	使用するテクスチャ
+*/
+HealthGuage::HealthGuage(const TexturePtr& tex):
+Sprite(tex){
+}
+
+/**
+*	表示比率の設定
+*/
+void HealthGuage::Ratio(float r){
+
+	ratio = r;
+	Program()->SetFloatParameter(r, "ratio");
+}

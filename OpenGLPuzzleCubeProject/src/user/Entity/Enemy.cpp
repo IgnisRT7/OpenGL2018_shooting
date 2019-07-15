@@ -8,6 +8,7 @@
 #include "../../../Res/Audio/CueSheet_0.h"
 #include "../EnemyLaunchController.h"
 #include "../GameMainScene.h"
+#include "../../Engine/GLFWEW.h"
 
 #include "Effect.h"
 #include "Item.h"
@@ -165,8 +166,19 @@ namespace GameState {
 			}
 		}
 
-		hp = maxHp;
+		glm::vec2 windowSize = game.WindowSize();
 
+		//HPゲージ作成
+		hpGuage = std::make_shared<HealthGuage>(Texture::LoadFromFile("Res/HealthMeter.dds"));
+		hpGuage->Program(Shader::Program::Create("Res/Shader/HealthGauge.vert", "Res/Shader/HealthGauge.frag"));
+		glm::vec3 pos = hpGuage->Position();
+		pos += glm::vec3(0, windowSize.y * 0.45, 0);
+		hpGuage->Position(pos);
+		hpGuage->Scale(glm::vec2(5, 3));
+		hpGuage->Rectangle({ glm::vec2(0,128),glm::vec2(128,12) });
+		std::dynamic_pointer_cast<HealthGuage>(hpGuage)->Ratio(1);
+
+		hp = maxHp;
 	}
 
 	/**
@@ -193,6 +205,9 @@ namespace GameState {
 
 		//タレットの位置情報更新処理
 		UpdateTurret();
+
+		//HPゲージの表示
+		GameEngine::Instance().AddSprite(*hpGuage);
 	}
 
 	/**
@@ -225,6 +240,9 @@ namespace GameState {
 			entity->Destroy();
 		}
 		else {
+
+			std::dynamic_pointer_cast<HealthGuage>(hpGuage)->Ratio(
+				static_cast<float>(hp) / static_cast<float>(maxHp));
 
 			if ((static_cast<float>(hp) / maxHp) > 0.6) {
 				for (auto turret : turrets) {

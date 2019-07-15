@@ -116,9 +116,6 @@ namespace GameState {
 			}
 		}
 
-		hpguage = std::make_shared<Sprite>(Texture::LoadFromFile("Res/Model/Player.dds"));
-		hpguage->Program(Shader::Program::Create("Res/Shader/HealthGauge.vert", "Res/Shader/HealthGauge.frag"));
-
 		return true;
 	}
 
@@ -174,6 +171,7 @@ namespace GameState {
 
 		game.EnableShadow(true);
 		
+		
 	}
 
 	/**
@@ -226,7 +224,7 @@ namespace GameState {
 		game.StopAllAudio();
 		game.RemoveAllEntity();
 
-		++stageNo;
+		++stageNo; stageNo = 3;
 		
 		launchController = std::make_shared<EnemyLaunchController>();
 		launchController->Init(stageNo);
@@ -350,8 +348,6 @@ namespace GameState {
 			game.ReplaceScene(std::make_shared<GameEnd>());
 			return;
 		}
-
-		game.AddSprite(*hpguage);
 
 		//“GoŒ‚ŠÇ—‚ÌXVˆ—
 		if (launchController) {

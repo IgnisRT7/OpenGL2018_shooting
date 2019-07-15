@@ -6,6 +6,7 @@
 #include "../../Engine/Entity.h"
 #include "../BulletGenerator.h"
 #include "../EnemyMoveController.h"
+#include "../../Engine/Sprite.h"
 
 namespace GameState {
 
@@ -63,6 +64,7 @@ namespace GameState {
 		float timer = 0;	/// 
 		int hp = 0;		/// ‘Ì—Í
 		const int maxHp = 1500;
+		SpritePtr hpGuage;
 
 		MoveControllerPtr moveController;
 		std::vector<std::shared_ptr<Toroid> > turrets;

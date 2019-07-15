@@ -75,6 +75,8 @@ public:
 	void PopScene();
 	void ReplaceScene(ScenePtr s);
 
+	const glm::vec2& WindowSize() const { return windowSize; }
+
 	///影生成パラメータ
 	struct ShadowParameter {
 		glm::vec3 lightPos;	///< 影を発生させるライトの位置

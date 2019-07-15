@@ -26,7 +26,7 @@ public:
 
 	Sprite() = default;
 	explicit Sprite(const TexturePtr&);
-	~Sprite() = default;
+	virtual ~Sprite() = default;
 	Sprite(const Sprite&) = default;
 	Sprite& operator=(const Sprite&) = default;
 
@@ -70,6 +70,26 @@ private:
 };
 
 using SpritePtr = std::shared_ptr<Sprite>;
+
+/**
+*	HPゲージ表示用スプライトクラス
+*/
+class HealthGuage :public Sprite {
+public:
+
+	HealthGuage() = default;
+	explicit HealthGuage(const TexturePtr& tex);
+	virtual ~HealthGuage() = default;
+	HealthGuage(const HealthGuage&) = default;
+	HealthGuage& operator=(const HealthGuage&) = default;
+
+	void Ratio(float r);
+	float Ratio() const { return ratio; }
+
+private:
+
+	float ratio;
+};
 
 /**
 *	スプライト描画クラス
