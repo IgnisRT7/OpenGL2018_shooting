@@ -65,7 +65,7 @@ UniformBuffer::~UniformBuffer() {
 *
 *	offsetとsizeの両方が0の場合、バッファサイズ=UBOサイズとして転送される
 */
-bool UniformBuffer::BUfferSubData(const GLvoid* data, GLintptr offset, GLsizeiptr size) {
+bool UniformBuffer::BufferSubData(const GLvoid* data, GLintptr offset, GLsizeiptr size) {
 
 	if (offset * size > this->size) {
 
@@ -79,6 +79,12 @@ bool UniformBuffer::BUfferSubData(const GLvoid* data, GLintptr offset, GLsizeipt
 	}
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
 	glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
+
+	auto err = glGetError();
+	if (err != GL_NO_ERROR) {
+		std::cerr << "ERROR(" << name << "): バッファの転送に失敗" << std::endl;
+
+	}
 	return true;
 }
 
@@ -91,6 +97,11 @@ bool UniformBuffer::BUfferSubData(const GLvoid* data, GLintptr offset, GLsizeipt
 void UniformBuffer::BindBufferRange(GLintptr offset, GLsizeiptr size) const
 {
 	glBindBufferRange(GL_UNIFORM_BUFFER, bindingPoint, ubo, offset, size);
+	auto err = glGetError();
+	if (err != GL_NO_ERROR) {
+		std::cerr << "ERROR(" << __func__ << "): 失敗" << std::endl;
+
+	}
 }
 
 /**
@@ -102,6 +113,11 @@ void* UniformBuffer::MapBuffer() const
 {
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
 	return glMapBufferRange(GL_UNIFORM_BUFFER, 0, size, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+	auto err = glGetError();
+	if (err != GL_NO_ERROR) {
+		std::cerr << "ERROR(" << __func__ << "): 失敗" << std::endl;
+
+	}
 }
 
 /**
