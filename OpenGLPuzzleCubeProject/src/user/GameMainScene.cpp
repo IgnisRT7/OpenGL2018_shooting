@@ -134,9 +134,6 @@ namespace GameState {
 
 		game.UserVariable("score") = 0;
 
-		stageName.size = glm::vec2(4);
-		stageName.color = glm::vec4(0,0,1,1);
-
 		///衝突判定用ハンドラの定義
 		game.CollisionHandler(EntityGroupId_PlayerShot, EntityGroupId_Enemy);
 		game.CollisionHandler(EntityGroupId_EnemyShot, EntityGroupId_Player);
@@ -152,16 +149,6 @@ namespace GameState {
 		//game.MainCamera(std::make_shared<CameraDebugComponent>());
 		game.MainCamera(std::make_shared<CameraComponent>());
 		game.MainCamera()->LookAt(glm::vec3(0, 50, -1), glm::vec3(0, 0, 0));
-
-		///シャドウの設定
-		GameEngine::ShadowParameter shadowParam;
-		shadowParam.lightPos = glm::vec3(20, 50, 50);
-		shadowParam.lightDir = glm::normalize(glm::vec3(-25, -150, 25)); 
-		shadowParam.lightUp = glm::vec3(0, 1, 0);
-		shadowParam.near = 10;
-		shadowParam.far = 200;
-		shadowParam.range = glm::vec2(500, 500);
-		game.Shadow(shadowParam);
 
 		game.TimeScale(1);
 
@@ -187,6 +174,13 @@ namespace GameState {
 	void MainGame::DrawScreenInfo() {
 
 		GameEngine& game = GameEngine::Instance();
+
+		//ステージ名の表示更新
+		if (stageNameFadeTimer) {
+			static const float fadeTime = 3.f - 1.f;
+			stageNameFadeTimer -= game.DeltaTime();
+			stageName.color = glm::vec4(glm::vec3(stageName.color), stageNameFadeTimer / fadeTime);
+		}
 
 		if (sceneTimer <= 0) {
 			//スコア表示処理
@@ -224,7 +218,7 @@ namespace GameState {
 		game.StopAllAudio();
 		game.RemoveAllEntity();
 
-		++stageNo; stageNo = 3;
+		++stageNo;// stageNo = 3;
 		
 		launchController = std::make_shared<EnemyLaunchController>();
 		launchController->Init(stageNo);
@@ -244,11 +238,22 @@ namespace GameState {
 
 			game.KeyValue(0.16f);
 
+			//シャドウの設定
+			GameEngine::ShadowParameter shadowParam;
+			shadowParam.lightPos = glm::vec3(20, 50, 50);
+			shadowParam.lightDir = glm::normalize(glm::vec3(-25, -150, 25));
+			shadowParam.lightUp = glm::vec3(0, 1, 0);
+			shadowParam.near = 10;
+			shadowParam.far = 200;
+			shadowParam.range = glm::vec2(500, 500);
+			game.Shadow(shadowParam);
+
+			//ステージ名の設定
 			stageName.pos = glm::vec2(-1,0);
 			stageName.color = glm::vec4(1, 0, 0, 1);
 			stageName.str = "The beginning of the forest";
 				
-			//背景の更新処理
+			//背景エンティティの作成処理
 			for (int z = 0; z < 5; ++z) {
 				const float offsetZ = static_cast<float>(z * 40 * 5);
 
@@ -265,10 +270,7 @@ namespace GameState {
 
 			game.KeyValue(0.24f);
 
-			stageName.pos = glm::vec2(-1,0);
-			stageName.str = "The town that got stuck";
-
-			///シャドウの設定
+			//シャドウの設定
 			GameEngine::ShadowParameter shadowParam;
 			shadowParam.lightPos = glm::vec3(20, 50, 50);
 			shadowParam.lightDir = glm::normalize(glm::vec3(-25, -50, 25));
@@ -278,7 +280,11 @@ namespace GameState {
 			shadowParam.range = glm::vec2(500, 500);
 			game.Shadow(shadowParam);
 
-			//背景の初期化処理
+			//ステージ名の設定
+			stageName.pos = glm::vec2(-1, 0);
+			stageName.str = "The town that got stuck";
+
+			//背景エンティティの作成処理
 			for (int z = 0; z < 5; ++z) {
 				const float offsetZ = static_cast<float>(z * 40);
 
@@ -309,8 +315,11 @@ namespace GameState {
 			shadowParam.range = glm::vec2(500, 500);
 			game.Shadow(shadowParam);
 
+			//ステージ名の設定
 			stageName.pos = glm::vec2(-1,0);
 			stageName.str = "To SPACE";
+
+			//背景エンティティ作成
 			game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
 				"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<SpaceSphereMain>(), "NonLighting");
 
@@ -328,6 +337,7 @@ namespace GameState {
 
 		//ステージ遷移処理
 		if (stageTimer > 0 && (stageTimer -= delta) < 0) {
+			//ステージ遷移の要件を満たした
 
 			if (stageNo == 3) {
 				game.ReplaceScene(std::make_shared<GameEnd>(true));
@@ -335,6 +345,8 @@ namespace GameState {
 				return;
 			}
 
+			//TODO : ステージタイマー設定時に呼び出さなければならない
+			playerData->EndMoveSet();
 			StageLoad();
 		}
 
@@ -359,15 +371,6 @@ namespace GameState {
 			}
 		}
 
-		//ステージ名の表示更新
-		if (stageNameFadeTimer) {
-			static const float fadeTime = 3.f - 1.f;
-			stageNameFadeTimer -= delta;
-			stageName.color = glm::vec4(glm::vec3(stageName.color), stageNameFadeTimer / fadeTime);
-		}
-
 		DrawScreenInfo();
-
-
 	}
 }

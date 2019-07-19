@@ -19,7 +19,6 @@ namespace GameState {
 		Landscape(bool l = false);
 
 		void Initialize() override;
-
 		void Update(float delta) override;
 	private:
 
@@ -58,12 +57,14 @@ namespace GameState {
 
 	private:
 
-		float stageTimer = -1;
+		float stageNameFadeTimer = 0;	///< ステージ名を表示するためのタイマー
+		float stageTimer = -1;			///< ステージが遷移するまでのタイマー
+		float sceneTimer=0;				///< シーンが遷移するまでのタイマー
+		
+		bool isStageClear = false;		///< ステージをクリアしたかどうかのフラグ
 
-		float sceneTimer=0;
-
-		int stageNo = 0;
-		int playerType = 0;
+		int stageNo = 0;				///< 現在のステージ番号
+		int playerType = 0;				///< プレイヤーのタイプ
 
 		struct FontDrawInfo {
 			glm::vec2 pos;
@@ -71,12 +72,12 @@ namespace GameState {
 			glm::vec4 color;
 			std::string str;
 		}stageName;
-		float stageNameFadeTimer = 0;
 
-		std::shared_ptr<Player> playerData;
-		std::shared_ptr<Sprite> hpguage;
 
-		EnemyLaunchControllerPtr launchController;
+		std::shared_ptr<Player> playerData;	///< プレイヤーのエンティティデータ
+		std::shared_ptr<Sprite> hpguage;	///< デバッグ用HPゲージ用スプライト
+
+		EnemyLaunchControllerPtr launchController;	
 	};
 
 }
