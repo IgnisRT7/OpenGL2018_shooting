@@ -831,7 +831,7 @@ void GameEngine::RenderEntity() const {
 
 	shaderMap.find("Tutorial")->second->BindShadowTexture(GL_TEXTURE_2D, offDepth->GetTexture());
 
-	uboLight->BUfferSubData(&lightData);
+	uboLight->BufferSubData(&lightData);
 
 	///エンティティごとに描画に使用するシェーダが異なるためここでは設定しない
 
@@ -914,7 +914,7 @@ void GameEngine::RenderFrameBuffer() const{
 	Uniform::PostEffectData postEffect;
 	postEffect.luminanceScale = luminanceScale;
 	postEffect.bloomThreshold = 1.0f / luminanceScale;
-	uboPostEffect->BUfferSubData(&postEffect);
+	uboPostEffect->BufferSubData(&postEffect);
 	progColorFilter->BindTexture(GL_TEXTURE0, offscreen->GetTexture());
 	progColorFilter->BindTexture(GL_TEXTURE1, offBloom[0]->GetTexture());
 	progColorFilter->BindTexture(GL_TEXTURE2, offDepth->GetTexture());

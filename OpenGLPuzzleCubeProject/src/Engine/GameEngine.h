@@ -124,7 +124,7 @@ public:
 	
 
 	void TimeScale(float t) { timeScale = t; }
-	float DeltaTime(float delta) const { return deltaTime; }
+	float DeltaTime() const { return deltaTime; }
 	float FPS() const { return fps; }
 	void EnableShadow(bool b) { isEnableShadow = b; }
 	void ToggleDrawOutline() { isDrawOutline = !isDrawOutline; }
