@@ -108,7 +108,7 @@ namespace Entity {
 		struct Impl : Buffer { Impl() {} ~Impl() {} };
 		BufferPtr p = std::make_shared<Impl>();
 		if (!p) {
-			std::cerr << "WARNING in Entity::Buffer::Create: バッファの作成に失敗." << std::endl;
+			std::cerr << "[Error] Entity::Buffer::Create: バッファの作成に失敗." << std::endl;
 			return {};
 		}
 
@@ -120,7 +120,7 @@ namespace Entity {
 		p->ubo = UniformBuffer::Create(maxEntityCount * ubSizePerEntity, bindingPoint, ubName);
 		p->buffer.reset(new LinkEntity[maxEntityCount]);
 		if (!p->ubo || !p->buffer) {
-			std::cerr << "WARNING in Entity::Buffer::Create: バッファの作成に失敗." << std::endl;
+			std::cerr << "[Error]: Entity::Buffer::Create: バッファの作成に失敗." << std::endl;
 			return {};
 		}
 
@@ -160,14 +160,15 @@ namespace Entity {
 	Entity* Buffer::AddEntity(int groupId, const glm::vec3& position, const Mesh::MeshPtr& mesh, const TexturePtr texture[2], const Shader::ProgramPtr& program, EntityDataBasePtr eData) {
 
 		if (freeList.prev == freeList.next) {
-			std::cerr << "WARNING in Entity::Buffer::AddEntity: "
+			std::cerr << "[Warning]: Entity::Buffer::AddEntity "
 				"空きエンティティがありません." << std::endl;
 			return nullptr;
 		}
 
 		if (groupId <0 || groupId > maxGroupId) {
 
-			std::cerr << "ERROR in Entity::Buffer::AddEntity: 範囲外のグループID(" << groupId << ")が渡されました。\nグループIDは0～" << maxGroupId << "でなければなりません。" << std::endl;
+			std::cerr << "[Error]: Entity::Buffer::AddEntity"
+				"範囲外のグループID(" << groupId << ")が渡されました。\nグループIDは0～" << maxGroupId << "でなければなりません。" << std::endl;
 			return nullptr;
 		}
 
@@ -200,13 +201,13 @@ namespace Entity {
 	void Buffer::RemoveEntity(Entity* entity) {
 
 		if (!entity || !entity->isActive) {
-			std::cerr << "WARNING in Entity::Buffer::RemoveEntity: "
+			std::cerr << "[Warning]: Entity::Buffer::RemoveEntity: "
 				"非アクティブなエンティティを削除しようとしました." << std::endl;
 			return;
 		}
 		LinkEntity* p = static_cast<LinkEntity*>(entity);
 		if (p < &buffer[0] || p >= &buffer[bufferSize]) {
-			std::cerr << "WARNING in Entity::Buffer::RemoveEntity: "
+			std::cerr << "[Warning]: Entity::Buffer::RemoveEntity: "
 				"異なるバッファから取得したエンティティを削除しようとしました." << std::endl;
 			return;
 		}

@@ -142,55 +142,51 @@ GameEngine& GameEngine::Instance() {
 */
 bool GameEngine::Init(int w, int h, const char* title) {
 
-	windowSize = glm::vec2(w, h);
-	viewportRect[0] = glm::vec2(0, 0);
-	viewportRect[1] = windowSize;
-
 	if (isInitalized) {
 		return true;
 	}
+
+	windowSize = glm::vec2(w, h);
+	viewportRect[0] = glm::vec2(0, 0);
+	viewportRect[1] = windowSize;
 
 	if (!GLFWEW::Window::Instance().Init(w, h, title)) {
 		return false;
 	}
 
+	//オフスクリーンバッファの頂点データ初期化
 	vbo.Init(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	ibo.Init(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	if (vbo.Id() == 0 || ibo.Id() == 0) {
-		return false;
-	}
 
 	vao = CreateVAO(vbo.Id(), ibo.Id());
 
-	uboLight = UniformBuffer::Create(sizeof(Uniform::LightData), 1, "LightData");
-	uboPostEffect = UniformBuffer::Create(sizeof(Uniform::PostEffectData), 2, "PostEffectData");
+	if (!ibo.Id() || !vbo.Id() || !vao ) {
 
-	//バックバッファ作成
-	offscreen = OffscreenBuffer::Create(static_cast<int>(windowSize.x), static_cast<int>(windowSize.y), GL_RGBA16F);
-	if (!offscreen) {
+		std::cerr << "[Error]: GameEngine::Init 初期化に失敗(MainBufferFaild)" << std::endl;
 		return false;
 	}
 
-	//ブルームエフェクト用縮小バッファ作成
+	///描画用バッファ群作成
+
+	//オフスクリーンバッファ作成
+	offscreen = OffscreenBuffer::Create(static_cast<int>(windowSize.x), static_cast<int>(windowSize.y), GL_RGBA16F);
+
+	//デプスシャドウバッファ作成
+	offDepth = OffscreenBuffer::Create(4096, 4096, GL_DEPTH_COMPONENT32);
+
+	//ステンシル用バッファ作成
+	offStencil = OffscreenBuffer::Create(1024, 1024, GL_RGBA16F);
+	
+	//ブルームエフェクト用バッファ作成
+	bool offBloofFaild = false;
 	for (int i = 0, scale = 4; i < bloomBufferCount; ++i, scale *= 4) {
 		const int w = static_cast<int>(windowSize.x) / scale;
 		const int h = static_cast<int>(windowSize.y) / scale;
 		offBloom[i] = OffscreenBuffer::Create(w, h, GL_RGBA16F);
 		if (!offBloom[i]) {
-			return false;
+			offBloofFaild = true;
+			break;
 		}
-	}
-
-	//デプスシャドウバッファ作成
-	offDepth = OffscreenBuffer::Create(4096, 4096, GL_DEPTH_COMPONENT32);
-	if (!offDepth) {
-		return false;
-	}
-
-	//ステンシル用バッファ作成
-	offStencil = OffscreenBuffer::Create(1024, 1024, GL_RGBA16F);
-	if (!offStencil) {
-		return false;
 	}
 
 	//テクスチャサイズ取得
@@ -206,11 +202,9 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		e.Init(GL_PIXEL_PACK_BUFFER, pboByteSize, nullptr, GL_DYNAMIC_READ);
 	}
 
-
-	if ( !vao || !uboLight || !uboPostEffect) {
-
-		std::cerr << "ERROR: GameEngineの初期化に失敗" << std::endl;
-		return false;
+	if (!offscreen || !offDepth || !offStencil || offBloofFaild || !pbo->Id() || !pbo->Id()) {
+		std::cerr << "[Error]: GameEngine::Init 初期化に失敗(OffscreenBufferFaild)" << std::endl;
+		return;
 	}
 
 	//シェーダリスト
@@ -244,10 +238,13 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	shaderMap["ColorFilter"]->UniformBlockBinding("PostEffectData", 2);
 	shaderMap["HiLumExtract"]->UniformBlockBinding("PostEffectData", 2);
 
+	uboLight = UniformBuffer::Create(sizeof(Uniform::LightData), 1, "LightData");
+	uboPostEffect = UniformBuffer::Create(sizeof(Uniform::PostEffectData), 2, "PostEffectData");
+
 	//meshBuffer作成
 	meshBuffer = Mesh::Buffer::Create(1000 * 1024, 1000 * 1024);
 	if (!meshBuffer) {
-		std::cerr << "ERROR: GameEngineの初期化に失敗" << std::endl;
+		std::cerr << "[Error]: GameEngine::Init 初期化に失敗" << std::endl;
 	}
 
 	textureStack.push_back(TextureLevel());
