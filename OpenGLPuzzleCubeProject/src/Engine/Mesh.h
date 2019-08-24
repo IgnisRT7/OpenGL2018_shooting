@@ -3,6 +3,7 @@
 */
 #pragma once
 
+#include "BufferObject.h"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <vector>
@@ -85,9 +86,12 @@ namespace Mesh {
 
 	private:
 
-		GLuint vbo = 0;	///< モデルの頂点データを格納するVBO
-		GLuint ibo = 0;	///< モデルのインデックスデータを格納するIBO
-		GLuint vao = 0; ///< モデル用VAO
+		BufferObject ibo, vbo;
+		VertexArrayObject vao;
+
+		//GLuint vbo = 0;	///< モデルの頂点データを格納するVBO
+		//GLuint ibo = 0;	///< モデルのインデックスデータを格納するIBO
+		//GLuint vao = 0; ///< モデル用VAO
 		std::vector<Material> materialList;	///< マテリアルリスト
 
 		//tips :ココから下は上記vbo,ibo,materialListのどこに現在読み込むべき

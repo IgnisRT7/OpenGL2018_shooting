@@ -15,11 +15,11 @@ namespace Mesh {
 	/// 頂点データ型
 	struct Vertex {
 
-		glm::vec3 position;	///< 座標
-		glm::vec4 color;	///< 色
-		glm::vec2 texCoord;	///< テクスチャ座標
-		glm::vec3 normal;	///< 法線
-		glm::vec4 tangent;	///< 接ベクトル
+		glm::vec3 position = { 0,0,0 };	///< 座標
+		glm::vec4 color = { 1,1,1,1 };	///< 色
+		glm::vec2 texCoord = { 0,0 };	///< テクスチャ座標
+		glm::vec3 normal = { 1,0,0 };	///< 法線
+		glm::vec4 tangent = { 1,0,0,0 };	///< 接ベクトル
 	};
 
 	/**
@@ -98,8 +98,6 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 		SetVertexAttribPointer(4, Vertex, tangent); 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 		glBindVertexArray(0);
-		//glDeleteBuffers(1, &vbo);
-		//glDeleteBuffers(1, &ibo);
 
 		return vao;
 	}
@@ -212,29 +210,36 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 	*/
 	bool FbxLoader::Load(const char* filename) {
 		
+		//FBXManager作成
 		 fbxManager = std::unique_ptr<FbxManager, Deleter<FbxManager> >(FbxManager::Create());
 		if (!fbxManager) {
-			std::cerr << "ERROR: " << filename << "の読み込みに失敗(FbxManager)の作成に失敗" << std::endl;
+			std::cerr << "[Error]: FbxLoader::Load "<<
+				filename << "の読み込みに失敗(FbxManagerFaild)" << std::endl;
 			return false;
 		}
 
+		//FbxScene作成
 		fbxScene = FbxScene::Create(fbxManager.get(), "");
 		if (!fbxScene) {
-			std::cerr << "ERROR:" << filename << "の読み込みに失敗(FbxSceneの作成に失敗)" << std::endl;
+			std::cerr << "[Error]: FbxLoader::Load "<<
+				filename << "の読み込みに失敗(FbxSceneFaild)" << std::endl;
 			return false;
 		}
 		else {
 
+			//FBxImporter作成
 			std::unique_ptr<FbxImporter, Deleter<FbxImporter> > fbxImporter(FbxImporter::Create(fbxManager.get(), ""));
 			const bool importStatus = fbxImporter->Initialize(filename);
 			if (!importStatus || !fbxImporter->Import(fbxScene)) {
-				std::cerr << "ERROR: " << filename << "の読み込みに失敗\n" << fbxImporter->GetStatus().GetErrorString() << std::endl;
+				std::cerr << "[Error]: FbxLoader::Load " <<
+					filename << "の読み込みに失敗(FbxImporterFaild)\n" << fbxImporter->GetStatus().GetErrorString() << std::endl;
 				return false;
 			}
 		}
 
 		if (!Convert(fbxScene->GetRootNode())) {
-			std::cerr << "ERROR: " << filename << "の変換に失敗" << std::endl;
+			std::cerr << "[Error]: FbxLoader::Load " <<
+				filename << "の変換に失敗(FbxConverterFaild)" << std::endl;
 			return false;
 		}
 
@@ -286,69 +291,36 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 
 		TemporaryMesh mesh;
 		mesh.name = fbxNode->GetName();
+
+		std::cout << "[Info]: FbxLoader::LoadMesh " << mesh.name << " 読み込み中" << std::endl;;
+
 		if (!fbxMesh->IsTriangleMesh()) {
-			std::cerr << "Warning! :" << mesh.name << "には三角形以外のメンが含まれています" << std::endl;
+			std::cout << "Warning! :" << mesh.name << "には三角形以外のメンが含まれています" << std::endl;
+			std::cout << "三角化処理を行います" << std::endl;
 
-			//TODO: ４頂点ポリゴンの三角化
+			//４頂点ポリゴンの三角化
 			FbxGeometryConverter fbxGeometoryConverter(fbxManager.get());
-			fbxGeometoryConverter.Triangulate(fbxScene,true);
-			//fbxGeometoryConverter.SplitMeshesPerMaterial(fbxScene, true);
-
+			fbxGeometoryConverter.Triangulate(fbxScene, true);
 		}
 
+		//TODO : ここの処理が無意味なので要修正
 		//マテリアル情報を読み取る
 		const int materialCount = fbxNode->GetMaterialCount();
 		mesh.materialList.reserve(materialCount);
+
 		for (int i = 0; i < materialCount; ++i) {
-				
+
 			TemporaryMaterial material;
 			if (FbxSurfaceMaterial* fbxMaterial = fbxNode->GetMaterial(i)) {
-
-				FbxProperty fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
-
-				int layerCount = fbxProperty.GetSrcObjectCount<FbxLayeredTexture>();
-				if (layerCount == 0) {
-					//通常テクスチャ
-
-					int textureCount = fbxProperty.GetSrcObjectCount<FbxTexture>();
-					//テクスチャ情報取得処理
-					for (int i = 0; i < textureCount; i++) {
-
-						FbxFileTexture* texture = fbxProperty.GetSrcObject<FbxFileTexture>();
-						if (texture) {
-
-
-							int d = 0;
-						}
-
-					}
-
+				//マテリアルの色情報を読み取る
+				const FbxClassId classId = fbxMaterial->GetClassId();
+				if (classId == FbxSurfaceLambert::ClassId || classId == FbxSurfacePhong::ClassId) {
+					const FbxSurfaceLambert* pLambert = static_cast<const FbxSurfaceLambert*>(fbxMaterial);
+					material.color = glm::vec4(ToVec3(pLambert->Diffuse.Get()), static_cast<float>(1.0f - pLambert->TransparencyFactor));
 				}
 
-	
-/*				//テクスチャ情報の読み込み
-				FbxProperty fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
-
-				int layerdTextureCount = fbxProperty.GetSrcObjectCount<FbxLayeredTexture>();
-				if (layerdTextureCount > 0) {
-					//レイヤードテクスチャ読み込み処理
-				}
-
-				int fileTextureCount = fbxProperty.GetSrcObjectCount<FbxFileTexture>();
-				if (fileTextureCount > 0) {
-					//通常のテクスチャ取得
-					
-					for (int j = 0; j < fileTextureCount; j++) {
-
-						FbxFileTexture* texture = fbxProperty.GetSrcObject<FbxFileTexture>();
-						if (texture) {
-							std::cout << "モデルに含まれるテクスチャを発見しました。name : " << texture->GetFileName() << std::endl;
-						}
-					}
-				}*/
-
+				mesh.materialList.push_back(material);
 			}
-			mesh.materialList.push_back(material);
 		}
 
 		if (mesh.materialList.empty()) {
@@ -390,6 +362,7 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 		bool isBinormalDirectRef = true;
 		const FbxLayerElementArrayTemplate<int>* binormalIndexList = nullptr;
 		const FbxLayerElementArrayTemplate<FbxVector4>* binormalList = nullptr;
+
 		if (hasTangent) {
 
 			const FbxGeometryElementTangent* fbxTangentList = fbxMesh->GetElementTangent();
@@ -529,7 +502,7 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 		}
 
 		if (buffer->GetMesh(name.c_str()).get() != this) {
-			std::cerr << "WARNING: バッファに存在しないメッシュ'" << name << "'を描画しようとしました" << std::endl;
+			std::cerr << "[Warnig]: Mesh::Draw バッファに存在しないメッシュ'" << name << "'を描画しようとしました" << std::endl;
 			return;
 		}
 
@@ -542,26 +515,31 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 	/**
 	*	メッシュバッファを作成する
 	*
-	*	@param vboSize	バッファに格納可能な総頂点数
+	*	@param vboSize	格納可能な総頂点数
 	*	@param iboSize	バッファに格納可能な総インデックス数
 	*/
 	BufferPtr Buffer::Create(int vboSize, int iboSize) {
 
+		std::cout << "[Info]: MeshBuffer::Create" << std::endl;
+
 		struct Impl :Buffer { Impl() {} ~Impl() {} };
 		BufferPtr p = std::make_shared<Impl>();
-		p->vbo = CreateVBO(vboSize * sizeof(Vertex), nullptr);
-		if (!p->vbo) {
-			return {};
-		}
 
-		p->ibo = CreateIBO(iboSize * sizeof(uint32_t), nullptr);
-		if (!p->ibo) {
-			return {};
-		}
+		p->vbo.Init(GL_ARRAY_BUFFER,vboSize*sizeof(Vertex));
+		p->ibo.Init(GL_ELEMENT_ARRAY_BUFFER, iboSize * sizeof(uint32_t));
+		p->vao.Init(p->vbo.Id(), p->ibo.Id());
 
-		p->vao = CreateVAO(p->vbo, p->ibo);
-		if (!p->vao) {
-			return {};
+		p->vao.Bind();
+		p->vao.VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), offsetof(Vertex, position));
+		p->vao.VertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), offsetof(Vertex, color));
+		p->vao.VertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), offsetof(Vertex, texCoord));
+		p->vao.VertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), offsetof(Vertex, normal));
+		p->vao.VertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), offsetof(Vertex, tangent));
+		p->vao.UnBind();
+
+		if (!p->vbo.Id() || !p->ibo.Id() || !p->vao.Id()){
+
+			std::cout << "バッファの作成に失敗 " << std::endl;
 		}
 
 		p->PushLevel();
@@ -574,14 +552,14 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 	*/
 	Buffer::~Buffer() {
 
-		if (vao) {
-			glDeleteVertexArrays(1, &vao);
+		if (vao.Id()) {
+			vao.Destroy();
 		}
-		if (ibo) {
-			glDeleteBuffers(1, &ibo);
+		if (ibo.Id()) {
+			ibo.Destroy();
 		}
-		if (vbo) {
-			glDeleteBuffers(1, &vbo);
+		if (vbo.Id()) {
+			vbo.Destroy();
 		}
 	}
 
@@ -603,23 +581,23 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 		Level& level = levelStack.back();
 		GLint64 vboSize = 0;
 		GLint64 iboSize = 0;
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo.Id());
 		glGetBufferParameteri64v(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &vboSize);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo.Id());
 		glGetBufferParameteri64v(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &iboSize);
 		for (TemporaryMesh& e : loader.meshList) {
 			for (TemporaryMaterial& material : e.materialList) {
 
 				const GLsizeiptr verticesBytes = material.vertexBuffer.size() * sizeof(Vertex);
 				if (level.vboEnd + verticesBytes >= vboSize) {
-					std::cerr << "WARNING: vboサイズが不足しています(" << level.vboEnd << '/' << vboSize << ')' << std::endl;
+					std::cerr << "[Warning]: vboサイズが不足しています(" << level.vboEnd << '/' << vboSize << ')' << std::endl;
 					continue;
 				}
 
 				const GLsizei indexSize = static_cast<GLsizei>(material.indexBuffer.size());
 				const GLsizeiptr indicesBytes = indexSize * sizeof(uint32_t);
 				if (level.iboEnd + indicesBytes >= iboSize) {
-					std::cerr << "WARNING: iboサイズが不足しています(" << level.iboEnd << '/' << iboSize << ')' << std::endl;
+					std::cerr << "[Warning]: iboサイズが不足しています(" << level.iboEnd << '/' << iboSize << ')' << std::endl;
 					continue;
 				}
 
@@ -679,7 +657,7 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 		if (index >= materialList.size()) {
 			//インデックスに対応するマテリアルが無いのでダミーを代用
 			static const Material dummy{ GL_UNSIGNED_BYTE,0,0,0,glm::vec4(1) };
-			std::cout << "MeshBuffer::GetMaterial() material index is out of range!" << std::endl;
+			std::cout << "[Error]: MeshBuffer::GetMaterial() material index is out of range!" << std::endl;
 			return dummy;
 		}
 		return materialList[index];
@@ -689,14 +667,14 @@ reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
 	*	バッファが保持するVAOをOpenGLの処理対象に設定する
 	*/
 	void Buffer::BindVAO() const {
-		glBindVertexArray(vao);
+		vao.Bind();
 	}
 
 	/**
 	*	バッファの紐づけの解除
 	*/
 	void Buffer::UnBindVAO() const{
-		glBindVertexArray(0);
+		vao.UnBind();
 	}
 
 	/**
