@@ -23,34 +23,34 @@ namespace GameState {
 		if (isAutoMove) {
 			return;
 		}
+		isAutoMove = true;
 
-//		startMovValue = 100;
-		entity->Position(glm::vec3(0, 0, -screenHalfH));
-//		entity->Velocity(glm::vec3(0, 0, 15));
+		entity->Position(glm::vec3(0, 0, -screenHalfH * 1.1f));
+		autoMoveStartTimer = 0;	// 即時実行
 
 		goalLocation = glm::vec3(0, 0, -screenHalfH * 0.5);
-		entity->Velocity(goalLocation - entity->Position());
-		isAutoMove = true;
+		autoMoveVel = glm::normalize(goalLocation - entity->Position()) * 30.0f;
 	}
 
 	/**
 	*	ステージクリア時の演出用設定処理
+	*
+	*	@param delayTime	この関数を呼び出してから動き出す時間
 	*/
-	void Player::EndMoveSet(){
+	void Player::EndMoveSet(float delayTime){
 
-		if (isAutoMove) {
+ 		if (isAutoMove) {
 			return;
 		}
-
-		goalLocation = glm::vec3(0, 0, screenHalfH + 5);
-		glm::vec3 vel = goalLocation - entity->Position();
-
-		entity->Velocity(vel);
 		isAutoMove = true;
+
+		goalLocation = glm::vec3(0, 0, screenHalfH + 10);
+		autoMoveStartTimer = delayTime;
+		autoMoveVel = glm::normalize(goalLocation - entity->Position()) * 30.0f;
 	}
 
 	/**
-	*	ステージ開始後に行われる処理
+	*	ステージ開始後もしくはクリア後に行われる処理
 	*/
 	void Player::AutoMove(float delta) {
 
@@ -58,6 +58,12 @@ namespace GameState {
 
 			isAutoMove = false;
 			entity->Velocity(glm::vec3(0));
+		}
+		
+		if (autoMoveStartTimer >= 0 && --autoMoveStartTimer <= 0) {
+			//移動開始タイマーが切れた瞬間の動作
+
+			entity->Velocity(autoMoveVel);
 		}
 	}
 
@@ -161,10 +167,11 @@ namespace GameState {
 			entity->Velocity(vec);
 
 			//移動制限処理
-			glm::vec3 pos = entity->Position();
-			pos = glm::min(moveBox[1], glm::max(pos, moveBox[0]));
-			entity->Position(pos);
-
+			if (!isAutoMove) {
+				glm::vec3 pos = entity->Position();
+				pos = glm::min(moveBox[1], glm::max(pos, moveBox[0]));
+				entity->Position(pos);
+			}
 
 			entity->Rotation(glm::quat(glm::vec3(0, 0, rotZ)));
 

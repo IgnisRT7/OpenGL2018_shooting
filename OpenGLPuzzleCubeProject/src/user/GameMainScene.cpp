@@ -170,16 +170,32 @@ namespace GameState {
 
 	/**
 	*	画面に表示する情報の描画処理
+	*
+	*	@param deltaTime	経過時間
 	*/
-	void MainGame::DrawScreenInfo() {
+	void MainGame::DrawScreenInfo(float deltaTime) {
 
 		GameEngine& game = GameEngine::Instance();
 
 		//ステージ名の表示更新
-		if (stageNameFadeTimer) {
-			static const float fadeTime = 3.f - 1.f;
-			stageNameFadeTimer -= game.DeltaTime();
-			stageName.color = glm::vec4(glm::vec3(stageName.color), stageNameFadeTimer / fadeTime);
+		if (stageNameFadeTimer > 0 ) {
+			static const float fadeTime = 2.0f;
+			stageNameFadeTimer -= deltaTime;
+			stageName.color = glm::vec4(stageName.color.r, stageName.color.g, stageName.color.b, 
+				stageNameFadeTimer / fadeTime);
+		}
+		char str[16];
+		snprintf(str, 16, "STAGE : %d", stageNo);
+		game.FontScale(stageName.size);
+		game.FontColor(stageName.color);
+		game.AddString(glm::vec3(0), stageName.str.c_str(), true);
+		game.AddString(glm::vec2(0.f, 0.15f), str, true);
+
+		//ゲームクリア時の文字描画処理
+		if (isStageClear) {
+			game.FontScale(stageClearString.size);
+			game.FontColor(stageClearString.color);
+			game.AddString(stageClearString.pos, stageClearString.str.c_str(), true);
 		}
 
 		if (sceneTimer <= 0) {
@@ -187,25 +203,21 @@ namespace GameState {
 
 			char str[16];
 			snprintf(str, 16, "SCORE :%08.0f", game.UserVariable("score"));
-			game.FontScale(glm::vec2(3));
-			game.FontColor(glm::vec4(1, 1, 1, 1));
-			game.AddString(glm::vec2(-0.95f, 0.95f), str);
+			scoreString.str = std::string(str);
+			game.FontScale(scoreString.size);
+			game.FontColor(scoreString.color);
+			game.AddString(scoreString.pos, scoreString.str.c_str());
+//			game.AddString(glm::vec2(0, 0), scoreString.str.c_str());
 
+			game.FontColor(glm::vec4(1,0,0,1));
 			snprintf(str, 16, "P :%02.0f", glm::max(0.0, static_cast<double>(playerData->RemainingPlayer())));
-			game.AddString(glm::vec2(-0.95f, 0.8f), str);
+			game.AddString(glm::vec2(-0.9f, 0.95f), str);
 
+			game.FontColor(glm::vec4(1));
 			game.FontScale(glm::vec2(2));
 			snprintf(str, 16, "%02.0f fps", game.FPS());
-			game.AddString(glm::vec2(-0.95f, -0.85f), str);
+			game.AddString(glm::vec2(0.8f, -0.85f), str);
 		}
-
-		char str[16];
-		snprintf(str, 16, "STAGE : %d", stageNo);
-
-		game.FontScale(stageName.size);
-		game.FontColor(stageName.color);
-		game.AddString(glm::vec3(0),stageName.str.c_str(),true);
-		game.AddString(glm::vec2(0.f, 0.15f), str,true);
 	}
 
 	/**
@@ -224,12 +236,15 @@ namespace GameState {
 		launchController->Init(stageNo);
 
 		auto playerEntity = game.AddEntity(EntityGroupId_Player, glm::vec3(0, 0, 0),
-			"AirCraftType2", "Res/Model/Player.dds", playerData);
+			"Aircraft", "Res/Model/Player.dds", playerData);
 
 		playerData->StartMoveSet();
 
 		stageTimer = 0;
-		stageNameFadeTimer = 5.f;
+		stageNameFadeTimer = 5.0f;
+		isStageClear = false;
+		stageName.size = glm::vec2(4);
+		stageName.color = glm::vec4(1, 0, 0, 1);
 
 		//ステージごとのロード処理
 		switch (stageNo) {
@@ -327,6 +342,11 @@ namespace GameState {
 		}
 		}
 	}
+	
+	void MainGame::StageClear(float nextStageTimer){
+
+		stageTimer = nextStageTimer; 
+	}
 
 	/**
 	*	メインゲーム画面の更新
@@ -336,19 +356,24 @@ namespace GameState {
 		GameEngine& game = GameEngine::Instance();
 
 		//ステージ遷移処理
-		if (stageTimer > 0 && (stageTimer -= delta) < 0) {
-			//ステージ遷移の要件を満たした
+		if (stageTimer > 0 ){
+			stageTimer -= delta;
+			if (stageTimer < 0) {
+				//ステージ遷移の要件を満たした
 
-			if (stageNo == 3) {
-				game.ReplaceScene(std::make_shared<GameEnd>(true));
+				if (stageNo == 3) {
+					game.ReplaceScene(std::make_shared<GameEnd>(true));
 
-				return;
+					return;
+				}
+
+				StageLoad();
 			}
-
-			//TODO : ステージタイマー設定時に呼び出さなければならない
-			playerData->EndMoveSet();
-			StageLoad();
+			else if (stageTimer < launchController->LastSpawnedTime() * 0.3f) {
+				isStageClear = true;
+			}
 		}
+		
 
 		//ゲームオーバー時シーン遷移処理
 		if (sceneTimer == 0 && playerData->RemainingPlayer() < 0) {
@@ -367,10 +392,10 @@ namespace GameState {
 
 			if (stageTimer == 0 && launchController->IsFinish() && stageNo != 3) {
 
-				StageClear(10);
+				StageClear(launchController->LastSpawnedTime());
 			}
 		}
 
-		DrawScreenInfo();
+		DrawScreenInfo(delta);
 	}
 }

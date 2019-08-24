@@ -48,7 +48,8 @@ public:
 
 	void Update(float deltaTime);
 	void Launch();
-	bool IsFinish() { return isFinished; }
+	bool IsFinish() const { return isFinished; }
+	float LastSpawnedTime() const { return lastSpawnTime; }
 
 private:
 
@@ -56,8 +57,9 @@ private:
 	std::vector<EnemyLaunchType> activeList;
 	int seekIndex = 0;
 	float timer = 0;
-	bool isFinished;
 
+	bool isFinished;
+	float lastSpawnTime = 0;
 };
 
 using EnemyLaunchControllerPtr = std::shared_ptr<EnemyLaunchController>;

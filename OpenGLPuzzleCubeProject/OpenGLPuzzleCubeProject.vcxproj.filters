@@ -189,6 +189,9 @@
     <ClInclude Include="src\Engine\Sprite.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Res\Resource.h">
+      <Filter>Res</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

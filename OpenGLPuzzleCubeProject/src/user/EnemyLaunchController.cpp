@@ -110,6 +110,9 @@ void EnemyLaunchController::Load(const std::string& filename) {
 
 		launchList.push_back(launchData);
 	}
+
+	auto lastLaunchData = launchList[launchList.size() - 1];
+	lastSpawnTime = lastLaunchData.launchCount * lastLaunchData.launchInterval + 10.0f;
 }
 
 /**
@@ -143,8 +146,8 @@ void EnemyLaunchController::Update(float deltaTime){
 
 			GameEngine::Instance().AddEntity(
 				GameState::EntityGroupId_Others, itr->startPostion, nullptr, nullptr, e);
-			//std::cout << "EnemySpawner is Launched index: " << seekIndex << " time: "<<timer << std::endl;
 
+			
 			//次の出撃データへ
 			itr++;
 			seekIndex++;

@@ -23,11 +23,12 @@ namespace Shader {
 		struct Impl : Program { Impl() {}~Impl() {} };
 		ProgramPtr p = std::make_shared<Impl>();
 		if (!p) {
-			std::cerr << "ERROR: プログラム'" << fsFilename << "'の作成に失敗" << std::endl;
+			std::cerr << "[Error]: Program::Create "
+				"プログラム'" << fsFilename << "'の作成に失敗" << std::endl;
 			return {};
 		}
 
-		std::cout << "Compiling " << vsFilename << " and " << fsFilename << std::endl;
+		std::cout << "コンパイル中 " << vsFilename << " and " << fsFilename << std::endl;
 
 		p->program = CreateProgramFromFile(vsFilename, fsFilename);
 		if (!p->program) {
@@ -90,18 +91,17 @@ namespace Shader {
 
 		const GLuint blockIndex = glGetUniformBlockIndex(program, blockName);
 		if (blockIndex == GL_INVALID_INDEX) {
-			std::cerr << "ERROR(" << name << "): Uniformブロック'" << blockName << "'が見つかりません" << std::endl;
+			std::cerr << "Error: Program::UniformBlockBinding プログラム名" <<
+				name << "の Uniformブロック'" << blockName << "'が見つかりません" << std::endl;
 			return false;
 		}
 
 		glUniformBlockBinding(program, blockIndex, bindingPoint);
 		const GLenum result = glGetError();
 		if (result != GL_NO_ERROR) {
-			std::cerr << "ERROR(" << name << "): Uniformブロック'" << blockName << "'のバインドに失敗" << std::endl;
 			return false;
 		}
 
-		//std::cout << "Program::UniformBlockBinding()" << "Successed" << " blockName:" << blockName << " bindingPoint:"<<bindingPoint << std::endl;
 		return true;
 	}
 

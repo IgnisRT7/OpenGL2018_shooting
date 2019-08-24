@@ -24,7 +24,7 @@ namespace GameState {
 		void Damage(float p) override;
 
 		void StartMoveSet();
-		void EndMoveSet();
+		void EndMoveSet(float delay);
 		void AutoMove(float delta);
 		void ShotBullet();
 
@@ -32,14 +32,18 @@ namespace GameState {
 
 	private:
 
-		bool initialized = false;		
 		bool isAutoMove = false;		///< Velocity値による自動操作モード
-		bool isStartingMove = true;		///< スタート直後の移動処理
+		float autoMoveStartTimer;		///< 移動開始するまでの時間
 		float startMovValue = 20;		///< スタート直後の移動量
+		glm::vec3 autoMoveVel;			///< 自動モード時の移動量
+
+		bool initialized = false;		
+
 		float moveSpeed = 15.0f;		///< ベースとなるスピード
 		float moveMultiply = 1.0f;		///< 加算する速度
 
 		float timer = 0;
+
 		float damageTimer;				///< 無敵時間
 		float shotInterval = 0;			///< 発射されるまでのクールタイム
 

@@ -51,9 +51,9 @@ namespace GameState {
 		void Hide() override {};
 
 		void SelectPlayerType(int t) { playerType = t; }
-		void DrawScreenInfo();
+		void DrawScreenInfo(float dt);
 		void StageLoad();
-		void StageClear(float nextStageTimer) { stageTimer = nextStageTimer; }
+		void StageClear(float nextStageTimer);
 
 	private:
 
@@ -64,15 +64,23 @@ namespace GameState {
 		bool isStageClear = false;		///< ステージをクリアしたかどうかのフラグ
 
 		int stageNo = 0;				///< 現在のステージ番号
-		int playerType = 0;				///< プレイヤーのタイプ
+		int playerType = 0;				///< プレイヤーのタイプ(シーンからの引き継ぎ用)
 
 		struct FontDrawInfo {
 			glm::vec2 pos;
 			glm::vec2 size;
 			glm::vec4 color;
 			std::string str;
-		}stageName;
+		};
 
+		FontDrawInfo stageName;
+		FontDrawInfo stageClearString = {
+			{0,0},{4,4},{0,0.3,1.0,1.0},"STAGE CLEAR!!"
+		};
+		FontDrawInfo scoreString = {
+			{-0.95,-0.85f}, {3,3}, {1.0,0.5,0,1.0},""
+		};
+		
 
 		std::shared_ptr<Player> playerData;	///< プレイヤーのエンティティデータ
 		std::shared_ptr<Sprite> hpguage;	///< デバッグ用HPゲージ用スプライト
