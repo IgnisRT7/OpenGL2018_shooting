@@ -279,20 +279,16 @@ bool GameEngine::Init(int w, int h, const char* title) {
 *	ゲームを実行する
 */
 void GameEngine::Run() {
-	;
+	
 	GLFWEW::Window& window = GLFWEW::Window::Instance();
 
-	double prevTime = glfwGetTime();
 	while (!window.ShouldClose()) {
-
-		const double curTime = glfwGetTime();
-		deltaTime = static_cast<float>(curTime - prevTime);
-		prevTime = curTime;
 
 		int w, h;
 		if (window.GetWindowSize(&w, &h)) {
 			//ウインドウサイズが変更された
 
+			//アスペクト比に応じたビューポートの変更処理
 			const float gameAspect = 800.0f / 600.0f; /// 4:3
 
 			float theoreticalWidth = h * gameAspect;	/// ウインドウサイズの高さを1としたときの横幅のサイズ(理論値)
@@ -304,13 +300,14 @@ void GameEngine::Run() {
 			viewportRect[0].y = (h - viewportRect[1].y) * 0.5f;
 		}
 
+		window.UpdateDeltaTime();
 		UpdateFps();
 
 		window.UpdateGamePad();
 
 		spriteRenderer.BeginUpdate();
 
-		if (!Update(glm::min(0.25f, deltaTime))) {
+		if (!Update(window.DeltaTime())) {
 			break;
 		}
 
