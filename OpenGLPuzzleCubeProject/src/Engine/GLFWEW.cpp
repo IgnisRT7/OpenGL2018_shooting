@@ -150,6 +150,18 @@ namespace GLFWEW {
 	}
 
 	/**
+	*	前回からの経過時間の更新処理
+	*/
+	void Window::UpdateDeltaTime(){
+
+		//経過時間の更新処理
+		nowTime = glfwGetTime();
+		deltaTime = static_cast<float>(nowTime - prevTime);
+		prevTime = nowTime;
+		deltaTime = glm::min(0.25f, deltaTime);
+	}
+
+	/**
 	*	ジョイスティックのアナログ入力装置ID
 	*
 	*	@note XBOX360コントローラー基準

@@ -29,12 +29,15 @@ namespace GLFWEW {
 		bool ShouldClose() const;
 		void SwapBuffers() const;
 		const GamePad& GetGamePad() const;
+		GLFWwindow& GetWindow()const { return *window; }
+		const float DeltaTime() const { return deltaTime; }
+
+		void UpdateDeltaTime();
 		void UpdateGamePad();
 		void UpdateMouseWheel(float x, float y);
 		void ClearWheel() { gamepad.mouseWheelY = 0; }
 		void SetKeyMap(std::vector<stKeyMap>& k);
 
-		GLFWwindow& GetWindow()const { return *window; }
 		bool GetWindowSize(int* w, int* h);
 
 	private:
@@ -51,6 +54,10 @@ namespace GLFWEW {
 
 		int windowSizeX;
 		int windowSizeY;
+
+		double prevTime;
+		double nowTime;
+		float deltaTime=0;
 
 		std::map<int, uint32_t> keyMap;
 
