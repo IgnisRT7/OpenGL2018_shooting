@@ -1,4 +1,5 @@
-# OpenGLPuzzleCubeProject_test
+# OpenGL2018_shooting
+
 OpenGL3Dでのgitテスト
 このリポジトリはgithubを使用するためのテスト用に上げたものになります
 このプロジェクトには以下のライブラリが含まれています
