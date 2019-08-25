@@ -8,7 +8,7 @@
 #include "Audio.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
-#include "DebugLog.h"
+//#include "DebugLog.h"
 
 ///	最終出力用の頂点データ型
 struct Vertex {
@@ -73,51 +73,6 @@ static const RenderingPart renderingParts[] = {
 };
 
 /**
-*	頂点アトリビュートを設定する
-*
-*	@param index 頂点アトリビュートのインデックス
-*	@param cls	頂点データ型名
-*	@param mbr	頂点アトリビュートに設定するclsのメンバ変数名
-*/
-#define SetVertexAttribPointer(index,cls,mbr) SetVertexAttribPointerI(\
-	index,	\
-sizeof(cls::mbr) / sizeof(float),	\
-sizeof(cls),	\
-reinterpret_cast<GLvoid*>(offsetof(cls,mbr)))
-
-void SetVertexAttribPointerI(GLuint index, GLint size, GLsizei stride, const GLvoid* pointer) {
-
-	glEnableVertexAttribArray(index);
-	glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, stride, pointer);
-}
-
-/**
-*	Vertex Array Object を作成する
-*
-*	@param vbo VAOに関連付けられるVBO
-*	@param ibo VAOに関連付けられるIBO
-*
-*	@return 作成したVAO
-*/
-GLuint CreateVAO(GLuint vbo, GLuint ibo) {
-
-	GLuint vao = 0;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	SetVertexAttribPointer(0, Vertex, position);
-	SetVertexAttribPointer(1, Vertex, color);
-	SetVertexAttribPointer(2, Vertex, texCoord);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBindVertexArray(0);
-	glDeleteBuffers(1, &vbo);
-	glDeleteBuffers(1, &ibo);
-
-	return vao;
-}
-
-
-/**
 *	ゲームエンジンのインスタンスを取得する
 *
 *	@return ゲームエンジンのインスタンス
@@ -157,10 +112,15 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	//オフスクリーンバッファの頂点データ初期化
 	vbo.Init(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	ibo.Init(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	vao.Init(vbo.Id(), ibo.Id());
 
-	vao = CreateVAO(vbo.Id(), ibo.Id());
+	vao.Bind();
+	vao.VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), offsetof(Vertex, position));
+	vao.VertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), offsetof(Vertex, color));
+	vao.VertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), offsetof(Vertex, texCoord));
+	vao.UnBind();
 
-	if (!ibo.Id() || !vbo.Id() || !vao ) {
+	if (!ibo.Id() || !vbo.Id() || !vao.Id() ) {
 
 		std::cerr << "[Error]: GameEngine::Init 初期化に失敗(MainBufferFaild)" << std::endl;
 		return false;
@@ -168,23 +128,17 @@ bool GameEngine::Init(int w, int h, const char* title) {
 
 	///描画用バッファ群作成
 
-	//オフスクリーンバッファ作成
 	offscreen = OffscreenBuffer::Create(static_cast<int>(windowSize.x), static_cast<int>(windowSize.y), GL_RGBA16F);
-
-	//デプスシャドウバッファ作成
 	offDepth = OffscreenBuffer::Create(4096, 4096, GL_DEPTH_COMPONENT32);
-
-	//ステンシル用バッファ作成
 	offStencil = OffscreenBuffer::Create(1024, 1024, GL_RGBA16F);
 	
-	//ブルームエフェクト用バッファ作成
-	bool offBloofFaild = false;
+	bool offBloomFaild = false;
 	for (int i = 0, scale = 4; i < bloomBufferCount; ++i, scale *= 4) {
 		const int w = static_cast<int>(windowSize.x) / scale;
 		const int h = static_cast<int>(windowSize.y) / scale;
 		offBloom[i] = OffscreenBuffer::Create(w, h, GL_RGBA16F);
 		if (!offBloom[i]) {
-			offBloofFaild = true;
+			offBloomFaild = true;
 			break;
 		}
 	}
@@ -202,9 +156,9 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		e.Init(GL_PIXEL_PACK_BUFFER, pboByteSize, nullptr, GL_DYNAMIC_READ);
 	}
 
-	if (!offscreen || !offDepth || !offStencil || offBloofFaild || !pbo->Id() || !pbo->Id()) {
-		std::cerr << "[Error]: GameEngine::Init 初期化に失敗(OffscreenBufferFaild)" << std::endl;
-		return;
+	if (!offscreen || !offDepth || !offStencil || offBloomFaild || !pbo->Id() || !pbo->Id()) {
+		std::cerr << "[Error]: GameEngine::Init 初期化に失敗(OffscreenBuffersFaild)" << std::endl;
+		return false;
 	}
 
 	//シェーダリスト
@@ -666,8 +620,8 @@ GameEngine::~GameEngine() {
 
 	Audio::Destroy();
 
-	if (vao) {
-		glDeleteVertexArrays(1, &vao);
+	if (vao.Id()) {
+		vao.Destroy();
 	}
 	if (ibo.Id()) {
 		ibo.Destroy();
@@ -781,7 +735,7 @@ void GameEngine::RenderShadow() const {
 }
 
 /**
-*	ステンシルばっふあを描画する
+*	ステンシルバッファを描画する
 */
 void GameEngine::RenderStencil() const {
 
@@ -827,13 +781,12 @@ void GameEngine::RenderEntity() const {
 
 	uboLight->BufferSubData(&lightData);
 
-	///エンティティごとに描画に使用するシェーダが異なるためここでは設定しない
-
+	//エンティティごとに描画に使用するシェーダが異なるためここでは設定しない
 	entityBuffer->Draw(meshBuffer);
 }
 
 /**
-*	ブルームエフェクトを描画します
+*	ブルームエフェクトを描画する
 */
 void GameEngine::RenderBloomEffect() const {
 
@@ -848,7 +801,7 @@ void GameEngine::RenderBloomEffect() const {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glViewport(0, 0, offBloom[0]->Width(), offBloom[0]->Height());
 
-	glBindVertexArray(vao);
+	vao.Bind();
 
 	const Shader::ProgramPtr& progHiLumExtract = shaderMap.find("HiLumExtract")->second;
 	progHiLumExtract->UseProgram();
@@ -886,6 +839,7 @@ void GameEngine::RenderBloomEffect() const {
 		glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
 	}
 
+	vao.UnBind();
 }
 
 /**
@@ -898,6 +852,8 @@ void GameEngine::RenderFrameBuffer() const{
 	glDisable(GL_BLEND);
 	glViewport(static_cast<int>(viewportRect[0].x), static_cast<int>(viewportRect[0].y),
 		static_cast<int>(viewportRect[1].x), static_cast<int>(viewportRect[1].y));
+
+	vao.Bind();
 
 	const Shader::ProgramPtr& progColorFilter = shaderMap.find("ColorFilter")->second;
 	progColorFilter->UseProgram();
@@ -913,9 +869,8 @@ void GameEngine::RenderFrameBuffer() const{
 	progColorFilter->BindTexture(GL_TEXTURE1, offBloom[0]->GetTexture());
 	progColorFilter->BindTexture(GL_TEXTURE2, offDepth->GetTexture());
 
-	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, renderingParts[1].size, GL_UNSIGNED_INT, renderingParts[1].offset);
-	glBindVertexArray(0);
+	vao.UnBind();
 }
 
 /**

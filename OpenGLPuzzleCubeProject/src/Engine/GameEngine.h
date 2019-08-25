@@ -160,7 +160,7 @@ private:
 
 	//最終出力用バッファ
 	BufferObject vbo, ibo;
-	GLuint vao = 0;
+	VertexArrayObject vao;
 
 	//画面輝度を調整するためのPBO
 	BufferObject pbo[2];
