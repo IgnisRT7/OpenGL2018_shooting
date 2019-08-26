@@ -121,6 +121,9 @@ public:
 	
 	void CalculateViewPortByAspect(int w,int h,float a);
 
+	//シェーダ取得処理
+	Shader::ProgramPtr& Shader(const char* pass) { return shaderMap[pass]; }
+
 	void TimeScale(float t) { timeScale = t; }
 	float DeltaTime() const { return deltaTime; }
 	float FPS() const { return fps; }
@@ -156,6 +159,7 @@ private:
 
 	glm::vec2 windowSize;
 	glm::vec2 viewportRect[2];
+	float windowAspect = 1.0f;
 
 	//最終出力用バッファ
 	BufferObject vbo, ibo;
