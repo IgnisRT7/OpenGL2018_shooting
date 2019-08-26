@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
+#include "GameEngine.h"
 
 /**
 *	Spriteコンストラクタ
@@ -36,7 +37,7 @@ void Sprite::Texture(const TexturePtr& tex) {
 *	@retval true	初期化成功
 *	@retval false	初期化失敗
 */
-bool SpriteRenderer::Init(size_t maxSpriteCount, const char* vsPath, const char* fsPath) {
+bool SpriteRenderer::Init(size_t maxSpriteCount, Shader::ProgramPtr program) {
 
 	vbo.Init(GL_ARRAY_BUFFER, sizeof(Vertex) * maxSpriteCount * 4, nullptr, GL_STREAM_DRAW);
 
@@ -64,7 +65,8 @@ bool SpriteRenderer::Init(size_t maxSpriteCount, const char* vsPath, const char*
 		vao.UnBind();
 	}
 
-	program = Shader::Program::Create(vsPath, fsPath);
+
+	this->program = program;
 	primitives.reserve(64);	//32個では足りないことがあるかもしれないので64個予約
 
 	return true;

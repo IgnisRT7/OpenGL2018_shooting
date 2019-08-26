@@ -102,7 +102,7 @@ public:
 	SpriteRenderer(const SpriteRenderer&) = delete;
 	SpriteRenderer& operator=(const SpriteRenderer&) = delete;
 
-	bool Init(size_t maxSpriteCount, const char* vsPath, const char* fsPath);
+	bool Init(size_t maxSpriteCount,Shader::ProgramPtr program);
 	void BeginUpdate();
 	bool AddVertices(const Sprite&);
 	void EndUpdate();
