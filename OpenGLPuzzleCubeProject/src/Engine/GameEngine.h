@@ -119,6 +119,7 @@ public:
 	void MainCamera(const std::shared_ptr<CameraComponent>& c) { mainCamera = c; }
 	const std::shared_ptr<CameraComponent>& MainCamera() const { return mainCamera; }
 	
+	void CalculateViewPortByAspect(int w,int h,float a);
 
 	void TimeScale(float t) { timeScale = t; }
 	float DeltaTime() const { return deltaTime; }
@@ -126,6 +127,7 @@ public:
 	void EnableShadow(bool b) { isEnableShadow = b; }
 	void ToggleDrawOutline() { isDrawOutline = !isDrawOutline; }
 	void SceneFadeStart(bool param) { isSceneFadeStart = param; }
+
 	
 private:
 

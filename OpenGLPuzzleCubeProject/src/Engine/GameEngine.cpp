@@ -223,29 +223,22 @@ void GameEngine::Run() {
 	
 	GLFWEW::Window& window = GLFWEW::Window::Instance();
 
+	//メインループ
 	while (!window.ShouldClose()) {
 
 		int w, h;
 		if (window.GetWindowSize(&w, &h)) {
 			//ウインドウサイズが変更された
 
-			//アスペクト比に応じたビューポートの変更処理
-			const float gameAspect = 800.0f / 600.0f; /// 4:3
-
-			float theoreticalWidth = h * gameAspect;	/// ウインドウサイズの高さを1としたときの横幅のサイズ(理論値)
-
-			viewportRect[1].y = (theoreticalWidth > w) ? w * (1 / gameAspect) : h;
-			viewportRect[1].x = viewportRect[1].y * gameAspect;
-
-			viewportRect[0].x = (w - viewportRect[1].x) * 0.5f;
-			viewportRect[0].y = (h - viewportRect[1].y) * 0.5f;
+			CalculateViewPortByAspect(w, h, (800.0f / 600.0f));
 		}
 
+		//ウインドウシステム側の更新
 		window.UpdateDeltaTime();
 		UpdateFps();
-
 		window.UpdateGamePad();
 
+		//アプリケーション側の更新処理
 		spriteRenderer.BeginUpdate();
 
 		if (!Update(window.DeltaTime())) {
@@ -254,6 +247,7 @@ void GameEngine::Run() {
 
 		spriteRenderer.EndUpdate();
 
+		//描画処理
 		Render();
 		window.SwapBuffers();
 
@@ -301,7 +295,15 @@ bool GameEngine::LoadMeshFromFile(const char* filename) {
 	return meshBuffer->LoadMeshFromFile(filename);
 }
 
-bool GameEngine::LoadFontFromFile(const char * filename){
+/**
+*	フォントを読み込む
+*
+*	@param filename フォントファイル名
+*
+*	@retval true	読み込み成功
+*	@retval false	読み込み失敗
+*/
+bool GameEngine::LoadFontFromFile(const char* filename){
 
 	return fontRenderer.LoadFromFile(filename); 
 }
@@ -343,10 +345,7 @@ Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const c
 *			なお、このポインタをアプリケーション側で保持する必要はない
 */
 Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, const char* normalName, Entity::EntityDataBasePtr eData, const char* shader) {
-
-//	std::cout << "AddEntiy : name = " << meshName << std::endl;
 	
-
 	decltype(shaderMap)::const_iterator itr = shaderMap.end();
 	if (shader) {
 		itr = shaderMap.find(shader);
@@ -366,7 +365,7 @@ Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const c
 			tex[1] = GetTexture(normalName);
 		}
 		else {
-			tex[1] = GetTexture("Res/Model/Dummy.Normal.bmp");
+			tex[1] = GetTexture(Resource::tex_defaultNormal);
 		}
 	}
 	return entityBuffer->AddEntity(groupId, pos, mesh, tex, itr->second, eData);
@@ -409,7 +408,7 @@ void GameEngine::RemoveAllEntity() {
 void GameEngine::Light(int index, const Uniform::PointLight& light) {
 
 	if (index<0 || index>Uniform::maxLightCount) {
-		std::cerr << "WARNING: '" << index << "'は不正なライトインデックスです" << std::endl;
+		std::cerr << "[Warning]: GameEngine::Light '" << index << "'は不正なライトインデックスです" << std::endl;
 		return;
 	}
 	lightData.light[index] = light;
@@ -425,7 +424,7 @@ void GameEngine::Light(int index, const Uniform::PointLight& light) {
 const Uniform::PointLight& GameEngine::Light(int index)const {
 
 	if (index<0 || index>Uniform::maxLightCount) {
-		std::cerr << "WARNING: '" << index << "'は不正なライトインデックスです" << std::endl;
+		std::cerr << "[Warning]: '" << index << "'は不正なライトインデックスです" << std::endl;
 		static const Uniform::PointLight dummy;
 		return dummy;
 	}
@@ -514,6 +513,22 @@ const TexturePtr& GameEngine::GetTexture(const char* filename) const {
 	//std::cerr << "GameEngine::GetTexture filename: "<<filename << " テクスチャが存在しませんでした。" << std::endl;
 	static const TexturePtr dummy;
 	return dummy;
+}
+
+/**
+*	アスペクト比に応じたビューポートサイズの変更
+*
+*	@param width	
+*/
+void GameEngine::CalculateViewPortByAspect(int width, int height,float aspect){
+
+	float theoreticalWidth = height * aspect;	/// ウインドウサイズの高さを1としたときの横幅のサイズ(理論値)
+
+	viewportRect[1].y = (theoreticalWidth > width) ? width * (1 / aspect) : height;
+	viewportRect[1].x = viewportRect[1].y * aspect;
+
+	viewportRect[0].x = (width - viewportRect[1].x) * 0.5f;
+	viewportRect[0].y = (height - viewportRect[1].y) * 0.5f;
 }
 
 /**
@@ -637,6 +652,7 @@ bool GameEngine::Update(float delta) {
 
 	SceneStack& sceneStack = SceneStack::Instance();
 
+	//シーンのフェード演出処理
 	if (isSceneFadeStart){
 		if ((sceneFadeTimer -= ratedDelta) < 0) {
 
@@ -657,7 +673,6 @@ bool GameEngine::Update(float delta) {
 
 		mainCamera->Update(ratedDelta);
 
-		//TODO : 試作デバッグ用 メインカメラからビュー・射影変換行列の取得
 		matProj = mainCamera->ProjctionMatrix();
 		matView[0] = mainCamera->ViewMatrix();
 	}
