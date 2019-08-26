@@ -36,7 +36,7 @@ namespace Font {
 	bool Renderer::Init(size_t maxChar, const glm::vec2& screen) {
 
 		if (maxChar > (USHRT_MAX + 1) / 4) {
-			std::cerr << "WARNING: " << maxChar << "‚ÍÝ’è‰Â”\‚ÈÅ‘å•¶Žš”‚ð’´‚¦‚Ä‚¢‚Ü‚·" << std::endl;
+			std::cerr << "[Warning]: FontRenderer::Init " << maxChar << "‚ÍÝ’è‰Â”\‚ÈÅ‘å•¶Žš”‚ð’´‚¦‚Ä‚¢‚Ü‚·" << std::endl;
 			maxChar = (USHRT_MAX + 1) / 4;
 		}
 
@@ -66,12 +66,7 @@ namespace Font {
 		vao.VertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), offsetof(Vertex, color));
 		vao.UnBind();
 
-		std::string vPass = std::string(Resource::shaderFolderPass) + "Font.vert";
-		std::string fPass = std::string(Resource::shaderFolderPass) + "Font.frag";
-		progFont = Shader::Program::Create(vPass.c_str(),fPass.c_str());
-		if (!progFont) {
-			return false;
-		}
+		progFont = GameEngine::Instance().Shader("Font");
 
 		reciprocalScreenSize = 1.0f / screen;
 		return true;
