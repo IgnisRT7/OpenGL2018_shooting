@@ -31,7 +31,8 @@ namespace Resource {
 	{ "Blur3x3"		, "TexCoord.vert"	, "Blur3x3.frag" },
 	{ "RenderDepth"	, "RenderDepth.vert", "RenderDepth.frag" },
 	{ "RenderStencil","RenderStencil.vert","RenderStencil.frag"},
-	{ "Sprite"		,"Sprite.vert"		,"Sprite.frag"},
+	{ "Sprite"		, "Sprite.vert"		, "Sprite.frag"},
+	{ "Font"		, "Font.vert"		, "Font.frag"},
 	};
 
 }
