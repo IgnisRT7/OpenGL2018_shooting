@@ -104,7 +104,6 @@ namespace Entity {
 	*/
 	BufferPtr Buffer::Create(size_t maxEntityCount, GLsizeiptr ubSizePerEntity, int bindingPoint, const char* ubName) {
 
-
 		struct Impl : Buffer { Impl() {} ~Impl() {} };
 		BufferPtr p = std::make_shared<Impl>();
 		if (!p) {
@@ -115,7 +114,7 @@ namespace Entity {
 		//データのサイズをドライバが要求するオフセット・アライメントに合わせる
 		GLint offsetAlignment = 0;
 		glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &offsetAlignment);
-		ubSizePerEntity = ((ubSizePerEntity + offsetAlignment - 1) / offsetAlignment)*offsetAlignment;
+		ubSizePerEntity = ((ubSizePerEntity + offsetAlignment - 1) / offsetAlignment) * offsetAlignment;
 
 		p->ubo = UniformBuffer::Create(maxEntityCount * ubSizePerEntity, bindingPoint, ubName);
 		p->buffer.reset(new LinkEntity[maxEntityCount]);
@@ -268,7 +267,6 @@ namespace Entity {
 				e.transform.position += e.velocity * delta;
 				if (e.entityData) {
 					e.entityData->Update(delta);
-
 				}
 
 				//コリジョンデータをワールド空間上に展開
@@ -291,8 +289,6 @@ namespace Entity {
 					if (!HasCollision(entityL->colWorld, entityR->colWorld)) {
 						continue;
 					}
-
-					//e.handler(*entityL, *entityR);
 
 					if (entityL->entityData) {
 						entityL->entityData->CollisionEnter(*entityR);
