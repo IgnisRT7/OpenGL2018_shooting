@@ -2,22 +2,36 @@
 
 namespace Resource {
 
-	const char* titleName = "STAR FIGHTER";
+	const static char* titleName = "STAR FIGHTER";
 
 //画像ファイル
 
-	const char* tex_defaultNormal = "Res/Model/Dummy.Normal.bmp";
-	const char* tex_font = "Res/Font.fnt";
+	const static char* tex_defaultNormal = "Res/Model/Dummy.Normal.bmp";
+	const static char* tex_font = "Res/Font.fnt";
 
 
 //モデルファイル
 
 	
 //音声ファイル
-	const char* audioAcfFile = "Res/Audio/testProject.acf";
-	const char* audioAcbFile = "Res/Audio/CueSheet_0.acb";
-	const char* audioAwbFile = "Res/Audio/CueSheet_0.awb";
+	const static char* audioAcfFile = "Res/Audio/testProject.acf";
+	const static char* audioAcbFile = "Res/Audio/CueSheet_0.acb";
+	const static char* audioAwbFile = "Res/Audio/CueSheet_0.awb";
 
-//シェーダファイル
+//シェーダファイル	
+
+	const static char* shaderFolderPass = "Res/Shader/";
+	
+	const static char* shaderNameList[][3] = {
+	{ "Tutorial"	, "Tutorial.vert"	, "Tutorial.frag" },
+	{ "ColorFilter"	, "ColorFilter.vert", "ColorFilter.frag" },
+	{ "NonLighting"	, "NonLighting.vert", "NonLighting.frag" },
+	{ "HiLumExtract", "TexCoord.vert"	, "HiLumExtract.frag" },
+	{ "Shrink"		, "TexCoord.vert"	, "Shrink.frag" },
+	{ "Blur3x3"		, "TexCoord.vert"	, "Blur3x3.frag" },
+	{ "RenderDepth"	, "RenderDepth.vert", "RenderDepth.frag" },
+	{ "RenderStencil","RenderStencil.vert","RenderStencil.frag"},
+	{ "Sprite"		,"Sprite.vert"		,"Sprite.frag"},
+	};
 
 }

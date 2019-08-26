@@ -19,12 +19,9 @@
 #include "GamePad.h"
 #include "Font.h"
 #include "Sprite.h"
-
 #include "Scene.h"
 
 #define COMPONENT_TYPEPTR(type) std::shared_ptr<type>			///シーンコンポーネントの型用マクロ
-
-#define FILEPASS_SHADER "Res/Shader/"
 
 /**
 *	ゲームエンジンクラス

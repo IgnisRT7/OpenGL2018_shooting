@@ -8,6 +8,7 @@
 #include "Audio.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include "../../Res/Resource.h"
 //#include "DebugLog.h"
 
 ///	最終出力用の頂点データ型
@@ -161,23 +162,12 @@ bool GameEngine::Init(int w, int h, const char* title) {
 		return false;
 	}
 
-	//シェーダリスト
-	const char* const shaderNameList[][3] = {
-		{ "Tutorial", "Tutorial.vert", "Tutorial.frag" },
-	{ "ColorFilter", "ColorFilter.vert", "ColorFilter.frag" },
-	{ "NonLighting", "NonLighting.vert", "NonLighting.frag" },
-	{ "HiLumExtract", "TexCoord.vert", "HiLumExtract.frag" },
-	{ "Shrink", "TexCoord.vert", "Shrink.frag" },
-	{ "Blur3x3", "TexCoord.vert", "Blur3x3.frag" },
-	{ "RenderDepth", "RenderDepth.vert", "RenderDepth.frag" },
-	{"RenderStencil","RenderStencil.vert","RenderStencil.frag"},
-	};
 	//シェーダのコンパイル
-	shaderMap.reserve(sizeof(shaderNameList) / sizeof(shaderNameList[0]));
-	for (auto& e : shaderNameList) {
+	shaderMap.reserve(sizeof(Resource::shaderNameList) / sizeof(Resource::shaderNameList[0]));
+	for (auto& e : Resource::shaderNameList) {
 
-		std::string vPass = (std::string(FILEPASS_SHADER) + std::string(e[1]));
-		std::string fPass = (std::string(FILEPASS_SHADER) + std::string(e[2]));
+		std::string vPass = (std::string(Resource::shaderFolderPass) + e[1]);
+		std::string fPass = (std::string(Resource::shaderFolderPass) + e[2]);
 
 		Shader::ProgramPtr program = Shader::Program::Create(vPass.c_str(), fPass.c_str());
 		if (!program) {
@@ -211,7 +201,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	}
 
 	//スプライトレンダラのバッファ作成
-	spriteRenderer.Init(1000, "Res/Shader/Sprite.vert", "Res/Shader/Sprite.frag");
+	spriteRenderer.Init(1000, shaderMap["Sprite"]);
 
 
 	//TODO : 試作用カメラコンポーネント作成
