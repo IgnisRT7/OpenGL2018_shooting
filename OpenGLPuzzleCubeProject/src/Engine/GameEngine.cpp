@@ -103,6 +103,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	}
 
 	windowSize = glm::vec2(w, h);
+	windowAspect = w / h;
 	viewportRect[0] = glm::vec2(0, 0);
 	viewportRect[1] = windowSize;
 
@@ -196,13 +197,12 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	//エンティティバッファの作成
 	entityBuffer = Entity::Buffer::Create(1024, sizeof(Uniform::VertexData), 0, "VertexData");
 	if (!entityBuffer) {
-		std::cerr << "ERROR: GameEngineの初期化に失敗" << std::endl;
+		std::cerr << "[Error]: GameEngineの初期化に失敗" << std::endl;
 		return false;
 	}
 
 	//スプライトレンダラのバッファ作成
 	spriteRenderer.Init(1000, shaderMap["Sprite"]);
-
 
 	//TODO : 試作用カメラコンポーネント作成
 	mainCamera = std::make_shared<CameraComponent>();
@@ -235,6 +235,7 @@ void GameEngine::Run() {
 
 		//ウインドウシステム側の更新
 		window.UpdateDeltaTime();
+		deltaTime = window.DeltaTime();
 		UpdateFps();
 		window.UpdateGamePad();
 
@@ -522,7 +523,8 @@ const TexturePtr& GameEngine::GetTexture(const char* filename) const {
 */
 void GameEngine::CalculateViewPortByAspect(int width, int height,float aspect){
 
-	float theoreticalWidth = height * aspect;	/// ウインドウサイズの高さを1としたときの横幅のサイズ(理論値)
+	windowAspect = aspect;
+	float theoreticalWidth = height * windowAspect;	/// ウインドウサイズの高さを1としたときの横幅のサイズ(理論値)
 
 	viewportRect[1].y = (theoreticalWidth > width) ? width * (1 / aspect) : height;
 	viewportRect[1].x = viewportRect[1].y * aspect;
@@ -893,8 +895,9 @@ void GameEngine::Render() {
 	
 	RenderFrameBuffer();
 
-	fontRenderer.Draw();
 	spriteRenderer.Draw(this->windowSize);
+
+	fontRenderer.Draw();
 
 	{
 		// オフスクリーンバッファの大きさを取得.
