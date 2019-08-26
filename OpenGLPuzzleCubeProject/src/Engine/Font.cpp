@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdio.h>
 #include "GameEngine.h"
+#include "../../Res/Resource.h"
 
 #pragma warning(disable: 4996)
 
@@ -65,8 +66,8 @@ namespace Font {
 		vao.VertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), offsetof(Vertex, color));
 		vao.UnBind();
 
-		std::string vPass = (std::string(FILEPASS_SHADER) + "Font.vert");
-		std::string fPass = (std::string(FILEPASS_SHADER) + "Font.frag");
+		std::string vPass = std::string(Resource::shaderFolderPass) + "Font.vert";
+		std::string fPass = std::string(Resource::shaderFolderPass) + "Font.frag";
 		progFont = Shader::Program::Create(vPass.c_str(),fPass.c_str());
 		if (!progFont) {
 			return false;
