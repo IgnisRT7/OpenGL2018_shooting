@@ -40,6 +40,7 @@ void Sprite::Texture(const TexturePtr& tex) {
 bool SpriteRenderer::Init(size_t maxSpriteCount, Shader::ProgramPtr program) {
 
 	vbo.Init(GL_ARRAY_BUFFER, sizeof(Vertex) * maxSpriteCount * 4, nullptr, GL_STREAM_DRAW);
+	
 
 	//éläpå`ÇmaxSpriteCountå¬çÏÇÈ
 	std::vector<GLushort> indices;
@@ -64,7 +65,6 @@ bool SpriteRenderer::Init(size_t maxSpriteCount, Shader::ProgramPtr program) {
 		vao.VertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), offsetof(Vertex, texCoord));
 		vao.UnBind();
 	}
-
 
 	this->program = program;
 	primitives.reserve(64);	//32å¬Ç≈ÇÕë´ÇËÇ»Ç¢Ç±Ç∆Ç™Ç†ÇÈÇ©Ç‡ÇµÇÍÇ»Ç¢ÇÃÇ≈64å¬ó\ñÒ
@@ -114,7 +114,7 @@ void SpriteRenderer::EndUpdate() {
 bool SpriteRenderer::AddVertices(const Sprite& sprite) {
 
 	if (vertices.size() * sizeof(Vertex) >= static_cast<size_t>(vbo.Size())) {
-		std::cerr << "[ åxçê ]" << __func__ << ": ç≈ëÂï\é¶êîÇí¥Ç¶ÇƒÇ¢Ç‹Ç∑\n";
+		std::cerr << "[Warning]: SpriteRenderer::" << __func__ << ": ç≈ëÂï\é¶êîÇí¥Ç¶ÇƒÇ¢Ç‹Ç∑\n";
 		return false;
 	}
 
@@ -237,5 +237,7 @@ Sprite(tex){
 void HealthGuage::Ratio(float r){
 
 	ratio = r;
+	Program()->UseProgram();
 	Program()->SetFloatParameter(r, "ratio");
+	glUseProgram(0);
 }
