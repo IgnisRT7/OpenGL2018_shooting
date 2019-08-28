@@ -84,35 +84,36 @@ namespace GameState {
 
 			GameEngine& game = GameEngine::Instance();
 
-		if (--hp <= 0) {
+			if (--hp <= 0) {
 
-			//爆発エフェクト
-			if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, entity->Position(), "Blast", Resource::tex_toroid, std::make_shared<Blast>())) {
-				const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
-				p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
-				p->Color(glm::vec4(1.0f, 0.75f, 0.5f, 1.0f));
-				game.UserVariable("score") += 100;
-			}
-
-			game.PlayAudio(0, CRI_CUESHEET_0_EXPLOSIVE);
-
-			if (isItemDrop) {
-				//アイテムドロップ処理
-
-				int itemID = rand() % 2;
-
-				//アイテム
-				std::string texName = itemID ? Resource::tex_itemboxSpeed : Resource::tex_itemboxPower;
-
-				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Item, entity->Position(), "ItemBox", texName.c_str(), std::make_shared<Item>(itemID))) {
-					p->Collision(collisionDataList[EntityGroupId_Item]);
+				//爆発エフェクト
+				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, entity->Position(), "Blast", Resource::tex_toroid, std::make_shared<Blast>())) {
+					const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
+					p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
+					p->Color(glm::vec4(1.0f, 0.75f, 0.5f, 1.0f));
+					game.UserVariable("score") += 100;
 				}
-			}
 
-			entity->Destroy();
-		}
-		else {
-			game.PlayAudio(1, CRI_CUESHEET_0_DAMAGE);
+				game.PlayAudio(0, CRI_CUESHEET_0_EXPLOSIVE);
+
+				if (isItemDrop) {
+					//アイテムドロップ処理
+
+					int itemID = rand() % 2;
+
+					//アイテム
+					std::string texName = itemID ? Resource::tex_itemboxSpeed : Resource::tex_itemboxPower;
+
+					if (Entity::Entity* p = game.AddEntity(EntityGroupId_Item, entity->Position(), "ItemBox", texName.c_str(), std::make_shared<Item>(itemID))) {
+						p->Collision(collisionDataList[EntityGroupId_Item]);
+					}
+				}
+
+				entity->Destroy();
+			}
+			else {
+				game.PlayAudio(1, CRI_CUESHEET_0_DAMAGE);
+			}
 		}
 	}
 
