@@ -9,6 +9,7 @@
 #include "../EnemyLaunchController.h"
 #include "../GameMainScene.h"
 #include "../../Engine/GLFWEW.h"
+#include "../../../Res/Resource.h"
 
 #include "Effect.h"
 #include "Item.h"
@@ -79,17 +80,19 @@ namespace GameState {
 	*/
 	void Toroid::Damage(float p) {
 
+		GameEngine& game = GameEngine::Instance();
+
 		if (--hp <= 0) {
 
-			GameEngine& game = GameEngine::Instance();
-
 			//爆発エフェクト
-			if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, entity->Position(), "Blast", "Res/Model/Toroid.dds", std::make_shared<Blast>())) {
+			if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, entity->Position(), "Blast", Resource::tex_toroid, std::make_shared<Blast>())) {
 				const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
 				p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
 				p->Color(glm::vec4(1.0f, 0.75f, 0.5f, 1.0f));
 				game.UserVariable("score") += 100;
 			}
+
+			game.PlayAudio(0, CRI_CUESHEET_0_EXPLOSIVE);
 
 			if (isItemDrop) {
 				//アイテムドロップ処理
@@ -97,7 +100,7 @@ namespace GameState {
 				int itemID = rand() % 2;
 
 				//アイテム
-				std::string texName = itemID ? "Res/Model/ItemBoxSpeed.dds" : "Res/Model/ItemBoxBullet.dds";
+				std::string texName = itemID ? Resource::tex_itemboxSpeed : Resource::tex_itemboxPower;
 
 				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Item, entity->Position(), "ItemBox", texName.c_str(), std::make_shared<Item>(itemID))) {
 					p->Collision(collisionDataList[EntityGroupId_Item]);
