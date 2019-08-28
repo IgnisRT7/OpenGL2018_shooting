@@ -88,7 +88,7 @@ public:
 
 private:
 
-	float ratio;
+	float ratio = 1;
 };
 
 /**
