@@ -71,6 +71,7 @@ namespace GameState {
 			glm::vec2 size;
 			glm::vec4 color;
 			std::string str;
+
 		};
 
 		FontDrawInfo stageName;
