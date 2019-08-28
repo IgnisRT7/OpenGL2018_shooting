@@ -4,14 +4,17 @@ namespace Resource {
 
 	const static char* titleName = "STAR FIGHTER";
 
-//画像ファイル
+	//画像ファイル
 
 	const static char* tex_defaultNormal = "Res/Model/Dummy.Normal.bmp";
 	const static char* tex_font = "Res/Font.fnt";
 
+	const static char* tex_itemboxSpeed = "Res/Model/ItemBoxSpeed.dds";
+	const static char* tex_itemboxPower = "Res/Model/ItemBoxBullet.dds";
+	const static char* tex_toroid = "Res/Model/Toroid.dds";
+
 
 //モデルファイル
-
 	
 //音声ファイル
 	const static char* audioAcfFile = "Res/Audio/testProject.acf";
