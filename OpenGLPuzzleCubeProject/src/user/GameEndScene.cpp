@@ -9,6 +9,9 @@
 #include "../../Res/Audio/testProject_acf.h"
 #include "../../Res/Audio/CueSheet_0.h"
 
+#include <iostream>
+#include <fstream>
+
 namespace GameState{
 
 	/**
@@ -20,6 +23,54 @@ namespace GameState{
 
 		game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
 		game.LoadTextureFromFile("Res/Model/SpaceSphere.dds");
+
+		//ハイスコア読み込み処理
+		int highScore = 100000;
+		std::ifstream ifs("Res/HighScore.txt");
+		if (!ifs.fail()) {
+			char tmp[64];
+			ifs.getline(tmp, 64);
+			highScore = atoi(tmp);
+		}
+		
+		//スコア読み込み処理
+		int score = static_cast<int>(game.UserVariable("score"));
+
+		if (score > highScore) {
+			//ハイスコアを超えた
+
+			highScore = score;
+			std::ofstream ofs("Res/highScore.txt");
+			if (!ofs.fail()) {
+				ofs << score << std::endl;
+			}
+		}
+
+		//画面描画用文字列の初期化処理
+
+		scoreStrInfo.color = glm::vec4(1);
+		scoreStrInfo.size = glm::vec2(4.5f);
+		scoreStrInfo.pos = glm::vec2(0, -0.05f);
+		scoreStrInfo.str = std::string("SCORE: ") + std::to_string(score);
+		scoreStrInfo.isCenter = true;
+
+		highScoreStrInfo.color = glm::vec4(1);
+		highScoreStrInfo.size = glm::vec2(4.5f);
+		highScoreStrInfo.pos = glm::vec2(0, 0.1f);
+		highScoreStrInfo.str = std::string("HIGH SCORE: ") + std::to_string(highScore);
+		highScoreStrInfo.isCenter = true;
+
+		gameoverStrInfo.color = glm::vec4(1, 0, 0, 1);
+		gameoverStrInfo.size = glm::vec2(8);
+		gameoverStrInfo.pos = glm::vec2(0, 0.5f);
+		gameoverStrInfo.str = isClear ? "GAME CLEAR!!" : "GAME OVER...";
+		gameoverStrInfo.isCenter = true;
+
+		pressButtonStrInfo.color = glm::vec4(1, 0, 0, 1);
+		pressButtonStrInfo.size = glm::vec2(2);
+		pressButtonStrInfo.pos = glm::vec2(0,-0.5f);
+		pressButtonStrInfo.str = "Pressed enter to title...";
+		pressButtonStrInfo.isCenter = true;
 
 		return true;
 	}
@@ -38,7 +89,6 @@ namespace GameState{
 
 		GameEngine& game = GameEngine::Instance();
 
-
 		auto e = game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
 			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
 		game.KeyValue(0.01f);
@@ -47,10 +97,6 @@ namespace GameState{
 		game.MainCamera()->LookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
 
 		game.PlayAudio(0, CRI_CUESHEET_0_GAMEOVER);
-
-		scoreStr = "SCORE : ";
-		double s = game.UserVariable("score");
-		scoreStr+= std::to_string(static_cast<int>(s));
 	}
 
 	/**
@@ -67,20 +113,20 @@ namespace GameState{
 
 		GameEngine& game = GameEngine::Instance();
 
+		strFadeTimer += delta * (timer > 0 ? 20 : 2);
 
-		const float offset = timer == 0 ? 0 : (2.0f - timer) * (2.0f - timer) * 2.0f;
-		game.FontColor(glm::vec4(1, 0, 0, 1));
-		game.FontScale(glm::vec2(7));
-		game.AddString(glm::vec2(0, 0.4),isClear ? "GAME CLEAR!!": "GAME OVER...",true);
+		float fadeAlpha = (glm::cos(strFadeTimer) + 1) * 0.25f;// 0 <= fadeAlpha <= 0.5
+		pressButtonStrInfo.color.a = 0.5f + fadeAlpha;
 
+		FontDrawInfo infoArray[] = {
+			scoreStrInfo,highScoreStrInfo,gameoverStrInfo,pressButtonStrInfo
+		};
 
-		game.FontColor(glm::vec4(1));
-		game.FontScale(glm::vec2(4.5));
-		game.AddString(glm::vec2(0, 0.05), scoreStr.c_str(),true);
-
-		game.FontColor(glm::vec4(1, 1, 1, 1));
-		game.FontScale(glm::vec2(2));
-		game.AddString(glm::vec2(0, -0.5), "Pressed enter to title...",true);
+		for (auto& info : infoArray) {
+			game.FontColor(info.color);
+			game.FontScale(info.size);
+			game.AddString(info.pos, info.str.c_str(),info.isCenter);
+		}
 
 		auto gamepad = game.GetGamePad();
 
@@ -93,7 +139,7 @@ namespace GameState{
 			}
 		}
 		else if (game.GetGamePad().buttonDown & GamePad::START) {
-			//game.PlayAudio(1, CRI_CUESHEET_0_SELECT);
+			game.PlayAudio(1, CRI_CUESHEET_0_SELECT2);
 			timer = 2;
 		}
 	}
