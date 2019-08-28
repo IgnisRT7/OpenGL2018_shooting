@@ -207,11 +207,10 @@ namespace GameState {
 			game.FontScale(scoreString.size);
 			game.FontColor(scoreString.color);
 			game.AddString(scoreString.pos, scoreString.str.c_str());
-//			game.AddString(glm::vec2(0, 0), scoreString.str.c_str());
 
-			game.FontColor(glm::vec4(1,0,0,1));
-			snprintf(str, 16, "P :%02.0f", glm::max(0.0, static_cast<double>(playerData->RemainingPlayer())));
-			game.AddString(glm::vec2(-0.9f, 0.95f), str);
+			game.FontColor(glm::vec4(0, 0.63f, 0.9f, 1.0f));
+			snprintf(str, 16, "P: %01.0f", glm::max(0.0, static_cast<double>(playerData->RemainingPlayer())));
+			game.AddString(glm::vec2(-0.95f, -0.85f), str);
 
 			game.FontColor(glm::vec4(1));
 			game.FontScale(glm::vec2(2));

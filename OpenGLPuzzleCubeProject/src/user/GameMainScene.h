@@ -79,8 +79,9 @@ namespace GameState {
 			{0,0},{4,4},{0,0.3,1.0,1.0},"STAGE CLEAR!!"
 		};
 		FontDrawInfo scoreString = {
-			{-0.95,-0.85f}, {3,3}, {1.0,0.5,0,1.0},""
+			{-0.75,-0.85f}, {3,3}, {0.8f,0.8f,0,1.0f },""
 		};
+		
 		
 
 		std::shared_ptr<Player> playerData;	///< プレイヤーのエンティティデータ
