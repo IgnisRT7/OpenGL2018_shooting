@@ -79,9 +79,11 @@ namespace GameState {
 	*/
 	void Toroid::Damage(float p) {
 
+		GameEngine& game = GameEngine::Instance();
+
 		if (--hp <= 0) {
 
-			GameEngine& game = GameEngine::Instance();
+			game.PlayAudio(1, CRI_CUESHEET_0_EXPLOSIVE2);
 
 			//爆発エフェクト
 			if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, entity->Position(), "Blast", "Res/Model/Toroid.dds", std::make_shared<Blast>())) {
@@ -106,6 +108,9 @@ namespace GameState {
 
 			entity->Destroy();
 		}
+		else {
+			game.PlayAudio(1, CRI_CUESHEET_0_DAMAGE);
+		}
 	}
 
 	/**
@@ -116,7 +121,6 @@ namespace GameState {
 	void Toroid::CollisionEnter(Entity::Entity& e) {
 		e.EntityData()->Damage(1);
 
-		//GameEngine::Instance().PlayAudio(1, CRI_CUESHEET_0_EXPLOSIVE);
 	}
 
 	/**
@@ -217,7 +221,11 @@ namespace GameState {
 	*/
 	void BossEnemy::Damage(float p) {
 
+		GameEngine& game = GameEngine::Instance();
+
 		if (--hp <= 0) {
+
+			game.PlayAudio(1, CRI_CUESHEET_0_EXPLOSIVE2);
 
 			GameEngine& game = GameEngine::Instance();
 
@@ -241,9 +249,13 @@ namespace GameState {
 		}
 		else {
 
+			game.PlayAudio(1, CRI_CUESHEET_0_DAMAGE);
+
+			//HPゲージの更新
 			std::dynamic_pointer_cast<HealthGuage>(hpGuage)->Ratio(
 				static_cast<float>(hp) / static_cast<float>(maxHp));
 
+			//砲台の更新
 			if ((static_cast<float>(hp) / maxHp) > 0.6) {
 				for (auto turret : turrets) {
 

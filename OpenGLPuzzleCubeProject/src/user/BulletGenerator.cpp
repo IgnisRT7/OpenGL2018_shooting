@@ -97,7 +97,8 @@ namespace GameState {
 			if (target) {
 				CalcVelocity();
 			}
-			//game.PlayAudio(1, CRI_CUESHEET_0_ENEMYSHOT);
+	
+			game.PlayAudio(1, CRI_CUESHEET_0_LASER2);
 
 			ShotBullet();
 		}
@@ -128,7 +129,7 @@ namespace GameState {
 		timer -= delta;
 
 		if (timer < 0) {
-			//game.PlayAudio(1, CRI_CUESHEET_0_ENEMYSHOT);
+			game.PlayAudio(1, CRI_CUESHEET_0_LASER2);
 
 			if (target) {
 				CalcVelocity();
@@ -175,6 +176,8 @@ namespace GameState {
 
 	void CircleShot::Update(float delta){
 
+		GameEngine& game = GameEngine::Instance();
+
 		timer += delta;
 
 		if ( timer > shotInterval) {
@@ -183,6 +186,8 @@ namespace GameState {
 			if (target) {
 				CalcVelocity();
 			}
+
+			game.PlayAudio(1, CRI_CUESHEET_0_LASER2);
 
 			GameEngine& game = GameEngine::Instance();
 
@@ -193,7 +198,6 @@ namespace GameState {
 			if (shotAngle > glm::pi<float>() * 2.0f) {
 				shotAngle -= glm::pi<float>() * 2.0f;
 			}
-			std::cout << "shot angle:" << shotAngle << std::endl;
 			glm::quat rot = glm::angleAxis(shotAngle, glm::vec3(0,1,0));
 			glm::vec3 newVel = rot * glm::vec3(1, 0, 0);
 
@@ -201,7 +205,6 @@ namespace GameState {
 			p->Scale(glm::vec3(0.5));
 			p->Color(color);
 
-			//game.PlayAudio()
 			shotAngle += glm::radians(angleInterval);
 			timer = 0;
 		}

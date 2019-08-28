@@ -211,11 +211,10 @@ namespace GameState {
 				p->Color(glm::vec4(1.0f, 0.75f, 0.5f, 1.0f));
 				p->CastStencil(true);
 				p->StencilColor(glm::vec4(0, 1, 0, 1));
-				game.UserVariable("score") += 100;
 			}
 
 			//爆発音
-			//game.PlayAudio(1, CRI_CUESHEET_0_SHOT);
+			game.PlayAudio(1, CRI_CUESHEET_0_EXPLOSIVE);
 
 			if (--remainingPlayer < 0) {
 
@@ -237,6 +236,8 @@ namespace GameState {
 
 		if (remainingPlayer >= 0) {
 
+			auto& game = GameEngine::Instance();
+
 			if (auto i = entity.CastTo<Item>()) {
 				//アイテムの効果を受ける
 
@@ -247,12 +248,14 @@ namespace GameState {
 
 					multiShotNum = glm::min(multiShotNum + 1, 5); 
 				}
+
+				game.PlayAudio(1, i->ItemType() != 1 ? CRI_CUESHEET_0_POWER_UP1 : CRI_CUESHEET_0_SPEED_UP1);
 			}
 			if (auto e = entity.CastTo<Toroid>()) {
 				//敵にダメージを与える
 
 				e->Damage(1);
-				GameEngine::Instance().PlayAudio(1, CRI_CUESHEET_0_EXPLOSIVE);
+				game.PlayAudio(1, CRI_CUESHEET_0_EXPLOSIVE);
 			}
 		}
 	}
