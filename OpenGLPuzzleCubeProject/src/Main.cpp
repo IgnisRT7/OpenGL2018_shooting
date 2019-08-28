@@ -24,7 +24,7 @@ int main(){
 	}
 
 	if (!game.InitAudio(Resource::audioAcfFile, Resource::audioAcbFile ,
-		Resource::audioAwbFile, CRI_TESTPROJECT_DSPSETTING_DSPBUSSETTING_0)) {
+		Resource::audioAwbFile, CRI_TESTPROJECT_ACF_DSPSETTING_DSPBUSSETTING_0)) {
 		
 		return 1;
 	}
