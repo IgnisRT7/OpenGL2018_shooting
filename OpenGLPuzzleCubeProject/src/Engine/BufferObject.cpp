@@ -50,7 +50,7 @@ void BufferObject::Destroy() {
 bool BufferObject::BufferSubData(GLintptr offset, GLsizeiptr size, const GLvoid* data) {
 
 	if (offset + size > this->size) {
-		std::cerr << "[警告]" << __func__ << ": 転送先領域がバッファサイズを超えています\n";
+		std::cerr << "[Warning]: BufferObject::" << __func__ << " 転送先領域がバッファサイズを超えています\n";
 		std::cerr << "buffer_size:" << this->size << " offset:" << offset << "size:" << size;
 		if (offset >= this->size) {
 			return false;
@@ -60,11 +60,13 @@ bool BufferObject::BufferSubData(GLintptr offset, GLsizeiptr size, const GLvoid*
 	}
 
 	glBindBuffer(target, id);
+
 	glBufferSubData(target, offset, size, data);
 	glBindBuffer(target, 0);
 	const GLenum error = glGetError();
 	if (error != GL_NO_ERROR) {
-		std::cerr << "[エラー] " << __func__ << ": データの転送に失敗\n";
+		std::cerr << "[Error] BufferObject::" << __func__ << " データの転送に失敗\n";
+		
 	}
 
 	return error == GL_NO_ERROR;
