@@ -242,8 +242,6 @@ namespace Entity {
 		};
 		std::vector<CollisionHandlerInfo> collisionHandlerList;
 
-
-
 	};
 
 	//エンティティに付属する情報の管理クラス

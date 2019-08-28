@@ -334,7 +334,6 @@ namespace Entity {
 		for (int viewIndex = 0; viewIndex < Uniform::maxViewCount; ++viewIndex) {
 			for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
 
-
 				if (!(visibilityFlags[groupId] & (1 << viewIndex))) {
 					//見えないエンティティは描画しない
 					continue;
@@ -353,7 +352,6 @@ namespace Entity {
 								e.program->BindTexture(GL_TEXTURE0 + i, e.texture[i]->Id());
 							}
 						}
-						//e.program->SetViewIndex(viewIndex);
 						ubo->BindBufferRange(e.uboOffset, ubSizePerEntity);
 						e.mesh->Draw(meshBuffer);
 					}
@@ -392,7 +390,6 @@ namespace Entity {
 					e.mesh->Draw(meshBuffer);
 				}
 			}
-
 		}
 		meshBuffer->UnBindVAO();
 	}
@@ -426,7 +423,6 @@ namespace Entity {
 					e.mesh->Draw(meshBuffer);
 				}
 			}
-
 		}
 		meshBuffer->UnBindVAO();
 	}
@@ -475,7 +471,6 @@ namespace Entity {
 		if (itr == collisionHandlerList.end()) {
 			collisionHandlerList.push_back({ gid0,gid1 });
 		}
-
 	}
 
 	/**

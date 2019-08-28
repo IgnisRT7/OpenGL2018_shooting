@@ -23,7 +23,6 @@ namespace GameState {
 
 		glm::vec3 velocity;
 
-		//Entity::Entity* target;
 	};
 
 
