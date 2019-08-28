@@ -44,8 +44,6 @@ namespace GameState {
 	*/
 	void Item::CollisionEnter(Entity::Entity& e) {
 
-		auto p = e.EntityData();
-
 		entity->Destroy();
 
 	}
