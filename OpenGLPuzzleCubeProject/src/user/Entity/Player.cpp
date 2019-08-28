@@ -88,6 +88,7 @@ namespace GameState {
 				"NormalShot", "Res/Model/Player.dds", b, "NonLighting")) {
 
 				b->Velocity(glm::vec3(0, 0, 100));
+				
 				p->Collision(collisionDataList[EntityGroupId_PlayerShot]);
 				p->Scale(glm::vec3(1.5f));
 			}
@@ -195,7 +196,7 @@ namespace GameState {
 	*	ƒ_ƒ[ƒWˆ—
 	*/
 	void Player::Damage(float p) {
-
+		//return;
 		if (remainingPlayer < 0) {
 			return;
 		}

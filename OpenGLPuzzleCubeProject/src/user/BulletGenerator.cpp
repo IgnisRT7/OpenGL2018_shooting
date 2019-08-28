@@ -193,7 +193,6 @@ namespace GameState {
 			if (shotAngle > glm::pi<float>() * 2.0f) {
 				shotAngle -= glm::pi<float>() * 2.0f;
 			}
-			std::cout << "shot angle:" << shotAngle << std::endl;
 			glm::quat rot = glm::angleAxis(shotAngle, glm::vec3(0,1,0));
 			glm::vec3 newVel = rot * glm::vec3(1, 0, 0);
 
