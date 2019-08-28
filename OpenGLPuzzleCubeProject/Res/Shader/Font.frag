@@ -5,7 +5,7 @@ layout(location=1) in vec4 inColor;
 
 out vec4 fragColor;
 uniform sampler2D colorSampler;
-const float smoothing = 1.0 / 8.0;
+const float smoothing = 1.0 / 16.0;
 void main()
 {
 
