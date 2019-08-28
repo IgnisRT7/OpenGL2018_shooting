@@ -179,8 +179,7 @@ namespace GameState {
 		pos += glm::vec3(0, windowSize.y * 0.45, 0);
 		hpGuage->Position(pos);
 		hpGuage->Scale(glm::vec2(5, 3));
-		hpGuage->Rectangle({ glm::vec2(0,128),glm::vec2(128,12) });
-		std::dynamic_pointer_cast<HealthGuage>(hpGuage)->Ratio(1);
+		hpGuage->Rectangle({ glm::vec2(0,128),glm::vec2(128,12) });	
 
 		hp = maxHp;
 	}
@@ -279,9 +278,9 @@ namespace GameState {
 					turret->BulletGenerator()->BulletSpeed(15.0);
 					
 					if (b) {
-						b->MaxBulletNum(15);
+						b->MaxBulletNum(10);
 						b->ShotInterval(0.5f);
-						b->AngleInterval(10);
+						b->AngleInterval(15);
 					}
 					else {
 						turret->BulletGenerator()->ShotInterval(0.7f);
