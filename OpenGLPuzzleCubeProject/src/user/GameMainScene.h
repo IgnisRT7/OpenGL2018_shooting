@@ -1,5 +1,7 @@
 /**
-*	@file GameMainScene.h
+*	@file	GameMainScene.h
+*	@brief	ゲームのメインシーン制御用
+*	@author	Takuya Yokoyama
 */
 #pragma once
 #include "../Engine/Entity.h"

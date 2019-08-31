@@ -1,5 +1,7 @@
 /**
 *	@file ModelLoadTestScene.cpp
+*	@brief	テスト用シーン制御用
+*	@author	Takuya Yokoyama
 */
 #include "ModelLoadTestscene.h"
 #include "../Engine/GameEngine.h"

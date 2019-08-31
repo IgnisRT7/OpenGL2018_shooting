@@ -1,5 +1,7 @@
 /**
-*	@file Effect.cpp
+*	@file	Effect.cpp
+*	@brief	3Dモデルを使用した疑似エフェクト
+*	@author	TakuyaYokoyama
 */
 #include "Effect.h"
 

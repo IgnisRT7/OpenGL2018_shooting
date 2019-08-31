@@ -1,5 +1,7 @@
 /**
-*	@file TitleScene.h
+*	@file	TitleScene.h
+*	@brief	タイトルシーン制御用
+*	@author Takuya Yokoyama
 */
 #pragma once
 #include "../Engine/Entity.h"

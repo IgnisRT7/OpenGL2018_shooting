@@ -1,5 +1,7 @@
 /**
 *	@file TitleScene.cpp
+*	@brief	タイトルシーン制御用
+*	@author Takuya Yokoyama
 */
 
 #include "../Engine/entity.h"

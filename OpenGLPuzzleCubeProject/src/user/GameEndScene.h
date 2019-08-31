@@ -1,5 +1,7 @@
 /**
 *	@file GameEndScene.h
+*	@brief	ゲームオーバー時のシーン制御用
+*	@author	Takuya Yokoyama
 */
 #pragma once
 

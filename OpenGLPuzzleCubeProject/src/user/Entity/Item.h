@@ -1,5 +1,7 @@
 /**
 *	@file Item.h
+*	@brief	プレイヤーを強化するアイテム
+*	@author	Takuya Yokoyama
 */
 #pragma once 
 

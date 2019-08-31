@@ -1,5 +1,7 @@
 /**
-*	@file player.h
+*	@file	Player.h
+*	@brief	プレイヤー制御用
+*	@author	Takuya Yokoyama , tn-mai(講義資料製作者)
 */
 #pragma once
 

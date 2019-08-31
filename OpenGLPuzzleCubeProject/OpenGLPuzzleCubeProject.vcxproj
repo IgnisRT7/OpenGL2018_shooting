@@ -198,7 +198,6 @@
     <ClInclude Include="src\user\GameMainScene.h" />
     <ClInclude Include="src\user\ModelLoadTestscene.h" />
     <ClInclude Include="src\user\TitleScene.h" />
-    <ClInclude Include="StageLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Component\CameraComponent.cpp" />
@@ -228,7 +227,6 @@
     <ClCompile Include="src\user\GameEndScene.cpp" />
     <ClCompile Include="src\user\GameMainScene.cpp" />
     <ClCompile Include="src\user\ModelLoadTestScene.cpp" />
-    <ClCompile Include="src\user\StageLoader.cpp" />
     <ClCompile Include="src\user\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>

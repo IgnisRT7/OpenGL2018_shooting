@@ -1,5 +1,7 @@
 /**
 *	@file EnemyLaunchController.cpp
+*	@brief	敵の出撃システムの制御用
+*	@author	Takuya Yokoyama
 */
 
 #include "EnemyLaunchController.h"

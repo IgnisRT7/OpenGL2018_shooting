@@ -1,5 +1,5 @@
 /**
-*	@file CameraComponent.cpp
+*	@file	CameraComponent.cpp
 */
 
 #include "CameraComponent.h"
@@ -14,18 +14,12 @@ const glm::mat4& CameraComponent::ProjctionMatrix() const {
 	return matProj;
 }
 
-/**
-*	更新処理
-*/
-void CameraComponent::Update(float delta){
+void CameraComponent::Update(float deltaTime){
 
 	matView = glm::lookAt(position, position + direction, up);
 	matProj = glm::perspective(fov, aspect, near, far);
 }
 
-/**
-*	初期化処理
-*/
 void CameraDebugComponent::Initialize(){
 
 	forward = direction;
@@ -34,12 +28,7 @@ void CameraDebugComponent::Initialize(){
 	Update(0);
 }
 
-/**
-*	更新処理
-*
-*	@param delta	経過時間
-*/
-void CameraDebugComponent::Update(float delta){
+void CameraDebugComponent::Update(float deltaTime){
 
 	GameEngine& game = GameEngine::Instance();
 	GamePad gamepad = game.GetGamePad();

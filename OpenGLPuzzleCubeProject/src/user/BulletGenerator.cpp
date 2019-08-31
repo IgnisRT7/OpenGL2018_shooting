@@ -1,6 +1,9 @@
 /**
-*	@file BulletGenerator.cpp
+*	@file	BulletGenerator.cpp
+*	@brief	敵の弾生成システムの制御用
+*	@author	Takuya Yokoyama
 */
+
 #include "BulletGenerator.h"
 #include "../Engine/GameEngine.h"
 #include "../GameState.h"

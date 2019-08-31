@@ -1,5 +1,7 @@
 /**
-*	@file Item.cpp
+*	@file	Item.cpp
+*	@brief	プレイヤーを強化するアイテム
+*	@author	Takuya Yokoyama
 */
 
 #include "Item.h"

@@ -1,5 +1,7 @@
 /**
 *	@file Player.cpp
+*	@brief	プレイヤー制御用
+*	@author	Takuya Yokoyama , tn-mai(講義資料製作者)
 */
 
 #include "Player.h"

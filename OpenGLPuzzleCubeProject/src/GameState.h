@@ -1,5 +1,7 @@
 /**
 *	@file GameState.h
+*	@brief	ゲーム内で使用するグローバルパラメータ群
+*	@author	Takuya Yokoyama , tn-mai(講義資料の製作者)
 */
 #pragma once
 

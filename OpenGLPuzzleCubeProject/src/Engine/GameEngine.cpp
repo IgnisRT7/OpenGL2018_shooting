@@ -1,6 +1,7 @@
 /**
-*	@file GameEngine.cpp
+*	@file	GameEngine.cpp
 */
+
 #pragma once
 
 #include "GameEngine.h"
@@ -73,29 +74,11 @@ static const RenderingPart renderingParts[] = {
 	MakeRenderingPart(6,12),
 };
 
-/**
-*	ゲームエンジンのインスタンスを取得する
-*
-*	@return ゲームエンジンのインスタンス
-*/
 GameEngine& GameEngine::Instance() {
 	static GameEngine instance;
 	return instance;
 }
 
-/**
-*	ゲームエンジンを初期化する
-*
-*	@param w	ウインドウの描画の幅(ピクセル)
-*	@param h	ウインドウの描画の高さ(ピクセル)
-*	@param titleウインドウタイトル
-*
-*	@retval true	初期化成功
-*	@retval false	初期化失敗
-*
-*	Run関数を呼び出す前に、一度だけ呼び出しておく必要がある
-*	一度初期化に成功すると
-*/
 bool GameEngine::Init(int w, int h, const char* title) {
 
 	if (isInitalized) {
@@ -216,9 +199,6 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	return true;
 }
 
-/**
-*	ゲームを実行する
-*/
 void GameEngine::Run() {
 	
 	GLFWEW::Window& window = GLFWEW::Window::Instance();
@@ -261,14 +241,6 @@ void GameEngine::Run() {
 	}
 }
 
-/**
-*	テクスチャを読み込む
-*
-*	@param filename テクスチャファイル名
-*
-*	@retval true	読み込み成功
-*	@retval false	読み込み失敗
-*/
 bool GameEngine::LoadTextureFromFile(const char* filename) {
 
 	if (GetTexture(filename)) {
@@ -284,67 +256,20 @@ bool GameEngine::LoadTextureFromFile(const char* filename) {
 	return true;
 }
 
-/**
-*	メッシュを読み込む
-*
-*	@param filename メッシュファイル名
-*
-*	@retval true	読み込み成功
-*	@retval false	読み込み失敗
-*/
 bool GameEngine::LoadMeshFromFile(const char* filename) {
 	return meshBuffer->LoadMeshFromFile(filename);
 }
 
-/**
-*	フォントを読み込む
-*
-*	@param filename フォントファイル名
-*
-*	@retval true	読み込み成功
-*	@retval false	読み込み失敗
-*/
 bool GameEngine::LoadFontFromFile(const char* filename){
 
 	return fontRenderer.LoadFromFile(filename); 
 }
 
-/**
-*	エンティティを追加する
-*
-*	@param groupId	エンティティのグループID
-*	@param pos		エンティティの座標
-*	@param meshName	エンティティの表示に使用するメッシュ名
-*	@param texName	エンティティの表示に使うテクスチャファイル名
-*	@param func		エンティティの状態を更新する関数(または関数オブジェクト)
-*	@param shader	エンティティの表示に使うシェーダ名
-*
-*	@return 追加したエンティティへのポインタ
-*			これ以上エンティティを追加できない場合はnullptrが返される
-*			回転や拡大率はこのポインタ経由で設定する
-*			なお、このポインタをアプリケーション側で保持する必要はない
-*/
 Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, Entity::EntityDataBasePtr eData, const char* shader) {
 
 	return AddEntity(groupId, pos, meshName, texName, nullptr, eData, shader);
 }
 
-/**
-*	エンティティを追加する
-*
-*	@param groupId	エンティティのグループID
-*	@param pos		エンティティの座標
-*	@param meshName	エンティティの表示に使用するメッシュ名
-*	@param texName	エンティティの表示に使うテクスチャファイル名
-*	@param texNormal
-*	@param func		エンティティの状態を更新する関数(または関数オブジェクト)
-*	@param shader	エンティティの表示に使うシェーダ名
-*
-*	@return 追加したエンティティへのポインタ
-*			これ以上エンティティを追加できない場合はnullptrが返される
-*			回転や拡大率はこのポインタ経由で設定する
-*			なお、このポインタをアプリケーション側で保持する必要はない
-*/
 Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, const char* normalName, Entity::EntityDataBasePtr eData, const char* shader) {
 	
 	decltype(shaderMap)::const_iterator itr = shaderMap.end();
@@ -372,40 +297,21 @@ Entity::Entity* GameEngine::AddEntity(int groupId, const glm::vec3& pos, const c
 	return entityBuffer->AddEntity(groupId, pos, mesh, tex, itr->second, eData);
 }
 
-/**
-*	スプライトの追加処理
-*
-*	@param s	追加するスプライト
-*/
 void GameEngine::AddSprite(Sprite &s){
 
 	spriteRenderer.AddVertices(s);
 }
 
-/**
-*	エンティティを削除する
-*
-*	@param 削除するエンティティのポインタ
-*/
 void GameEngine::RemoveEntity(Entity::Entity* e) {
 
 	entityBuffer->RemoveEntity(e);
 }
 
-/**
-*	全てのエンティティを削除する
-*/
 void GameEngine::RemoveAllEntity() {
 
 	entityBuffer->RemoveAllEntity();
 }
 
-/**
-*	ライトを設定する
-*
-*	@param indes	設定するライトのインデっクス
-*	@param lilght	ライトデータ
-*/
 void GameEngine::Light(int index, const Uniform::PointLight& light) {
 
 	if (index<0 || index>Uniform::maxLightCount) {
@@ -415,13 +321,6 @@ void GameEngine::Light(int index, const Uniform::PointLight& light) {
 	lightData.light[index] = light;
 }
 
-/**
-*	ライトを取得する
-*
-*	@param inex 取得するライトのインデックス
-*
-*	@return ライトデータ
-*/
 const Uniform::PointLight& GameEngine::Light(int index)const {
 
 	if (index<0 || index>Uniform::maxLightCount) {
@@ -433,75 +332,30 @@ const Uniform::PointLight& GameEngine::Light(int index)const {
 	return lightData.light[index];
 }
 
-/**
-*	環境光を設定する
-*
-*	@param color	環境光の明るさ
-*/
 void GameEngine::AmbientLight(const glm::vec4& color) {
 	lightData.ambientColor = color;
 }
 
-/**
-*	環境光を取得する
-*
-*	@return 環境光の明るさ
-*/
 const glm::vec4& GameEngine::AmbientLight() const {
 	return lightData.ambientColor;
 }
 
-/**
-*	乱数オブジェクトを取得する
-*
-*	@return 乱数オブジェクト
-*/
 std::mt19937& GameEngine::Rand() {
 	return rand;
 }
 
-/**
-*	ゲームパッドの状態を取得する
-*/
 const GamePad& GameEngine::GetGamePad() const {
 	return GLFWEW::Window::Instance().GetGamePad();
 }
 
-/**
-*	衝突解決ハンドラを設定する
-*
-*	@param gid0		衝突対象のグループID
-*	@param gid1		衝突対象のグループID
-*	@param handler	衝突解決ハンドラ
-*
-*	衝突が発生し衝突解決ハンドラが呼び出されるとき、
-*	より小さいグループIDを持つエンティティから先に渡される。
-*	ココで指定したグループIDの順序とは無関係であることに注意すること
-*
-*	CollisionHandler(10,1,Func)
-*	というコードでハンドラを登録したとする、衝突が発生すると、
-*	Func(グループID=1のエンティティ、グループID=10のエンティティ)
-*	のように呼び出される
-*/
 void GameEngine::CollisionHandler(int gid0, int gid1) {
 	entityBuffer->CollisionHandler(gid0, gid1);
 }
 
-/**
-*	衝突ハンドラのリストをクリアする
-*/
 void GameEngine::ClearCollisionHandlerList() {
 	entityBuffer->ClearCollisionHanderList();
 }
 
-/**
-*	テクスチャの取得
-*
-*	@param filename テクスチャ名
-*
-*	@return true	取得したテクスチャ
-*	@return false	ダミーのテクスチャ
-*/
 const TexturePtr& GameEngine::GetTexture(const char* filename) const {
 
 	for (const auto& e : textureStack) {
@@ -511,16 +365,10 @@ const TexturePtr& GameEngine::GetTexture(const char* filename) const {
 		}
 	}
 
-	//std::cerr << "GameEngine::GetTexture filename: "<<filename << " テクスチャが存在しませんでした。" << std::endl;
 	static const TexturePtr dummy;
 	return dummy;
 }
 
-/**
-*	アスペクト比に応じたビューポートサイズの変更
-*
-*	@param width	
-*/
 void GameEngine::CalculateViewPortByAspect(int width, int height,float aspect){
 
 	windowAspect = aspect;
@@ -533,51 +381,32 @@ void GameEngine::CalculateViewPortByAspect(int width, int height,float aspect){
 	viewportRect[0].y = (height - viewportRect[1].y) * 0.5f;
 }
 
-/**
-*	@copydoc Audio::Initialize
-*/
 bool GameEngine::InitAudio(const char* acfPath, const char* acbPath, const char* awbPath, const char* dspBufName) {
 
 	return Audio::Initialize(acfPath, acbPath, awbPath, dspBufName);
 }
 
-/**
-*	@copydoc Audio::Play
-*/
 void GameEngine::PlayAudio(int playerId, int cueId) {
 
 	Audio::Play(playerId, cueId);
 }
 
-
-/**
-*	@copydoc Audio::Stop
-*/
 void GameEngine::StopAudio(int playerId) {
 
 	Audio::Stop(playerId);
 }
 
-/**
-*	@copydoc Audio::StopAll
-*/
 void GameEngine::StopAllAudio() {
 
 	Audio::StopAll();
 }
 
-/**
-*	リソーススタックに新しいリソースレベルを作成する
-*/
 void GameEngine::PushLevel() {
 
 	meshBuffer->PushLevel();
 	textureStack.push_back(TextureLevel());
 }
 
-/*
-*	リソーススタックの末尾のリソースレベルを除去する
-*/
 void GameEngine::PopLevel() {
 
 	meshBuffer->PopLevel();
@@ -586,43 +415,27 @@ void GameEngine::PopLevel() {
 	}
 }
 
-/**
-*	リソーススタックの末尾のリソースレベルを空の状態にする
-*/
 void GameEngine::ClearLevel() {
 
 	textureStack.back().clear();
 	meshBuffer->ClearLevel();
 }
 
-/**
-*	シーンをプッシュします
-*/
 void GameEngine::PushScene(ScenePtr s){
 	
 	SceneStack::Instance().Push(s);
 }
 
-/**
-*	シーンをポップします
-*/
 void GameEngine::PopScene(){
 
 	SceneStack::Instance().Pop();
 }
 
-/**
-*	シーンを取り換えます
-*/
 void GameEngine::ReplaceScene(ScenePtr s){
 	
-	//meshBuffer->ClearLevel();
 	SceneStack::Instance().Replace(s);
 }
 
-/**
-*	デストラクタ
-*/
 GameEngine::~GameEngine() {
 
 	Audio::Destroy();
@@ -638,12 +451,6 @@ GameEngine::~GameEngine() {
 	}
 }
 
-
-/**
-*	ゲームの状態を更新する
-*
-*	@param delta	前回の更新からの経過時間(秒)
-*/
 bool GameEngine::Update(float delta) {
 
 	if (GetGamePad().buttonDown & GamePad::ESCAPE) {
@@ -695,9 +502,6 @@ bool GameEngine::Update(float delta) {
 	return true;
 }
 
-/**
-*	Fpsの更新処理
-*/
 void GameEngine::UpdateFps(){
 
 	// fps の更新処理
@@ -712,9 +516,6 @@ void GameEngine::UpdateFps(){
 	fps = 1 / fps;
 }
 
-/**
-*	デプスシャドウマップを描画する
-*/
 void GameEngine::RenderShadow() const {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, offDepth->GetFramebuffer());
@@ -741,9 +542,6 @@ void GameEngine::RenderShadow() const {
 	glCullFace(GL_BACK);
 }
 
-/**
-*	ステンシルバッファを描画する
-*/
 void GameEngine::RenderStencil() const {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, offStencil->GetFramebuffer());
@@ -766,9 +564,6 @@ void GameEngine::RenderStencil() const {
 
 }
 
-/**
-*	エンティティを描画する
-*/
 void GameEngine::RenderEntity() const {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, offscreen->GetFramebuffer());
@@ -792,9 +587,6 @@ void GameEngine::RenderEntity() const {
 	entityBuffer->Draw(meshBuffer);
 }
 
-/**
-*	ブルームエフェクトを描画する
-*/
 void GameEngine::RenderBloomEffect() const {
 
 	///明るい部分の抽出処理
@@ -849,9 +641,6 @@ void GameEngine::RenderBloomEffect() const {
 	vao.UnBind();
 }
 
-/**
-*	オフスクリーンバッファに描画する
-*/
 void GameEngine::RenderFrameBuffer() const{
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -880,9 +669,6 @@ void GameEngine::RenderFrameBuffer() const{
 	vao.UnBind();
 }
 
-/**
-*	ゲームの状態を描画する
-*/
 void GameEngine::Render() {
 
 	RenderShadow(); 

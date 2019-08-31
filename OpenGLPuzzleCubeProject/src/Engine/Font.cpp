@@ -1,6 +1,9 @@
 /**
 *	@file Font.cpp
+*	@brief	シーン内で描画するためのフォント
+*	@author	takuya Yokoyama , tn-mai(講義資料製作者)
 */
+
 #include "Font.h"
 #include <memory>
 #include <iostream>
@@ -24,15 +27,7 @@ namespace Font {
 		glm::u8vec4 color;
 	};
 
-	/**
-	*	フォント描画オブジェクトを初期化する
-	*
-	*	@pararm maxChar	最大描画文字数
-	*	@param screen	描画先スクリーンの大きさ
-	*
-	*	@retval true	初期化成功
-	*	@retval false	初期化失敗
-	*/
+
 	bool Renderer::Init(size_t maxChar, const glm::vec2& screen) {
 
 		if (maxChar > (USHRT_MAX + 1) / 4) {
@@ -72,14 +67,6 @@ namespace Font {
 		return true;
 	}
 
-	/**
-	*	フォントファイルを読み込む
-	*
-	*	@param filename フォントファイル名
-	*
-	*	@retval true	読み込み成功
-	*	@retval false	読み込み失敗
-	*/
 	bool Renderer::LoadFromFile(const char* filename) {
 
 		const std::unique_ptr<FILE, decltype(&fclose)> fp(fopen(filename, "r"), fclose);
@@ -162,34 +149,15 @@ namespace Font {
 		return true;
 	}
 
-	/**
-	*	文字色を設定する
-	*
-	*	@param c 文字色
-	*/
 	void Renderer::Color(const glm::vec4& c) {
 		color = glm::clamp(c, 0.0f, 1.0f) * 255.0f;
 	}
 
-	/**
-	*	文字色を取得する
-	*
-	*	@return 文字色
-	*/
 	glm::vec4 Renderer::Color() const {
 		
 		return glm::vec4(color) * (1.0f / 255.0f);
 	}
 
-	/**
-	*	文字列を追加する
-	*
-	*	@param position 表示開始座標
-	*	@param str		追加する文字列
-	*
-	*	@retval true	追加成功
-	*	@retval false	追加失敗
-	*/
 	bool Renderer::AddString(const glm::vec2& position, const char* str, bool isCenter) {
 
 		Vertex* p = pVBO + vboSize;
@@ -243,9 +211,6 @@ namespace Font {
 		return true;
 	}
 
-	/**
-	*	VBOをシステムメモリにマッピングする
-	*/
 	void Renderer::MapBuffer() {
 
 		if (pVBO) {
@@ -258,9 +223,6 @@ namespace Font {
 		vboSize = 0;
 	}
 
-	/**
-	*	VBOのマッピングを解除する
-	*/
 	void Renderer::UnmapBuffer() {
 
 		if (!pVBO || vboSize == 0) {
@@ -273,9 +235,6 @@ namespace Font {
 		pVBO = nullptr;
 	}
 
-	/**
-	*	フォントを描画する
-	*/
 	void Renderer::Draw() const {
 
 		if (vboSize == 0) {

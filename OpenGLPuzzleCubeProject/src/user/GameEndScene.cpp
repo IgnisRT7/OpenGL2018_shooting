@@ -1,5 +1,7 @@
 /**
-*	@file GameEndScene.cpp
+*	@file	GameEndScene.cpp
+*	@brief	ゲームオーバー時のシーン制御用
+*	@author	Takuya Yokoyama
 */
 #include "GameEndScene.h"
 #include "../Engine/GameEngine.h"

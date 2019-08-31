@@ -1,5 +1,7 @@
 /**
-*	@file Bullet.cpp
+*	@file	Bullet.cpp
+*	@brief	弾のエンティティ制御用
+*	@author	Takuya Yokoyama
 */
 #include "Bullet.h"
 #include <glm/gtc/matrix_transform.hpp>

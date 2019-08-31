@@ -1,6 +1,9 @@
 /**
 *	@file Entity.h
+*	@brief	シーンで動くエンティティのベース
+*	@author	takuya Yokoyama , tn-mai(講義資料製作者)
 */
+
 #pragma once
 #include <GL/glew.h>
 #include <glm/glm.hpp>
@@ -76,6 +79,11 @@ namespace Entity {
 		void LocalTransform(const TransformData t) { localTransform = t; }
 		const TransformData LocalTransform() const { return localTransform; }
 
+		/**
+		*	移動・回転・拡縮行列を取得する
+		*
+		*	@return TRS行列
+		*/
 		glm::mat4 CalcModelMatrix() const;
 
 		EntityDataBasePtr EntityData() { return entityData; }
@@ -105,6 +113,12 @@ namespace Entity {
 		const glm::vec4& Color() const { return color; }
 
 		int GroupId() const { return groupId; }
+
+	/**
+	*	エンティティを破棄する
+	*
+	*	この関数を呼び出した後は、エンティティを操作してはならない
+	*/
 		void Destroy();
 
 		void CastShadow(bool b) { castShadow = b; }
@@ -157,22 +171,120 @@ namespace Entity {
 	*/
 	class Buffer {
 	public:
+
+		/**
+		*	エンティティバッファを作成する
+		*
+		*	@param maxEntityCount	扱えるエンティティの最大数
+		*	@param ubSizePerEntity	エンティティごとのUniform Bufferのバイト数
+		*	@param bindingPoint		エンティティ用UBOのバインディングポイント
+		*	@param ubName			エンティティ用Uniform Bufferの名前
+		*
+		*	@return 作成したエンティティバッファへのポインタ
+		*/
 		static BufferPtr Create(size_t maxEntityCount, GLsizeiptr ubSizePerEntity, int bindingPoint, const char* name);
 
+		/**
+		*	エンティティを追加する
+		*
+		*	@param position	エンティティの座標
+		*	@param mesh		エンティティの表示に使用するメッシュ
+		*	@param texture	エンティティの表示に使うテクスチャ
+		*	@param program	エンティティの表示に使用するシェーダプログラム
+		*	@param func		エンティティの状態を更新する関数(または関数オブジェクト)
+		*
+		*	@return 追加したエンティティへのポインタ
+		*			これこれ以上エンティティを追加できない場合はnullptrが返される
+		*			回転や拡大率を設定する場合は個のポインタ経由で行う
+		*			このポインタをアプリケーション側で保持する必要はない
+		*/
 		Entity* AddEntity(int groupId, const glm::vec3& pos, const Mesh::MeshPtr& m, const TexturePtr t[2], const Shader::ProgramPtr& p, EntityDataBasePtr ed);
+
+		/**
+		*	エンティティを削除する
+		*
+		*	@param 削除するエンティティのポインタ
+		*/
 		void RemoveEntity(Entity* entity);
+
+		/**
+		*	全てのエンティティを削除する
+		*/
 		void RemoveAllEntity();
+
+		/**
+		*	アクティブなエンティティの状態を更新する
+		*
+		*	@param delta	前回の更新からの経過時間
+		*	@param matView	View行列
+		*	@param matProj	Projection行列
+		*	@param matDepthVP	View行列(深度バッファ用)
+		*/
 		void Update(float delta, const glm::mat4* matView, const glm::mat4& matProj, const glm::mat4& matDepthVP);
 
+		/**
+		*	アクティブなエンティティを描画する
+		*
+		*	@param meshBuffer 描画に使用するメッシュバッファへのポインタ
+		*/
 		void Draw(const Mesh::BufferPtr& meshBuffer) const;
+
+		/**
+		*	アクティブなエンティティを深度情報を描画する
+		*
+		*	@param meshBuffer 描画に使用するメッシュバッファへのポインタ
+		*	tips シェーダの設定は外部で行うこと
+		*/
 		void DrawDepth(const Mesh::BufferPtr& meshBuffer)const;
+
+		/**
+		*	ステンシルバッファの描画
+		*
+		*	@param meshBuffer	メッシュバッファ
+		*	@param prograrm		使用するプログラムオブジェクト
+		*/
 		void DrawStencil(const Mesh::BufferPtr& meshBuffer, const Shader::ProgramPtr& program)const;
+
+		/**
+		*	表示するGroupIDの設定
+		*
+		*	@param groupId		適用するGroupID
+		*	@param cameraIndex	適用するカメラのインデックス番号
+		*	@param isVisible	表示フラグ
+		*/
 		void GroupVisibility(int groupId, int cameraIndex, bool isVisible);
 		bool GroupVisibility(int groupId, int cameraIndex) { return visibilityFlags[groupId] & (1U << cameraIndex); }
 
+		/**
+		*	衝突解決ハンドラを設定する
+		*
+		*	@param gid0		衝突対象のグループID
+		*	@param gid1		衝突対象のグループID
+		*	@param handler	衝突解決ハンドラ
+		*
+		*	衝突が発生し衝突ハンドラが呼び出されるとき、
+		*	より小さいグループIDを持つエンティティから先に渡される。
+		*	ココで指定したグループIDの順序とは無関係であることに注意
+		*
+		*	CollisionHandler(10,1,Func)
+		*	というコードでハンドラを登録したとする、衝突が発生すると、
+		*	Func(グループID=1のエンティティ,グループID=10のエンティティ)
+		*	のように呼び出される
+		*/
 		void CollisionHandler(int gid0, int gid1);
+
+		/**
+		*	全ての衝突解決ハンドラを削除する
+		*/
 		void ClearCollisionHanderList();
 
+		/**
+		*	エンティティの検索を行う
+		*
+		*	@param name	エンティティ名
+		*	
+		*	@return 見つけたエンティティ(無い場合はnullptr)
+		*/
 		Entity* FindEntity(FindEntityFunc f);
 
 		
@@ -214,7 +326,20 @@ namespace Entity {
 
 		///エンティティ用リンクリスト
 		struct Link {
+
+			/**
+			*	リンクオブジェクトを自分の手前に追加する
+			*
+			*	@param p	追加するリンクオブジェクトへのポインタ
+			*
+			*	pを所属元のリンクリストから切り離し、自分の手前に追加する
+			*/
 			void Insert(Link* e);
+
+			/**
+			*	自分自身をリンクリストから切り離す
+			*	自分はどこにも接続されていない状態になる
+			*/
 			void Remove();
 			Link* prev = this;
 			Link* next = this;

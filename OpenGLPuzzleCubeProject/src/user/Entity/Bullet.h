@@ -1,5 +1,7 @@
 /**
-*	@file Bullet.h
+*	@file	Bullet.h
+*	@brief	弾のエンティティ制御用
+*	@author	Takuya Yokoyama
 */
 #pragma once
 

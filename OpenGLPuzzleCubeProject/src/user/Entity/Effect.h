@@ -1,5 +1,7 @@
 /**
 *	@file Effect.h
+*	@brief	3Dモデルを使用した疑似エフェクト
+*	@author	TakuyaYokoyama
 */
 #pragma once
 #include "../../Engine/Entity.h"

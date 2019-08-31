@@ -1,5 +1,7 @@
 /**
 *	@file ModelLoadTestScene.h
+*	@brief	テスト用シーン制御用
+*	@author	Takuya Yokoyama
 */
 #pragma once
 #include "../Engine/Scene.h"

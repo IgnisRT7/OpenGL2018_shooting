@@ -1,6 +1,9 @@
 /**
-*	@file GameMainScene.cpp
+*	@file	GameMainScene.cpp
+*	@brief	ゲームのメインシーンの制御用
+*	@author	Takuya Yokoyama
 */
+
 #include "GameMainScene.h"
 #include "../GameState.h"
 #include "../../Res/Audio/CueSheet_0.h"

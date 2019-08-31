@@ -1,5 +1,7 @@
 /**
 *	@file BulletGenerator.h
+*	@brief	敵の弾生成システムの制御用
+*	@author	Takuya Yokoyama
 */
 #pragma once
 #include "../Engine/Entity.h"

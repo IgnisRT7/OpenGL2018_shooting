@@ -1,5 +1,7 @@
 /**
 *	@file EnemyLaunchController.h
+*	@brief	敵の出撃システムの制御用
+*	@author	Takuya Yokoyama
 */
 #pragma once
 

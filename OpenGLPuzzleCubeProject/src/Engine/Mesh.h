@@ -1,5 +1,7 @@
 /**
 *	@file Mesh.h
+*	@brief	ƒƒbƒVƒ…‚ÌŠÇ——p
+*	@brief	tn-mai
 */
 #pragma once
 

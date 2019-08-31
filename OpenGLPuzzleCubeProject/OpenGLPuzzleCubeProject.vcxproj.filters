@@ -55,9 +55,6 @@
     <ClCompile Include="src\Main.cpp">
       <Filter>User</Filter>
     </ClCompile>
-    <ClCompile Include="src\user\StageLoader.cpp">
-      <Filter>User</Filter>
-    </ClCompile>
     <ClCompile Include="src\user\GameEndScene.cpp">
       <Filter>User\Scene</Filter>
     </ClCompile>
@@ -148,9 +145,6 @@
       <Filter>User</Filter>
     </ClInclude>
     <ClInclude Include="src\GameState.h">
-      <Filter>User</Filter>
-    </ClInclude>
-    <ClInclude Include="StageLoader.h">
       <Filter>User</Filter>
     </ClInclude>
     <ClInclude Include="src\user\GameEndScene.h">

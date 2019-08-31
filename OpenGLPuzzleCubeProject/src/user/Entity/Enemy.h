@@ -1,6 +1,9 @@
 /**
 *	@file Enemy.h
+*	@brief	“G‚Ì§Œä—p
+*	@author	Takuya Yokoyama
 */
+
 #pragma once
 
 #include "../../Engine/Entity.h"

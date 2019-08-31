@@ -1,6 +1,10 @@
 /**
-*	@file Entity.cpp
+*	@file	Entity.cpp
+*	@brief	敵の制御用
+*	@author	Takuya Yokoyama
 */
+
+
 #include "Enemy.h"
 #include "../../Engine/GameEngine.h"
 #include "../../GameState.h"
@@ -120,7 +124,7 @@ namespace GameState {
 	/**
 	*	衝突判定処理
 	*
-	*	@param e	衝突してきたエンティティ
+	*	@param e	衝突してきたエンティtティ
 	*/
 	void Toroid::CollisionEnter(Entity::Entity& e) {
 		e.EntityData()->Damage(1);

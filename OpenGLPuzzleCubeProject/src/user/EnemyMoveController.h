@@ -1,5 +1,7 @@
 /**
-*	@file EnemyMoveController.h
+*	@file EnemyMoveController
+*	@brief	敵の移動システムの制御用
+*	@author	Takuya Yokoyama , tn-mai(講義資料の製作者)
 */
 
 #pragma once

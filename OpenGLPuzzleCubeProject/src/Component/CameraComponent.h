@@ -1,5 +1,7 @@
 /**
 *	@file CameraComponent.h
+*	@brief	シーンで使用されるカメラコンポーネント
+*	@author	takuya Yokoyama
 */
 #pragma once
 
@@ -29,6 +31,12 @@ public:
 	virtual const glm::mat4& ProjctionMatrix() const;
 
 	virtual void Initialize() {};
+
+	/**
+	*	更新処理
+	*
+	*	@param deltaTime	経過時間
+	*/
 	virtual void Update(float delta);
 
 	void Position(glm::vec3& p) { position = p; }		
@@ -71,7 +79,16 @@ public:
 
 private:
 
+	/**
+	*	初期化処理
+	*/
 	void Initialize() override;
+
+	/**
+	*	更新処理
+	*
+	*	@param deltaTime	経過時間
+	*/
 	void Update(float delta) override;
 
 	glm::vec3 forward;
