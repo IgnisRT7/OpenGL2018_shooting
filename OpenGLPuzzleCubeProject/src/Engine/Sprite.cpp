@@ -8,35 +8,17 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "GameEngine.h"
 
-/**
-*	Spriteコンストラクタ
-*/
 Sprite::Sprite(const TexturePtr& tex) :
 	texture(tex), rect(Rect{ glm::vec2(), glm::vec2(tex->Width(), tex->Height()) }) {
 
 }
 
-/**
-*	描画に使用するテクスチャを指定する
-*
-*	@param tex	描画に使用するテクスチャ
-*/
 void Sprite::Texture(const TexturePtr& tex) {
 
 	texture = tex;
 	Rectangle(Rect{ glm::vec2(0),glm::vec2(tex->Width(),tex->Height()) });
 }
 
-/**
-*	スプライト描画クラスを初期化する
-*
-*	@param maxSpriteCount	描画可能な最大スプライト数
-*	@param vsPath			頂点シェーダファイル名
-*	@param fsPath			フラグメントシェーダファイル名
-*
-*	@retval true	初期化成功
-*	@retval false	初期化失敗
-*/
 bool SpriteRenderer::Init(size_t maxSpriteCount, Shader::ProgramPtr program) {
 
 	vbo.Init(GL_ARRAY_BUFFER, sizeof(Vertex) * maxSpriteCount * 4, nullptr, GL_STREAM_DRAW);
@@ -72,9 +54,6 @@ bool SpriteRenderer::Init(size_t maxSpriteCount, Shader::ProgramPtr program) {
 	return true;
 }
 
-/**
-*	頂点データの作成を開始する
-*/
 void SpriteRenderer::BeginUpdate() {
 
 	primitives.clear();
@@ -82,9 +61,6 @@ void SpriteRenderer::BeginUpdate() {
 	vertices.reserve(vbo.Size() / sizeof(Vertex));
 }
 
-/**
-*	頂点データの作成を終了する
-*/
 void SpriteRenderer::EndUpdate() {
 
 	bool debugMode = false;
@@ -105,12 +81,6 @@ void SpriteRenderer::EndUpdate() {
 	vertices.shrink_to_fit();
 }
 
-/**
-*	頂点データを追加する
-*
-*	@retval true	追加成功
-*	@retval false	頂点バッファが満杯で追加できない
-*/
 bool SpriteRenderer::AddVertices(const Sprite& sprite) {
 
 	if (vertices.size() * sizeof(Vertex) >= static_cast<size_t>(vbo.Size())) {
@@ -177,12 +147,6 @@ bool SpriteRenderer::AddVertices(const Sprite& sprite) {
 	return true;
 }
 
-/**
-*	スプライトを描画する
-*
-*	@param texture		描画に使用するテクスチャ
-*	@param screenSize	画面サイズ
-*/
 void SpriteRenderer::Draw(const glm::vec2& screenSize)const {
 
 	glDisable(GL_DEPTH_TEST);
@@ -214,26 +178,15 @@ void SpriteRenderer::Draw(const glm::vec2& screenSize)const {
 	vao.UnBind();
 }
 
-/**
-*	スプライト描画データを消去する
-*/
 void SpriteRenderer::Clear() {
 
 	primitives.clear();
 }
 
-/**
-*	HPゲージの初期化処理
-*
-*	@param tex	使用するテクスチャ
-*/
 HealthGuage::HealthGuage(const TexturePtr& tex):
 Sprite(tex){
 }
 
-/**
-*	表示比率の設定
-*/
 void HealthGuage::Ratio(float r){
 
 	ratio = r;

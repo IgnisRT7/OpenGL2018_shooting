@@ -10,14 +10,6 @@
 
 namespace Shader {
 
-	/**
-	*	シェーダプログラムを作成する
-	*
-	*	@param vsCode;
-	*	@param fsCode;
-	*
-	*	@return 作成したプログラムオブジェクト
-	*/
 	ProgramPtr Program::Create(const char* vsFilename, const char* fsFilename) {
 
 		struct Impl : Program { Impl() {}~Impl() {} };
@@ -69,24 +61,12 @@ namespace Shader {
 		return p;
 	}
 
-	/**
-	*	デストラクタ
-	*/
 	Program::~Program() {
 		if (program) {
 			glDeleteProgram(program);
 		}
 	}
 
-	/**
-	*	Uniform ブロックをバインディング・ポイントに割り当てる
-	*
-	*	@param blockName	割り当てるUniformブロックの名前
-	*	@param bindingPoint	割当先のバインディング・ポイント
-	*
-	*	@retval	true	割り当て成功
-	*	@retval false	割り当て失敗
-	*/
 	bool Program::UniformBlockBinding(const char* blockName, GLuint bindingPoint) {
 
 		const GLuint blockIndex = glGetUniformBlockIndex(program, blockName);
@@ -105,12 +85,7 @@ namespace Shader {
 		return true;
 	}
 
-	/**
-	*	描画用プログラムに設定する
-	*/
 	void Program::UseProgram() {
-
-		//std::cout << "UseProgram " << name << std::endl;
 
 		glUseProgram(program);
 		for (GLint i = 0; i < samperCount; ++i) {
@@ -122,13 +97,6 @@ namespace Shader {
 		}
 	}
 
-	/**
-	*	テクスチャをテクスチャ・イメージユニットに割り当てる
-	*
-	*	@param unit		割当先のテクスチャ・イメージ・ユニット番号(GL_TExTURE0～)
-	*	@param texure	割り当てるテクスチャオブジェクト
-	*	@param type		割り当てるテクスチャの種類(GL_TEXTURE_1D,GLTEXTURE_2D,etc)
-	*/
 	void Program::BindTexture(GLenum unit, GLuint texture, GLenum type) {
 
 		if (unit >= GL_TEXTURE0 && unit < static_cast<GLenum>(GL_TEXTURE0 + samperCount)) {
@@ -138,12 +106,6 @@ namespace Shader {
 		}
 	}
 
-	/**
-	*	デプステクスチャをテクスチャ・イメージ・ユニットに割り当てる
-	*
-	*	@param type		割り当てるテクスチャの種類 (GL_TEXTURE_1D,GL_TEXTURE_2D,etc)
-	*	@param texture	割り当てるテクスチャオブジェクト
-	*/
 	void Program::BindShadowTexture(GLenum type, GLuint texture) {
 		if (depthSamplerLocation >= 0) {
 			glActiveTexture(GL_TEXTURE2);
@@ -151,9 +113,6 @@ namespace Shader {
 		}
 	}
 
-	/**
-	*	使用するカメラのインデックスを指定する
-	*/
 	void Program::SetViewIndex(int index) {
 
 		if (viewIndexLocation >= 0) {
@@ -161,25 +120,6 @@ namespace Shader {
 		}
 	}
 
-	/**
-	*	ベクトル型のパラメータを設定する
-	*
-	*	@param p	パラメータ
-	*	@param n	パラメータ名
-	*/
-	void Program::SetVectorParameter(glm::vec3 p, std::string name) {
-		GLint vecLocation = glGetUniformLocation(program, name.c_str());
-		if (vecLocation > 0) {
-			glUniform4fv(vecLocation, 1, glm::value_ptr(glm::vec4(p.x, p.y, p.z, 1.0f)));
-		}
-	}
-
-	/**
-	*	ブール型のパラメータを設定する
-	*
-	*	@param b	パラメータ
-	*	@param name	パラメータ名
-	*/
 	void Program::SetBoolParameter(bool b, std::string name) {
 
 		GLint bLocation = glGetUniformLocation(program, name.c_str());
@@ -188,11 +128,6 @@ namespace Shader {
 		}
 	}
 
-	/**
-	*	float型パラメータを設定する
-	*
-	*	@param name パラメータ名
-	*/
 	void Program::SetFloatParameter(float f, std::string name){
 
 		GLint fLocation = glGetUniformLocation(program, name.c_str());
@@ -201,11 +136,13 @@ namespace Shader {
 		}
 	}
 
-	/**
-	*	4x4f ビュー射影変換行列を設定する
-	*
-	*	@param matVP	設定する変換行列
-	*/
+	void Program::SetVectorParameter(glm::vec3 p, std::string name) {
+		GLint vecLocation = glGetUniformLocation(program, name.c_str());
+		if (vecLocation > 0) {
+			glUniform4fv(vecLocation, 1, glm::value_ptr(glm::vec4(p.x, p.y, p.z, 1.0f)));
+		}
+	}
+
 	void Program::SetMatViewProjection(glm::mat4& matVP){
 
 		this->matVP = matVP;

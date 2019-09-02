@@ -1,7 +1,7 @@
 /**
 *	@file Mesh.h
 *	@brief	メッシュの管理用
-*	@brief	tn-mai
+*	@author	tn-mai(講義資料製作者)
 */
 #pragma once
 
@@ -41,15 +41,35 @@ namespace Mesh {
 		friend class Buffer;
 	public:
 
+		/**
+		*	メッシュ名の取得
+		*
+		*	@return メッシュ名
+		*/
 		const std::string& Name() const { return name; }
+
+		/**
+		*	メッシュを描画する
+		*
+		*	@param buffer	描画に使用するメッシュバッファへのポインタ
+		*/
 		void Draw(const BufferPtr& buffer) const;
 
 	private:
 
 
 		Mesh() = default;
-		Mesh(const std::string& n, size_t begin, size_t end);
 		Mesh(const Mesh&) = default;
+
+		/**
+		*	コンストラクタ
+		*
+		*	@param meshName	メッシュデータ名
+		*	@param begin	描画するマテリアルの先頭インデックス
+		*	@param end		描画するマテリアルの終端インデックス
+		*/
+		Mesh(const std::string& n, size_t begin, size_t end);
+
 		~Mesh() = default;
 		Mesh& operator=(const Mesh&) = default;
 
@@ -66,16 +86,66 @@ namespace Mesh {
 	*/
 	class Buffer {
 	public:
+
+		/**
+		*	メッシュバッファを作成する
+		*
+		*	@param vboSize	格納可能な総頂点数
+		*	@param iboSize	バッファに格納可能な総インデックス数
+		*/
 		static BufferPtr Create(int vboSize, int iboSize);
 
+		/**
+		*	メッシュをファイルから読み込む
+		*
+		*	@param filename メッシュファイル名
+		*
+		*	@retval true	読み込み成功
+		*	@retval false	読み込み失敗
+		*/
 		bool LoadMeshFromFile(const char* filename);
+
+		/**
+		*	メッシュを取得する
+		*
+		*	@param name メッシュ名
+		*
+		*	@return nameに対応するメッシュへのポインタ
+		*/
 		const MeshPtr& GetMesh(const char* name) const;
+
+		/**
+		*	マテリアルを取得する
+		*
+		*	@param index マテリアルインデックス
+		*
+		*	@return indexに対応するマテリアル
+		*/
 		const Material& GetMaterial(size_t index) const;
+
+		/**
+		*	バッファが保持するVAOをOpenGLの処理対象に設定する
+		*/
 		void BindVAO() const;
+
+		/**
+		*	バッファの紐づけの解除
+		*/
 		void UnBindVAO() const;
 
+		/**
+		*	スタックに新しいリソースレベルを作成する
+		*/
 		void PushLevel();
+
+		/**
+		*	スタックの末尾にあるリソースレベルを消去する
+		*/
 		void PopLevel();
+
+		/**
+		*	末尾のリソースレベルを空の状態にする
+		*/
 		void ClearLevel();
 		int Size() { return levelStack.size(); }
 
@@ -88,8 +158,9 @@ namespace Mesh {
 
 	private:
 
-		BufferObject ibo, vbo;
-		VertexArrayObject vao;
+		BufferObject ibo;					///< 頂点データ
+		BufferObject vbo;
+		VertexArrayObject vao;				///< インデックスデータ
 
 		std::vector<Material> materialList;	///< マテリアルリスト
 

@@ -111,22 +111,41 @@ namespace Mesh {
 	*/
 	struct FbxLoader {
 //		bool GetMotionList(void);
+
+		/**
+		*	FBXファイルを読み込む
+		*
+		*	@param filename FBXファイル名
+		*
+		*	@retval true	読み込み成功
+		*	@retval false	読み込み失敗
+		*/
 		bool Load(const char* filename);
+
+		/**
+		*	FBXデータを仮データに変換する
+		*
+		*	@param fbxNode 変換対象のFBXノードへのポインタ
+		*
+		*	@retval true	変換成功
+		*	@retval false	変換失敗
+		*/
 		bool Convert(FbxNode* node);
+
+		/**
+		*	FBXメッシュを仮データに変換する
+		*
+		*	@param fbxNode 変換対象のFBXノードへのポインタ
+		*
+		*	@retval true	変換成功
+		*	@retval false	変換失敗
+		*/
 		bool LoadMesh(FbxNode* node);
 		std::vector<TemporaryMesh> meshList;
 		std::unique_ptr<FbxManager, Deleter<FbxManager> > fbxManager;
 		FbxScene* fbxScene;
 	};
 
-	/**
-	*	FBXファイルを読み込む
-	*
-	*	@param filename FBXファイル名
-	*
-	*	@retval true	読み込み成功
-	*	@retval false	読み込み失敗
-	*/
 	bool FbxLoader::Load(const char* filename) {
 		
 		//FBXManager作成
@@ -165,14 +184,6 @@ namespace Mesh {
 		return true;
 	}
 
-	/**
-	*	FBXデータを仮データに変換する
-	*
-	*	@param fbxNode 変換対象のFBXノードへのポインタ
-	*
-	*	@retval true	変換成功
-	*	@retval false	変換失敗
-	*/
 	bool FbxLoader::Convert(FbxNode* fbxNode) {
 
 		if (!fbxNode) {
@@ -193,14 +204,6 @@ namespace Mesh {
 		return true;
 	}
 
-	/**
-	*	FBXメッシュを仮データに変換する
-	*
-	*	@param fbxNode 変換対象のFBXノードへのポインタ
-	*
-	*	@retval true	変換成功
-	*	@retval false	変換失敗
-	*/
 	bool FbxLoader::LoadMesh(FbxNode* fbxNode) {
 
 		FbxMesh* fbxMesh = fbxNode->GetMesh();
@@ -222,7 +225,6 @@ namespace Mesh {
 			fbxGeometoryConverter.Triangulate(fbxScene, true);
 		}
 
-		//TODO : ここの処理が無意味なので要修正
 		//マテリアル情報を読み取る
 		const int materialCount = fbxNode->GetMaterialCount();
 		mesh.materialList.reserve(materialCount);
@@ -397,23 +399,11 @@ namespace Mesh {
 		return true;
 	}
 
-	/**
-	*	コンストラクタ
-	*
-	*	@param meshName	メッシュデータ名
-	*	@param begin	描画するマテリアルの先頭インデックス
-	*	@param end		描画するマテリアルの終端インデックス
-	*/
 	Mesh::Mesh(const std::string& meshName, size_t begin, size_t end) :
 		name(meshName), beginMaterial(begin), endMaterial(end) {
 
 	}
 
-	/**
-	*	メッシュを描画する
-	*
-	*	@param buffer	描画に使用するメッシュバッファへのポインタ
-	*/
 	void Mesh::Draw(const BufferPtr& buffer) const {
 
 		if (!buffer) {
@@ -431,12 +421,6 @@ namespace Mesh {
 		}
 	}
 
-	/**
-	*	メッシュバッファを作成する
-	*
-	*	@param vboSize	格納可能な総頂点数
-	*	@param iboSize	バッファに格納可能な総インデックス数
-	*/
 	BufferPtr Buffer::Create(int vboSize, int iboSize) {
 
 		std::cout << "[Info]: MeshBuffer::Create" << std::endl;
@@ -466,9 +450,6 @@ namespace Mesh {
 		return p;
 	}
 
-	/**
-	*	デストラクタ
-	*/
 	Buffer::~Buffer() {
 
 		if (vao.Id()) {
@@ -482,14 +463,6 @@ namespace Mesh {
 		}
 	}
 
-	/**
-	*	メッシュをファイルから読み込む
-	*
-	*	@param filename メッシュファイル名
-	*
-	*	@retval true	読み込み成功
-	*	@retval false	読み込み失敗
-	*/
 	bool Buffer::LoadMeshFromFile(const char* filename) {
 
 		FbxLoader loader;
@@ -539,13 +512,6 @@ namespace Mesh {
 		return true;
 	}
 
-	/**
-	*	メッシュを取得する
-	*
-	*	@param name メッシュ名
-	*
-	*	@return nameに対応するメッシュへのポインタ
-	*/
 	const MeshPtr& Buffer::GetMesh(const char* name) const {
 
 		static const MeshPtr dummy;
@@ -564,13 +530,6 @@ namespace Mesh {
 		return dummy;
 	}
 
-	/**
-	*	マテリアルを取得する
-	*
-	*	@param index マテリアルインデックス
-	*
-	*	@return indexに対応するマテリアル
-	*/
 	const Material& Buffer::GetMaterial(size_t index) const {
 
 		if (index >= materialList.size()) {
@@ -582,32 +541,20 @@ namespace Mesh {
 		return materialList[index];
 	}
 
-	/**
-	*	バッファが保持するVAOをOpenGLの処理対象に設定する
-	*/
 	void Buffer::BindVAO() const {
 		vao.Bind();
 	}
 
-	/**
-	*	バッファの紐づけの解除
-	*/
 	void Buffer::UnBindVAO() const{
 		vao.UnBind();
 	}
 
-	/**
-	*	スタックに新しいリソースレベルを作成する
-	*/
 	void Buffer::PushLevel() {
 
 		levelStack.push_back(Level());
 		ClearLevel();
 	}
 
-	/**
-	*	スタックの末尾にあるリソースレベルを消去する
-	*/
 	void Buffer::PopLevel() {
 
 		Buffer::Level& currentLevel = levelStack.back();
@@ -634,9 +581,6 @@ namespace Mesh {
 		}
 	}
 
-	/**
-	*	末尾のリソースレベルを空の状態にする
-	*/
 	void Buffer::ClearLevel() {
 
 		Level& currentLevel = levelStack.back();
