@@ -19,17 +19,61 @@ namespace GameState {
 		Player() = default;
 		Player(const Player&) = delete;
 		void operator=(const Player&) = delete;
+		~Player() = default;
 
+		/**
+		*	初期化処理
+		*/
 		void Initialize() override;
+
+		/**
+		*	更新処理
+		*
+		*	@param delta	経過時間
+		*/
 		void Update(float delta) override;
+
+		/**
+		*	衝突判定処理
+		*
+		*	@param entity	衝突してきたエンティティ
+		*/
 		void CollisionEnter(Entity::Entity& entity) override;
+
+		/**
+		*	ダメージ処理
+		*
+		*	@param p	ダメージ量
+		*/
 		void Damage(float p) override;
 
+		/**
+		*	ステージ開始時の演出用設定処理
+		*/
 		void StartMoveSet();
+
+		/**
+		*	ステージクリア時の演出用設定処理
+		*
+		*	@param delayTime	この関数を呼び出してから動き出す時間
+		*/
 		void EndMoveSet(float delay);
+
+		/**
+		*	ステージ開始後もしくはクリア後に行われる処理
+		*/
 		void AutoMove(float delta);
+
+		/**
+		*	弾の発射処理
+		*/
 		void ShotBullet();
 
+		/**
+		*	残機の取得
+		*
+		*	@return 残機
+		*/
 		int RemainingPlayer()const { return remainingPlayer; }
 
 	private:
@@ -65,10 +109,27 @@ namespace GameState {
 	*/
 	class PlayerForProduction :public Entity::EntityDataBase {
 	public:
+
+		/**
+		*	初期化処理
+		*/
 		void Initialize() override;
+
+		/**
+		*	更新処理
+		*/
 		void Update(float delta) override {};
+
+		/**
+		*	プレイヤーの機体色の設定
+		*
+		*	@param c	設定する色
+		*/
 		void Color(glm::vec4 c) { entity->Color(c); }
 
+		/**
+		*	自動スタート用処理
+		*/
 		void MoveStart() { entity->Velocity(glm::vec3(0, 0, moveSpeed)); }
 
 	private:

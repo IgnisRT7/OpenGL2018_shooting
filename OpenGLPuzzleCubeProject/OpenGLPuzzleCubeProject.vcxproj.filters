@@ -85,6 +85,9 @@
     <ClCompile Include="src\Engine\Sprite.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\user\Entity\EnemySpawner.cpp">
+      <Filter>User\Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine\GameEngine.h">
@@ -179,6 +182,9 @@
     </ClInclude>
     <ClInclude Include="Res\Resource.h">
       <Filter>Res</Filter>
+    </ClInclude>
+    <ClInclude Include="src\user\Entity\EnemySpawner.h">
+      <Filter>User\Entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

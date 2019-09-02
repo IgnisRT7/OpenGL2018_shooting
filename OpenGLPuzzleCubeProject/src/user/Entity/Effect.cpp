@@ -1,26 +1,18 @@
 /**
 *	@file	Effect.cpp
-*	@brief	3Dモデルを使用した疑似エフェクト
-*	@author	TakuyaYokoyama
 */
 #include "Effect.h"
 
 namespace GameState {
 
-	/**
-	*	初期化処理
-	*/
 	void Blast::Initialize() {
 
 		entity->CastShadow(false);
 	}
 
-	/**
-	*	更新処理
-	*/
-	void Blast::Update(float delta) {
+	void Blast::Update(float deltaTime) {
 
-		timer += delta;
+		timer += deltaTime;
 
 		if (timer >= 0.3) {
 			entity->Destroy();
@@ -42,7 +34,7 @@ namespace GameState {
 
 		//Y軸回転させる
 		glm::vec3 euler = glm::eulerAngles(entity->Rotation());
-		euler.y += glm::radians(60.0f) + delta;
+		euler.y += glm::radians(60.0f) + deltaTime;
 		entity->Rotation(glm::quat(euler));
 	}
 

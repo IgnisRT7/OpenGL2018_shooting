@@ -1,7 +1,7 @@
 /**
 *	@file	Shader.h
 *	@brief	シェーダの管理用
-*	@author	Taku Yokoyama , tn-mai(講義資料製作者)
+*	@author	Takuya Yokoyama , tn-mai(講義資料製作者)
 */
 #pragma once
 

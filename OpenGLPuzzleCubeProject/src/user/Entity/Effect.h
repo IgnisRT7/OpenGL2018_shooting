@@ -16,8 +16,16 @@ namespace GameState {
 	class Blast : public Entity::EntityDataBase {
 	public:
 
+		/**
+		*	‰Šú‰»ˆ—
+		*/
 		void Initialize() override;
 
+		/**
+		*	XVˆ—
+		*
+		*	@param deltaTime	Œo‰ßŠÔ
+		*/
 		void Update(float delta) override;
 
 	private:

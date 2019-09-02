@@ -1,30 +1,20 @@
 /**
 *	@file	Bullet.cpp
-*	@brief	弾のエンティティ制御用
-*	@author	Takuya Yokoyama
 */
+
 #include "Bullet.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "../../GameState.h"
 
 namespace GameState {
 
-
-	/**
-	*	弾の初期化処理
-	*/
 	void Bullet::Initialize() {
 		
 		entity->CastShadow(false);
 		entity->Collision(GameState::collisionDataList[EntityGroupId_EnemyShot]);
 	}
 
-	/**
-	*	弾の更新処理
-	*
-	*	@param delta	経過時間
-	*/
-	void Bullet::Update(float delta) {
+	void Bullet::Update(float deltaTime) {
 
 		//弾の向きの調整処理
 
@@ -47,11 +37,6 @@ namespace GameState {
 		}
 	}
 	
-	/**
-	*	衝突処理
-	*
-	*	@param e	衝突してきたエンティティ
-	*/
 	void Bullet::CollisionEnter(Entity::Entity& e) {
 
 		entity->Destroy();
