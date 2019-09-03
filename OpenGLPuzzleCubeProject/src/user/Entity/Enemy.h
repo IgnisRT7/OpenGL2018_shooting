@@ -11,7 +11,7 @@
 #include "../EnemyMoveController.h"
 #include "../../Engine/Sprite.h"
 
-namespace GameState {
+namespace Application {
 
 	/// “G
 	class Toroid : public Entity::EntityDataBase {

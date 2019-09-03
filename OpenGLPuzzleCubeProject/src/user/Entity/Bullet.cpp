@@ -6,12 +6,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "../../GameState.h"
 
-namespace GameState {
+namespace Application {
 
 	void Bullet::Initialize() {
 		
 		entity->CastShadow(false);
-		entity->Collision(GameState::collisionDataList[EntityGroupId_EnemyShot]);
+		entity->Collision(GameState::collisionDataList[GameState::EntityGroupId_EnemyShot]);
 	}
 
 	void Bullet::Update(float deltaTime) {
@@ -31,7 +31,7 @@ namespace GameState {
 
 		//”ÍˆÍŠOˆ—
 		const glm::vec3 pos = entity->Position();
-		if (std::abs(pos.x) > screenHalfW || std::abs(pos.z) > screenHalfH) {
+		if (std::abs(pos.x) > GameState::screenHalfW || std::abs(pos.z) > GameState::screenHalfH) {
 			entity->Destroy();
 			return;
 		}

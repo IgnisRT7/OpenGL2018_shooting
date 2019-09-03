@@ -7,7 +7,7 @@
 
 #include "../../Engine/Entity.h"
 
-namespace GameState {
+namespace Application {
 
 	/// 弾のエンティティクラス
 	class Bullet : public Entity::EntityDataBase {

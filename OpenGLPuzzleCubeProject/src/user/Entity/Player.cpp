@@ -13,13 +13,13 @@
 #include "../../../Res/Audio/testProject_acf.h"
 #include "../../../Res/Audio/CueSheet_0.h"
 
-namespace GameState {
+namespace Application {
 
 	void Player::Initialize() {
 
 		if (!initialized) {
 			initialized = true;
-			entity->Collision(collisionDataList[EntityGroupId_Player]);
+			entity->Collision(GameState::collisionDataList[GameState::EntityGroupId_Player]);
 		}
 
 		entity->Scale(glm::vec3(1.5f));
@@ -140,7 +140,8 @@ namespace GameState {
 			GameEngine& game = GameEngine::Instance();
 
 			//爆発エフェクト
-			if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, entity->Position(), "Blast", "Res/Model/Toroid.dds", std::make_shared<Blast>())) {
+			if (Entity::Entity* p = game.AddEntity(GameState::EntityGroupId_Others, entity->Position(),
+				"Blast", "Res/Model/Toroid.dds", std::make_shared<Blast>())) {
 				const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
 				p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
 				p->Color(glm::vec4(1.0f, 0.75f, 0.5f, 1.0f));
@@ -171,10 +172,10 @@ namespace GameState {
 		}
 		isAutoMove = true;
 
-		entity->Position(glm::vec3(0, 0, -screenHalfH * 1.1f));
+		entity->Position(glm::vec3(0, 0, -GameState::screenHalfH * 1.1f));
 		autoMoveStartTimer = 0;	// 即時実行
 
-		goalLocation = glm::vec3(0, 0, -screenHalfH * 0.5);
+		goalLocation = glm::vec3(0, 0, -GameState::screenHalfH * 0.5);
 		autoMoveVel = glm::normalize(goalLocation - entity->Position()) * 30.0f;
 	}
 
@@ -185,7 +186,7 @@ namespace GameState {
 		}
 		isAutoMove = true;
 
-		goalLocation = glm::vec3(0, 0, screenHalfH + 10);
+		goalLocation = glm::vec3(0, 0, GameState::screenHalfH + 10);
 		autoMoveStartTimer = delayTime;
 		autoMoveVel = glm::normalize(goalLocation - entity->Position()) * 30.0f;
 	}
@@ -219,12 +220,12 @@ namespace GameState {
 
 			auto b = std::make_shared<Bullet>();
 
-			if (Entity::Entity* p = game.AddEntity(EntityGroupId_PlayerShot, leftPos + glm::vec3(i * bulletInterval, 0, + 1.0f),
+			if (Entity::Entity* p = game.AddEntity(GameState::EntityGroupId_PlayerShot, leftPos + glm::vec3(i * bulletInterval, 0, + 1.0f),
 				"NormalShot", "Res/Model/Player.dds", b, "NonLighting")) {
 
 				b->Velocity(glm::vec3(0, 0, 100));
 				
-				p->Collision(collisionDataList[EntityGroupId_PlayerShot]);
+				p->Collision(GameState::collisionDataList[GameState::EntityGroupId_PlayerShot]);
 				p->Scale(glm::vec3(1.5f));
 			}
 			pos.x += 0.25f;

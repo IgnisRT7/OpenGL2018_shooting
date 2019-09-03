@@ -8,7 +8,7 @@
 #include "../../Engine/Entity.h"
 #include "../../GameState.h"
 
-namespace GameState {
+namespace Application {
 
 	/*
 	*	プレイヤークラス	ゲーム画面操縦用
@@ -98,8 +98,8 @@ namespace GameState {
 		glm::vec3 goalLocation;			///< isAutoMoveがtrueの時のゴール地点
 
 		const glm::vec3 moveBox[2] =	///< プレイヤーの移動可能な領域
-		{	glm::vec3(-screenHalfW, -120, -screenHalfH) * 0.9f,
-			glm::vec3(screenHalfW, 100, screenHalfH) * 0.9f };		
+		{	glm::vec3(-GameState::screenHalfW, -120, -GameState::screenHalfH) * 0.9f,
+			glm::vec3(GameState::screenHalfW, 100, GameState::screenHalfH) * 0.9f };
 
 		int remainingPlayer = 3;		///< プレイヤー残機
 	};

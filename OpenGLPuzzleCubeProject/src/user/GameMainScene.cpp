@@ -15,62 +15,7 @@
 #include "GameEndScene.h"
 #include "TitleScene.h"
 
-namespace GameState {
-
-	/**
-	*	コンストラクタ
-	*
-	*	@param l	ループするかどうかのフラグ
-	*/
-	Landscape::Landscape(bool l) :
-		isLoop(l){
-	}
-
-	/**
-	*	初期化処理
-	*/
-	void Landscape::Initialize() {
-		entity->CastShadow(false);
-		start = entity->Position();
-	}
-
-	/**
-	*	更新処理
-	*
-	*	@param delta	経過時間
-	*/
-	void Landscape::Update(float delta) {
-
-		timer += delta;
-		glm::vec3 newPos = entity->Position() + glm::vec3(0, 0, -10.0f * delta);
-
-		entity->Position(newPos);
-
-
-		if (newPos.z < -80 && isLoop) {
-			entity->Position(glm::vec3(glm::vec2(newPos), newPos.z + 200.0f));
-		}
-	}
-
-	/**
-	*	背景の初期化処理
-	*/
-	void SpaceSphereMain::Initialize() {
-		entity->CastShadow(false);
-	}
-
-	/**
-	*	背景の更新処理
-	*/
-	void SpaceSphereMain::Update(float delta) {
-
-		glm::vec3 rotSpace = glm::eulerAngles(entity->Rotation());
-		rotSpace.x += glm::radians(2.5f) * delta;
-		entity->Rotation(rotSpace);
-	}
-
-	
-	///メインゲーム画面のクラス定義
+namespace Application {
 
 	/**
 	*	初期化処理
@@ -138,10 +83,10 @@ namespace GameState {
 		game.UserVariable("score") = 0;
 
 		///衝突判定用ハンドラの定義
-		game.CollisionHandler(EntityGroupId_PlayerShot, EntityGroupId_Enemy);
-		game.CollisionHandler(EntityGroupId_EnemyShot, EntityGroupId_Player);
-		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Enemy);
-		game.CollisionHandler(EntityGroupId_Player, EntityGroupId_Item);
+		game.CollisionHandler(GameState::EntityGroupId_PlayerShot, GameState::EntityGroupId_Enemy);
+		game.CollisionHandler(GameState::EntityGroupId_EnemyShot, GameState::EntityGroupId_Player);
+		game.CollisionHandler(GameState::EntityGroupId_Player, GameState::EntityGroupId_Enemy);
+		game.CollisionHandler(GameState::EntityGroupId_Player, GameState::EntityGroupId_Item);
 
 		/// ライト・輝度の設定
 		game.AmbientLight(glm::vec4(0.05f, 0.1f, 0.2f, 1));
@@ -237,7 +182,7 @@ namespace GameState {
 		launchController = std::make_shared<EnemyLaunchController>();
 		launchController->Init(stageNo);
 
-		auto playerEntity = game.AddEntity(EntityGroupId_Player, glm::vec3(0, 0, 0),
+		auto playerEntity = game.AddEntity(GameState::EntityGroupId_Player, glm::vec3(0, 0, 0),
 			"Aircraft", "Res/Model/Player.dds", playerData);
 
 		playerData->StartMoveSet();
@@ -276,7 +221,7 @@ namespace GameState {
 
 				for (int x = 0; x < 5; ++x) {
 					const float offsetX = static_cast<float>(x * 40 - 80) * 5.0f;
-					game.AddEntity(EntityGroupId_Background, glm::vec3(offsetX, -100.0, offsetZ),
+					game.AddEntity(GameState::EntityGroupId_Background, glm::vec3(offsetX, -100.0, offsetZ),
 						"Landscape01", "Res/Model/BG02.Diffuse.dds", "Res/Model/BG02.Normal.bmp", std::make_shared<Landscape>());
 				}
 			}
@@ -307,9 +252,9 @@ namespace GameState {
 
 				for (int x = 0; x < 5; ++x) {
 					const float offsetX = static_cast<float>(x * 40 - 80);
-					game.AddEntity(EntityGroupId_Background, glm::vec3(offsetX, -10, offsetZ),
+					game.AddEntity(GameState::EntityGroupId_Background, glm::vec3(offsetX, -10, offsetZ),
 						"City01", "Res/Model/City01.Diffuse.dds", "Res/Model/City01.Normal.bmp", std::make_shared<Landscape>(true));
-					game.AddEntity(EntityGroupId_Background, glm::vec3(offsetX, -10, offsetZ),
+					game.AddEntity(GameState::EntityGroupId_Background, glm::vec3(offsetX, -10, offsetZ),
 						"City01.Shadow", "Res/Model/City01.Diffuse.dds", "Res/Model/City01.Normal.bmp", std::make_shared<Landscape>(true));
 				}
 			}
@@ -337,7 +282,7 @@ namespace GameState {
 			stageName.str = "To SPACE";
 
 			//背景エンティティ作成
-			game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
+			game.AddEntity(GameState::EntityGroupId_Background, glm::vec3(0, 0, 0),
 				"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<SpaceSphereMain>(), "NonLighting");
 
 			break;

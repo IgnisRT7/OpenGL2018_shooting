@@ -10,7 +10,7 @@
 #include <memory>
 #include "../Engine/Sprite.h"
 
-namespace GameState {
+namespace Application {
 
 	///”wŒi‚ÌXV
 	class TitleSpaceSphere : public Entity::EntityDataBase {

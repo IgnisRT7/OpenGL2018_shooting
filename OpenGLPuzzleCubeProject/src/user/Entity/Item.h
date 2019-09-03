@@ -7,7 +7,7 @@
 
 #include "../../Engine/Entity.h"
 
-namespace GameState {
+namespace Application {
 
 	/// ƒAƒCƒeƒ€
 	class Item : public Entity::EntityDataBase {

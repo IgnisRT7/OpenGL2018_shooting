@@ -88,6 +88,9 @@
     <ClCompile Include="src\user\Entity\EnemySpawner.cpp">
       <Filter>User\Entity</Filter>
     </ClCompile>
+    <ClCompile Include="src\user\Entity\LandScape.cpp">
+      <Filter>User\Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine\GameEngine.h">
@@ -184,6 +187,9 @@
       <Filter>Res</Filter>
     </ClInclude>
     <ClInclude Include="src\user\Entity\EnemySpawner.h">
+      <Filter>User\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="src\user\Entity\LandScape.h">
       <Filter>User\Entity</Filter>
     </ClInclude>
   </ItemGroup>

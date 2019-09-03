@@ -8,7 +8,7 @@
 #include "TitleScene.h"
 #include "../Engine/Scene.h"
 
-namespace GameState{
+namespace Application{
 
 	///タイトル画面
 	class GameEnd : public Scene{
@@ -16,12 +16,38 @@ namespace GameState{
 
 		GameEnd(bool clear = false) :isClear(clear),Scene("GameEnd") {}
 
+		/**
+		*	初期化処理
+		*
+		*	@return true	初期化成功
+		*/
 		bool Initialize() override;
-		void Update(float delta) override;
+
+		/**
+		*	更新処理
+		*
+		*	@param deltaTime	経過時間
+		*/
+		void Update(float deltaTime) override;
+
+		/**
+		*	終了処理
+		*/
 		void Finalize() override;
 
+		/**
+		*	開始処理
+		*/
 		void Play() override;
+
+		/**
+		*	停止処理
+		*/
 		void Stop() override;
+
+		/**
+		*	非表示処理
+		*/
 		void Hide() override {}
 		
 	private:

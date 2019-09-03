@@ -9,35 +9,9 @@
 #include "../Engine/Scene.h"
 #include "EnemyLaunchController.h"
 #include "../Engine/Sprite.h"
+#include "Entity/LandScape.h"
 
-namespace GameState {
-
-
-	///背景(スライド)
-	class Landscape : public Entity::EntityDataBase {
-	public:
-
-		//Landscape() = default;
-		Landscape(bool l = false);
-
-		void Initialize() override;
-		void Update(float delta) override;
-	private:
-
-		float timer = 0;
-		glm::vec3 start;
-		bool isLoop = false;
-	};
-
-	///背景の更新(回転)
-	class SpaceSphereMain : public Entity::EntityDataBase {
-
-		void Initialize() override;
-
-		void Update(float delta) override;
-	};
-	
-
+namespace Application {
 
 	///メインゲーム画面
 	class MainGame : public Scene{
@@ -89,7 +63,7 @@ namespace GameState {
 		std::shared_ptr<Player> playerData;	///< プレイヤーのエンティティデータ
 		std::shared_ptr<Sprite> hpguage;	///< デバッグ用HPゲージ用スプライト
 
-		EnemyLaunchControllerPtr launchController;	
+		Application::EnemyLaunchControllerPtr launchController;	
 	};
 
 }

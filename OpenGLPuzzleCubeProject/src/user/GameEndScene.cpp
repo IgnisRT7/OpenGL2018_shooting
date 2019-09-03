@@ -1,8 +1,7 @@
 /**
 *	@file	GameEndScene.cpp
-*	@brief	ゲームオーバー時のシーン制御用
-*	@author	Takuya Yokoyama
 */
+
 #include "GameEndScene.h"
 #include "../Engine/GameEngine.h"
 #include "../GameState.h"
@@ -14,12 +13,9 @@
 #include <iostream>
 #include <fstream>
 
-namespace GameState{
+namespace Application{
 
-	/**
-	*	初期化処理
-	*/
-	bool GameState::GameEnd::Initialize(){
+	bool GameEnd::Initialize(){
 
 		GameEngine& game = GameEngine::Instance();
 
@@ -91,7 +87,7 @@ namespace GameState{
 
 		GameEngine& game = GameEngine::Instance();
 
-		auto e = game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
+		auto e = game.AddEntity(GameState::EntityGroupId_Background, glm::vec3(0, 0, 0),
 			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
 		game.KeyValue(0.1f);
 

@@ -17,7 +17,7 @@
 #include "../../Res/Audio/testProject_acf.h"
 #include "../../Res/Audio/CueSheet_0.h"
 
-namespace GameState {
+namespace Application {
 
 	///　背景球クラス定義
 
@@ -67,11 +67,11 @@ namespace GameState {
 
 		timer = 0;
 
-		game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
+		game.AddEntity(GameState::EntityGroupId_Background, glm::vec3(0, 0, 0),
 			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
 
 		player = std::make_shared<PlayerForProduction>();
-		game.AddEntity(EntityGroupId_Others, glm::vec3(0, 0, 0), "Aircraft", "Res/Model/Player.dds", player, "NonLighting");
+		game.AddEntity(GameState::EntityGroupId_Others, glm::vec3(0, 0, 0), "Aircraft", "Res/Model/Player.dds", player, "NonLighting");
 
 		sampleSprite = std::make_shared<Sprite>(Texture::LoadFromFile("Res/Model/Player.dds"));
 

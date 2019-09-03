@@ -289,7 +289,7 @@ namespace GLFWEW {
 
 		static glm::vec2 prev = glm::vec2(0);
 
-		gamepad.mouseWheelY = y - prev.y;
+		gamepad.mouseWheelY = static_cast<int>(y - prev.y);
 
 		prev = glm::vec2(x, y);
 

@@ -7,7 +7,7 @@
 #include "../Engine/Entity.h"
 
 
-namespace GameState {
+namespace Application {
 
 	///弾の生成システムのベースクラス
 	class BulletGenerator {

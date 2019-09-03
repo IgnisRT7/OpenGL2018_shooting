@@ -86,7 +86,7 @@ bool GameEngine::Init(int w, int h, const char* title) {
 	}
 
 	windowSize = glm::vec2(w, h);
-	windowAspect = w / h;
+	windowAspect = windowSize.x / windowSize.y;
 	viewportRect[0] = glm::vec2(0, 0);
 	viewportRect[1] = windowSize;
 

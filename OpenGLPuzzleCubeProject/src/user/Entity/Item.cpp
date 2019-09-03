@@ -5,7 +5,7 @@
 #include "Item.h"
 #include "../../Engine/GameEngine.h"
 
-namespace GameState {
+namespace Application {
 
 	void Item::Initialize() {
 		entity->Scale({ 0.8f,0.8f,0.8f });

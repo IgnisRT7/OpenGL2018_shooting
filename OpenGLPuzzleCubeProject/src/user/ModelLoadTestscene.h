@@ -6,26 +6,29 @@
 #pragma once
 #include "../Engine/Scene.h"
 
-struct ModelLoadTestScene : Scene{
-public:
+namespace Application {
 
-	ModelLoadTestScene();
-	~ModelLoadTestScene() = default;
-	ModelLoadTestScene(const ModelLoadTestScene&) = delete;
-	ModelLoadTestScene& operator=(const ModelLoadTestScene&) = delete;
+	struct ModelLoadTestScene : Scene {
+	public:
+
+		ModelLoadTestScene();
+		~ModelLoadTestScene() = default;
+		ModelLoadTestScene(const ModelLoadTestScene&) = delete;
+		ModelLoadTestScene& operator=(const ModelLoadTestScene&) = delete;
 
 
-	bool Initialize() override;
-	void Update(float d) override;
-	void Finalize() override;
+		bool Initialize() override;
+		void Update(float d) override;
+		void Finalize() override;
 
-	void Play() override;
-	void Stop() override;
-	void Hide() override;
+		void Play() override;
+		void Stop() override;
+		void Hide() override;
 
-private:
+	private:
 
-	float moveSpeed = 10.0f;
-	float rotateSpeed = 10.0f;
+		float moveSpeed = 10.0f;
+		float rotateSpeed = 10.0f;
 
-};
+	};
+}

@@ -15,7 +15,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-namespace GameState {
+namespace Application {
 
 	/*
 	*	‰Šú‰»ˆ—

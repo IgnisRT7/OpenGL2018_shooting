@@ -21,37 +21,37 @@
 #include "Player.h"
 #include <memory>
 
-namespace GameState {
+namespace  Application{
 
 	void Toroid::Initialize() {
 		entity->CastShadow(true);
-		entity->CastStencil(true);	//TODO : ステンシルマスクのテスト用
+		entity->CastStencil(true);	
 		entity->StencilColor(glm::vec4(1, 0, 1, 1));
 		entity->Scale(glm::vec3(1.5));
 
-		entity->Collision(collisionDataList[EntityGroupId_Enemy]);
+		entity->Collision(GameState::collisionDataList[GameState::EntityGroupId_Enemy]);
 
 		return;
 	}
 
 	void Toroid::Update(float deltaTime) {
 
-		timer += delta;
+		timer += deltaTime;
 
 		//弾管理システムの更新
 		if (bulletGenerator) {
 			//bulletGenerator->Color(bulletColor);
-			bulletGenerator->Update(delta);
+			bulletGenerator->Update(deltaTime);
 		}
 
 		//移動管理システムの更新
 		if (moveController) {
-			moveController->Update(*entity, delta);
+			moveController->Update(*entity, deltaTime);
 		}
 
 		// 円盤を回転させる.
 		float rot = glm::angle(entity->Rotation());
-		rot += glm::radians(180.0f) * delta;
+		rot += glm::radians(180.0f) * deltaTime;
 		if (rot > glm::pi<float>() * 2.0f) {
 			rot -= glm::pi<float>() * 2.0f;
 		}
@@ -60,7 +60,7 @@ namespace GameState {
 		//画面外判定処理
 		if (isDestroyByScreenOut) {
 			const glm::vec3 pos = entity->Position();
-			if (std::abs(pos.x) > screenHalfW * 1.2 || std::abs(pos.z) > screenHalfH * 1.2) {
+			if (std::abs(pos.x) > GameState::screenHalfW * 1.2 || std::abs(pos.z) > GameState::screenHalfH * 1.2) {
 
 				std::cout << "enemy of outrange" << std::endl;
 				GameEngine::Instance().RemoveEntity(entity);
@@ -78,7 +78,7 @@ namespace GameState {
 			if (--hp <= 0) {
 
 				//爆発エフェクト
-				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, entity->Position(), "Blast", Resource::tex_toroid, std::make_shared<Blast>())) {
+				if (Entity::Entity* p = game.AddEntity(GameState::EntityGroupId_Others, entity->Position(), "Blast", Resource::tex_toroid, std::make_shared<Application::Blast>())) {
 					const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
 					p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
 					p->Color(glm::vec4(1.0f, 0.75f, 0.5f, 1.0f));
@@ -95,8 +95,8 @@ namespace GameState {
 					//アイテム
 					std::string texName = itemID ? Resource::tex_itemboxSpeed : Resource::tex_itemboxPower;
 
-					if (Entity::Entity* p = game.AddEntity(EntityGroupId_Item, entity->Position(), "ItemBox", texName.c_str(), std::make_shared<Item>(itemID))) {
-						p->Collision(collisionDataList[EntityGroupId_Item]);
+					if (Entity::Entity* p = game.AddEntity(GameState::EntityGroupId_Item, entity->Position(), "ItemBox", texName.c_str(), std::make_shared<Item>(itemID))) {
+						p->Collision(GameState::collisionDataList[GameState::EntityGroupId_Item]);
 					}
 				}
 
@@ -135,7 +135,7 @@ namespace GameState {
 			auto t = std::make_shared<Toroid>();
 			t->DestroyByScreenOut(false);
 
-			if (auto p = game.AddEntity(EntityGroupId_Others, glm::vec3(-60,0,0),
+			if (auto p = game.AddEntity(GameState::EntityGroupId_Others, glm::vec3(-60,0,0),
 				"", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", t)) {
 
 				turrets.push_back(t);
@@ -143,10 +143,10 @@ namespace GameState {
 				//タレット用弾作成
 				BulletGeneratorPtr b;
 				if ((i % 2) == 0) {
-					b = std::make_shared<MultiWayShot>(*p, EntityGroupId_EnemyShot, nullptr, 15, 3);
+					b = std::make_shared<MultiWayShot>(*p, GameState::EntityGroupId_EnemyShot, nullptr, 15, 3);
 				}
 				else {
-					b = std::make_shared<NormalShot>(*p, EntityGroupId_EnemyShot, playerEntity);
+					b = std::make_shared<NormalShot>(*p, GameState::EntityGroupId_EnemyShot, playerEntity);
 				}
 
 				t->BulletGenerator(b);
@@ -203,7 +203,8 @@ namespace GameState {
 			GameEngine& game = GameEngine::Instance();
 
 			//爆発エフェクト
-			if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, entity->Position(), "Blast", "Res/Model/Toroid.dds", std::make_shared<Blast>())) {
+			if (Entity::Entity* p = game.AddEntity(GameState::EntityGroupId_Others, entity->Position(),
+				"Blast", "Res/Model/Toroid.dds", std::make_shared<Blast>())) {
 				const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
 				p->Scale(glm::vec3(10.0f));
 				p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
@@ -304,56 +305,5 @@ namespace GameState {
 			}
 		}
 	}
-
-	/// 敵スポナーのクラス定義
-
-	/**
-	*	コンストラクタ
-	*
-	*	@param max	スポーン数
-	*	@param interval	出撃間隔
-	*	@param eType	敵のタイプ
-	*	@param mType	移動タイプ
-	*	@param bType	弾のタイプ
-	*/
-	EnemySpawner::EnemySpawner(int max, float interval, int eType, int mType, int bType, int health) :
-		spawnMax(max), spawnInterval(interval), enemyType(eType),
-		moveType(mType), bulletType(bType),health(health) {
-	}
-
-	/**
-	*	初期化処理
-	*/
-	void EnemySpawner::Initialize() {
-		playerEntity = GameEngine::Instance().FindEntityData<Player>();
-	}
-
-	/**
-	*	敵スポナーの更新処理
-	*
-	*	@param delta	経過時間
-	*/
-	void EnemySpawner::Update(float delta) {
-
-		GameEngine& game = GameEngine::Instance();
-
-		time += delta;
-
-		//敵の出撃処理
-		if (launchIndex < static_cast<int>(time / spawnInterval)) {
-			SpawnEnemy();
-			launchIndex++;
-		}
-
-		if (time >= spawnMax * spawnInterval) {
-			//スポーン終了
-
-			entity->Destroy();
-			return;
-		}
-	}
-
-
-
 
 }

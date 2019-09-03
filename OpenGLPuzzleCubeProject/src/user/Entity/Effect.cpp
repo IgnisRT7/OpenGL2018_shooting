@@ -3,7 +3,7 @@
 */
 #include "Effect.h"
 
-namespace GameState {
+namespace Application {
 
 	void Blast::Initialize() {
 

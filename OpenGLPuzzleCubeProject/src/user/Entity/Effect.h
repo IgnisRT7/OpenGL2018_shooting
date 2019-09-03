@@ -1,13 +1,13 @@
 /**
 *	@file Effect.h
 *	@brief	3Dモデルを使用した疑似エフェクト
-*	@author	TakuyaYokoyama
+*	@author	TakuyaYokoyama, tn-mai(講義資料製作者)
 */
 #pragma once
 #include "../../Engine/Entity.h"
 
 
-namespace GameState {
+namespace Application {
 
 
 	/**

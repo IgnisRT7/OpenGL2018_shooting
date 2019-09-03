@@ -59,7 +59,7 @@ void CameraDebugComponent::Update(float deltaTime){
 		glm::vec3 rot;	/// ƒJƒƒ‰‚ÌŽ²‚É‘Î‚·‚é‰ñ“]—Ê
 		glm::vec2 mouseVel = gamepad.mouseVelocity;
 		rot = glm::vec3(mouseVel.y, mouseVel.x, 0);
-		rot *= mouseSensitivy * delta;
+		rot *= mouseSensitivy * deltaTime;
 
 
 		if (glm::length(mov) >= 0.05f || glm::length(rot) >= 0.05f) {
@@ -85,6 +85,6 @@ void CameraDebugComponent::Update(float deltaTime){
 			position = this->position;
 			direction = forward;
 		}
-		CameraComponent::Update(delta);
+		CameraComponent::Update(deltaTime);
 	}
 }
