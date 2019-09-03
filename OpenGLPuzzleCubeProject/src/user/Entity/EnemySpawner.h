@@ -10,7 +10,7 @@
 #include "../../Engine/GameEngine.h"
 #include "Player.h"
 #include "Enemy.h"
-#include "../EnemyMoveController.h"
+#include "../EnemyLaunchController.h"
 
 namespace Application {
 
