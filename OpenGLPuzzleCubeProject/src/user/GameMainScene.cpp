@@ -184,7 +184,7 @@ namespace Application {
 		launchController->Init(stageNo);
 
 		auto playerEntity = game.AddEntity(GameState::EntityGroupId_Player, glm::vec3(0, 0, 0),
-			"Aircraft", "Res/Model/Player.dds", playerData);
+			"Aircraft", Resource::tex_player, playerData);
 
 		playerData->StartMoveSet();
 
@@ -223,7 +223,7 @@ namespace Application {
 				for (int x = 0; x < 5; ++x) {
 					const float offsetX = static_cast<float>(x * 40 - 80) * 5.0f;
 					game.AddEntity(GameState::EntityGroupId_Background, glm::vec3(offsetX, -100.0, offsetZ),
-						"Landscape01", "Res/Model/BG02.Diffuse.dds", "Res/Model/BG02.Normal.bmp", std::make_shared<Landscape>());
+						"Landscape01", Resource::tex_bg02, Resource::tex_bg02_normal, std::make_shared<Landscape>());
 				}
 			}
 			break;
@@ -254,9 +254,9 @@ namespace Application {
 				for (int x = 0; x < 5; ++x) {
 					const float offsetX = static_cast<float>(x * 40 - 80);
 					game.AddEntity(GameState::EntityGroupId_Background, glm::vec3(offsetX, -10, offsetZ),
-						"City01", "Res/Model/City01.Diffuse.dds", "Res/Model/City01.Normal.bmp", std::make_shared<Landscape>(true));
+						"City01", Resource::tex_city01, Resource::tex_city01_normal, std::make_shared<Landscape>(true));
 					game.AddEntity(GameState::EntityGroupId_Background, glm::vec3(offsetX, -10, offsetZ),
-						"City01.Shadow", "Res/Model/City01.Diffuse.dds", "Res/Model/City01.Normal.bmp", std::make_shared<Landscape>(true));
+						"City01.Shadow", Resource::tex_city01, Resource::tex_city01_normal, std::make_shared<Landscape>(true));
 				}
 			}
 			break;
@@ -284,7 +284,7 @@ namespace Application {
 
 			//背景エンティティ作成
 			game.AddEntity(GameState::EntityGroupId_Background, glm::vec3(0, 0, 0),
-				"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<SpaceSphereMain>(), "NonLighting");
+				"SpaceSphere", Resource::tex_spaceSphere, std::make_shared<SpaceSphereMain>(), "NonLighting");
 
 			break;
 		}

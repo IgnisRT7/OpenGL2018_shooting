@@ -51,12 +51,10 @@ namespace Application {
 		timer = 0;
 
 		game.AddEntity(GameState::EntityGroupId_Background, glm::vec3(0, 0, 0),
-			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<SpaceSphereMain>(), "NonLighting");
+			"SpaceSphere", Resource::tex_spaceSphere, std::make_shared<SpaceSphereMain>(), "NonLighting");
 
 		player = std::make_shared<PlayerForProduction>();
-		game.AddEntity(GameState::EntityGroupId_Others, glm::vec3(0, 0, 0), "Aircraft", "Res/Model/Player.dds", player, "NonLighting");
-
-		sampleSprite = std::make_shared<Sprite>(Texture::LoadFromFile("Res/Model/Player.dds"));
+		game.AddEntity(GameState::EntityGroupId_Others, glm::vec3(0, 0, 0), "Aircraft", Resource::tex_player, player, "NonLighting");
 
 		game.KeyValue(0.01f);
 

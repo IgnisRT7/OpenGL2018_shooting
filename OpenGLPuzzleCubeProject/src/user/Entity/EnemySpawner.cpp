@@ -3,6 +3,7 @@
 */
 
 #include "EnemySpawner.h"
+#include "../../../Res/Resource.h"
 
 namespace Application {
 
@@ -69,7 +70,7 @@ namespace Application {
 			b->Target(playerEntity);
 
 			Entity::Entity* p = game.AddEntity(GameState::EntityGroupId_Enemy, entity->Position(),
-				"MotherShip", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", b);
+				"MotherShip", Resource::tex_toroid, Resource::tex_toroid_normal, b);
 		}
 		else {
 
@@ -86,7 +87,7 @@ namespace Application {
 			}
 
 			Entity::Entity* p = game.AddEntity(GameState::EntityGroupId_Enemy, pos,
-				"Toroid", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", t);
+				"Toroid", Resource::tex_toroid, Resource::tex_toroid_normal, t);
 
 			//弾のタイプに基づいて弾生成機を作成
 			if (bulletType != -1) {

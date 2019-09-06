@@ -204,7 +204,7 @@ namespace  Application{
 
 			//爆発エフェクト
 			if (Entity::Entity* p = game.AddEntity(GameState::EntityGroupId_Others, entity->Position(),
-				"Blast", "Res/Model/Toroid.dds", std::make_shared<Blast>())) {
+				"Blast", Resource::fbx_blast, std::make_shared<Blast>())) {
 				const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
 				p->Scale(glm::vec3(10.0f));
 				p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));

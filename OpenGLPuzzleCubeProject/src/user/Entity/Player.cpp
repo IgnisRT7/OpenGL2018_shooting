@@ -9,6 +9,7 @@
 #include "Item.h"
 #include "Enemy.h"
 #include "Effect.h"
+#include "../../../Res/Resource.h"
 
 #include "../../../Res/Audio/testProject_acf.h"
 #include "../../../Res/Audio/CueSheet_0.h"
@@ -141,7 +142,7 @@ namespace Application {
 
 			//爆発エフェクト
 			if (Entity::Entity* p = game.AddEntity(GameState::EntityGroupId_Others, entity->Position(),
-				"Blast", "Res/Model/Toroid.dds", std::make_shared<Blast>())) {
+				"Blast", Resource::tex_toroid, std::make_shared<Blast>())) {
 				const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
 				p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
 				p->Color(glm::vec4(1.0f, 0.75f, 0.5f, 1.0f));
@@ -221,7 +222,7 @@ namespace Application {
 			auto b = std::make_shared<Bullet>();
 
 			if (Entity::Entity* p = game.AddEntity(GameState::EntityGroupId_PlayerShot, leftPos + glm::vec3(i * bulletInterval, 0, + 1.0f),
-				"NormalShot", "Res/Model/Player.dds", b, "NonLighting")) {
+				"NormalShot", Resource::tex_player, b, "NonLighting")) {
 
 				b->Velocity(glm::vec3(0, 0, 100));
 				
