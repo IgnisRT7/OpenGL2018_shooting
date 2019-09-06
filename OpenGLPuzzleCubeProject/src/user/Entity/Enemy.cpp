@@ -93,7 +93,7 @@ namespace  Application{
 					int itemID = rand() % 2;
 
 					//アイテム
-					std::string texName = itemID ? Resource::tex_itemboxSpeed : Resource::tex_itemboxPower;
+					std::string texName = itemID ? Resource::tex_itemboxSpeed : Resource::tex_itemboxBullet;
 
 					if (Entity::Entity* p = game.AddEntity(GameState::EntityGroupId_Item, entity->Position(), "ItemBox", texName.c_str(), std::make_shared<Item>(itemID))) {
 						p->Collision(GameState::collisionDataList[GameState::EntityGroupId_Item]);
@@ -136,7 +136,7 @@ namespace  Application{
 			t->DestroyByScreenOut(false);
 
 			if (auto p = game.AddEntity(GameState::EntityGroupId_Others, glm::vec3(-60,0,0),
-				"", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", t)) {
+				"", Resource::tex_toroid, Resource::tex_toroid_normal, t)) {
 
 				turrets.push_back(t);
 
@@ -157,7 +157,7 @@ namespace  Application{
 		glm::vec2 windowSize = game.WindowSize();
 
 		//HPゲージ作成
-		hpGuage = std::make_shared<HealthGuage>(Texture::LoadFromFile("Res/HealthMeter.dds"));
+		hpGuage = std::make_shared<HealthGuage>(Texture::LoadFromFile(Resource::tex_healthMeter));
 		hpGuage->Program(Shader::Program::Create("Res/Shader/HealthGauge.vert", "Res/Shader/HealthGauge.frag"));
 		glm::vec3 pos = hpGuage->Position();
 		pos += glm::vec3(0, windowSize.y * 0.45, 0);

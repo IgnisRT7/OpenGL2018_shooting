@@ -9,6 +9,7 @@
 #include "../../Res/Audio/CueSheet_0.h"
 #include "../../Res/Audio/testProject_acf.h"
 #include "../Engine/GameEngine.h"
+#include "../../Res/Resource.h"
 
 #include "Entity/Enemy.h"
 
@@ -26,16 +27,15 @@ namespace Application {
 
 		//モデルデータのロード
 		const char* meshPassList[] = {
-			"Res/Model/Player.fbx",
-			"Res/Model/Player2.fbx",
-			"Res/Model/Blast.fbx",
-			"Res/Model/Toroid.fbx",
-			"Res/Model/MotherShip.fbx",
-			"Res/Model/ItemBox.fbx",
-			"Res/Model/sampleSphere.fbx",
-			"Res/Model/Landscape.fbx",
-			"Res/Model/City01.fbx",
-			"Res/Model/SpaceSphereWithTexture.fbx",
+			Resource::fbx_player,
+			Resource::fbx_playerType2,
+			Resource::fbx_blast,
+			Resource::fbx_toroid,
+			Resource::fbx_motherShip,
+			Resource::fbx_itembox,
+			Resource::fbx_spaceSphere,
+			Resource::fbx_landscape,
+			Resource::fbx_city,
 		};
 
 		for (const char* meshPass : meshPassList) {
@@ -46,18 +46,19 @@ namespace Application {
 
 		//テクスチャデータのロード
 		const char* texturePassList[] = {
-			"Res/Model/Player.dds",
-			"Res/Model/Toroid.dds",
-			"Res/Model/Toroid.Normal.bmp",
-			"Res/Model/ItemBoxSpeed.dds",
-			"Res/Model/ItemBoxBullet.dds",
-			"Res/Model/sphere.dds",
-			"Res/Model/BG02.Diffuse.dds",
-			"Res/Model/BG02.Normal.bmp",
-			"Res/Model/City01.Diffuse.dds",
-			"Res/Model/City01.Normal.bmp",
-			"Res/Model/SpaceSphere.dds",
+			Resource::tex_player,
+			Resource::tex_toroid,
+			Resource::tex_toroid_normal,
+			Resource::tex_itemboxSpeed,
+			Resource::tex_itemboxBullet,
+			Resource::tex_bullet,
+			Resource::tex_bg02,
+			Resource::tex_bg02_normal,
+			Resource::tex_city01,
+			Resource::tex_city01_normal,
+			Resource::tex_spaceSphere,
 		};
+
 		for (const char* texturePass : texturePassList) {
 			if (!game.LoadTextureFromFile(texturePass)) {
 				std::cout << "file: " << texturePass << "の読み込みに失敗" << std::endl;

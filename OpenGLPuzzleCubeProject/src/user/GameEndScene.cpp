@@ -9,6 +9,7 @@
 
 #include "../../Res/Audio/testProject_acf.h"
 #include "../../Res/Audio/CueSheet_0.h"
+#include "../../Res/Resource.h"
 
 #include <iostream>
 #include <fstream>
@@ -19,8 +20,8 @@ namespace Application{
 
 		GameEngine& game = GameEngine::Instance();
 
-		game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
-		game.LoadTextureFromFile("Res/Model/SpaceSphere.dds");
+		game.LoadMeshFromFile(Resource::fbx_spaceSphere);
+		game.LoadTextureFromFile(Resource::tex_spaceSphere);
 
 		//ハイスコア読み込み処理
 		int highScore = 100000;
@@ -88,7 +89,7 @@ namespace Application{
 		GameEngine& game = GameEngine::Instance();
 
 		auto e = game.AddEntity(GameState::EntityGroupId_Background, glm::vec3(0, 0, 0),
-			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<SpaceSphereMain>(), "NonLighting");
+			"SpaceSphere", Resource::fbx_spaceSphere, std::make_shared<SpaceSphereMain>(), "NonLighting");
 		game.KeyValue(0.1f);
 
 		game.MainCamera(std::make_shared<CameraComponent>());

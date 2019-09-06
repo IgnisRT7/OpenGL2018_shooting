@@ -10,6 +10,7 @@
 #include "../GameState.h"
 #include "GameMainScene.h"
 #include "ModelLoadTestscene.h"
+#include "../../Res/Resource.h"
 
 
 #include "../../Res/Audio/testProject_acf.h"
@@ -24,10 +25,11 @@ namespace Application {
 		
 		GameEngine& game = GameEngine::Instance();
 
-		game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
-		game.LoadTextureFromFile("Res/Model/SpaceSphere.dds");
-		game.LoadMeshFromFile("Res/Model/Player.fbx");
-		game.LoadTextureFromFile("Res/Model/Player.dds");
+		
+		game.LoadMeshFromFile(Resource::fbx_spaceSphere);
+		game.LoadTextureFromFile(Resource::tex_spaceSphere);
+		game.LoadMeshFromFile(Resource::fbx_player);
+		game.LoadTextureFromFile(Resource::tex_player);
 
 		return true;
 	}
