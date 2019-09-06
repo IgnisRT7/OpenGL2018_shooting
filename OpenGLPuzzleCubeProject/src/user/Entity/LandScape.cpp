@@ -32,9 +32,6 @@ namespace Application {
 		entity->CastShadow(false);
 	}
 
-	/**
-	*	”wŒi‚ÌXVˆ—
-	*/
 	void SpaceSphereMain::Update(float deltaTime) {
 
 		glm::vec3 rotSpace = glm::eulerAngles(entity->Rotation());

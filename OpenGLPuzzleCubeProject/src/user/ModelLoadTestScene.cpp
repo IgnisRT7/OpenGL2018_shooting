@@ -14,12 +14,6 @@ namespace Application {
 
 	}
 
-	/**
-	*	初期化処理
-	*
-	*	@retval true	初期化成功
-	*	@retval false	初期化失敗
-	*/
 	bool ModelLoadTestScene::Initialize() {
 
 		GameEngine& game = GameEngine::Instance();
@@ -31,15 +25,9 @@ namespace Application {
 		return false;
 	}
 
-	/**
-	*	終了処理
-	*/
 	void ModelLoadTestScene::Finalize() {
 	}
 
-	/**
-	*	開始処理
-	*/
 	void ModelLoadTestScene::Play() {
 
 		GameEngine& game = GameEngine::Instance();
@@ -79,23 +67,12 @@ namespace Application {
 
 	}
 
-	/**
-	*	停止処理
-	*/
 	void ModelLoadTestScene::Stop() {
 	}
 
-	/**
-	*	非表示処理
-	*/
 	void ModelLoadTestScene::Hide() {
 	}
 
-	/**
-	*	更新処理
-	*
-	*	@param delta	経過時間
-	*/
 	void ModelLoadTestScene::Update(float delta) {
 	}
 }

@@ -47,11 +47,40 @@ namespace Application {
 		EnemyLaunchController(const EnemyLaunchController&) = delete;
 		void operator=(const EnemyLaunchController&) = delete;
 
+		/**
+		*	初期化処理
+		*
+		*	@param stageNum	ロードするステージの番号
+		*/
 		void Init(int stageNum);
+
+		/**
+		*	ステージデータの読み込み処理
+		*
+		*	@param filename ステージのファイル名
+		*/
 		void Load(const std::string& filename);
 
+		/**
+		*	更新処理
+		*
+		*	@param deltaTime	経過時間
+		*/
 		void Update(float deltaTime);
+
+		/**
+		*	終了状態の取得
+		*
+		*	@retval true	出撃が終了した
+		*	@retval false	出撃中
+		*/
 		bool IsFinish() const { return isFinished; }
+
+		/**
+		*	最後にスポーンする敵の時間の取得
+		*
+		*	@return 最後にスポーンする時間
+		*/
 		float LastSpawnedTime() const { return lastSpawnTime; }
 
 	private:

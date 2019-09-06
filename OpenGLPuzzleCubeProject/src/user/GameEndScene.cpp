@@ -74,29 +74,17 @@ namespace Application{
 		return true;
 	}
 
-	/**
-	*	終了処理
-	*/
 	void GameEnd::Finalize() {
 
 	}
 
-	/**
-	*	シーンの開始処理
-	*/
 	void GameEnd::Play() {
 
 		GameEngine& game = GameEngine::Instance();
 
-<<<<<<< HEAD
-		auto e = game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
-			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
-		game.KeyValue(0.03f);
-=======
 		auto e = game.AddEntity(GameState::EntityGroupId_Background, glm::vec3(0, 0, 0),
 			"SpaceSphere", Resource::fbx_spaceSphere, std::make_shared<SpaceSphereMain>(), "NonLighting");
 		game.KeyValue(0.1f);
->>>>>>> 5d5f335a25b2a64bd64e26cfd7b8d7421daa8a5c
 
 		game.MainCamera(std::make_shared<CameraComponent>());
 		game.MainCamera()->LookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
@@ -104,16 +92,9 @@ namespace Application{
 		game.PlayAudio(0, CRI_CUESHEET_0_GAMEOVER);
 	}
 
-	/**
-	*	シーンの停止処理
-	*/
 	void GameEnd::Stop() {
 	}
 
-
-	/**
-	*	更新処理
-	*/
 	void GameEnd::Update(float delta){
 
 		GameEngine& game = GameEngine::Instance();
@@ -148,7 +129,4 @@ namespace Application{
 			timer = 2;
 		}
 	}
-
-
-
 }

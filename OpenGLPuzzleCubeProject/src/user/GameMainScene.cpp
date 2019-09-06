@@ -18,9 +18,6 @@
 
 namespace Application {
 
-	/**
-	*	初期化処理
-	*/
 	bool MainGame::Initialize() {
 
 		GameEngine& game = GameEngine::Instance();
@@ -32,6 +29,7 @@ namespace Application {
 			Resource::fbx_blast,
 			Resource::fbx_toroid,
 			Resource::fbx_motherShip,
+			Resource::fbx_bullet,
 			Resource::fbx_itembox,
 			Resource::fbx_spaceSphere,
 			Resource::fbx_landscape,
@@ -68,15 +66,9 @@ namespace Application {
 		return true;
 	}
 
-	/**
-	*	終了処理
-	*/
 	void MainGame::Finalize() {
 	}
 
-	/**
-	*	再生処理
-	*/
 	void MainGame::Play() {
 
 		GameEngine& game = GameEngine::Instance();
@@ -110,18 +102,10 @@ namespace Application {
 		
 	}
 
-	/**
-	*	停止処理
-	*/
 	void MainGame::Stop() {
 
 	}
 
-	/**
-	*	画面に表示する情報の描画処理
-	*
-	*	@param deltaTime	経過時間
-	*/
 	void MainGame::DrawScreenInfo(float deltaTime) {
 
 		GameEngine& game = GameEngine::Instance();
@@ -168,9 +152,6 @@ namespace Application {
 		}
 	}
 
-	/**
-	*	ステージの読み込み処理
-	*/
 	void MainGame::StageLoad(){
 
 		GameEngine& game = GameEngine::Instance();
@@ -296,9 +277,6 @@ namespace Application {
 		stageTimer = nextStageTimer;
 	}
 
-	/**
-	*	メインゲーム画面の更新
-	*/
 	void MainGame::Update(float delta) {
 
 		GameEngine& game = GameEngine::Instance();

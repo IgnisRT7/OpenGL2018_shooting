@@ -54,11 +54,6 @@ namespace Application {
 		return  std::make_shared<MoveController>(seq);
 	}
 
-	/**
-	*	初期化処理l
-	*
-	*	@param stageNum	ロードするステージの番号
-	*/
 	void EnemyLaunchController::Init(int stageNum) {
 
 		std::string filename = "Res/StageData/Stage";
@@ -71,11 +66,6 @@ namespace Application {
 
 	}
 
-	/**
-	*	ステージデータの読み込み処理
-	*
-	*	@param filename ステージのファイル名
-	*/
 	void EnemyLaunchController::Load(const std::string& filename) {
 
 		launchList.clear();
@@ -118,11 +108,6 @@ namespace Application {
 		lastSpawnTime = lastLaunchData.launchCount * lastLaunchData.launchInterval + 10.0f;
 	}
 
-	/**
-	*	更新処理
-	*
-	*	@param deltaTime	経過時間
-	*/
 	void EnemyLaunchController::Update(float deltaTime) {
 
 		if (isFinished) {

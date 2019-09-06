@@ -57,12 +57,14 @@ namespace Application {
 		*
 		*	@param delayTime	この関数を呼び出してから動き出す時間
 		*/
-		void EndMoveSet(float delay);
+		void EndMoveSet(float delayTIme);
 
 		/**
 		*	ステージ開始後もしくはクリア後に行われる処理
+		*
+		*	@param deltaTime	経過時間
 		*/
-		void AutoMove(float delta);
+		void AutoMove(float deltaTime);
 
 		/**
 		*	弾の発射処理

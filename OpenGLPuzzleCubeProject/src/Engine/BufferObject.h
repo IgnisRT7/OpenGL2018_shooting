@@ -112,6 +112,11 @@ public:
 	*/
 	void UnBind() const;
 
+	/**
+	*	バッファオブジェクトのIDを取得
+	*
+	*	@return バッファオブジェクト
+	*/
 	GLuint Id() const { return id; }
 
 private:

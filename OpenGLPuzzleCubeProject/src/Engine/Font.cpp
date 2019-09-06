@@ -100,7 +100,7 @@ namespace Font {
 			return false;
 		}
 		std::string texName;
-		std::string res("Res/");
+		std::string res("Res/Texture/");
 		texName.assign(tex + 1, tex + strlen(tex) - 1);
 
 		texFilename = res + texName;

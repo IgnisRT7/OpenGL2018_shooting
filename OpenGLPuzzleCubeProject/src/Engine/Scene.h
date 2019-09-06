@@ -153,7 +153,6 @@ public:
 	*	@param delta	‘O‰ñ‚©‚ç‚ÌŒo‰ßŽžŠÔ
 	*/
 	void Update(float);
-	//void Render();
 
 private:
 

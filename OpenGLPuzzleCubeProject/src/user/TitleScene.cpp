@@ -18,9 +18,6 @@
 
 namespace Application {
 
-	/**
-	*	タイトル画面の初期化
-	*/
 	bool Title::Initialize() {
 		
 		GameEngine& game = GameEngine::Instance();
@@ -34,16 +31,10 @@ namespace Application {
 		return true;
 	}
 
-	/**
-	*	終了処理
-	*/
 	void Title::Finalize() {
 
 	}
 
-	/**
-	*	開始処理
-	*/
 	void Title::Play() {
 
 		GameEngine& game = GameEngine::Instance();
@@ -65,18 +56,10 @@ namespace Application {
 		game.PlayAudio(1, CRI_CUESHEET_0_TITLE1);
 	}
 
-	/**
-	*	停止処理
-	*/
 	void Title::Stop() {
 
 	}
 
-	/*
-	*	タイトル画面の更新
-	*
-	*	@param delta 経過時間
-	*/
 	void Title::Update(float delta) {
 
 		GameEngine& game = GameEngine::Instance();

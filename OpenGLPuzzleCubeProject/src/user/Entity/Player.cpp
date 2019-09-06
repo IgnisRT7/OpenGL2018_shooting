@@ -192,10 +192,16 @@ namespace Application {
 		autoMoveVel = glm::normalize(goalLocation - entity->Position()) * 30.0f;
 	}
 
-				game.PlayAudio(1, i->ItemType() != 1 ? CRI_CUESHEET_0_POWER_UP1 : CRI_CUESHEET_0_SPEED_UP1);
-			}
-			if (auto e = entity.CastTo<Toroid>()) {
-				//敵にダメージを与える
+	void Player::AutoMove(float delta) {
+
+		if (glm::length(goalLocation - entity->Position()) < 3.0f) {
+
+			isAutoMove = false;
+			entity->Velocity(glm::vec3(0));
+		}
+
+		if (autoMoveStartTimer >= 0 && --autoMoveStartTimer <= 0) {
+			//移動開始タイマーが切れた瞬間の動作
 
 			entity->Velocity(autoMoveVel);
 		}

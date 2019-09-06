@@ -7,32 +7,15 @@
 
 namespace Application {
 
-	/**
-*	コンストラクタ
-*
-*	@param max	スポーン数
-*	@param interval	出撃間隔
-*	@param eType	敵のタイプ
-*	@param mType	移動タイプ
-*	@param bType	弾のタイプ
-*/
 	EnemySpawner::EnemySpawner(int max, float interval, int eType, int mType, int bType, int health) :
 		spawnMax(max), spawnInterval(interval), enemyType(eType),
 		moveType(mType), bulletType(bType), health(health) {
 	}
 
-	/**
-	*	初期化処理
-	*/
 	void EnemySpawner::Initialize() {
 		playerEntity = GameEngine::Instance().FindEntityData<Player>();
 	}
 
-	/**
-	*	敵スポナーの更新処理
-	*
-	*	@param delta	経過時間
-	*/
 	void EnemySpawner::Update(float delta) {
 
 		GameEngine& game = GameEngine::Instance();
@@ -53,9 +36,6 @@ namespace Application {
 		}
 	}
 
-	/**
-	*	スポーン処理
-	*/
 	void EnemySpawner::SpawnEnemy() {
 
 		GameEngine& game = GameEngine::Instance();

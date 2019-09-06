@@ -387,7 +387,11 @@ public:
 	*/
 	void CalculateViewPortByAspect(int width,int height,float aspect);
 
-	//シェーダ取得処理
+	/*
+	*	シェーダ取得処理
+	*
+	*	@return シェーダプログラム
+	*/
 	Shader::ProgramPtr& Shader(const char* pass) { return shaderMap[pass]; }
 
 	/**

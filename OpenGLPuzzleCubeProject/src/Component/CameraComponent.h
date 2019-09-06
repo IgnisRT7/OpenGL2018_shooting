@@ -37,9 +37,23 @@ public:
 	virtual ~CameraComponent() = default;
 	const CameraComponent& operator=(const CameraComponent&) = delete;
 	
+	/**
+	*	ビュー変換行列の取得
+	*
+	*	@return ビュー変換行列
+	*/
 	virtual const glm::mat4& ViewMatrix() const;
+
+	/**
+	*	プロジェクション変換行列の取得
+	*
+	*	@return プロジェクション変換行列
+	*/
 	virtual const glm::mat4& ProjctionMatrix() const;
 
+	/**
+	*	初期化処理
+	*/
 	virtual void Initialize() {};
 
 	/**

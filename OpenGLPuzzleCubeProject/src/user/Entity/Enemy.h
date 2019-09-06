@@ -17,6 +17,13 @@ namespace Application {
 	class Toroid : public Entity::EntityDataBase {
 	public:
 
+		/**
+		*	コンストラクタ
+		*
+		*	@param typeID	本体のタイプ	
+		*	@param health	体力
+		*	@param itemDrop	アイテムをドロップするかどうかのフラグ
+		*/
 		Toroid(int typeID = 0, int health = 2, bool itemDrop = false) :
 			enemyType(typeID), isItemDrop(itemDrop), hp(health) {} 
 

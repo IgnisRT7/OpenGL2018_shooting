@@ -362,13 +362,22 @@ namespace Entity {
 		void DrawStencil(const Mesh::BufferPtr& meshBuffer, const Shader::ProgramPtr& program)const;
 
 		/**
-		*	表示するGroupIDの設定
+		*	表示するグループIDの設定
 		*
 		*	@param groupId		適用するGroupID
 		*	@param cameraIndex	適用するカメラのインデックス番号
 		*	@param isVisible	表示フラグ
 		*/
 		void GroupVisibility(int groupId, int cameraIndex, bool isVisible);
+
+		/**
+		*	グループIDから表示/非表示状態の取得
+		*
+		*	@param groupId		取得するグループID
+		*	@param cameraIndex	取得するカメラのインデックス番号
+		*
+		*	@return 表示フラグ
+		*/
 		bool GroupVisibility(int groupId, int cameraIndex) { return visibilityFlags[groupId] & (1U << cameraIndex); }
 
 		/**
@@ -496,7 +505,10 @@ namespace Entity {
 	class EntityDataBase {
 	public:
 
-		EntityDataBase() {}
+		EntityDataBase() = default;
+		~EntityDataBase() = default;
+		EntityDataBase(const EntityDataBase&) = delete;
+		const EntityDataBase& operator=(const EntityDataBase&) = delete;
 
 		/*
 		*	期化処理

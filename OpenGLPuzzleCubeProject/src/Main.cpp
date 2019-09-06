@@ -31,7 +31,7 @@ int main(){
 
 	//‰ŠúƒŠƒ\[ƒX‚Ì“Ç‚İ‚İ
 	game.LoadTextureFromFile(Resource::tex_defaultNormal);
-	game.LoadFontFromFile(Resource::tex_font);
+	game.LoadFontFromFile(Resource::fnt_default);
 
 	game.PushScene(std::make_shared<Application::Title>());
 

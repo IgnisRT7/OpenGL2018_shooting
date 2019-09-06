@@ -41,10 +41,22 @@ class MoveController {
 public:
 
 	MoveController() = default;
+
+	/**
+	*	コンストラクタ
+	*
+	*	@param p	操作する動作パーツ
+	*/
 	explicit MoveController(const MovePartPtr& p);
 	MoveController(const MoveController&) = delete;
 	MoveController& operator=(const MoveController&) = delete;
 
+	/**
+	*	更新処理
+	*
+	*	@param entity	制御するエンティティ
+	*	@param delta	経過時間
+	*/
 	void Update(Entity::Entity& entity, float delta);
 
 private:
@@ -65,13 +77,32 @@ class MoveStraight : public MovePart {
 public:
 
 	MoveStraight() = default;
+
+	/**
+	*	コンストラクタ
+	*
+	*	@param d	動作時間
+	*	@param v	移動距離
+	*/
 	MoveStraight(float d,const glm::vec3& v);
 
 	MoveStraight(const MoveStraight&) = delete;
 	MoveStraight& operator=(const MoveStraight&) = delete;
 	virtual ~MoveStraight() = default;
 
+	/**
+	*	初期化処理
+	*
+	*	@param entity	制御するエンティティ
+	*/
 	virtual void Initialize(Entity::Entity& p) override;
+
+	/**
+	*	更新処理
+	*
+	*	@param entity		制御するエンティティ
+	*	@param elapsedTime	経過時間
+	*/
 	void Update(Entity::Entity& e,float d) override;
 
 private:
@@ -88,12 +119,32 @@ class MoveCircle : public MovePart {
 public:
 
 	MoveCircle() = default;
+
+	/**
+	*	コンストラクタ
+	*
+	*	@param d	動作時間
+	*	@param a	移動角度
+	*	@param r	半径
+	*/
 	MoveCircle(float d,float a,float o, float r);
 	MoveCircle(const MoveCircle&) = delete;
 	MoveCircle& operator=(const MoveCircle&) = delete;
 	virtual ~MoveCircle() = default;
 
+	/**
+	*	初期化処理
+	*
+	*	@param entity	制御するエンティティ
+	*/
 	virtual void Initialize(Entity::Entity& p)override;
+
+	/**
+	*	更新処理
+	*
+	*	@param entity	制御するエンティティ
+	*	@param elapsedTime	経過時間
+	*/
 	void Update(Entity::Entity& e, float d)override;
 
 private:
@@ -115,12 +166,38 @@ public:
 	MovePartSequencer& operator=(const MovePartSequencer&) = delete;
 	virtual ~MovePartSequencer() = default;
 
+	/**
+	*	初期化処理
+	*
+	*	@param entity	制御対象のエンティティ
+	*/
 	virtual void Initialize(Entity::Entity& p) override;
+
+	/**
+	*	更新処理
+	*
+	*	@param entity		制御対象のエンティティ
+	*	@param elapsedTime	経過時間
+	*/
 	virtual void Update(Entity::Entity& p, float d) override;
+
+	/**
+	*	動作リストに追加
+	*
+	*	@param p	追加する動作パーツ
+	*/
 	void Add(const MovePartPtr p);
 
 private:
 
+	/**
+	*	次に実行させる動作パーツの設定をする
+	*
+	*	@param entity	制御対象のエンティティ
+	*
+	*	@retval true	次に動作させるパーツが存在し設定した
+	*	@retval false	次に動作させるパーツが存在しない(last index)
+	*/
 	bool NextMove(Entity::Entity&);
 
 	std::vector<MovePartPtr> movList;	///< 動作パーツのリスト

@@ -134,10 +134,6 @@ bool SceneStack::Empty() const {
 
 void SceneStack::Update(float delta) {
 
-	/*for (ScenePtr& e : stack) {
-		
-		e->Update(deltaTime);
-	}*/
 	Current().Update(delta);
 }
 
