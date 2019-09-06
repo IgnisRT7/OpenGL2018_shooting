@@ -6,22 +6,22 @@ namespace Resource {
 
 	//画像ファイル
 
-	const static char* tex_defaultNormal =	"Res/Model/Dummy.Normal.bmp";
-	const static char* tex_font =			"Res/Font.fnt";
+	const static char* tex_defaultNormal =	"Res/Texture/Dummy.Normal.bmp";
+	const static char* tex_font =			"Res/Texture/Font.bmp";
 
-	const static char* tex_player =			"Res/Model/Player.dds";
-	const static char* tex_toroid =			"Res/Model/Toroid.dds";
-	const static char* tex_toroid_normal =	"Res/Model/Toroid_Normal.bmp";
-	const static char* tex_itemboxSpeed =	"Res/Model/ItemBoxSpeed.dds";
-	const static char* tex_itemboxBullet =	"Res/Model/ItemBoxBullet.dds";
-	const static char* tex_bullet =			"Res/Model/sphere.dds";
-	const static char* tex_healthMeter =	"Res/HealthMeter.dds";
+	const static char* tex_player =			"Res/Texture/Player.dds";
+	const static char* tex_toroid =			"Res/Texture/Toroid.dds";
+	const static char* tex_toroid_normal =	"Res/Texture/Toroid_Normal.bmp";
+	const static char* tex_itemboxSpeed =	"Res/Texture/ItemBoxSpeed.dds";
+	const static char* tex_itemboxBullet =	"Res/Texture/ItemBoxBullet.dds";
+	const static char* tex_bullet =			"Res/Texture/sphere.dds";
+	const static char* tex_healthMeter =	"Res/Texture/HealthMeter.dds";
 	
-	const static char* tex_bg02 =			"Res/Model/BG02.Diffuse.dds";
-	const static char* tex_bg02_normal =	"Res/Model/BG02.Normal.bmp";
-	const static char* tex_city01 =			"Res/Model/City01.Diffuse.dds";
-	const static char* tex_city01_normal =	"Res/Model/City01.Normal.bmp";
-	const static char* tex_spaceSphere =	"Res/Model/SpaceSphere.dds";
+	const static char* tex_bg02 =			"Res/Texture/BG02.Diffuse.dds";
+	const static char* tex_bg02_normal =	"Res/Texture/BG02.Normal.bmp";
+	const static char* tex_city01 =			"Res/Texture/City01.Diffuse.dds";
+	const static char* tex_city01_normal =	"Res/Texture/City01.Normal.bmp";
+	const static char* tex_spaceSphere =	"Res/Texture/SpaceSphere.dds";
 
 //モデルファイル
 	const static char* fbx_player =			"Res/Model/Player.fbx";
@@ -38,9 +38,12 @@ namespace Resource {
 
 	
 //音声ファイル
-	const static char* audioAcfFile = "Res/Audio/testProject.acf";
-	const static char* audioAcbFile = "Res/Audio/CueSheet_0.acb";
-	const static char* audioAwbFile = "Res/Audio/CueSheet_0.awb";
+	const static char* audioAcfFile =		"Res/Audio/testProject.acf";
+	const static char* audioAcbFile =		"Res/Audio/CueSheet_0.acb";
+	const static char* audioAwbFile =		"Res/Audio/CueSheet_0.awb";
+
+//フォントファイル
+	const static char* fnt_default =		"Res/Misc/Font.fnt";
 
 //シェーダファイル	
 
