@@ -187,29 +187,15 @@ namespace Application {
 		}
 		isAutoMove = true;
 
-<<<<<<< HEAD
-				game.UserVariable("score") += 300;
-				game.PlayAudio(1, i->ItemType() != 1 ? CRI_CUESHEET_0_POWER_UP1 : CRI_CUESHEET_0_SPEED_UP1);
-			}
-			if (auto e = entity.CastTo<Toroid>()) {
-				//敵にダメージを与える
-=======
 		goalLocation = glm::vec3(0, 0, GameState::screenHalfH + 10);
 		autoMoveStartTimer = delayTime;
 		autoMoveVel = glm::normalize(goalLocation - entity->Position()) * 30.0f;
 	}
->>>>>>> 5d5f335a25b2a64bd64e26cfd7b8d7421daa8a5c
 
-	void Player::AutoMove(float delta) {
-
-		if (glm::length(goalLocation - entity->Position()) < 3.0f) {
-
-			isAutoMove = false;
-			entity->Velocity(glm::vec3(0));
-		}
-		
-		if (autoMoveStartTimer >= 0 && --autoMoveStartTimer <= 0) {
-			//移動開始タイマーが切れた瞬間の動作
+				game.PlayAudio(1, i->ItemType() != 1 ? CRI_CUESHEET_0_POWER_UP1 : CRI_CUESHEET_0_SPEED_UP1);
+			}
+			if (auto e = entity.CastTo<Toroid>()) {
+				//敵にダメージを与える
 
 			entity->Velocity(autoMoveVel);
 		}
