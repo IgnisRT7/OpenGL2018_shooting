@@ -120,6 +120,7 @@ namespace Application {
 				}
 
 				game.PlayAudio(1, i->ItemType() != 1 ? CRI_CUESHEET_0_POWER_UP1 : CRI_CUESHEET_0_SPEED_UP1);
+				game.UserVariable("score") += 300;
 			}
 			if (auto e = entity.CastTo<Toroid>()) {
 				//“G‚Éƒ_ƒ[ƒW‚ğ—^‚¦‚é
