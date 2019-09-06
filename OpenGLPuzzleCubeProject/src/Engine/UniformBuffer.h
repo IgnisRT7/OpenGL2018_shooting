@@ -68,6 +68,7 @@ public:
 	GLsizeiptr Size() const { return size; }
 
 private:
+
 	UniformBuffer() = default;
 	~UniformBuffer();
 	UniformBuffer(const UniformBuffer&) = delete;

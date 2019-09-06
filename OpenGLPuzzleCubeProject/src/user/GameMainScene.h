@@ -18,17 +18,69 @@ namespace Application {
 	public:
 
 		MainGame() :Scene("MainGame") {}
+		~MainGame() = default;
+		MainGame(const MainGame&) = delete;
+		const MainGame& operator=(const MainGame&) = delete;
 
+		/**
+		*	初期化処理
+		*
+		*	@return true	初期化成功
+		*	@return false	初期化失敗
+		*/
 		bool Initialize() override;
-		void Update(float d) override;
+
+		/**
+		*	更新処理
+		*
+		*	@param deltaTime	経過時間
+		*/
+		void Update(float deltaTime) override;
+
+		/**
+		*	終了処理
+		*/
 		void Finalize() override;
+
+		/**
+		*	開始処理
+		*/
 		void Play() override;
+
+		/**
+		*	停止処理
+		*/
 		void Stop() override ;
+
+		/**
+		*	非表示処理
+		*/
 		void Hide() override {};
 
+		/**
+		*	プレイヤーのタイプを設定する
+		*
+		*	@param t	タイプ
+		*/	
 		void SelectPlayerType(int t) { playerType = t; }
-		void DrawScreenInfo(float dt);
+
+		/**
+		*	スクリーンの描画情報を設定する
+		*
+		*	@param deltaTime	経過時間
+		*/
+		void DrawScreenInfo(float deltaTime);
+
+		/**
+		*	ステージのロード処理
+		*/
 		void StageLoad();
+
+		/**
+		*	ステージクリア後の処理
+		*
+		*	@param nextStageTimer	次のステージの開始タイマ
+		*/
 		void StageClear(float nextStageTimer);
 
 	private:

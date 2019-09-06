@@ -163,6 +163,7 @@ public:
 	*	@param tex	使用するテクスチャ
 	*/
 	explicit HealthGuage(const TexturePtr& tex);
+
 	virtual ~HealthGuage() = default;
 	HealthGuage(const HealthGuage&) = default;
 	HealthGuage& operator=(const HealthGuage&) = default;

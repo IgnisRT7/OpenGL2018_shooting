@@ -44,7 +44,18 @@ public:
 	*/
 	bool BufferSubData(GLintptr offset, GLsizeiptr size, const GLvoid* data);
 
+	/**
+	*	バッファオブジェクトの取得
+	*
+	*	@return バッファオブジェクト
+	*/
 	GLuint Id() const { return id; }
+
+	/**
+	*	バッファのサイズの取得
+	*
+	*	@return バッファサイズ
+	*/
 	size_t Size() const { return size; }
 
 private:

@@ -116,9 +116,6 @@ namespace GLFWEW {
 		return gamepad;
 	}
 
-	/**
-	*	前回からの経過時間の更新処理
-	*/
 	void Window::UpdateDeltaTime(){
 
 		//経過時間の更新処理
@@ -302,8 +299,7 @@ namespace GLFWEW {
 		for (stKeyMap& keyValue : k) {
 			
 			keyMap[keyValue.glfwCode] = keyValue.keyCode;
-		}
-		
+		}	
 	}
 
 	bool Window::GetWindowSize(int* w, int* h){

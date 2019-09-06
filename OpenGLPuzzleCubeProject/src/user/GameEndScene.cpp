@@ -88,7 +88,7 @@ namespace Application{
 		GameEngine& game = GameEngine::Instance();
 
 		auto e = game.AddEntity(GameState::EntityGroupId_Background, glm::vec3(0, 0, 0),
-			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
+			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<SpaceSphereMain>(), "NonLighting");
 		game.KeyValue(0.1f);
 
 		game.MainCamera(std::make_shared<CameraComponent>());

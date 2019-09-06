@@ -12,27 +12,10 @@
 #include "ModelLoadTestscene.h"
 
 
-//#include "../../Res/Audio/SampleSound_acf.h"
-//#include "../../Res/Audio/SampleCueSheet.h"
 #include "../../Res/Audio/testProject_acf.h"
 #include "../../Res/Audio/CueSheet_0.h"
 
 namespace Application {
-
-	///　背景球クラス定義
-
-	void TitleSpaceSphere::Initialize() {
-	}
-
-	void TitleSpaceSphere::Update(float delta) {
-
-		glm::vec3 rotSpace = glm::eulerAngles(entity->Rotation());
-		rotSpace.x += glm::radians(2.5f) * delta;
-		entity->Rotation(rotSpace);
-	}
-
-	/// タイトルクラス定義
-
 
 	/**
 	*	タイトル画面の初期化
@@ -45,8 +28,6 @@ namespace Application {
 		game.LoadTextureFromFile("Res/Model/SpaceSphere.dds");
 		game.LoadMeshFromFile("Res/Model/Player.fbx");
 		game.LoadTextureFromFile("Res/Model/Player.dds");
-
-		initialize = true;
 
 		return true;
 	}
@@ -68,7 +49,7 @@ namespace Application {
 		timer = 0;
 
 		game.AddEntity(GameState::EntityGroupId_Background, glm::vec3(0, 0, 0),
-			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
+			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<SpaceSphereMain>(), "NonLighting");
 
 		player = std::make_shared<PlayerForProduction>();
 		game.AddEntity(GameState::EntityGroupId_Others, glm::vec3(0, 0, 0), "Aircraft", "Res/Model/Player.dds", player, "NonLighting");

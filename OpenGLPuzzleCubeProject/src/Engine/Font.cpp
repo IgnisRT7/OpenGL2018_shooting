@@ -22,11 +22,10 @@ namespace Font {
 	*	フォント用頂点データ型
 	*/
 	struct Vertex {
-		glm::vec2 position;
-		glm::u16vec2 uv;
-		glm::u8vec4 color;
+		glm::vec2 position;	/// 座標
+		glm::u16vec2 uv;	/// UV座標
+		glm::u8vec4 color;	/// 色
 	};
-
 
 	bool Renderer::Init(size_t maxChar, const glm::vec2& screen) {
 

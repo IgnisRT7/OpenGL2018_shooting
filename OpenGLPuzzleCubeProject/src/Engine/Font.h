@@ -56,7 +56,18 @@ namespace Font {
 		*/
 		bool LoadFromFile(const char* filename);
 
+		/**
+		*	拡縮情報の設定
+		*
+		*	@param s	拡縮情報
+		*/
 		void Scale(const glm::vec2& s) { scale = s; }
+
+		/**
+		*	拡縮情報の取得
+		*
+		*	@return 拡縮情報
+		*/
 		const glm::vec2& Scale() const { return scale; }
 
 		/**
@@ -101,21 +112,20 @@ namespace Font {
 
 	private:
 
-		BufferObject vbo;				
-		BufferObject ibo;				
-		VertexArrayObject vao;		
+		BufferObject vbo, ibo;			/// 描画に使用されるバッファオブジェクト			
+		VertexArrayObject vao;			/// 描画に使用されるバッファオブジェクト
 
-		GLsizei vboCapacity = 0;		///< VBOに格納可能な最大長点数
-		std::vector<FontInfo> fontList;	///< フォント位置情報のリスト
-		std::string texFilename;		///< フォントテクスチャファイル名
-		Shader::ProgramPtr progFont;	///< フォント描画用シェーダプログラム
-		glm::vec2 reciprocalScreenSize;	///< 画面サイズの逆数
+		GLsizei vboCapacity = 0;		/// VBOに格納可能な最大長点数
+		std::vector<FontInfo> fontList;	/// フォント位置情報のリスト
+		std::string texFilename;		/// フォントテクスチャファイル名
+		Shader::ProgramPtr progFont;	/// フォント描画用シェーダプログラム
+		glm::vec2 reciprocalScreenSize;	/// 画面サイズの逆数
 
-		glm::vec2 scale = glm::vec2(1, 1);	///< フォントを描画するときの拡大率
+		glm::vec2 scale = glm::vec2(1, 1);	/// フォントを描画するときの拡大率
 		glm::vec2 screenScale;
 		glm::u8vec4 color = glm::u8vec4(255, 255, 255, 255);	///< フォントを描画するときの色
-		GLsizei vboSize = 0;			///< VBOに格納されている頂点数
-		Vertex* pVBO = nullptr;			///< VBOへのポインタ
+		GLsizei vboSize = 0;			/// VBOに格納されている頂点数
+		Vertex* pVBO = nullptr;			/// VBOへのポインタ
 	};
 }
 

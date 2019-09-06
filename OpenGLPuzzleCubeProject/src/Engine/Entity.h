@@ -57,27 +57,62 @@ namespace Entity {
 		friend class EntityDataBase;
 
 	public:
-		///transfom parameters getter and setter
-
+		
+		/**
+		*	座標の設定
+		*
+		*	@param v	座標
+		*/
 		void Position(const glm::vec3& v) { transform.position = v; }
+
+		/**
+		*	座標の取得
+		*
+		*	@return 座標
+		*/
 		const glm::vec3& Position() const { return transform.position; }
-		void LocalPosition(const glm::vec3& v) { localTransform.position = v; }
-		const glm::vec3& WorldPosition() const { return localTransform.position; }
 
+		/**
+		*	回転情報の設定
+		*
+		*	@param q	回転情報
+		*/
 		void Rotation(const glm::quat& q) { transform.rotation = q; }
+
+		/**
+		*	回転情報の取得
+		*
+		*	@return 回転情報
+		*/
 		const glm::quat& Rotation() const { return transform.rotation; }
-		void LocalRotation(const glm::vec3& q) { localTransform.rotation = q; }
-		const glm::quat& LocalRotation() const { return localTransform.rotation; }
 
-		void Scale(const glm::vec3& v) { transform.scale = v; }
+		/**
+		*	拡縮情報の設定
+		*
+		*	@param s	拡縮情報
+		*/
+		void Scale(const glm::vec3& s) { transform.scale = s; }
+
+		/**
+		*	拡縮情報の取得
+		*
+		*	@return 拡縮情報
+		*/
 		const glm::vec3& Scale() const { return transform.scale; }
-		void LocalScale(const glm::vec3& v) { localTransform.scale = v; }
-		const glm::vec3& LocalScale() const { return localTransform.scale; }
 
+		/**
+		*	トランスフォームデータの設定
+		*
+		*	@param t	トランスフォームデータ
+		*/
 		void Transform(const TransformData t) { transform = t; }
+
+		/**
+		*	トランスフォームデータの取得
+		*
+		*	@return	トランスフォームデータ
+		*/
 		const TransformData Transform() const { return transform; }
-		void LocalTransform(const TransformData t) { localTransform = t; }
-		const TransformData LocalTransform() const { return localTransform; }
 
 		/**
 		*	移動・回転・拡縮行列を取得する
@@ -86,51 +121,133 @@ namespace Entity {
 		*/
 		glm::mat4 CalcModelMatrix() const;
 
+		/**
+		*	エンティティ制御データの取得
+		*
+		*	@return	エンティティ制御データ
+		*/
 		EntityDataBasePtr EntityData() { return entityData; }
 
+		/**
+		*	エンティティ制御データにキャストする
+		*
+		*	@tparam T キャストする型
+		*	@return nullptr	無効なキャストデータ
+		*	@return EntityDatabasePtr キャストされたデータ
+		*/
 		template<typename T>
 		const std::shared_ptr<T> CastTo() {
 
 			return std::dynamic_pointer_cast<T>(entityData);
 		}
 
-	public:
-
-		/// 状態更新関数型.
-		using UpdateFuncType = std::function<void(Entity&, double)>;
-
+		/**
+		*	衝突形状データの設定
+		*
+		*	@param c	衝突形状データ
+		*/
 		void Collision(const CollisionData& c) { colLocal = c; UpdateCollisionData(); }
+
+		/**
+		*	衝突形状データの取得
+		*
+		*	@return 衝突形状データ
+		*/
 		const CollisionData& Collision() const { return colLocal; }
 		void UpdateCollisionData() {
 
-			this->colWorld.min = this->colLocal.min + this->transform.position;
-			this->colWorld.max = this->colLocal.max + this->transform.position;
+			//this->colWorld.min = this->colLocal.min + this->transform.position;
+			//this->colWorld.max = this->colLocal.max + this->transform.position;
 		}
 
+		/**
+		*	移動量の設定
+		*
+		*	@param v	移動量
+		*/
 		void Velocity(const glm::vec3& v) { velocity = v; }
+
+		/**
+		*	移動量の取得
+		*
+		*	@return 移動量
+		*/
 		const glm::vec3& Velocity() const { return velocity; }
+
+		/**
+		*	エンティティのベース色の設定
+		*
+		*	@param c	色
+		*/
 		void Color(const glm::vec4& c) { color = c; }
+
+		/**
+		*	エンティティのベース色の取得
+		*	
+		*	@return 色
+		*/
 		const glm::vec4& Color() const { return color; }
 
+		/**
+		*	所属するグループIDの取得
+		*
+		*	@return グループID
+		*/
 		int GroupId() const { return groupId; }
 
-	/**
-	*	エンティティを破棄する
-	*
-	*	この関数を呼び出した後は、エンティティを操作してはならない
-	*/
+		/**
+		*	エンティティを破棄する
+		*
+		*	この関数を呼び出した後は、エンティティを操作してはならない
+		*/
 		void Destroy();
 
+		/**
+		*	シャドウマップの描画切り替え
+		*
+		*	@param b	切替フラグ
+		*				tips true = シャドウマップ有効化, false = シャドウマップ無効化
+		*/
 		void CastShadow(bool b) { castShadow = b; }
+
+		/**
+		*	シャドウマップ切り替え情報の取得
+		*	
+		*	@return 現在の切り替え状態
+		*/
 		bool CastShadow() const { return castShadow; }
+
+		/**
+		*	ステンシルマップの描画切り替え
+		*
+		*	@param b	切り替えフラグ
+		*				tips true = ステンシルマップ有効化, false = ステンシルマップ無効化
+		*/
 		void CastStencil(bool b) { castStencil = b; }
+
+		/**
+		*	ステンシルマップ切り替え情報の取得
+		*
+		*	@return 現在の切り替え状態
+		*/
 		bool CastStencil() const { return castStencil; }
+
+		/**
+		*	ステンシルカラーの設定
+		*
+		*	@param v	ステンシルカラー値
+		*/
 		void StencilColor(glm::vec4 v) { stencilColor = v; }
+
+		/**
+		*	ステンシルカラーの取得
+		*
+		*	@return	ステンシルカラー
+		*/
 		glm::vec4 StencilColor() const { return stencilColor; }
 
-//		void Mesh()
-
 	private:
+
 		Entity() = default;
 		~Entity() = default;
 		Entity(const Entity&) = default;
@@ -142,7 +259,6 @@ namespace Entity {
 		Buffer* pBuffer = nullptr;	///< 生成元のBufferクラスへのポインタ
 
 		TransformData transform;	///< トランスフォームデータ(ワールド空間)
-		TransformData localTransform;///< トランスフォームデータ(ローカル空間)
 
 		glm::vec3 forward = glm::vec3(1, 0, 0);
 		glm::vec3 velocity;			///< 速度.
@@ -287,7 +403,13 @@ namespace Entity {
 		*/
 		Entity* FindEntity(FindEntityFunc f);
 
-		
+		/**
+		*	エンティティ制御データからエンティティの検索を行う
+		*
+		*	@tparam T キャストする型
+		*	@retval nullptr エンティティが存在しなかった
+		*	@retval Entity* エンティティデータ
+		*/
 		template<typename T>
 		Entity* FindEntityData() {
 
@@ -341,6 +463,7 @@ namespace Entity {
 			*	自分はどこにも接続されていない状態になる
 			*/
 			void Remove();
+
 			Link* prev = this;
 			Link* next = this;
 		};
@@ -352,20 +475,20 @@ namespace Entity {
 		struct EntityArrayDeleter { void operator()(LinkEntity* p) { delete[] p; } };
 
 		std::unique_ptr<LinkEntity[], EntityArrayDeleter> buffer;	///< エンティティの配列
-		size_t bufferSize;	///< エンティティの総数
-		Link freeList;		///< 未使用のエンティティのリンクリスト
-		Link activeList[maxGroupId + 1];	///< 使用中のエンティティのリンクリスト
-		glm::u32 visibilityFlags[maxGroupId + 1];///<	
-		GLsizeiptr ubSizePerEntity;	///< 各エンティティが使えるUniformBufferのバイト数
-		UniformBufferPtr ubo;	///< エンティティ用UBO
-		Link* itrUpdate = nullptr;	///< UpdateとRemoveEntityの相互作用に対応っするためのイテレータ
+		size_t bufferSize;					///  エンティティの総数
+		Link freeList;						/// 未使用のエンティティのリンクリスト
+		Link activeList[maxGroupId + 1];	///使用中のエンティティのリンクリスト
+		glm::u32 visibilityFlags[maxGroupId + 1];///
+		GLsizeiptr ubSizePerEntity;			/// 各エンティティが使えるUniformBufferのバイト数
+		UniformBufferPtr ubo;				/// エンティティ用UBO
+		Link* itrUpdate = nullptr;			/// UpdateとRemoveEntityの相互作用に対応っするためのイテレータ
 		Link* itrUpdateRhs = nullptr;
 
-		//衝突判定用ハンドラ
+		///衝突判定用ハンドラ
 		struct CollisionHandlerInfo {
 			int groupId[2];
 		};
-		std::vector<CollisionHandlerInfo> collisionHandlerList;
+		std::vector<CollisionHandlerInfo> collisionHandlerList;	/// 
 
 	};
 
@@ -375,27 +498,63 @@ namespace Entity {
 
 		EntityDataBase() {}
 
-		//初期化処理
+		/*
+		*	期化処理
+		*/
 		virtual void Initialize() = 0;
-		//更新処理
+
+		/*
+		*	更新処理
+		*
+		*	@param d	経過時間
+		*/
 		virtual void Update(float d) = 0;
-		//ダメージ処理
+
+		/*
+		*	ダメージ処理
+		*	
+		*	@param p	ダメージ値
+		*/
 		virtual void Damage(float p) {}
-		//衝突判定処理
+
+		/*
+		*	衝突判定処理
+		*
+		*	@param e	衝突対象のエンティティ
+		*/
 		virtual void CollisionEnter(Entity& e) {}
 
-		void SetEntity(Entity& e) { entity = &e; }
-
-	public:
-		//パラメータ設定系
-		
+		/**
+		*	エンティティのカラー設定
+		*
+		*	@param c	色情報
+		*/
 		void Color(glm::vec4& c) { entity->Color(c); }
+
+		/**
+		*	エンティティの移動量設定
+		*
+		*	@param v	移動量
+		*/
 		void Velocity(glm::vec3& v) { entity->Velocity(v); }
+
+		/**
+		*	エンティティの座標設定
+		*
+		*	@param p	座標情報
+		*/
 		void Position(glm::vec3& p) { entity->Position(p); }
+
+		/**
+		*	エンティティの設定
+		*
+		*	@param e	適用するエンティティ
+		*/
+		void SetEntity(Entity* e) { entity = e; }
 
 	protected:
 
-		Entity* entity;
+		Entity* entity;		/// 制御するエンティティデータ
 		
 	};
 }

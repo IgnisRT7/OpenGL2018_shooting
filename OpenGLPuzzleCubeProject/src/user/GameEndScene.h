@@ -7,6 +7,7 @@
 
 #include "TitleScene.h"
 #include "../Engine/Scene.h"
+#include "Entity/LandScape.h"
 
 namespace Application{
 
@@ -62,7 +63,7 @@ namespace Application{
 
 		FontDrawInfo scoreStrInfo, highScoreStrInfo,gameoverStrInfo,pressButtonStrInfo;
 
-		TitleSpaceSphere spaceSphere;
+		SpaceSphereMain spaceSphere;
 
 		float timer = 0;
 		float strFadeTimer = 0;

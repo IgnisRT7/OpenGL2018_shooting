@@ -25,9 +25,26 @@ public:
 	Scene& operator=(const Scene&) = delete;
 	virtual ~Scene();
 
+	/**
+	*	初期化処理
+	*
+	*	@retval true	初期化成功
+	*	@retval false	初期化失敗
+	*/
 	virtual bool Initialize() = 0 {};
-	virtual void Update(float delta) = 0 {};
-//	virtual void Render() = 0 {};
+
+	/**
+	*	更新処理
+	*
+	*	@param deltaTime	経過時間
+	*/
+	virtual void Update(float deltaTime) = 0 {};
+
+	//	virtual void Render() = 0 {};
+
+	/**
+	*	終了処理
+	*/
 	virtual void Finalize() = 0 {};
 
 	/**
@@ -40,7 +57,9 @@ public:
 	*/
 	virtual void Stop() = 0;
 
-
+	/**
+	*	シーンを非表示処理にする
+	*/
 	virtual void Hide() = 0;
 
 	/**

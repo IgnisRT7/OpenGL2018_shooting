@@ -18,11 +18,36 @@ namespace Application {
 	class EnemySpawner : public Entity::EntityDataBase {
 	public:
 
-		EnemySpawner() {}
-		EnemySpawner(int max, float interval, int enemyType, int moveType, int bulletType, int health);
-		void Initialize() override;
-		void Update(float delta) override;
+		EnemySpawner() = default;
 
+		/**
+		*	コンストラクタ
+		*	
+		*	@param max			敵の生成数
+		*	@param interval		生成の間隔
+		*	@param enemyType	敵のタイプ
+		*	@param moveType		移動タイプ
+		*	@param health		体力
+		*/
+		EnemySpawner(int max, float interval, int enemyType, int moveType, int bulletType, int health);
+		~EnemySpawner() = default;
+		const EnemySpawner& operator=(const EnemySpawner&) = delete;
+
+		/**
+		*	初期化処理
+		*/
+		void Initialize() override;
+
+		/**
+		*	更新処理
+		*
+		*	@param deltaTime	経過時間
+		*/
+		void Update(float deltaTime) override;
+
+		/**
+		*	敵のスポーン処理
+		*/
 		void SpawnEnemy();
 
 	private:

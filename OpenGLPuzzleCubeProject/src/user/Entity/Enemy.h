@@ -41,7 +41,7 @@ namespace Application {
 		*
 		*	@param p	ダメージ量
 		*/
-		void Damage(float) override;
+		void Damage(float p) override;
 
 		/**
 		*	衝突判定処理
@@ -50,8 +50,32 @@ namespace Application {
 		*/
 		void CollisionEnter(Entity::Entity& e) override;
 
+		/**
+		*	移動用コントローラの設定
+		*
+		*	@param m	移動用コントローラ
+		*/
 		void MoveController(MoveControllerPtr m) { moveController = m; }
+
+		/**
+		*	移動用コントローラーの取得
+		*	
+		*	@return 移動用コントローラー
+		*/
+		MoveControllerPtr MoveController() const { return moveController; }
+
+		/**
+		*	弾の生成器を設定
+		*
+		*	@param b	弾の生成器
+		*/
 		void BulletGenerator(BulletGeneratorPtr b) { bulletGenerator = b; }
+
+		/**
+		*	弾の生成器を取得
+		*
+		*	@return 弾の生成器
+		*/
 		BulletGeneratorPtr BulletGenerator() const { return bulletGenerator; }
 		void DestroyByScreenOut(bool v) { isDestroyByScreenOut = v; }
 
@@ -61,7 +85,17 @@ namespace Application {
 		*	@param t	ターゲットとなるエンティティ
 		*/
 		void Target(Entity::Entity* t);
+
+		/**
+		*	弾の色を設定する
+		*/
 		void BulletColor(glm::vec4 c) { bulletColor = c; }
+
+		/**
+		*	設定しているエンティティの取得
+		*
+		*	@return 試用しているエンティティ
+		*/
 		Entity::Entity* Entity() { return entity; }
 
 	private:

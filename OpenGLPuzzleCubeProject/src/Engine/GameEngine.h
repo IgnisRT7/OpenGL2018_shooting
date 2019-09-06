@@ -127,21 +127,21 @@ public:
 	Entity::Entity* AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, Entity::EntityDataBasePtr eData, const char* shader = nullptr);
 
 	/**
-*	エンティティを追加する
-*
-*	@param groupId	エンティティのグループID
-*	@param pos		エンティティの座標
-*	@param meshName	エンティティの表示に使用するメッシュ名
-*	@param texName	エンティティの表示に使うテクスチャファイル名
-*	@param texNormal
-*	@param func		エンティティの状態を更新する関数(または関数オブジェクト)
-*	@param shader	エンティティの表示に使うシェーダ名
-*
-*	@return 追加したエンティティへのポインタ
-*			これ以上エンティティを追加できない場合はnullptrが返される
-*			回転や拡大率はこのポインタ経由で設定する
-*			なお、このポインタをアプリケーション側で保持する必要はない
-*/
+	*	エンティティを追加する
+	*
+	*	@param groupId	エンティティのグループID
+	*	@param pos		エンティティの座標
+	*	@param meshName	エンティティの表示に使用するメッシュ名
+	*	@param texName	エンティティの表示に使うテクスチャファイル名
+	*	@param texNormal
+	*	@param func		エンティティの状態を更新する関数(または関数オブジェクト)
+	*	@param shader	エンティティの表示に使うシェーダ名
+	*
+	*	@return 追加したエンティティへのポインタ
+	*			これ以上エンティティを追加できない場合はnullptrが返される
+	*			回転や拡大率はこのポインタ経由で設定する
+	*			なお、このポインタをアプリケーション側で保持する必要はない
+	*/
 	Entity::Entity* AddEntity(int groupId, const glm::vec3& pos, const char* meshName, const char* texName, const char* normalName, Entity::EntityDataBasePtr eData, const char* shader = nullptr);
 
 	/**
@@ -163,32 +163,68 @@ public:
 	*/
 	void RemoveAllEntity();
 
-	//エンティティ検索処理
+	/*
+	*	エンティティ検索処理
+	*
+	*	@tparam T 検索する型
+	*	@retval nullptr 該当するエンティティデータが存在しなかった
+	*	@retval Entity* 該当したエンティティデータ
+	*/
 	template<typename T>
 	Entity::Entity* FindEntityData() { return entityBuffer->FindEntityData<T>(); }
 
-	//フォント関連の処理
+	/*
+	*	フォント関連の処理
+	*
+	*	@param pos		描画位置
+	*	@param str		描画する文字列
+	*	@param isCenter	文字列の中心をposの位置とするかどうか
+	*
+	*	@retval true	追加成功
+	*	@retval false	追加失敗
+	*/
 	bool AddString(const glm::vec2& pos, const char* str, bool isCenter = false) {
 		return fontRenderer.AddString(pos, str, isCenter);
 	}
+
+	/**
+	*	文字の拡縮情報の設定
+	*
+	*	@param scale	拡縮情報
+	*/
 	void FontScale(const glm::vec2& scale) { fontRenderer.Scale(scale); }
+
+	/**
+	*	文字の色情報の設定
+	*	
+	*	@param color	色情報
+	*/
 	void FontColor(const glm::vec4& color) { fontRenderer.Color(color); }
 
 	/**
-	*	シーンをプッシュします
+	*	シーンをプッシュ処理
+	*
+	*	@param s	シーンオブジェクト
 	*/
 	void PushScene(ScenePtr s);
 
 	/**
-	*	シーンをポップします
+	*	シーンをポップ処理
 	*/
 	void PopScene();
 
 	/**
-	*	シーンを取り換えます
+	*	シーンを取り換え処理
+	*
+	*	@param s	シーンオブジェクト
 	*/
 	void ReplaceScene(ScenePtr s);
 
+	/**
+	*	フォントに設定されているウインドウサイズの取得
+	*
+	*	@return ウインドウサイズ
+	*/
 	const glm::vec2& WindowSize() const { return windowSize; }
 
 	///影生成パラメータ
@@ -201,8 +237,18 @@ public:
 		glm::vec2 range;	///< 描画範囲の幅と高さ
 	};
 
-	//シャドウパラメータの取得・設定処理
-	void Shadow(const ShadowParameter& param) { shadowParameter = param; }
+	/**
+	*	シャドウマップのパラメータの設定
+	*
+	*	@param s	シャドウパラメータ
+	*/
+	void Shadow(const ShadowParameter& s) { shadowParameter = s; }
+
+	/**
+	*	シャドウマップのパラメータ取得
+	*
+	*	@return シャドウパラメータ
+	*/	
 	const ShadowParameter& Shadow() const { return shadowParameter; }
 
 	/**
@@ -236,12 +282,38 @@ public:
 	*/
 	const glm::vec4& AmbientLight() const;
 
-	//輝度の閾値の取得・設定処理
+	/**
+	*	輝度を調整するためのキー値の設定
+	*
+	*	@param k	キー値
+	*/
 	void KeyValue(float k) { keyValue = k; }
-	const float KeyValue() const { return keyValue; }
 
-	//表示・非表示の処理 現在未使用
+	/**
+	*	輝度を調節するためのキー値の取得
+	*
+	*	@return キー値
+	*/
+	const float KeyValue() const { return keyValue; }
+	
+	/**
+	*	可視化フラグの設定
+	*
+	*	@param groupId		適用する対象のグループID
+	*	@param index		カメラのインデックス
+	*	@param isVisible	可視かどうかのフラグ
+	*/
 	void GroupVisibility(int groupId, int index, bool isVisible) { entityBuffer->GroupVisibility(groupId, index, isVisible); }
+
+	/**
+	*	可視化フラグの取得
+	*
+	*	@param groupId	確認する対象のグループID
+	*	@param index	カメラのインデックス
+	*
+	*	@retval true	可視可能
+	*	@retval false	不可視
+	*/
 	bool GroupVisibility(int groupId, int index) const { return entityBuffer->GroupVisibility(groupId, index); }
 
 	/**
@@ -292,8 +364,18 @@ public:
 	//グローバルデータの取得設定処理
 	double& UserVariable(const char* name) { return userNumbers[name]; }
 
-	//メインカメラ設定処理
+	/**
+	*	メインカメラの設定
+	*
+	*	@param c	カメラのコンポーネント
+	*/
 	void MainCamera(const std::shared_ptr<CameraComponent>& c) { mainCamera = c; }
+
+	/**
+	*	メインカメラの取得
+	*
+	*	@return カメラコンポーネント
+	*/
 	const std::shared_ptr<CameraComponent>& MainCamera() const { return mainCamera; }
 	
 	/**
@@ -308,11 +390,43 @@ public:
 	//シェーダ取得処理
 	Shader::ProgramPtr& Shader(const char* pass) { return shaderMap[pass]; }
 
+	/**
+	*	タイムスケールの設定
+	*
+	*	@param t	タイムスケール値
+	*/
 	void TimeScale(float t) { timeScale = t; }
+
+	/**
+	*	経過時間の取得
+	*
+	*	@return 経過時間
+	*/
 	float DeltaTime() const { return deltaTime; }
+
+	/**
+	*	FPSの取得
+	*
+	*	@retun FPS値
+	*/
 	float FPS() const { return fps; }
+
+	/**
+	*	シャドウ描画の切り替え処理
+	*
+	*	@param b	切替フラグ
+	*				tips true = シャドウ描画する, false = シャドウ描画しない
+	*/
 	void EnableShadow(bool b) { isEnableShadow = b; }
+
+	/**
+	*	アウトラインの描画切り替え処理
+	*/
 	void ToggleDrawOutline() { isDrawOutline = !isDrawOutline; }
+
+	/**
+	*	シーンの暗転処理
+	*/
 	void SceneFadeStart(bool param) { isSceneFadeStart = param; }
 
 	

@@ -12,33 +12,50 @@
 
 namespace Application {
 
-	///背景の更新
-	class TitleSpaceSphere : public Entity::EntityDataBase {
-
-		void Initialize() override;
-
-		void Update(float delta) override;
-	};
-
 	///タイトル画面
 	class Title : public Scene{
 	public:
 
 		Title() : Scene("Title") {}
+		~Title() = default;
+		Title(const Title&) = delete;
+		const Title& operator=(const Title&) = delete;
 
+		/**
+		*	初期化処理
+		*
+		*	@retval true	初期化成功
+		*	@retval false	初期化失敗
+		*/
 		bool Initialize() override;
-		void Update(float delta) override;
+
+		/**
+		*	更新処理
+		*/
+		void Update(float deltaTime) override;
+
+		/**
+		*	終了処理
+		*/
 		void Finalize() override;
+
+		/**
+		*	開始処理
+		*/
 		void Play() override;
+
+		/**
+		*	停止処理
+		*/
 		void Stop() override;
+
+		/**
+		*	非表示処理
+		*/
 		void Hide() override {}
-
-
-		//void operator()(float delta) ;
 
 	private:
 		
-		bool initialize = false;
 		float timer = 0;
 		int selectAirCraftType = 0;
 		SpritePtr sampleSprite;

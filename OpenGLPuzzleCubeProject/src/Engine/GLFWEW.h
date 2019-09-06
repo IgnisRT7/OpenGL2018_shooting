@@ -14,7 +14,6 @@
 
 #define GL_DEBUG_STRING(str) std::cerr << str;
 
-
 namespace GLFWEW {
 
 	struct stKeyMap {
@@ -66,9 +65,24 @@ namespace GLFWEW {
 		*	@return ゲームパッドの状態
 		*/
 		const GamePad& GetGamePad() const;
+
+		/**
+		*	ウインドウインスタンスの取得
+		*
+		*	@return ウインドウインスタンス
+		*/
 		GLFWwindow& GetWindow()const { return *window; }
+
+		/**
+		*	経過時間の取得
+		*
+		*	@return 経過時間
+		*/
 		const float DeltaTime() const { return deltaTime; }
 
+		/**
+		*	前回からの経過時間の更新処理
+		*/
 		void UpdateDeltaTime();
 
 		/**
@@ -83,6 +97,10 @@ namespace GLFWEW {
 		*	@param y	ホイールYの回転量
 		*/
 		void UpdateMouseWheel(float x, float y);
+
+		/**
+		*	ホイール情報のクリア処理
+		*/
 		void ClearWheel() { gamepad.mouseWheelY = 0; }
 
 		/**

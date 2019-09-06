@@ -147,6 +147,12 @@ namespace Mesh {
 		*	末尾のリソースレベルを空の状態にする
 		*/
 		void ClearLevel();
+
+		/**
+		*	現在のレベルのサイズを取得する
+		*
+		*	@return サイズ
+		*/
 		int Size() { return levelStack.size(); }
 
 	private:

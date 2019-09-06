@@ -140,7 +140,7 @@ namespace Entity {
 		entity->program = program;
 		entity->entityData = eData;
 		if (eData) {
-			eData->SetEntity(*dynamic_cast<Entity*>(entity));
+			eData->SetEntity(dynamic_cast<Entity*>(entity));
 			eData->Initialize();
 		}
 		entity->isActive = true;
