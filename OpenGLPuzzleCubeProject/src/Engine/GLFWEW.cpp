@@ -1,5 +1,7 @@
 /**
 *	@file GLFWEW.cpp
+*	@brief	ゲーム外システム部分の制御用
+*	@brief	Takuya Yokoyama , tn-mai
 */
 #include "GLFWEW.h"
 #include <iostream>
@@ -30,19 +32,11 @@ namespace GLFWEW {
 		Window::Instance().UpdateMouseWheel(static_cast<float>(xPos), static_cast<float>(yPos));
 	}
 
-	/**
-	*	シングルトンインスタンスを取得する
-	*
-	*	@return Windowのシングルトンインスタンス
-	*/
 	Window& Window::Instance() {
 		static Window instance;
 		return instance;
 	}
 
-	/**
-	*	コンストラクタ
-	*/
 	Window::Window() :
 		isGLFWInitialized(false),
 		isInitialized(false),
@@ -50,25 +44,12 @@ namespace GLFWEW {
 
 	}
 
-	/**
-	*	デストラクタ
-	*/
 	Window::~Window() {
 		if (isGLFWInitialized) {
 			glfwTerminate();
 		}
 	}
 
-	/**
-	*	GLFW/GLEWの初期化
-	*
-	*	@param w ウインドウの描画範囲の幅(ピクセル)
-	*	@param h ウインドウの描画範囲の高さ(ピクセル)
-	*	@param title ウインドウタイトル(UTF-8の0終端文字列)
-	*
-	*	@retval true 初期化成功
-	*	@retval false 初期化失敗
-	*/
 	bool Window::Init(int w, int h, const char* title) {
 
 		if (isInitialized) {
@@ -122,36 +103,19 @@ namespace GLFWEW {
 		return true;
 	}
 
-	/**
-	*	ウインドウを閉じるべきか調べる
-	*
-	*	retval trueu 閉じる
-	*	retval false 閉じない
-	*/
 	bool Window::ShouldClose() const {
 		return glfwWindowShouldClose(window) != 0;
 	}
 
-	/**
-	*	フロントバッファとバックバッファを切り替える
-	*/
 	void Window::SwapBuffers() const {
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 	}
 
-	/**
-	*	ゲームパッドの状態を取得する
-	*
-	*	@return ゲームパッドの状態
-	*/
 	const GamePad& Window::GetGamePad() const {
 		return gamepad;
 	}
 
-	/**
-	*	前回からの経過時間の更新処理
-	*/
 	void Window::UpdateDeltaTime(){
 
 		//経過時間の更新処理
@@ -196,9 +160,6 @@ namespace GLFWEW {
 		GLFWBUTTONID_Left,	///< 左キー
 	};
 
-	/**
-	*	ゲームパッドの状態を更新する
-	*/
 	void Window::UpdateGamePad() {
 
 		const uint32_t prevButtons = gamepad.buttons;
@@ -321,27 +282,16 @@ namespace GLFWEW {
 
 	}
 
-	/**
-	*	マウスホイールの値の更新処理
-	*
-	*	@param x	ホイールXの回転量
-	*	@param y	ホイールYの回転量
-	*/
 	void Window::UpdateMouseWheel(float x, float y){
 
 		static glm::vec2 prev = glm::vec2(0);
 
-		gamepad.mouseWheelY = y - prev.y;
+		gamepad.mouseWheelY = static_cast<int>(y - prev.y);
 
 		prev = glm::vec2(x, y);
 
 	}
 
-	/**
-	*	キーのマッピングの設定
-	*
-	*	@param k キーマッピングのデータ
-	*/
 	void Window::SetKeyMap(std::vector<stKeyMap>& k){
 
 		keyMap.clear();
@@ -349,19 +299,9 @@ namespace GLFWEW {
 		for (stKeyMap& keyValue : k) {
 			
 			keyMap[keyValue.glfwCode] = keyValue.keyCode;
-		}
-		
+		}	
 	}
 
-	/**
-	*	ウインドウサイズを取得します
-	*
-	*	@param w	ウインドウの横サイズの格納場所
-	*	@param h	ウインドウの縦サイズの格納場所
-	*
-	*	return true	ウインドウサイズが変更された
-	*	retrun false変更されていない
-	*/
 	bool Window::GetWindowSize(int* w, int* h){
 
 		glfwGetWindowSize(window,w, h);

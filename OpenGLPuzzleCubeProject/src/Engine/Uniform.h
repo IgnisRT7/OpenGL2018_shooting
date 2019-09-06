@@ -1,6 +1,9 @@
 /**
-*	@file Uniform.h
+*	@file	Uniform.h
+*	@brief	シェーダに使用するユニファームバッファブロックの管理
+*	@author	tn-mai(講義資料製作者)
 */
+
 #pragma once
 #include <glm/glm.hpp>
 

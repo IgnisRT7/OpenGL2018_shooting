@@ -1,5 +1,7 @@
 /**
 *	@file TitleScene.cpp
+*	@brief	タイトルシーン制御用
+*	@author Takuya Yokoyama
 */
 
 #include "../Engine/entity.h"
@@ -8,29 +10,13 @@
 #include "../GameState.h"
 #include "GameMainScene.h"
 #include "ModelLoadTestscene.h"
+#include "../../Res/Resource.h"
 
 
-//#include "../../Res/Audio/SampleSound_acf.h"
-//#include "../../Res/Audio/SampleCueSheet.h"
 #include "../../Res/Audio/testProject_acf.h"
 #include "../../Res/Audio/CueSheet_0.h"
 
-namespace GameState {
-
-	///　背景球クラス定義
-
-	void TitleSpaceSphere::Initialize() {
-	}
-
-	void TitleSpaceSphere::Update(float delta) {
-
-		glm::vec3 rotSpace = glm::eulerAngles(entity->Rotation());
-		rotSpace.x += glm::radians(2.5f) * delta;
-		entity->Rotation(rotSpace);
-	}
-
-	/// タイトルクラス定義
-
+namespace Application {
 
 	/**
 	*	タイトル画面の初期化
@@ -39,12 +25,11 @@ namespace GameState {
 		
 		GameEngine& game = GameEngine::Instance();
 
-		game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
-		game.LoadTextureFromFile("Res/Model/SpaceSphere.dds");
-		game.LoadMeshFromFile("Res/Model/Player.fbx");
-		game.LoadTextureFromFile("Res/Model/Player.dds");
-
-		initialize = true;
+		
+		game.LoadMeshFromFile(Resource::fbx_spaceSphere);
+		game.LoadTextureFromFile(Resource::tex_spaceSphere);
+		game.LoadMeshFromFile(Resource::fbx_player);
+		game.LoadTextureFromFile(Resource::tex_player);
 
 		return true;
 	}
@@ -65,13 +50,11 @@ namespace GameState {
 
 		timer = 0;
 
-		game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
-			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
+		game.AddEntity(GameState::EntityGroupId_Background, glm::vec3(0, 0, 0),
+			"SpaceSphere", Resource::tex_spaceSphere, std::make_shared<SpaceSphereMain>(), "NonLighting");
 
 		player = std::make_shared<PlayerForProduction>();
-		game.AddEntity(EntityGroupId_Others, glm::vec3(0, 0, 0), "Aircraft", "Res/Model/Player.dds", player, "NonLighting");
-
-		sampleSprite = std::make_shared<Sprite>(Texture::LoadFromFile("Res/Model/Player.dds"));
+		game.AddEntity(GameState::EntityGroupId_Others, glm::vec3(0, 0, 0), "Aircraft", Resource::tex_player, player, "NonLighting");
 
 		game.KeyValue(0.01f);
 

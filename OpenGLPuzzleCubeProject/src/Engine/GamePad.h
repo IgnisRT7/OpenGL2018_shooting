@@ -1,5 +1,7 @@
 /**
 *	@file GamePad.h
+*	@brief	ゲームパッド用パラメータ
+*	@brief	Takuya Yokoyama , tn-mai
 */
 #pragma once
 #include <stdint.h>

@@ -1,6 +1,7 @@
 /**
 *	@file Entity.cpp
 */
+
 #include "Entity.h"
 #include "Uniform.h"
 #include <glm/gtc/matrix_transform.hpp>
@@ -20,7 +21,7 @@ namespace Entity {
 	*	@param matViewProjection
 	*	@param viewFlags
 	*/
-	void UpdateUniformVertexData(Entity& entity, void*ubo, const glm::mat4* matVP, const glm::mat4& matDepthVP, glm::u32 viewFlags) {
+	void UpdateUniformVertexData(Entity& entity, void* ubo, const glm::mat4* matVP, const glm::mat4& matDepthVP, glm::u32 viewFlags) {
 
 		Uniform::VertexData data;
 		data.matModel = entity.CalcModelMatrix();
@@ -39,11 +40,6 @@ namespace Entity {
 		memcpy(ubo, &data, sizeof(data));
 	}
 
-	/**
-	*	移動・回転・拡縮行列を取得する
-	*
-	*	@return TRS行列
-	*/
 	glm::mat4 Entity::CalcModelMatrix() const
 	{
 		const glm::mat4 t = glm::translate(glm::mat4(), transform.position);
@@ -52,11 +48,6 @@ namespace Entity {
 		return t * r * s;
 	}
 
-	/**
-	*	エンティティを破棄する
-	*
-	*	この関数を呼び出した後は、エンティティを操作してはならない
-	*/
 	void Entity::Destroy() {
 
 		if (pBuffer) {
@@ -64,11 +55,6 @@ namespace Entity {
 		}
 	}
 
-	/**
-	*	自分自身をリンクリストから切り離す
-	*
-	*	自分はどこにも接続されていない状態になる
-	*/
 	void Buffer::Link::Remove() {
 		next->prev = prev;
 		prev->next = next;
@@ -76,13 +62,6 @@ namespace Entity {
 		next = this;
 	}
 
-	/**
-	*	リンクオブジェクトを自分の手前に追加する
-	*
-	*	@param p	追加するリンクオブジェクトへのポインタ
-	*
-	*	pを所属元のリンクリストから切り離し、自分の手前に追加する
-	*/
 	void Buffer::Link::Insert(Link* p)
 	{
 		p->Remove();
@@ -92,16 +71,6 @@ namespace Entity {
 		prev = p;
 	}
 
-	/**
-	*	エンティティバッファを作成する
-	*
-	*	@param maxEntityCount	扱えるエンティティの最大数
-	*	@param ubSizePerEntity	エンティティごとのUniform Bufferのバイト数
-	*	@param bindingPoint		エンティティ用UBOのバインディングポイント
-	*	@param ubName			エンティティ用Uniform Bufferの名前
-	*
-	*	@return 作成したエンティティバッファへのポインタ
-	*/
 	BufferPtr Buffer::Create(size_t maxEntityCount, GLsizeiptr ubSizePerEntity, int bindingPoint, const char* ubName) {
 
 		struct Impl : Buffer { Impl() {} ~Impl() {} };
@@ -142,20 +111,6 @@ namespace Entity {
 		return p;
 	}
 
-	/**
-	*	エンティティを追加する
-	*
-	*	@param position	エンティティの座標
-	*	@param mesh		エンティティの表示に使用するメッシュ
-	*	@param texture	エンティティの表示に使うテクスチャ
-	*	@param program	エンティティの表示に使用するシェーダプログラム
-	*	@param func		エンティティの状態を更新する関数(または関数オブジェクト)
-	*
-	*	@return 追加したエンティティへのポインタ
-	*			これこれ以上エンティティを追加できない場合はnullptrが返される
-	*			回転や拡大率を設定する場合は個のポインタ経由で行う
-	*			このポインタをアプリケーション側で保持する必要はない
-	*/
 	Entity* Buffer::AddEntity(int groupId, const glm::vec3& position, const Mesh::MeshPtr& mesh, const TexturePtr texture[2], const Shader::ProgramPtr& program, EntityDataBasePtr eData) {
 
 		if (freeList.prev == freeList.next) {
@@ -185,18 +140,13 @@ namespace Entity {
 		entity->program = program;
 		entity->entityData = eData;
 		if (eData) {
-			eData->SetEntity(*dynamic_cast<Entity*>(entity));
+			eData->SetEntity(dynamic_cast<Entity*>(entity));
 			eData->Initialize();
 		}
 		entity->isActive = true;
 		return entity;
 	}
 
-	/**
-	*	エンティティを削除する
-	*
-	*	@param 削除するエンティティのポインタ
-	*/
 	void Buffer::RemoveEntity(Entity* entity) {
 
 		if (!entity || !entity->isActive) {
@@ -226,9 +176,6 @@ namespace Entity {
 		p->isActive = false;
 	}
 
-	/**
-	*	全てのエンティティを削除する
-	*/
 	void Buffer::RemoveAllEntity() {
 
 		for (int groupId = 0; groupId <= maxGroupId; ++groupId) {
@@ -241,6 +188,12 @@ namespace Entity {
 
 	/**
 	*	矩形同士の衝突判定
+	*
+	*	@param lhs	コリジョンデータA
+	*	@param rhs	コリジョンデータB
+	*
+	*	@retval true	衝突した
+	*	@retval false	衝突しなかった
 	*/
 	bool HasCollision(const CollisionData& lhs, const CollisionData& rhs) {
 		if (lhs.max.x < rhs.min.x || lhs.min.x > rhs.max.x)return false;
@@ -249,13 +202,6 @@ namespace Entity {
 		return true;
 	}
 
-	/**
-	*	アクティブなエンティティの状態を更新する
-	*
-	*	@param delta	前回の更新からの経過時間
-	*	@param matView	View行列
-	*	@param matProj	Projection行列
-	*/
 	void Buffer::Update(float delta, const glm::mat4* matView, const glm::mat4& matProj, const glm::mat4& matDepthVP) {
 
 		//エンティティの更新処理
@@ -323,11 +269,6 @@ namespace Entity {
 		ubo->UnmapBuffer();
 	}
 
-	/**
-	*	アクティブなエンティティを描画する
-	*
-	*	@param meshBuffer 描画に使用するメッシュバッファへのポインタ
-	*/
 	void Buffer::Draw(const Mesh::BufferPtr& meshBuffer) const {
 
 		meshBuffer->BindVAO();
@@ -361,12 +302,6 @@ namespace Entity {
 		meshBuffer->UnBindVAO();
 	}
 
-	/**
-	*	アクティブなエンティティを深度情報を描画する
-	*
-	*	@param meshBuffer 描画に使用するメッシュバッファへのポインタ
-	*	tips シェーダの設定は外部で行うこと
-	*/
 	void Buffer::DrawDepth(const Mesh::BufferPtr& meshBuffer) const {
 
 		meshBuffer->BindVAO();
@@ -394,12 +329,6 @@ namespace Entity {
 		meshBuffer->UnBindVAO();
 	}
 
-	/**
-	*	ステンシルバッファの描画
-	*
-	*	@param meshBuffer	メッシュバッファ
-	*	@param prograrm		使用するプログラムオブジェクト
-	*/
 	void Buffer::DrawStencil(const Mesh::BufferPtr& meshBuffer, const Shader::ProgramPtr& program)const {
 
 		meshBuffer->BindVAO();
@@ -427,13 +356,6 @@ namespace Entity {
 		meshBuffer->UnBindVAO();
 	}
 
-	/**
-	*	表示するGroupIDの設定
-	*
-	*	@param groupId		適用するGroupID
-	*	@param cameraIndex	適用するカメラのインデックス番号
-	*	@param isVisible	表示フラグ
-	*/
 	void Buffer::GroupVisibility(int groupId, int cameraIndex, bool isVisible) {
 
 		if (isVisible) {
@@ -444,22 +366,6 @@ namespace Entity {
 		}
 	}
 
-	/**
-	*	衝突解決ハンドラを設定する
-	*
-	*	@param gid0		衝突対象のグループID
-	*	@param gid1		衝突対象のグループID
-	*	@param handler	衝突解決ハンドラ
-	*
-	*	衝突が発生し衝突ハンドラが呼び出されるとき、
-	*	より小さいグループIDを持つエンティティから先に渡される。
-	*	ココで指定したグループIDの順序とは無関係であることに注意
-	*
-	*	CollisionHandler(10,1,Func)
-	*	というコードでハンドラを登録したとする、衝突が発生すると、
-	*	Func(グループID=1のエンティティ,グループID=10のエンティティ)
-	*	のように呼び出される
-	*/
 	void Buffer::CollisionHandler(int gid0, int gid1) {
 
 		if (gid0 > gid1) {
@@ -473,18 +379,10 @@ namespace Entity {
 		}
 	}
 
-	/**
-	*	全ての衝突解決ハンドラを削除する
-	*/
 	void Buffer::ClearCollisionHanderList() {
 		collisionHandlerList.clear();
 	}
 
-	/**
-	*	エンティティの検索を行う
-	*
-	*	@param name	エンティティ名
-	*/
 	Entity* Buffer::FindEntity(FindEntityFunc searchFunc) {
 
 		if (searchFunc) return nullptr;

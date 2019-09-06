@@ -55,9 +55,6 @@
     <ClCompile Include="src\Main.cpp">
       <Filter>User</Filter>
     </ClCompile>
-    <ClCompile Include="src\user\StageLoader.cpp">
-      <Filter>User</Filter>
-    </ClCompile>
     <ClCompile Include="src\user\GameEndScene.cpp">
       <Filter>User\Scene</Filter>
     </ClCompile>
@@ -87,6 +84,12 @@
     </ClCompile>
     <ClCompile Include="src\Engine\Sprite.cpp">
       <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\user\Entity\EnemySpawner.cpp">
+      <Filter>User\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="src\user\Entity\LandScape.cpp">
+      <Filter>User\Entity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -150,9 +153,6 @@
     <ClInclude Include="src\GameState.h">
       <Filter>User</Filter>
     </ClInclude>
-    <ClInclude Include="StageLoader.h">
-      <Filter>User</Filter>
-    </ClInclude>
     <ClInclude Include="src\user\GameEndScene.h">
       <Filter>User\Scene</Filter>
     </ClInclude>
@@ -185,6 +185,12 @@
     </ClInclude>
     <ClInclude Include="Res\Resource.h">
       <Filter>Res</Filter>
+    </ClInclude>
+    <ClInclude Include="src\user\Entity\EnemySpawner.h">
+      <Filter>User\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="src\user\Entity\LandScape.h">
+      <Filter>User\Entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,9 @@
 /**
 *	Billbord.h
+*	@brief	パーティクルエフェクト用
+*	@author Takuya Yokoyama
 */
+
 #pragma once
 #include "BufferObject.h"
 #include <glm/glm.hpp>

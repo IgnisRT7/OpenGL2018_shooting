@@ -1,5 +1,7 @@
 /**
 *	@file CameraComponent.h
+*	@brief	シーンで使用されるカメラコンポーネント
+*	@author	takuya Yokoyama
 */
 #pragma once
 
@@ -11,10 +13,15 @@ using SceneComponentPtr = std::shared_ptr<SceneComponent>;
 
 /**
 *	シーンコンポーネント
-*	TODO: ココに書くべき処理ではないため後に移行するように
+*	TODO: ココに書くべき処理ではないため後に移行予定
 */
 class SceneComponent {
 public:
+
+	SceneComponent() = default;
+	SceneComponent(const SceneComponent&) = delete;
+	virtual ~SceneComponent() = default;
+	const SceneComponent& operator=(const SceneComponent&) = delete;
 
 private:
 };
@@ -25,22 +32,97 @@ private:
 class CameraComponent :public SceneComponent{
 public:
 
+	CameraComponent() = default;
+	CameraComponent(const CameraComponent&) = delete;
+	virtual ~CameraComponent() = default;
+	const CameraComponent& operator=(const CameraComponent&) = delete;
+	
 	virtual const glm::mat4& ViewMatrix() const;
 	virtual const glm::mat4& ProjctionMatrix() const;
 
 	virtual void Initialize() {};
+
+	/**
+	*	更新処理
+	*
+	*	@param deltaTime	経過時間
+	*/
 	virtual void Update(float delta);
 
+	/**
+	*	カメラの位置情報の設定
+	*
+	*	@return p	設定するカメラの座標
+	*/
 	void Position(glm::vec3& p) { position = p; }		
+
+	/**
+	*	カメラの見ている方向の設定
+	*
+	*	@param d	カメラの方向ベクトル
+	*/
 	void Direction(glm::vec3& d) { direction = d; }
+
+	/**
+	*	カメラの上方向ベクトルの設定
+	*
+	*	@param u	カメラの上方向ベクトル
+	*/
 	void UpVector(glm::vec3& u) { up = u; }
+
+	/**
+	*	カメラの画角の設定
+	*
+	*	@param f	画角
+	*/
 	void Fov(float f) { fov = f; }
+
+	/**
+	*	アスペクト比の設定
+	*
+	*	@param a	アスペクト比
+	*/
 	void Aspect(float a) { aspect = a; }
+
+	/**
+	*	カメラのNear距離を設定する
+	*
+	*	@param n	Near値
+	*/
 	void Near(float n) { near = n; }
+
+	/**
+	*	カメラのFar距離を設定する
+	*
+	*	@param f	Far値
+	*/
 	void Far(float f) { far = f; }
 
+	/**
+	*	カメラのビューパラメータの一括設定
+	*
+	*	@param p	座標
+	*	@param d	方向ベクトル
+	*	@param u	上方向ベクトル
+	*/
 	void ViewMatrixParam(glm::vec3& p, glm::vec3& d, glm::vec3 u) { position = p; direction = d; up = u; }
-	void ProjMatrixParam(float f, float a, float n, float fa) { far = f; aspect = a; near = n; far = fa; }
+
+	/**
+	*	カメラのプロジェクションパラメータの一括設定
+	*
+	*	@param fo	画角
+	*	@param a	アスペクト比
+	*	@param n	Near値
+	*	@param fa	Far値
+	*/
+	void ProjMatrixParam(float fo, float a, float n, float fa) { fov = fo; aspect = a; near = n; far = fa; }
+
+	/**
+	*	カメラの位置とみている方向から方向ベクトルを設定
+	*	
+	*	@param pos	カメラがある座標
+	*	@param at	カメラの注視点
+	*/
 	void LookAt(glm::vec3 pos, glm::vec3 at) { position = pos; direction = glm::normalize(at - pos); }
 
 
@@ -67,16 +149,26 @@ public:
 
 	CameraDebugComponent() = default;
 	CameraDebugComponent(const CameraDebugComponent&) = delete;
-	void operator=(const CameraDebugComponent&) = delete;
+	~CameraDebugComponent() = default;
+	const CameraDebugComponent& operator=(const CameraDebugComponent&) = delete;
+
+	/**
+	*	初期化処理
+	*/
+	void Initialize() override;
+
+	/**
+	*	更新処理
+	*
+	*	@param deltaTime	経過時間
+	*/
+	void Update(float delta) override;
 
 private:
 
-	void Initialize() override;
-	void Update(float delta) override;
-
-	glm::vec3 forward;
-	glm::vec3 right;
-	glm::vec3 upLocal;
+	glm::vec3 forward;	/// 前方向ベクトル
+	glm::vec3 right;	/// 右方向ベクトル
+	glm::vec3 upLocal;	/// 上方向ベクトル(ローカル)
 
 };
 

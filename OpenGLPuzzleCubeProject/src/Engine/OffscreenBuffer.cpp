@@ -1,18 +1,11 @@
 /**
 *	@file OffscreenBuffer.cpp
 */
+
 #pragma once
 #include "OffscreenBuffer.h"
 #include <iostream>
 
-/**
-*	オフスクリーンバッファを作成する
-*
-*	@param w オフスクリーンバッファの幅(ピクセル単位)
-*	@param h オフスクリーンバッファの高さ(ピクセル単位)
-*
-*	@return 作成したオフスクリーンバッファへのポインタ
-*/
 OffscreenBufferPtr OffscreenBuffer::Create(int w, int h, GLenum iformat) {
 
 	struct Impl : OffscreenBuffer {};
@@ -67,19 +60,10 @@ OffscreenBufferPtr OffscreenBuffer::Create(int w, int h, GLenum iformat) {
 	return offscreen;
 }
 
-/**
-*	サイズ変更処理
-*
-*	@param w	横方向の変更後のサイズ
-*	@param h	縦方向の変更後のサイズ
-*/
 void OffscreenBuffer::Resize(int w, int h){
 
 }
 
-/**
-*	デストラクタ
-*/
 OffscreenBuffer::~OffscreenBuffer() {
 
 	if (framebuffer) {

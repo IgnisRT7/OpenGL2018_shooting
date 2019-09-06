@@ -8,8 +8,6 @@
 #include <stdio.h>
 #include <sys/stat.h>
 
-
-
 /**
 *	バイト列から数値を復元する
 *
@@ -240,27 +238,12 @@ GLuint LoadDDS(const char* filename, const struct stat& st,
 	return texId;
 }
 
-/**
-*	デストラクタ
-*/
 Texture::~Texture() {
 	if (texId) {
 		glDeleteTextures(1, &texId);
 	}
 }
 
-/**
-*	2Dテクスチャを作成する
-*
-*	@param width	テクスチャの幅(ピクセル数)
-*	@param height	テクスチャの高さ(ピクセル数)
-*	@param iformat	テクスチャのデータ形式
-*	@param format	アクセスする要素
-*	@param data		テクスチャのデータへのポインタ
-*
-*	@return 作成に成功した場合はテクスチャポインタを返す
-*			失敗した場合はnullptrを返す
-*/
 TexturePtr Texture::Create(int width, int height, GLenum iformat, GLenum format, const void* data) {
 
 	GLenum type;
@@ -309,14 +292,6 @@ TexturePtr Texture::Create(int width, int height, GLenum iformat, GLenum format,
 	return p;
 }
 
-/**
-*	ファイルから2Dテクスチャを読み込む
-*
-*	@param	filename ファイル名
-*
-*	@return 作成に成功した場合はテクスチャポインタを返す
-*			失敗した場合はnullptrを返す
-*/
 TexturePtr Texture::LoadFromFile(const char* filename) {
 
 	struct stat st;

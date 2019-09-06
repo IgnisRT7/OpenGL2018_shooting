@@ -1,27 +1,18 @@
 /**
-*	@file Item.cpp
+*	@file	Item.cpp
 */
 
 #include "Item.h"
 #include "../../Engine/GameEngine.h"
 
-namespace GameState {
+namespace Application {
 
-	/**
-	*	アイテムの初期化処理
-	*/
 	void Item::Initialize() {
 		entity->Scale({ 0.8f,0.8f,0.8f });
 		entity->Velocity({ 0,0,-5 });
 		entity->Color({ 1,1,1,1 });
-		//entity->Rotation(glm::angleAxis(90.0f, glm::vec3(0, 0, 1)));
 	}
 
-	/**
-	*	アイテムの更新処理
-	*
-	*	@param  delta	経過時間
-	*/
 	void Item::Update(float delta) {
 
 		//くるくる回転させる
@@ -37,11 +28,6 @@ namespace GameState {
 		}
 	}
 
-	/**
-	*	アイテムの衝突判定処理
-	*
-	*	@param e	衝突してきたエンティティ
-	*/
 	void Item::CollisionEnter(Entity::Entity& e) {
 
 		entity->Destroy();

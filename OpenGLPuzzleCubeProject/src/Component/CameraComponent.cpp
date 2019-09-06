@@ -1,5 +1,5 @@
 /**
-*	@file CameraComponent.cpp
+*	@file	CameraComponent.cpp
 */
 
 #include "CameraComponent.h"
@@ -14,18 +14,12 @@ const glm::mat4& CameraComponent::ProjctionMatrix() const {
 	return matProj;
 }
 
-/**
-*	更新処理
-*/
-void CameraComponent::Update(float delta){
+void CameraComponent::Update(float deltaTime){
 
 	matView = glm::lookAt(position, position + direction, up);
 	matProj = glm::perspective(fov, aspect, near, far);
 }
 
-/**
-*	初期化処理
-*/
 void CameraDebugComponent::Initialize(){
 
 	forward = direction;
@@ -34,12 +28,7 @@ void CameraDebugComponent::Initialize(){
 	Update(0);
 }
 
-/**
-*	更新処理
-*
-*	@param delta	経過時間
-*/
-void CameraDebugComponent::Update(float delta){
+void CameraDebugComponent::Update(float deltaTime){
 
 	GameEngine& game = GameEngine::Instance();
 	GamePad gamepad = game.GetGamePad();
@@ -70,7 +59,7 @@ void CameraDebugComponent::Update(float delta){
 		glm::vec3 rot;	/// カメラの軸に対する回転量
 		glm::vec2 mouseVel = gamepad.mouseVelocity;
 		rot = glm::vec3(mouseVel.y, mouseVel.x, 0);
-		rot *= mouseSensitivy * delta;
+		rot *= mouseSensitivy * deltaTime;
 
 
 		if (glm::length(mov) >= 0.05f || glm::length(rot) >= 0.05f) {
@@ -96,6 +85,6 @@ void CameraDebugComponent::Update(float delta){
 			position = this->position;
 			direction = forward;
 		}
-		CameraComponent::Update(delta);
+		CameraComponent::Update(deltaTime);
 	}
 }

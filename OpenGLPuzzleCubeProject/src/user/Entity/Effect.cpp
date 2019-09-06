@@ -1,24 +1,18 @@
 /**
-*	@file Effect.cpp
+*	@file	Effect.cpp
 */
 #include "Effect.h"
 
-namespace GameState {
+namespace Application {
 
-	/**
-	*	‰Šú‰»ˆ—
-	*/
 	void Blast::Initialize() {
 
 		entity->CastShadow(false);
 	}
 
-	/**
-	*	XVˆ—
-	*/
-	void Blast::Update(float delta) {
+	void Blast::Update(float deltaTime) {
 
-		timer += delta;
+		timer += deltaTime;
 
 		if (timer >= 0.3) {
 			entity->Destroy();
@@ -40,7 +34,7 @@ namespace GameState {
 
 		//YŽ²‰ñ“]‚³‚¹‚é
 		glm::vec3 euler = glm::eulerAngles(entity->Rotation());
-		euler.y += glm::radians(60.0f) + delta;
+		euler.y += glm::radians(60.0f) + deltaTime;
 		entity->Rotation(glm::quat(euler));
 	}
 

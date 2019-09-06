@@ -1,10 +1,14 @@
 /**
-*	@file BulletGenerator.cpp
+*	@file	BulletGenerator.cpp
+*	@brief	敵の弾生成システムの制御用
+*	@author	Takuya Yokoyama
 */
+
 #include "BulletGenerator.h"
 #include "../Engine/GameEngine.h"
 #include "../GameState.h"
 #include "Entity/Bullet.h"
+#include "../../Res/Resource.h"
 
 #include "../../Res/Audio/testProject_acf.h"
 #include "../../Res/Audio/CueSheet_0.h"
@@ -12,7 +16,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-namespace GameState {
+namespace Application {
 
 	/*
 	*	初期化処理
@@ -44,7 +48,7 @@ namespace GameState {
 
 		//エンティティの追加処理
 		if (Entity::Entity* p = GameEngine::Instance().AddEntity(groupId, parent.Position(),
-			"Sphere", "Res/Model/sphere.dds", b)) {
+			"Sphere", Resource::tex_bullet, b)) {
 
 			b->Velocity(direction * initBulletSpeed);
 			b->Color(color);
@@ -193,7 +197,7 @@ namespace GameState {
 
 			std::shared_ptr<Bullet> b = std::make_shared<Bullet>();
 			Entity::Entity* p = game.AddEntity(groupId, parent.Position(),
-				"Sphere", "Res/Model/sphere.dds", b);
+				"Sphere", Resource::tex_bullet, b);
 
 			if (shotAngle > glm::pi<float>() * 2.0f) {
 				shotAngle -= glm::pi<float>() * 2.0f;

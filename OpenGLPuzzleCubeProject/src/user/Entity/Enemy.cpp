@@ -1,6 +1,10 @@
 /**
-*	@file Entity.cpp
+*	@file	Entity.cpp
+*	@brief	敵の制御用
+*	@author	Takuya Yokoyama
 */
+
+
 #include "Enemy.h"
 #include "../../Engine/GameEngine.h"
 #include "../../GameState.h"
@@ -17,45 +21,37 @@
 #include "Player.h"
 #include <memory>
 
-namespace GameState {
+namespace  Application{
 
-	/**
-	*	敵の初期化処理
-	*/
 	void Toroid::Initialize() {
 		entity->CastShadow(true);
-		entity->CastStencil(true);	//TODO : ステンシルマスクのテスト用
+		entity->CastStencil(true);	
 		entity->StencilColor(glm::vec4(1, 0, 1, 1));
 		entity->Scale(glm::vec3(1.5));
 
-		entity->Collision(collisionDataList[EntityGroupId_Enemy]);
+		entity->Collision(GameState::collisionDataList[GameState::EntityGroupId_Enemy]);
 
 		return;
 	}
 
-	/**
-	*	敵の更新処理
-	*
-	*	@param delta	経過時間
-	*/
-	void Toroid::Update(float delta) {
+	void Toroid::Update(float deltaTime) {
 
-		timer += delta;
+		timer += deltaTime;
 
 		//弾管理システムの更新
 		if (bulletGenerator) {
 			//bulletGenerator->Color(bulletColor);
-			bulletGenerator->Update(delta);
+			bulletGenerator->Update(deltaTime);
 		}
 
 		//移動管理システムの更新
 		if (moveController) {
-			moveController->Update(*entity, delta);
+			moveController->Update(*entity, deltaTime);
 		}
 
 		// 円盤を回転させる.
 		float rot = glm::angle(entity->Rotation());
-		rot += glm::radians(180.0f) * delta;
+		rot += glm::radians(180.0f) * deltaTime;
 		if (rot > glm::pi<float>() * 2.0f) {
 			rot -= glm::pi<float>() * 2.0f;
 		}
@@ -64,7 +60,7 @@ namespace GameState {
 		//画面外判定処理
 		if (isDestroyByScreenOut) {
 			const glm::vec3 pos = entity->Position();
-			if (std::abs(pos.x) > screenHalfW * 1.2 || std::abs(pos.z) > screenHalfH * 1.2) {
+			if (std::abs(pos.x) > GameState::screenHalfW * 1.2 || std::abs(pos.z) > GameState::screenHalfH * 1.2) {
 
 				std::cout << "enemy of outrange" << std::endl;
 				GameEngine::Instance().RemoveEntity(entity);
@@ -73,11 +69,6 @@ namespace GameState {
 		}
 	}
 
-	/**
-	*	ダメージ処理
-	*
-	*	@param p	ダメージ量
-	*/
 	void Toroid::Damage(float p) {
 
 		if (--hp <= 0) {
@@ -87,7 +78,7 @@ namespace GameState {
 			if (--hp <= 0) {
 
 				//爆発エフェクト
-				if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, entity->Position(), "Blast", Resource::tex_toroid, std::make_shared<Blast>())) {
+				if (Entity::Entity* p = game.AddEntity(GameState::EntityGroupId_Others, entity->Position(), "Blast", Resource::tex_toroid, std::make_shared<Application::Blast>())) {
 					const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
 					p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
 					p->Color(glm::vec4(1.0f, 0.75f, 0.5f, 1.0f));
@@ -102,10 +93,10 @@ namespace GameState {
 					int itemID = rand() % 2;
 
 					//アイテム
-					std::string texName = itemID ? Resource::tex_itemboxSpeed : Resource::tex_itemboxPower;
+					std::string texName = itemID ? Resource::tex_itemboxSpeed : Resource::tex_itemboxBullet;
 
-					if (Entity::Entity* p = game.AddEntity(EntityGroupId_Item, entity->Position(), "ItemBox", texName.c_str(), std::make_shared<Item>(itemID))) {
-						p->Collision(collisionDataList[EntityGroupId_Item]);
+					if (Entity::Entity* p = game.AddEntity(GameState::EntityGroupId_Item, entity->Position(), "ItemBox", texName.c_str(), std::make_shared<Item>(itemID))) {
+						p->Collision(GameState::collisionDataList[GameState::EntityGroupId_Item]);
 					}
 				}
 
@@ -117,20 +108,12 @@ namespace GameState {
 		}
 	}
 
-	/**
-	*	衝突判定処理
-	*
-	*	@param e	衝突してきたエンティティ
-	*/
 	void Toroid::CollisionEnter(Entity::Entity& e) {
 		e.EntityData()->Damage(1);
 
 	}
 
-	/**
-	*	ターゲットの設定
-	*/
-	void Toroid::Target(Entity::Entity * t) {
+	void Toroid::Target(Entity::Entity* t) {
 
 		playerEntity = t;
 
@@ -139,9 +122,6 @@ namespace GameState {
 		}
 	}
 
-	/**
-	*	初期化処理
-	*/
 	void BossEnemy::Initialize() {
 
 		GameEngine& game = GameEngine::Instance();
@@ -155,18 +135,18 @@ namespace GameState {
 			auto t = std::make_shared<Toroid>();
 			t->DestroyByScreenOut(false);
 
-			if (auto p = game.AddEntity(EntityGroupId_Others, glm::vec3(-60,0,0),
-				"", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", t)) {
+			if (auto p = game.AddEntity(GameState::EntityGroupId_Others, glm::vec3(-60,0,0),
+				"", Resource::tex_toroid, Resource::tex_toroid_normal, t)) {
 
 				turrets.push_back(t);
 
 				//タレット用弾作成
 				BulletGeneratorPtr b;
 				if ((i % 2) == 0) {
-					b = std::make_shared<MultiWayShot>(*p, EntityGroupId_EnemyShot, nullptr, 15, 3);
+					b = std::make_shared<MultiWayShot>(*p, GameState::EntityGroupId_EnemyShot, nullptr, 15, 3);
 				}
 				else {
-					b = std::make_shared<NormalShot>(*p, EntityGroupId_EnemyShot, playerEntity);
+					b = std::make_shared<NormalShot>(*p, GameState::EntityGroupId_EnemyShot, playerEntity);
 				}
 
 				t->BulletGenerator(b);
@@ -177,7 +157,7 @@ namespace GameState {
 		glm::vec2 windowSize = game.WindowSize();
 
 		//HPゲージ作成
-		hpGuage = std::make_shared<HealthGuage>(Texture::LoadFromFile("Res/HealthMeter.dds"));
+		hpGuage = std::make_shared<HealthGuage>(Texture::LoadFromFile(Resource::tex_healthMeter));
 		hpGuage->Program(Shader::Program::Create("Res/Shader/HealthGauge.vert", "Res/Shader/HealthGauge.frag"));
 		glm::vec3 pos = hpGuage->Position();
 		pos += glm::vec3(0, windowSize.y * 0.45, 0);
@@ -188,23 +168,18 @@ namespace GameState {
 		hp = maxHp;
 	}
 
-	/**
-	*	更新処理
-	*
-	*	@param delta	経過時間
-	*/
-	void BossEnemy::Update(float delta) {
+	void BossEnemy::Update(float deltaTime) {
 
-		timer += delta;
+		timer += deltaTime;
 
 		//移動管理システムの更新
 		if (moveController) {
-			moveController->Update(*entity, delta);
+			moveController->Update(*entity, deltaTime);
 		}
 
 		// 円盤を回転させる.
 		float rot = glm::angle(entity->Rotation());
-		rot += glm::radians(30.0f) * delta;
+		rot += glm::radians(30.0f) * deltaTime;
 		if (rot > glm::pi<float>() * 2.0f) {
 			rot -= glm::pi<float>() * 2.0f;
 		}
@@ -217,11 +192,6 @@ namespace GameState {
 		GameEngine::Instance().AddSprite(*hpGuage);
 	}
 
-	/**
-	*	ダメージ処理
-	*
-	*	@param p	ダメージ量
-	*/
 	void BossEnemy::Damage(float p) {
 
 		GameEngine& game = GameEngine::Instance();
@@ -233,7 +203,8 @@ namespace GameState {
 			GameEngine& game = GameEngine::Instance();
 
 			//爆発エフェクト
-			if (Entity::Entity* p = game.AddEntity(EntityGroupId_Others, entity->Position(), "Blast", "Res/Model/Toroid.dds", std::make_shared<Blast>())) {
+			if (Entity::Entity* p = game.AddEntity(GameState::EntityGroupId_Others, entity->Position(),
+				"Blast", Resource::fbx_blast, std::make_shared<Blast>())) {
 				const std::uniform_real_distribution<float> rotRange(0.0f, glm::pi<float>() * 2);
 				p->Scale(glm::vec3(10.0f));
 				p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
@@ -301,9 +272,6 @@ namespace GameState {
 		e.EntityData()->Damage(1);
 	}
 
-	/**
-	*	タレットの更新処理
-	*/
 	void BossEnemy::UpdateTurret() {
 
 		glm::quat baseRot = entity->Rotation();
@@ -328,11 +296,6 @@ namespace GameState {
 		}
 	}
 
-	/**
-	*	ターゲットの設定
-	*
-	*	@param t	ターゲットのエンティティ
-	*/
 	void BossEnemy::Target(Entity::Entity* t) {
 
 		playerEntity = t;
@@ -342,117 +305,5 @@ namespace GameState {
 			}
 		}
 	}
-
-	/// 敵スポナーのクラス定義
-
-	/**
-	*	コンストラクタ
-	*
-	*	@param max	スポーン数
-	*	@param interval	出撃間隔
-	*	@param eType	敵のタイプ
-	*	@param mType	移動タイプ
-	*	@param bType	弾のタイプ
-	*/
-	EnemySpawner::EnemySpawner(int max, float interval, int eType, int mType, int bType, int health) :
-		spawnMax(max), spawnInterval(interval), enemyType(eType),
-		moveType(mType), bulletType(bType),health(health) {
-	}
-
-	/**
-	*	初期化処理
-	*/
-	void EnemySpawner::Initialize() {
-		playerEntity = GameEngine::Instance().FindEntityData<Player>();
-	}
-
-	/**
-	*	敵スポナーの更新処理
-	*
-	*	@param delta	経過時間
-	*/
-	void EnemySpawner::Update(float delta) {
-
-		GameEngine& game = GameEngine::Instance();
-
-		time += delta;
-
-		//敵の出撃処理
-		if (launchIndex < static_cast<int>(time / spawnInterval)) {
-			SpawnEnemy();
-			launchIndex++;
-		}
-
-		if (time >= spawnMax * spawnInterval) {
-			//スポーン終了
-
-			entity->Destroy();
-			return;
-		}
-	}
-
-	/**
-	*	スポーン処理
-	*/
-	void EnemySpawner::SpawnEnemy() {
-
-		GameEngine& game = GameEngine::Instance();
-
-		bool isItemDrop = spawnMax == (launchIndex + 1);	///最後に出撃する敵のみアイテムドロップする
-
-		if (enemyType == 5) {
-			//boss
-
-			auto& b = std::make_shared<BossEnemy>();
-			b->MoveController(MakeMoveControllerByMoveType(-1, false));
-			b->Target(playerEntity);
-
-			Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, entity->Position(),
-				"MotherShip", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", b);
-
-		}
-		else {
-
-			//敵本体の作成
-			auto& t = std::make_shared<Toroid>(0, health, isItemDrop);
-
-			//移動タイプに基づいて移動データを設定する
-			t->MoveController(MakeMoveControllerByMoveType(moveType, entity->Position().x < 0));
-
-			//スポナーの位置からスポーン地点の設定
-			glm::vec3 pos = entity->Position();
-			if (moveType == 2) {
-				pos.z -= launchIndex * 5.0f;
-			}
-
-			Entity::Entity* p = game.AddEntity(EntityGroupId_Enemy, pos,
-				"Toroid", "Res/Model/Toroid.dds", "Res/Model/Toroid.Normal.bmp", t);
-
-			//弾のタイプに基づいて弾生成機を作成
-			if (bulletType != -1) {
-
-				switch (bulletType) {
-				case 1:
-					t->BulletGenerator(std::make_shared<NormalShot>(*p, EntityGroupId_EnemyShot, playerEntity));
-					break;
-				case 2:
-					t->BulletGenerator(std::make_shared<MultiWayShot>(*p, EntityGroupId_EnemyShot, nullptr));
-					t->BulletGenerator()->Color(glm::vec4(0.3f, 1.0f, 0.5f, 1.0f));
-					break;
-				case 5:
-					t->BulletGenerator(std::make_shared<CircleShot>(*p, EntityGroupId_EnemyShot));
-					t->BulletGenerator()->Color(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
-				default:
-					break;
-				}
-			}
-			t->Target(playerEntity);
-
-		}
-
-
-
-	}
-
 
 }

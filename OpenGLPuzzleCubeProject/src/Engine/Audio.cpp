@@ -14,9 +14,7 @@ namespace Audio {
 	CriAtomExAcbHn acb;
 	CriAtomExPlayerHn player[playerMax];
 
-	/**
-	*	オーディオシステム用エラーコルバック
-	*/
+	///	オーディオシステム用エラーコルバック
 	void ErrorCallback(const CriChar8* errid, CriUint32 p1, CriUint32 p2, CriUint32* parry) {
 
 		const CriChar8* err = criErr_ConvertIdToMessage(errid, p1, p2);
@@ -29,17 +27,7 @@ namespace Audio {
 	/// オーディオシステム用デアロケータ.
 	void Deallocate(void* obj, void* ptr) { delete[] static_cast<uint8_t*>(ptr); }
 
-	/**
-	*	オーディオシステムを初期化する
-	*
-	*	@param acfPath		ACFファイルのパス
-	*	@param acbPath		ACBファイルのパス
-	*	@param awbPath		AWBファイルのパス
-	*	@param dspBusName	D-Bus名
-	*	
-	*	@retval true	初期化成功
-	*	@retval false	初期化失敗
-	*/
+
 	bool Initialize(const char* acfPath, const char* acbPath, const char* awbPath, const char* dspBusName) {
 
 		criErr_SetCallback(ErrorCallback);
@@ -74,9 +62,11 @@ namespace Audio {
 		return true;
 	}
 
-	/**
-	*	オーディオシステムを破棄する
-	*/
+	void Update() {
+
+		criAtomEx_ExecuteMain();
+	}
+
 	void Destroy() {
 
 		for (auto& e : player) {
@@ -106,39 +96,17 @@ namespace Audio {
 		criAtomEx_Finalize_WASAPI();
 	}
 
-	/**
-	*	オーディオシステムの状態を更新する
-	*/
-	void Update() {
-
-		criAtomEx_ExecuteMain();
-	}
-
-	/**
-	*	音声を再生する
-	*
-	*	@param playerId 再生に使用するプレイヤーのID
-	*	@param cueId	再生するキューのID
-	*/
 	void Play(int playerId, int cueId) {
 
 		criAtomExPlayer_SetCueId(player[playerId], acb, cueId);
 		criAtomExPlayer_Start(player[playerId]);
 	}
 
-	/**
-	*	音声を停止する
-	*
-	*	@param playerId 再生を停止するプレイヤーのID
-	*/
 	void Stop(int playerId) {
 		
 		criAtomExPlayer_Stop(player[playerId]);
 	}
 
-	/**
-	*	音声を全停止する
-	*/
 	void StopAll() {
 
 		criAtomExPlayer_StopAllPlayers();

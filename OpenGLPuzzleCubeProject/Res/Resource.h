@@ -6,15 +6,36 @@ namespace Resource {
 
 	//画像ファイル
 
-	const static char* tex_defaultNormal = "Res/Model/Dummy.Normal.bmp";
-	const static char* tex_font = "Res/Font.fnt";
+	const static char* tex_defaultNormal =	"Res/Model/Dummy.Normal.bmp";
+	const static char* tex_font =			"Res/Font.fnt";
 
-	const static char* tex_itemboxSpeed = "Res/Model/ItemBoxSpeed.dds";
-	const static char* tex_itemboxPower = "Res/Model/ItemBoxBullet.dds";
-	const static char* tex_toroid = "Res/Model/Toroid.dds";
-
+	const static char* tex_player =			"Res/Model/Player.dds";
+	const static char* tex_toroid =			"Res/Model/Toroid.dds";
+	const static char* tex_toroid_normal =	"Res/Model/Toroid_Normal.bmp";
+	const static char* tex_itemboxSpeed =	"Res/Model/ItemBoxSpeed.dds";
+	const static char* tex_itemboxBullet =	"Res/Model/ItemBoxBullet.dds";
+	const static char* tex_bullet =			"Res/Model/sphere.dds";
+	const static char* tex_healthMeter =	"Res/HealthMeter.dds";
+	
+	const static char* tex_bg02 =			"Res/Model/BG02.Diffuse.dds";
+	const static char* tex_bg02_normal =	"Res/Model/BG02.Normal.bmp";
+	const static char* tex_city01 =			"Res/Model/City01.Diffuse.dds";
+	const static char* tex_city01_normal =	"Res/Model/City01.Normal.bmp";
+	const static char* tex_spaceSphere =	"Res/Model/SpaceSphere.dds";
 
 //モデルファイル
+	const static char* fbx_player =			"Res/Model/Player.fbx";
+	const static char* fbx_playerType2 =	"Res/Model/Player2.fbx";
+	const static char* fbx_blast =			"Res/Model/Blast.fbx";
+	const static char* fbx_toroid =			"Res/Model/Toroid.fbx";
+	const static char* fbx_motherShip =		"Res/Model/MotherShip.fbx";
+	const static char* fbx_itembox =		"Res/Model/ItemBox.fbx";
+	const static char* fbx_bullet =			"Res/Model/sampleSphere.fbx";
+
+	const static char* fbx_spaceSphere =	"Res/Model/SpaceSphere.fbx";
+	const static char* fbx_landscape =		"Res/Model/Landscape.fbx";
+	const static char* fbx_city =			"Res/Model/City01.fbx";
+
 	
 //音声ファイル
 	const static char* audioAcfFile = "Res/Audio/testProject.acf";

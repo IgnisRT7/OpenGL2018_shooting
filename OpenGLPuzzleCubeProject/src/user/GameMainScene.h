@@ -1,5 +1,7 @@
 /**
-*	@file GameMainScene.h
+*	@file	GameMainScene.h
+*	@brief	ゲームのメインシーン制御用
+*	@author	Takuya Yokoyama
 */
 #pragma once
 #include "../Engine/Entity.h"
@@ -7,52 +9,78 @@
 #include "../Engine/Scene.h"
 #include "EnemyLaunchController.h"
 #include "../Engine/Sprite.h"
+#include "Entity/LandScape.h"
 
-namespace GameState {
-
-
-	///背景(スライド)
-	class Landscape : public Entity::EntityDataBase {
-	public:
-
-		//Landscape() = default;
-		Landscape(bool l = false);
-
-		void Initialize() override;
-		void Update(float delta) override;
-	private:
-
-		float timer = 0;
-		glm::vec3 start;
-		bool isLoop = false;
-	};
-
-	///背景の更新(回転)
-	class SpaceSphereMain : public Entity::EntityDataBase {
-
-		void Initialize() override;
-
-		void Update(float delta) override;
-	};
-	
-
+namespace Application {
 
 	///メインゲーム画面
 	class MainGame : public Scene{
 	public:
 
 		MainGame() :Scene("MainGame") {}
+		~MainGame() = default;
+		MainGame(const MainGame&) = delete;
+		const MainGame& operator=(const MainGame&) = delete;
 
+		/**
+		*	初期化処理
+		*
+		*	@return true	初期化成功
+		*	@return false	初期化失敗
+		*/
 		bool Initialize() override;
-		void Update(float d) override;
+
+		/**
+		*	更新処理
+		*
+		*	@param deltaTime	経過時間
+		*/
+		void Update(float deltaTime) override;
+
+		/**
+		*	終了処理
+		*/
 		void Finalize() override;
+
+		/**
+		*	開始処理
+		*/
 		void Play() override;
+
+		/**
+		*	停止処理
+		*/
 		void Stop() override ;
+
+		/**
+		*	非表示処理
+		*/
 		void Hide() override {};
 
+		/**
+		*	プレイヤーのタイプを設定する
+		*
+		*	@param t	タイプ
+		*/	
 		void SelectPlayerType(int t) { playerType = t; }
-		void DrawScreenInfo(float dt);
+
+		/**
+		*	スクリーンの描画情報を設定する
+		*
+		*	@param deltaTime	経過時間
+		*/
+		void DrawScreenInfo(float deltaTime);
+
+		/**
+		*	ステージのロード処理
+		*/
 		void StageLoad();
+
+		/**
+		*	ステージクリア後の処理
+		*
+		*	@param nextStageTimer	次のステージの開始タイマ
+		*/
 		void StageClear(float nextStageTimer);
 
 	private:
@@ -87,7 +115,7 @@ namespace GameState {
 		std::shared_ptr<Player> playerData;	///< プレイヤーのエンティティデータ
 		std::shared_ptr<Sprite> hpguage;	///< デバッグ用HPゲージ用スプライト
 
-		EnemyLaunchControllerPtr launchController;	
+		Application::EnemyLaunchControllerPtr launchController;	
 	};
 
 }

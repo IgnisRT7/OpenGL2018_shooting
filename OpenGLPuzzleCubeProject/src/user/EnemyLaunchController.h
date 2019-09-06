@@ -1,5 +1,7 @@
 /**
 *	@file EnemyLaunchController.h
+*	@brief	敵の出撃システムの制御用
+*	@author	Takuya Yokoyama
 */
 #pragma once
 
@@ -8,58 +10,61 @@
 #include "../Engine/Entity.h"
 #include "EnemyMoveController.h"
 
-///敵の出撃タイプデータ
-struct EnemyLaunchType {
+namespace Application {
 
-	float launchStartTimer;	///< ステージ開始後に出撃する時間
-	int launchCount;		///< 出撃数
-	float launchInterval;	///< 出撃間隔
+	///敵の出撃タイプデータ
+	struct EnemyLaunchType {
 
-	int enemyType;			///< 敵の種類
-	int moveType;			///< 敵の挙動
-	int bulletType;			///< 弾の種類
-	int health;				///< 体力
+		float launchStartTimer;	///< ステージ開始後に出撃する時間
+		int launchCount;		///< 出撃数
+		float launchInterval;	///< 出撃間隔
 
-	glm::vec3 startPostion;	///< 初期地点
+		int enemyType;			///< 敵の種類
+		int moveType;			///< 敵の挙動
+		int bulletType;			///< 弾の種類
+		int health;				///< 体力
 
-	bool operator>(const EnemyLaunchType& cmp) const {
-		return launchStartTimer > cmp.launchStartTimer;
-	}
-	bool operator<(const EnemyLaunchType& cmp) const { 
-		return launchStartTimer < cmp.launchStartTimer;
-	}
-};
+		glm::vec3 startPostion;	///< 初期地点
 
-MoveControllerPtr MakeMoveControllerByMoveType(int type, bool inverse = false);
+		bool operator>(const EnemyLaunchType& cmp) const {
+			return launchStartTimer > cmp.launchStartTimer;
+		}
+		bool operator<(const EnemyLaunchType& cmp) const {
+			return launchStartTimer < cmp.launchStartTimer;
+		}
+	};
 
-/**
-*	1ステージ分の敵の出撃管理クラス
-*/
-class EnemyLaunchController {
-public:
+	MoveControllerPtr MakeMoveControllerByMoveType(int type, bool inverse = false);
 
-	EnemyLaunchController() = default;
-	~EnemyLaunchController() {}
-	EnemyLaunchController(const EnemyLaunchController&) = delete;
-	void operator=(const EnemyLaunchController&) = delete;
+	/**
+	*	1ステージ分の敵の出撃管理クラス
+	*/
+	class EnemyLaunchController {
+	public:
 
-	void Init(int stageNum);
-	void Load(const std::string& filename);
+		EnemyLaunchController() = default;
+		~EnemyLaunchController() {}
+		EnemyLaunchController(const EnemyLaunchController&) = delete;
+		void operator=(const EnemyLaunchController&) = delete;
 
-	void Update(float deltaTime);
-	void Launch();
-	bool IsFinish() const { return isFinished; }
-	float LastSpawnedTime() const { return lastSpawnTime; }
+		void Init(int stageNum);
+		void Load(const std::string& filename);
 
-private:
+		void Update(float deltaTime);
+		bool IsFinish() const { return isFinished; }
+		float LastSpawnedTime() const { return lastSpawnTime; }
 
-	std::vector<EnemyLaunchType> launchList;
-	std::vector<EnemyLaunchType> activeList;
-	int seekIndex = 0;
-	float timer = 0;
+	private:
 
-	bool isFinished;
-	float lastSpawnTime = 0;
-};
+		std::vector<EnemyLaunchType> launchList;
+		std::vector<EnemyLaunchType> activeList;
+		int seekIndex = 0;
+		float timer = 0;
 
-using EnemyLaunchControllerPtr = std::shared_ptr<EnemyLaunchController>;
+		bool isFinished;
+		float lastSpawnTime = 0;
+	};
+
+	using EnemyLaunchControllerPtr = std::shared_ptr<EnemyLaunchController>;
+
+}

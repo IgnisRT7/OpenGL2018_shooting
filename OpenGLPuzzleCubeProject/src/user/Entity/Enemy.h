@@ -1,6 +1,9 @@
 /**
 *	@file Enemy.h
+*	@brief	敵の制御用
+*	@author	Takuya Yokoyama
 */
+
 #pragma once
 
 #include "../../Engine/Entity.h"
@@ -8,26 +11,91 @@
 #include "../EnemyMoveController.h"
 #include "../../Engine/Sprite.h"
 
-namespace GameState {
+namespace Application {
 
 	/// 敵
 	class Toroid : public Entity::EntityDataBase {
 	public:
 
-		Toroid(int typeID = 0,int health = 2, bool itemDrop = false) :
-			enemyType(typeID), isItemDrop(itemDrop),hp(health) {}
+		Toroid(int typeID = 0, int health = 2, bool itemDrop = false) :
+			enemyType(typeID), isItemDrop(itemDrop), hp(health) {} 
 
+		virtual ~Toroid() = default;
+		Toroid(const Toroid&) = delete;
+		const Toroid& operator=(const Toroid&) = delete;
+	
+		/**
+		*	敵の初期化処理
+		*/
 		void Initialize() override;
-		void Update(float delta) override;
-		void Damage(float) override;
+
+		/**
+		*	敵の更新処理
+		*
+		*	@param deltaTime	経過時間
+		*/
+		void Update(float deltaTime) override;
+
+		/**
+		*	ダメージ処理
+		*
+		*	@param p	ダメージ量
+		*/
+		void Damage(float p) override;
+
+		/**
+		*	衝突判定処理
+		*
+		*	@param e	衝突してきたエンティtティ
+		*/
 		void CollisionEnter(Entity::Entity& e) override;
 
+		/**
+		*	移動用コントローラの設定
+		*
+		*	@param m	移動用コントローラ
+		*/
 		void MoveController(MoveControllerPtr m) { moveController = m; }
+
+		/**
+		*	移動用コントローラーの取得
+		*	
+		*	@return 移動用コントローラー
+		*/
+		MoveControllerPtr MoveController() const { return moveController; }
+
+		/**
+		*	弾の生成器を設定
+		*
+		*	@param b	弾の生成器
+		*/
 		void BulletGenerator(BulletGeneratorPtr b) { bulletGenerator = b; }
+
+		/**
+		*	弾の生成器を取得
+		*
+		*	@return 弾の生成器
+		*/
 		BulletGeneratorPtr BulletGenerator() const { return bulletGenerator; }
 		void DestroyByScreenOut(bool v) { isDestroyByScreenOut = v; }
+
+		/**
+		*	ターゲットの設定
+		*
+		*	@param t	ターゲットとなるエンティティ
+		*/
 		void Target(Entity::Entity* t);
+
+		/**
+		*	弾の色を設定する
+		*/
 		void BulletColor(glm::vec4 c) { bulletColor = c; }
+
+		/**
+		*	設定しているエンティティの取得
+		*
+		*	@return 試用しているエンティティ
+		*/
 		Entity::Entity* Entity() { return entity; }
 
 	private:
@@ -50,13 +118,49 @@ namespace GameState {
 	class BossEnemy : public Entity::EntityDataBase {
 	public:
 
+		/**
+		*	初期化処理
+		*/
 		void Initialize() override;
-		void Update(float delta) override;
+
+		/**
+		*	更新処理
+		*
+		*	@param deltaTime	経過時間
+		*/
+		void Update(float deltaTime) override;
+
+		/**
+		*	ダメージ処理
+		*
+		*	@param p	ダメージ量
+		*/
 		void Damage(float) override;
+
+		/**
+		*	衝突判定処理
+		*
+		*	@param e	衝突したエンティティ
+		*/
 		void CollisionEnter(Entity::Entity& e) override;
 
+		/**
+		*	タレットの更新処理
+		*/
 		void UpdateTurret();
+
+		/**
+		*	移動用コントローラの設定
+		*
+		*	@param m	設定するコントローラー
+		*/
 		void MoveController(MoveControllerPtr m) { moveController = m; }
+
+		/**
+		*	ターゲットの設定
+		*
+		*	@param t	ターゲットのエンティティ
+		*/
 		void Target(Entity::Entity* t);
 
 	private:
@@ -71,34 +175,5 @@ namespace GameState {
 
 		Entity::Entity* playerEntity;
 	};
-
-	/// 敵スポナー
-	class EnemySpawner : public Entity::EntityDataBase {
-	public:
-
-		EnemySpawner() {}
-		EnemySpawner(int max, float interval, int enemyType, int moveType, int bulletType, int health);
-		void Initialize() override;
-		void Update(float delta) override;
-
-		void SpawnEnemy();
-
-	private:
-
-		float spawnInterval = 0.5;	///< スポーンする間隔
-		float time = 0;				///< 経過時間
-		int spawnMax = 5;			///< スポーン数
-		int launchIndex = 0;		///< 出撃している敵の数
-		int enemyType = -1;			///< 出撃する敵の種類
-		int moveType = -1;
-		int bulletType = -1;		///< 弾の種類 
-		int health = 1;				///< 体力
-
-		Entity::Entity* playerEntity;
-	};
-
-
-
-
 
 }

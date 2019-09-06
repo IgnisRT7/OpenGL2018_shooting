@@ -192,13 +192,14 @@
     <ClInclude Include="src\user\Entity\Bullet.h" />
     <ClInclude Include="src\user\Entity\Effect.h" />
     <ClInclude Include="src\user\Entity\Enemy.h" />
+    <ClInclude Include="src\user\Entity\EnemySpawner.h" />
     <ClInclude Include="src\user\Entity\Item.h" />
+    <ClInclude Include="src\user\Entity\LandScape.h" />
     <ClInclude Include="src\user\Entity\Player.h" />
     <ClInclude Include="src\user\GameEndScene.h" />
     <ClInclude Include="src\user\GameMainScene.h" />
     <ClInclude Include="src\user\ModelLoadTestscene.h" />
     <ClInclude Include="src\user\TitleScene.h" />
-    <ClInclude Include="StageLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Component\CameraComponent.cpp" />
@@ -223,12 +224,13 @@
     <ClCompile Include="src\user\Entity\Bullet.cpp" />
     <ClCompile Include="src\user\Entity\Effect.cpp" />
     <ClCompile Include="src\user\Entity\Enemy.cpp" />
+    <ClCompile Include="src\user\Entity\EnemySpawner.cpp" />
     <ClCompile Include="src\user\Entity\Item.cpp" />
+    <ClCompile Include="src\user\Entity\LandScape.cpp" />
     <ClCompile Include="src\user\Entity\Player.cpp" />
     <ClCompile Include="src\user\GameEndScene.cpp" />
     <ClCompile Include="src\user\GameMainScene.cpp" />
     <ClCompile Include="src\user\ModelLoadTestScene.cpp" />
-    <ClCompile Include="src\user\StageLoader.cpp" />
     <ClCompile Include="src\user\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>

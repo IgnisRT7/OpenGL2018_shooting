@@ -1,6 +1,7 @@
 /**
-*	@file GameEndScene.cpp
+*	@file	GameEndScene.cpp
 */
+
 #include "GameEndScene.h"
 #include "../Engine/GameEngine.h"
 #include "../GameState.h"
@@ -8,21 +9,19 @@
 
 #include "../../Res/Audio/testProject_acf.h"
 #include "../../Res/Audio/CueSheet_0.h"
+#include "../../Res/Resource.h"
 
 #include <iostream>
 #include <fstream>
 
-namespace GameState{
+namespace Application{
 
-	/**
-	*	初期化処理
-	*/
-	bool GameState::GameEnd::Initialize(){
+	bool GameEnd::Initialize(){
 
 		GameEngine& game = GameEngine::Instance();
 
-		game.LoadMeshFromFile("Res/Model/SpaceSphere.fbx");
-		game.LoadTextureFromFile("Res/Model/SpaceSphere.dds");
+		game.LoadMeshFromFile(Resource::fbx_spaceSphere);
+		game.LoadTextureFromFile(Resource::tex_spaceSphere);
 
 		//ハイスコア読み込み処理
 		int highScore = 100000;
@@ -89,9 +88,15 @@ namespace GameState{
 
 		GameEngine& game = GameEngine::Instance();
 
+<<<<<<< HEAD
 		auto e = game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
 			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
 		game.KeyValue(0.03f);
+=======
+		auto e = game.AddEntity(GameState::EntityGroupId_Background, glm::vec3(0, 0, 0),
+			"SpaceSphere", Resource::fbx_spaceSphere, std::make_shared<SpaceSphereMain>(), "NonLighting");
+		game.KeyValue(0.1f);
+>>>>>>> 5d5f335a25b2a64bd64e26cfd7b8d7421daa8a5c
 
 		game.MainCamera(std::make_shared<CameraComponent>());
 		game.MainCamera()->LookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
