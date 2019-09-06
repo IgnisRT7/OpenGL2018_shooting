@@ -238,7 +238,7 @@ namespace GameState {
 				p->Scale(glm::vec3(10.0f));
 				p->Rotation(glm::quat(glm::vec3(0, rotRange(game.Rand()), 0)));
 				p->Color(glm::vec4(1.0f, 0.75f, 0.5f, 1.0f));
-				game.UserVariable("score") += 100;
+				game.UserVariable("score") += 5000;
 
 				game.PlayAudio(0, CRI_CUESHEET_0_EXPLOSIVE);
 

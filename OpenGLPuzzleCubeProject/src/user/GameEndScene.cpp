@@ -91,7 +91,7 @@ namespace GameState{
 
 		auto e = game.AddEntity(EntityGroupId_Background, glm::vec3(0, 0, 0),
 			"SpaceSphere", "Res/Model/SpaceSphere.dds", std::make_shared<TitleSpaceSphere>(), "NonLighting");
-		game.KeyValue(0.1f);
+		game.KeyValue(0.03f);
 
 		game.MainCamera(std::make_shared<CameraComponent>());
 		game.MainCamera()->LookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));

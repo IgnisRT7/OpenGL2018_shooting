@@ -250,6 +250,7 @@ namespace GameState {
 					multiShotNum = glm::min(multiShotNum + 1, 5); 
 				}
 
+				game.UserVariable("score") += 300;
 				game.PlayAudio(1, i->ItemType() != 1 ? CRI_CUESHEET_0_POWER_UP1 : CRI_CUESHEET_0_SPEED_UP1);
 			}
 			if (auto e = entity.CastTo<Toroid>()) {

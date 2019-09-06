@@ -14,7 +14,7 @@ void main()
 	vec4 texColor = texture(colorSampler,inTexCoord);
 	
 	float distance = texColor.r;
-	float alpha = smoothstep(0.5 - smoothing, 0.5 + smoothing, distance);
+	float alpha = smoothstep(0.6 - smoothing, 0.6 + smoothing, distance);
 
 	fragColor = vec4(vec3(inColor.rgb * texColor.rgb), (1 - alpha) * inColor.a);
 

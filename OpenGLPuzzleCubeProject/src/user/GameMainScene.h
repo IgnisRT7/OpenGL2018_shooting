@@ -76,10 +76,10 @@ namespace GameState {
 
 		FontDrawInfo stageName;
 		FontDrawInfo stageClearString = {
-			{0,0},{4,4},{0,0.3,1.0,1.0},"STAGE CLEAR!!"
+			{0,0},{4,4},{1,0.3,0.3,1.0},"STAGE CLEAR!!"
 		};
 		FontDrawInfo scoreString = {
-			{-0.75,-0.85f}, {3,3}, {0.8f,0.8f,0,1.0f },""
+			{-0.75,-0.85f}, {3,3}, { 0,1,1,1 },""
 		};
 		
 		

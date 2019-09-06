@@ -208,7 +208,7 @@ namespace GameState {
 			game.FontColor(scoreString.color);
 			game.AddString(scoreString.pos, scoreString.str.c_str());
 
-			game.FontColor(glm::vec4(0, 0.63f, 0.9f, 1.0f));
+			game.FontColor(glm::vec4(0,1,1, 1.0f));
 			snprintf(str, 16, "P: %01.0f", glm::max(0.0, static_cast<double>(playerData->RemainingPlayer())));
 			game.AddString(glm::vec2(-0.95f, -0.85f), str);
 
@@ -229,7 +229,7 @@ namespace GameState {
 		game.StopAllAudio();
 		game.RemoveAllEntity();
 
-		++stageNo; stageNo = 3;
+		++stageNo; //stageNo = 3;
 		
 		launchController = std::make_shared<EnemyLaunchController>();
 		launchController->Init(stageNo);
@@ -321,8 +321,8 @@ namespace GameState {
 
 			///ÉVÉÉÉhÉEÇÃê›íË
 			GameEngine::ShadowParameter shadowParam;
-			shadowParam.lightPos = glm::vec3(0, 100, -50);
-			shadowParam.lightDir = glm::normalize(glm::vec3(0,0, 25));
+			shadowParam.lightPos = glm::vec3(0, 150, -50);
+			shadowParam.lightDir = glm::normalize(glm::vec3(0,0, -10));
 			shadowParam.lightUp = glm::vec3(0, 1, 0);
 			shadowParam.near = 10;
 			shadowParam.far = 200;
@@ -344,7 +344,7 @@ namespace GameState {
 	
 	void MainGame::StageClear(float nextStageTimer){
 
-		stageTimer = nextStageTimer; 
+		stageTimer = nextStageTimer;
 	}
 
 	/**
