@@ -25,7 +25,7 @@ namespace Application{
 
 		//ハイスコア読み込み処理
 		int highScore = 100000;
-		std::ifstream ifs("Res/HighScore.txt");
+		std::ifstream ifs(Resource::misc_highScore);
 		if (!ifs.fail()) {
 			char tmp[64];
 			ifs.getline(tmp, 64);
@@ -39,7 +39,7 @@ namespace Application{
 			//ハイスコアを超えた
 
 			highScore = score;
-			std::ofstream ofs("Res/highScore.txt");
+			std::ofstream ofs(Resource::misc_highScore);
 			if (!ofs.fail()) {
 				ofs << score << std::endl;
 			}

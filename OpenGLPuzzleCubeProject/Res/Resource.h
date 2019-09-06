@@ -62,4 +62,8 @@ namespace Resource {
 	{ "Font"		, "Font.vert"		, "Font.frag"},
 	};
 
+
+//ステージデータ
+
+	const static char* misc_highScore = "Res/StageData/HighScore.txt";
 }
