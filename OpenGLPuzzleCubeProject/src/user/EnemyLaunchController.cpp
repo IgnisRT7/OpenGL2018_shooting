@@ -37,7 +37,7 @@ namespace Application {
 		case 4:
 			seq->Add(std::make_shared<MoveStraight>(4.f, glm::vec3(GameState::screenHalfW * (inverse ? 1 : -1), 0, 0)));
 			seq->Add(std::make_shared<MoveStraight>(2.f, glm::vec3(0, 0, 0)));
-			seq->Add(std::make_shared<MoveStraight>(4.f, glm::vec3(GameState::screenHalfW * (inverse ? -1.2 : 1.2), 0, 0)));
+			seq->Add(std::make_shared<MoveStraight>(4.f, glm::vec3(GameState::screenHalfW * (inverse ? -1.3 : 1.3), 0, 0)));
 			break;
 		case 5:
 			seq->Add(std::make_shared<MoveStraight>(4.f, glm::vec3(0, 0, -GameState::screenHalfH * 0.3f)));
